@@ -8,7 +8,7 @@
   heading to the water: swimmers, families, paddlers, anglers and dog owners.
 </p>
 <p class="muted">
-  From the state's file dated {{ source_file.file_date|date }}{% if source_file.newest_record_date %}, whose newest record is from {{ source_file.newest_record_date|date }}{% endif %}.
+  {% for f in source_files %}{% if f.source == "ca-swrcb-fhab" %}California: the state's file dated {{ f.file_date|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% elif f.source == "mo-dnr-hab" %} Missouri: read {{ f.fetched_at[:10]|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% endif %}{% endfor %}
   An advisory stays listed until the state records an end. A water that is
   not listed has no advisory on file, which is not the same as being free of algae.
 </p>
@@ -25,5 +25,9 @@
 <p>Dogs swim through scum and drink lake water, so algae affects them more than most people. <a href="{{ root }}dogs/">How to read an advisory before a lake day with your dog</a>.</p>
 
 <h2>Find a lake</h2>
-<p><a href="{{ root }}county/">Browse {{ water_count }} lakes and rivers by county</a>. Each has its own page with every state record since 2016.</p>
+<p>{{ water_count }} lakes and rivers, each with its own page and every state record on file:</p>
+<ul>
+  <li><a href="{{ root }}county/">California, by county</a> (records since 2016)</li>
+  {% if "MO" in states_present %}<li><a href="{{ root }}state/mo/">Missouri</a> (records since 2017)</li>{% endif %}
+</ul>
 {% endblock %}

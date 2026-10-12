@@ -45,12 +45,15 @@ smoke:
 	cd $(PIPELINE) && $(UV_RUN) caalgae \
 		--fixture-page tests/fixtures/dataset-page-2026-10-12.html \
 		--fixture-csv tests/fixtures/responses-traps_2026-10-09.csv \
+		--mo-fixture tests/fixtures/mo-hab-points-2026-10-12.json \
+		--cyan-cache tests/fixtures/cyan-cache-traps.json \
 		--run-today 2026-10-12 \
 		--history $(TMP)/smoke/history.json \
 		--snapshot-out $(TMP)/smoke/snapshot.json \
 		--site-out $(TMP)/smoke/site
 	test -f $(TMP)/smoke/snapshot.json
 	test -f $(TMP)/smoke/site/index.html
+	test -f $(TMP)/smoke/site/state/mo/index.html
 
 # CQ-10: the wheel builds, and the schema and templates ship inside it.
 build:

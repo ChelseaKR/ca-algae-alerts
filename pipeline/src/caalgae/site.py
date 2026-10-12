@@ -28,6 +28,8 @@ from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
 
 SITE_NAME = "Algae Alerts (working title)"
+STATE_NAMES = {"CA": "California", "MO": "Missouri"}
+STATE_SOURCE = {"CA": "ca-swrcb-fhab", "MO": "mo-dnr-hab"}
 DEFAULT_BASE_URL = "https://chelseakr.github.io/ca-algae-alerts/"
 # Empty until the owner creates a GA4 property for this site
 # (docs/OWNER-STEPS in the hand-off). Set, every page carries the tag and the
@@ -55,6 +57,9 @@ def _env() -> jinja2.Environment:
         level_name=wording.level_name,
         dog_answer=wording.dog_answer,
         guidance=wording.LEVEL_GUIDANCE,
+        guidance_for=wording.guidance_for,
+        cells_label=wording.cells_label,
+        satellite_explainer=wording.SATELLITE_EXPLAINER,
         dog_advice=wording.DOG_ADVICE,
     )
     return env
@@ -82,7 +87,8 @@ class SiteBuilder:
         self.env = _env()
         self.run_date = dt.date.fromisoformat(snap["run_date"])
         self.urls: list[str] = []
-        source = snap["sources"][0]
+        self.sources = {s["id"]: s for s in snap["sources"]}
+        source = self.sources["ca-swrcb-fhab"]
         self.common: dict[str, Any] = {
             "site_name": SITE_NAME,
             "support_email": support_email,
@@ -91,10 +97,14 @@ class SiteBuilder:
             "ga4_denied_regions": GA4_DENIED_REGIONS,
             "source": source,
             "source_file": snap["source_file"],
+            "source_files": snap["source_files"],
+            "all_sources": snap["sources"],
+            "state_names": STATE_NAMES,
             "run_date": self.run_date,
             "quarantine": snap["quarantine"],
         }
         self.waters = snap["waterbodies"]
+        self.common["states_present"] = sorted({w["state"] for w in self.waters})
         self.by_county: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.no_county: list[dict[str, Any]] = []
         for water in self.waters:
@@ -197,7 +207,15 @@ class SiteBuilder:
         county = (
             f"{' and '.join(water['counties'])} County"
             if water["counties"]
-            else (water["county_text"] or "County not recorded")
+            else (
+                water["county_text"]
+                # Missouri's layer names no county; California's rows sometimes omit it.
+                or (
+                    "County not recorded"
+                    if water["state"] == "CA"
+                    else STATE_NAMES[water["state"]]
+                )
+            )
         )
         about: dict[str, Any] = {"@type": "BodyOfWater", "name": water["name"]}
         if water["center"]:
@@ -206,6 +224,8 @@ class SiteBuilder:
                 "latitude": water["center"]["lat"],
                 "longitude": water["center"]["lon"],
             }
+        water_source = self.sources[STATE_SOURCE[water["state"]]]
+        satellite_source = self.sources.get("epa-cyan")
         self._write(
             rel,
             "water.html.jinja",
@@ -219,6 +239,8 @@ class SiteBuilder:
                 "means for people, children and dogs."
             ),
             water=water,
+            water_source=water_source,
+            satellite_source=satellite_source,
             county=county,
             sites=sites,
             county_links=[(c, slugify(c)) for c in water["counties"]],
@@ -232,7 +254,7 @@ class SiteBuilder:
                         "name": f"{water['name']} toxic algae advisories",
                         "url": self.base_url + rel,
                         "about": about,
-                        "isBasedOn": self.common["source"]["dataset_url"],
+                        "isBasedOn": water_source["dataset_url"],
                     },
                 ],
             },
@@ -279,6 +301,36 @@ class SiteBuilder:
                 structured_data={
                     "@context": "https://schema.org",
                     **self._breadcrumb_data(crumbs_c),
+                },
+            )
+
+    def state_pages(self) -> None:
+        for state, name in STATE_NAMES.items():
+            waters = [w for w in self.waters if w["state"] == state]
+            if not waters or STATE_SOURCE[state] not in self.sources:
+                continue
+            rel = f"state/{state.lower()}/"
+            crumbs = self._crumbs((name, self.base_url + rel))
+            ordered = sorted(
+                waters,
+                key=lambda w: (w["status"]["kind"] != "advisory", w["name"].casefold()),
+            )
+            self._write(
+                rel,
+                "state.html.jinja",
+                title=f"{name} lake algae advisories | {SITE_NAME}",
+                description=(
+                    f"Toxic algae advisory status and history for {len(waters)} "
+                    f"lakes and rivers in {name}, from the state's own records."
+                ),
+                state=state,
+                state_name=name,
+                waters=ordered,
+                state_source=self.sources[STATE_SOURCE[state]],
+                breadcrumb=crumbs,
+                structured_data={
+                    "@context": "https://schema.org",
+                    **self._breadcrumb_data(crumbs),
                 },
             )
 
@@ -348,6 +400,7 @@ class SiteBuilder:
         for water in self.waters:
             self.water_page(water)
         self.counties()
+        self.state_pages()
         self.static_pages()
         self.extras()
 

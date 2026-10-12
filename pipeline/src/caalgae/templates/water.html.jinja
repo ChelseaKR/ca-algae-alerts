@@ -1,19 +1,23 @@
 {% extends "base.html.jinja" %}
-{% from "_macros.html.jinja" import status_box %}
+{% from "_macros.html.jinja" import status_box, satellite_box, required_disclaimer %}
 {% block content %}
 <h1>{{ water.name }}: toxic algae advisories</h1>
 <p class="lede">{{ water.name }}, {{ county }}.{% for name, slug in county_links %} See all <a href="{{ root }}county/{{ slug }}/">{{ name }} County waters</a>.{% endfor %}</p>
 
 <h2 id="status">What the state's records say</h2>
 {{ status_box(water.status) }}
-{% if water.status.tier %}
-<p><strong>What this level asks:</strong> {{ guidance[water.status.tier] }}</p>
+{% if guidance_for(water) %}
+<p><strong>What this level asks:</strong> {{ guidance_for(water) }}</p>
 {% endif %}
-<p>Before you go, check the <a href="{{ source.official_map_url }}">state's official algae map</a> and any signs posted at the water.{% if app_store_url %} The <a href="{{ app_store_url }}">iPhone app</a> can alert you when {{ water.name }} gets a new advisory.{% endif %}</p>
+<p>Before you go, check the <a href="{{ water_source.official_map_url }}">state's official algae page</a> and any signs posted at the water.{% if app_store_url %} The <a href="{{ app_store_url }}">iPhone app</a> can alert you when {{ water.name }} gets a new advisory.{% endif %}</p>
 
 <h2 id="dogs">Dogs at {{ water.name }}</h2>
 <p>{{ dog_answer(water.name, water.status) }}</p>
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>
+
+{% if water.satellite and satellite_source %}
+{{ satellite_box(water.satellite, satellite_explainer, satellite_source) }}
+{% endif %}
 
 <h2 id="sites">Reported spots</h2>
 <p>The state records each report at a spot, such as a beach or a boat ramp. Each spot's latest deciding record:</p>
@@ -46,4 +50,8 @@
   {% endfor %}
   </tbody>
 </table>
+
+<h2 id="source">Source</h2>
+<p>{{ water_source.attribution }} <a href="{{ water_source.dataset_url }}">The state's data</a>. {{ water_source.lift_explanation }}</p>
+{{ required_disclaimer(water_source) }}
 {% endblock %}

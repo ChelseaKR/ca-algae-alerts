@@ -31,7 +31,6 @@ def build(traps: normalize.Normalized) -> dict[str, Any]:
         run_date=RUN_DATE,
         generated_at=dt.datetime(2026, 10, 12, 13, tzinfo=dt.UTC),
         quarantine=traps.quarantine,
-        rows_read=traps.rows_read,
     )
 
 
@@ -51,7 +50,11 @@ def test_every_record_carries_its_source_and_every_water_its_state(
     traps: normalize.Normalized,
 ) -> None:
     snap = build(traps)
-    assert {s["id"] for s in snap["sources"]} == {"ca-swrcb-fhab"}
+    assert {s["id"] for s in snap["sources"]} == {
+        "ca-swrcb-fhab",
+        "mo-dnr-hab",
+        "epa-cyan",
+    }
     assert snap["sources"][0]["license"] == "Other (Public Domain)"
     for water in snap["waterbodies"]:
         assert water["state"] == "CA"
@@ -112,7 +115,6 @@ def test_build_needs_a_file() -> None:
             run_date=RUN_DATE,
             generated_at=dt.datetime.now(dt.UTC),
             quarantine=Counter(),
-            rows_read=1,
         )
 
 
@@ -132,4 +134,5 @@ def test_packaged_schema_matches_the_published_one() -> None:
 def test_slugs() -> None:
     assert snapshot.slugify("Lake Élsinore (north)") == "lake-elsinore-north"
     assert snapshot.slugify("!!!") == "unnamed"
-    assert snapshot.water_id("CA", "", "X") == "ca-county-not-recorded-x"
+    assert snapshot.water_id("CA", "", "X") == "ca-x"
+    assert snapshot.water_id("MO", "", "Truman Lake") == "mo-truman-lake"

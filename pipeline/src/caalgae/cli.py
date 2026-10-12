@@ -15,15 +15,21 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import os
 import sys
+from collections import Counter
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
-from caalgae import fetch, normalize, site, snapshot
+import httpx
+
+from caalgae import cyan, fetch, missouri, normalize, site, snapshot
 from caalgae import history as hist
-from caalgae.sources import CA_SWRCB_FHAB
+from caalgae.sources import CA_SWRCB_FHAB, EPA_CYAN, MO_DNR_HAB
 
 DEFAULT_HISTORY = Path(__file__).resolve().parents[2] / "data" / "history.json"
+DEFAULT_CYAN = Path(__file__).resolve().parents[2] / "data" / "cyan.json"
 STALE_AFTER_DAYS = 7
 
 
@@ -43,6 +49,9 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     p.add_argument("--base-url", default="")
     p.add_argument("--support-email", default="")
     p.add_argument("--app-store-url", default="")
+    p.add_argument("--mo-fixture", type=Path, default=None)
+    p.add_argument("--cyan-cache", type=Path, default=None)
+    p.add_argument("--cyan-refresh", choices=("auto", "never", "force"), default="auto")
     return p.parse_args(argv)
 
 
@@ -65,23 +74,23 @@ def _download(args: argparse.Namespace, previous: dt.date | None) -> fetch.Downl
         return fetch.fetch_csv(client, source, dt.datetime.now(dt.UTC))
 
 
-def run(args: argparse.Namespace) -> int:
-    run_date = (
-        dt.date.fromisoformat(args.run_today)
-        if args.run_today
-        else dt.datetime.now(dt.UTC).date()
-    )
-    history = hist.load(args.history)
-    download = _download(args, history.last_file_date)
+def _warn(message: str) -> None:
+    print(f"caalgae: WARNING {message}", file=sys.stderr)
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::warning::{message}")
+
+
+def _california(
+    args: argparse.Namespace, history: hist.History, run_date: dt.date
+) -> tuple[hist.History, Counter[str], fetch.Download]:
+    download = _download(args, history.last_file_date(CA_SWRCB_FHAB.id))
     source = download.source
     if source.file_date > run_date + dt.timedelta(days=1):
         raise RunRefused(f"{source.file_name} is dated after the run date {run_date}")
     age = (run_date - source.file_date).days
     if age > STALE_AFTER_DAYS:
-        print(
-            f"caalgae: WARNING the state's newest file is {age} days old "
-            f"({source.file_name}); the site says so",
-            file=sys.stderr,
+        _warn(
+            f"the state's newest file is {age} days old ({source.file_name}); the site says so"
         )
     normalized = normalize.normalize_csv(download.body, source.file_date)
     file_info = {
@@ -92,16 +101,101 @@ def run(args: argparse.Namespace) -> int:
         "fetched_at": download.fetched_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "rows_read": normalized.rows_read,
         "quarantined": sum(normalized.quarantine.values()),
+        "quarantined_by_reason": dict(sorted(normalized.quarantine.items())),
     }
     merged = hist.merge(
         history, normalized.records, run_date=run_date, file_info=file_info
     )
+    print(
+        f"caalgae: {source.file_name}: {normalized.rows_read} rows, "
+        f"{len(normalized.records)} records"
+    )
+    return merged, normalized.quarantine, download
+
+
+def _missouri(
+    args: argparse.Namespace, history: hist.History, run_date: dt.date, now: dt.datetime
+) -> tuple[hist.History, Counter[str]]:
+    """The second state. A failure here warns and keeps Missouri's records
+    as they were; it never stops California (docs/DECISIONS.md 0010)."""
+    if not MO_DNR_HAB.enabled:
+        return history, Counter()
+    if args.mo_fixture is not None:
+        body = args.mo_fixture.read_bytes()
+    elif args.fixture_page is not None:
+        return history, Counter()  # an offline run without a Missouri fixture
+    else:
+        try:
+            with fetch.make_client() as client:
+                body = missouri.fetch_cases(client)
+        except fetch.FetchError as error:
+            _warn(f"Missouri not refreshed: {error}")
+            return history, Counter()
+    normalized = missouri.normalize(body, run_date)
+    file_info = {
+        "source": MO_DNR_HAB.id,
+        "url": MO_DNR_HAB.dataset_url,
+        "file_name": "HAB_SUBMIT_POINTS layer 6 (public water bodies)",
+        "file_date": run_date.isoformat(),
+        "fetched_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "rows_read": normalized.rows_read,
+        "quarantined": sum(normalized.quarantine.values()),
+        "quarantined_by_reason": dict(sorted(normalized.quarantine.items())),
+    }
+    merged = hist.merge(
+        history, normalized.records, run_date=run_date, file_info=file_info
+    )
+    print(
+        f"caalgae: Missouri: {normalized.rows_read} cases, {len(normalized.records)} records"
+    )
+    return merged, Counter(
+        {f"Missouri: {k}": v for k, v in normalized.quarantine.items()}
+    )
+
+
+def _cyan(
+    args: argparse.Namespace, history: hist.History, run_date: dt.date, now: dt.datetime
+) -> dict[str, Any] | None:
+    """The satellite layer's cache, refreshed weekly on a live run. A failed
+    refresh warns and keeps the cache; every reading carries its week."""
+    offline = args.fixture_page is not None
+    path = args.cyan_cache or (None if offline else DEFAULT_CYAN)
+    if path is None or not EPA_CYAN.enabled:
+        return None
+    cache = cyan.load_cache(path)
+    if offline or args.cyan_refresh == "never":
+        return cache
+    if args.cyan_refresh == "auto" and not cyan.is_due(cache, now):
+        return cache
+    waters = snapshot.build_waterbodies(history.entries.values(), run_date)
+    try:
+        with fetch.make_client() as client:
+            cache = cyan.refresh(client, cache, waters, now)
+    except (fetch.FetchError, httpx.HTTPError, ValueError) as error:
+        _warn(f"CyAN not refreshed: {error}")
+        return cache
+    cyan.save_cache(cache, path)
+    print(f"caalgae: CyAN: {len(cache['series'])} lakes refreshed")
+    return cache
+
+
+def run(args: argparse.Namespace) -> int:
+    run_date = (
+        dt.date.fromisoformat(args.run_today)
+        if args.run_today
+        else dt.datetime.now(dt.UTC).date()
+    )
+    history = hist.load(args.history)
+    merged, quarantine, download = _california(args, history, run_date)
+    now = download.fetched_at
+    merged, mo_quarantine = _missouri(args, merged, run_date, now)
+    cyan_cache = _cyan(args, merged, run_date, now)
     snap = snapshot.build(
         merged,
         run_date=run_date,
-        generated_at=download.fetched_at,
-        quarantine=normalized.quarantine,
-        rows_read=normalized.rows_read,
+        generated_at=now,
+        quarantine=quarantine + mo_quarantine,
+        cyan_cache=cyan_cache,
     )
     snapshot.validate(snap)
     if args.snapshot_out is not None:
@@ -115,13 +209,9 @@ def run(args: argparse.Namespace) -> int:
             app_store_url=args.app_store_url,
         )
     hist.save(merged, args.history)
-    for reason, count in sorted(normalized.quarantine.items()):
+    for reason, count in sorted((quarantine + mo_quarantine).items()):
         print(f"caalgae: quarantined {count} row(s): {reason}")
-    print(
-        f"caalgae: {source.file_name}: {normalized.rows_read} rows, "
-        f"{len(normalized.records)} records, "
-        f"{len(snap['waterbodies'])} waterbodies"
-    )
+    print(f"caalgae: {len(snap['waterbodies'])} waterbodies")
     return 0
 
 

@@ -1,8 +1,11 @@
 # Algae Alerts (working title)
 
-California toxic-algae (harmful algal bloom) advisories for lakes and
-rivers, per waterbody, with history back to 2016, built from the State
-Water Resources Control Board's public-domain FHAB data. A free static site
+Toxic-algae (harmful algal bloom) advisories for lakes and rivers, per
+waterbody, with full history: California from the State Water Resources
+Control Board's public-domain FHAB data (since 2016) and Missouri from the
+Department of Natural Resources' HAB layer (since 2017), plus a separately
+labeled EPA CyAN satellite estimate for large lakes, which is never an
+advisory (docs/DECISIONS.md 0010). A free static site
 and a paid iPhone app with local alerts, no account for either, on the
 pattern of Trout Truck (`ChelseaKR/ca-fish-planting-alerts`).
 

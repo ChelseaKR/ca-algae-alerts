@@ -9,7 +9,8 @@ kinds of record decide anything:
 
 - an advisory (Caution, Warning, Danger, or one of the state's other
   advisory types), and
-- the state's explicit "None" (no advisory recommended).
+- the state's explicit "None" (no advisory recommended), or Missouri's
+  dissipated case with its date; ``lift_kind`` names which.
 
 "NA - refer to Report Details" and a blank level decide nothing, so they
 can neither raise nor end an advisory. The latest deciding record wins.
@@ -62,7 +63,7 @@ def site_status(records: Iterable[Record], run_date: dt.date) -> Status:
     if latest.explicit_no_advisory:
         return Status(
             kind=NO_ADVISORY_RECORDED,
-            lift_kind="no_advisory_record",
+            lift_kind=latest.end_kind,
             lift_date=latest.date,
             last_advisory=last_advisory,
         )

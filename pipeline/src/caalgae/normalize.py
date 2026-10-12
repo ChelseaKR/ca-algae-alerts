@@ -114,6 +114,10 @@ class Record:
     end_date: dt.date | None
     detail: str
     stamp: dt.datetime | None
+    record_kind: str = "official_advisory"
+    # What an explicit no-advisory record means at this source: the state's
+    # "None" in California, a dissipated bloom in Missouri.
+    end_kind: str = "no_advisory_record"
 
     @property
     def is_advisory(self) -> bool:
@@ -176,14 +180,29 @@ def parse_coordinate(lat_text: str, lon_text: str) -> tuple[float | None, float 
     return None, None
 
 
-def water_key(name: str, county_text: str) -> str:
+_BBOX = {"CA": _CA_BBOX, "MO": (35.9, 40.7, -95.9, -89.0)}
+
+
+def parse_coordinate_any(
+    lat: object, lon: object, state: str
+) -> tuple[float | None, float | None]:
+    """A numeric coordinate pair inside the state's box, or neither."""
+    if not isinstance(lat, int | float) or not isinstance(lon, int | float):
+        return None, None
+    lat_min, lat_max, lon_min, lon_max = _BBOX[state]
+    if lat_min <= lat <= lat_max and lon_min <= lon <= lon_max:
+        return round(float(lat), 6), round(float(lon), 6)
+    return None, None
+
+
+def water_key(name: str, county_text: str, state: str = "CA") -> str:
     """Case-insensitive identity for a waterbody within a county text.
 
     The source has no waterbody id; the same lake is typed as "Lake Perris"
     and "Lake perris". Bloom reports never change name or county (measured
     2026-10-12: 0 of 2,937 reports did).
     """
-    return f"{clean(county_text).casefold()}|{clean(name).casefold()}"
+    return f"{state.lower()}|{clean(county_text).casefold()}|{clean(name).casefold()}"
 
 
 def counties_of(county_text: str) -> list[str]:

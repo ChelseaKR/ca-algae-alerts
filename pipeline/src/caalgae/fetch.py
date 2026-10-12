@@ -21,6 +21,7 @@ import dataclasses
 import datetime as dt
 import re
 import urllib.parse
+import urllib.robotparser
 
 import httpx
 
@@ -163,3 +164,36 @@ def make_client() -> httpx.Client:
         timeout=TIMEOUT,
         follow_redirects=True,
     )
+
+
+class RobotsOffLimits(FetchError):
+    """The host's robots.txt could not be read, or disallows the path."""
+
+
+def robots_allows(client: httpx.Client, url: str) -> None:
+    """Read the host's robots.txt before touching it (docs/DECISIONS.md 0011).
+
+    - 200: parsed and enforced for our User-Agent.
+    - 404: the host publishes no robots.txt, so it sets no rules (RFC 9309
+      §2.3.1.3). Recorded as such in docs/LICENSES-AND-ATTRIBUTION.md, and an
+      owner decision to confirm.
+    - Anything else, including 403 and 5xx (ArcGIS's 403 "Invalid URL"), or
+      no answer: the host is off-limits under the owner's ruling of
+      2026-10-12, and nothing is fetched from it.
+    """
+    parts = urllib.parse.urlsplit(url)
+    robots_url = f"{parts.scheme}://{parts.netloc}/robots.txt"
+    try:
+        response = client.get(robots_url)
+    except httpx.HTTPError as error:
+        raise RobotsOffLimits(f"{robots_url} did not answer: {error}") from error
+    if response.status_code == 404:
+        return
+    if response.status_code != 200:
+        raise RobotsOffLimits(
+            f"{robots_url} returned HTTP {response.status_code}; the host is off-limits"
+        )
+    parser = urllib.robotparser.RobotFileParser()
+    parser.parse(response.text.splitlines())
+    if not parser.can_fetch(USER_AGENT, url):
+        raise RobotsOffLimits(f"{robots_url} disallows {parts.path}")

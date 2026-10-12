@@ -51,6 +51,24 @@ LEVEL_GUIDANCE = {
     ),
 }
 
+# For a state whose advisory levels are not California's Caution, Warning
+# and Danger: no level-by-level summary is invented for them.
+GENERIC_GUIDANCE = (
+    "The state recorded an advisory here. Read the state's notice and any sign "
+    "posted at the water, and keep people, children and pets out of discolored "
+    "or scummy water."
+)
+
+SATELLITE_EXPLAINER = (
+    "This is a satellite estimate from the U.S. EPA's Cyanobacteria Assessment "
+    "Network, not an advisory. It estimates how much cyanobacteria is in the "
+    "water near the lake's center, not whether toxins are present: a high "
+    "number does not mean toxins, and a low one does not mean there are none. "
+    "It covers lakes of about 1 square kilometer and larger, so small ponds, "
+    "dog parks and most rivers are not covered, and clouds can hide a lake for "
+    "weeks. It never changes the advisory status above."
+)
+
 DOG_ADVICE = (
     "Dogs are more exposed than people: they swim through scum, drink the "
     "water and lick algae off their fur. Where an advisory is on file, keep "
@@ -93,6 +111,11 @@ def headline(status: dict[str, Any]) -> str:
             return (
                 f"The state recorded an end date of {date_label(status['lift_date'])}."
             )
+        if status["lift_kind"] == "dissipated":
+            return (
+                "The state recorded the bloom as dissipated on "
+                f"{date_label(status['lift_date'])}."
+            )
         return (
             "The state's latest record, from "
             f"{date_label(status['lift_date'])}, recommends no advisory."
@@ -119,15 +142,15 @@ def dog_answer(name: str, status: dict[str, Any]) -> str:
     kind = status["kind"]
     if kind == "advisory":
         return (
-            f"The state has a {level_name(status).lower()} on file for {name}, "
+            f"The state has an advisory on file for {name} ({level_name(status)}), "
             f"last posted {date_label(status['posted'])}, and no all-clear "
             "recorded. Keep your dog out of the water and away from scum on "
             "the shore until the state records an end."
         )
     if kind == "no_advisory_recorded":
         return (
-            f"The state's latest record for {name} recommends no advisory, but "
-            "that is not the same as an all-clear for today. Look at the water "
+            f"{headline(status)} For {name}, that is not the same as an "
+            "all-clear for today. Look at the water "
             "before your dog goes in: keep it out of green, blue-green or "
             "scummy water and away from mats on the shore."
         )
@@ -136,6 +159,26 @@ def dog_answer(name: str, status: dict[str, Any]) -> str:
         "advisory level, so the records cannot answer this. Keep your dog out "
         "of discolored or scummy water."
     )
+
+
+def guidance_for(water: dict[str, Any]) -> str | None:
+    tier = water["status"].get("tier")
+    if not tier:
+        return None
+    if water["state"] == "CA":
+        return LEVEL_GUIDANCE[tier]
+    return GENERIC_GUIDANCE
+
+
+def cells_label(cells: int) -> str:
+    """``about 550,000 cells/mL``: estimates are rounded to two significant
+    figures, because the satellite does not measure to the cell."""
+    if cells <= 0:
+        # A valid reading of zero is the satellite seeing the lake and finding
+        # less than it can detect; a week it could not see has no entry.
+        return "below what the satellite can detect"
+    rounded = int(float(f"{cells:.2g}"))
+    return f"about {rounded:,} cells/mL"
 
 
 def is_recent(status: dict[str, Any], run_date: dt.date) -> bool:

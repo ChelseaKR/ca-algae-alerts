@@ -18,10 +18,11 @@ from typing import Any
 
 import jsonschema
 
+from caalgae import cyan
 from caalgae import history as hist
 from caalgae import status as st
 from caalgae.normalize import counties_of
-from caalgae.sources import SOURCES
+from caalgae.sources import CA_SWRCB_FHAB, enabled_sources
 
 SCHEMA_VERSION = 1
 
@@ -36,8 +37,11 @@ def slugify(text: str) -> str:
 
 
 def water_id(state: str, county_text: str, name: str) -> str:
-    county = slugify(county_text) if county_text else "county-not-recorded"
-    return f"{state.lower()}-{county}-{slugify(name)}"
+    """``ca-alameda-lake-temescal``; ``mo-truman-lake`` where the source
+    names no county."""
+    if not county_text:
+        return f"{state.lower()}-{slugify(name)}"
+    return f"{state.lower()}-{slugify(county_text)}-{slugify(name)}"
 
 
 def _display_name(variants: Counter[str]) -> str:
@@ -77,6 +81,7 @@ def _record_json(entry: hist.HistoryEntry) -> dict[str, Any]:
         "end_date": _iso(r.end_date),
         "detail": r.detail,
         "source": r.source,
+        "record_kind": r.record_kind,
         "removed_from_source": entry.removed_from_source,
     }
 
@@ -160,34 +165,55 @@ def _assert_unique_ids(waters: list[dict[str, Any]]) -> None:
         raise SnapshotError(f"two waterbodies share an id: {clashes[:5]}")
 
 
+def _file_json(history: hist.History, source: str) -> dict[str, Any] | None:
+    last = history.last_file(source)
+    if last is None:
+        return None
+    dates = [
+        e.record.date
+        for e in history.entries.values()
+        if e.active and e.record.source == source
+    ]
+    return {
+        "source": last["source"],
+        "url": last["url"],
+        "file_name": last["file_name"],
+        "file_date": last["file_date"],
+        "fetched_at": last["fetched_at"],
+        "rows_read": last["rows_read"],
+        "newest_record_date": _iso(max(dates, default=None)),
+    }
+
+
 def build(
     history: hist.History,
     *,
     run_date: dt.date,
     generated_at: dt.datetime,
     quarantine: Counter[str],
-    rows_read: int,
+    cyan_cache: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    if not history.files:
-        raise SnapshotError("no source file on record")
-    current = history.files[-1]
+    """The snapshot. Each waterbody's ``satellite`` block comes from the
+    EPA CyAN cache (``cyan.py``) and never touches its status."""
+    primary = _file_json(history, CA_SWRCB_FHAB.id)
+    if primary is None:
+        raise SnapshotError("no California source file on record")
+    files = [
+        f
+        for f in (_file_json(history, s.id) for s in enabled_sources())
+        if f is not None
+    ]
     waters = build_waterbodies(history.entries.values(), run_date)
-    active = history.active_records()
-    newest = max((r.date for r in active), default=None)
+    satellite = cyan.blocks(cyan_cache, waters) if cyan_cache else {}
+    for water in waters:
+        water["satellite"] = satellite.get(water["id"])
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "run_date": run_date.isoformat(),
-        "sources": [s.as_json() for s in SOURCES.values()],
-        "source_file": {
-            "source": current["source"],
-            "url": current["url"],
-            "file_name": current["file_name"],
-            "file_date": current["file_date"],
-            "fetched_at": current["fetched_at"],
-            "rows_read": rows_read,
-            "newest_record_date": _iso(newest),
-        },
+        "sources": [s.as_json() for s in enabled_sources()],
+        "source_file": primary,
+        "source_files": files,
         "quarantine": {
             "total": sum(quarantine.values()),
             "by_reason": dict(sorted(quarantine.items())),

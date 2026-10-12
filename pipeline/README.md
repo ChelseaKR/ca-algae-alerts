@@ -17,17 +17,28 @@ Python 3.12, managed with `uv`. One command, `caalgae`, runs the whole chain:
    `../schema/snapshot.v1.json` (`snapshot.py`).
 6. Build the static site (`site.py`).
 
+Beside California (docs/DECISIONS.md 0010): `missouri.py` reads Missouri's
+HAB layer (one request, explicit non-personal fields) into the same record
+shape, and `cyan.py` keeps a weekly cache of EPA CyAN satellite estimates
+for matched California and Missouri lakes, in a block of its own that never
+decides a status. Each live run checks each host's robots.txt first
+(`fetch.robots_allows`). A Missouri or CyAN failure warns and keeps the
+last data; only a California failure stops the run.
+
 ```sh
 uv sync
 uv run pytest
 uv run caalgae --fixture-page tests/fixtures/dataset-page-2026-10-12.html \
   --fixture-csv tests/fixtures/responses-traps_2026-10-09.csv \
+  --mo-fixture tests/fixtures/mo-hab-points-2026-10-12.json \
+  --cyan-cache tests/fixtures/cyan-cache-traps.json \
   --run-today 2026-10-12 --history /tmp/caalgae/history.json \
   --snapshot-out /tmp/caalgae/snapshot.json --site-out /tmp/caalgae/site
 ```
 
-A live run (no `--fixture-*` flags) makes exactly two requests: the dataset
-page and the file it links. It never calls `data.ca.gov/api/` and never
+A live run (no `--fixture-*` flags) makes two California requests (the
+dataset page and the file it links), two Missouri requests (robots.txt and
+the layer), and, at most weekly, the CyAN refresh. It never calls `data.ca.gov/api/` and never
 touches `mywaterquality.ca.gov` (`fetch.guard_url`).
 
 ## Fixtures

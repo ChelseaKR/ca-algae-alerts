@@ -18,7 +18,8 @@ def test_first_merge_adds_everything(traps: normalize.Normalized) -> None:
     )
     assert len(h.entries) == len(traps.records)
     assert all(e.first_seen == "2026-10-12" and e.active for e in h.entries.values())
-    assert h.last_file_date == dt.date(2026, 10, 9)
+    assert h.last_file_date("ca-swrcb-fhab") == dt.date(2026, 10, 9)
+    assert h.last_file_date("mo-dnr-hab") is None
 
 
 def test_round_trip(tmp_path: Path, traps: normalize.Normalized) -> None:

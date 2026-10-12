@@ -17,11 +17,12 @@
 {% macro advisory_table(waters, root, caption) %}
 <table>
   <caption class="visually-hidden">{{ caption }}</caption>
-  <thead><tr><th scope="col">Water</th><th scope="col">County</th><th scope="col">Level</th><th scope="col">Last posted</th></tr></thead>
+  <thead><tr><th scope="col">Water</th><th scope="col">State</th><th scope="col">County</th><th scope="col">Level</th><th scope="col">Last posted</th></tr></thead>
   <tbody>
   {% for w in waters %}
     <tr>
       <td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td>
+      <td>{{ w.state }}</td>
       <td>{{ w.counties|join(", ") if w.counties else (w.county_text or "Not recorded") }}</td>
       <td>{{ level_name(w.status) }}</td>
       <td>{{ w.status.posted|date }}</td>
@@ -29,4 +30,39 @@
   {% endfor %}
   </tbody>
 </table>
+{% endmacro %}
+
+{% macro satellite_box(sat, explainer, source) %}
+<section class="satellite" aria-labelledby="satellite">
+<h2 id="satellite">Satellite estimate (not an advisory)</h2>
+{% if sat.readings %}
+{% set r = sat.readings[0] %}
+<p><strong>Week ending {{ r.week_end|date }}: {{ cells_label(r.cells_per_ml) }} of cyanobacteria near the center of {{ sat.cyan_name }}.</strong></p>
+<p class="muted">A satellite estimate from EPA CyAN for a {{ sat.area_km2 }} km&sup2; lake. It does not measure toxins and does not change the advisory status.</p>
+{% if sat.readings|length > 1 %}
+<table>
+  <caption class="visually-hidden">Recent weekly satellite estimates for {{ sat.cyan_name }}, newest first</caption>
+  <thead><tr><th scope="col">Week ending</th><th scope="col">Estimate</th></tr></thead>
+  <tbody>
+  {% for r in sat.readings %}
+    <tr><td>{{ r.week_end|date }}</td><td>{{ cells_label(r.cells_per_ml) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% else %}
+<p><strong>No satellite reading on file for {{ sat.cyan_name }} in recent weeks.</strong> Clouds, ice, or a lake shape the satellite's estimate near its center misses can cause this. It is a gap in the data, not a reading.</p>
+{% endif %}
+<p>{{ explainer }}</p>
+<p class="muted">{{ source.attribution }} Checked {{ sat.fetched_at[:10]|date }}.</p>
+</section>
+{% endmacro %}
+
+{% macro required_disclaimer(source) %}
+{% if source.required_disclaimer %}
+<div class="disclaimer">
+  <p><strong>Required by the State of {{ "Missouri" if source.state == "MO" else source.state }}:</strong></p>
+  <p>{{ source.required_disclaimer }}</p>
+</div>
+{% endif %}
 {% endmacro %}

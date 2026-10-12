@@ -1,0 +1,19 @@
+{% extends "base.html.jinja" %}
+{% from "_macros.html.jinja" import required_disclaimer %}
+{% block content %}
+<h1>{{ state_name }}: lake and river algae advisories</h1>
+<p class="lede">{{ waters|length }} waters appear in the records of the {{ state_source.agency }}. Waters whose latest record is an advisory come first.</p>
+{% if state == "CA" %}<p><a href="{{ root }}county/">Browse California by county</a>.</p>{% endif %}
+<p class="muted">{{ state_source.lift_explanation }}</p>
+<table>
+  <caption class="visually-hidden">Waters in {{ state_name }} and what the state's latest record says</caption>
+  <thead><tr><th scope="col">Water</th><th scope="col">Latest record</th></tr></thead>
+  <tbody>
+  {% for w in waters %}
+    <tr><td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td><td>{{ headline(w.status) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p>{{ state_source.attribution }}</p>
+{{ required_disclaimer(state_source) }}
+{% endblock %}

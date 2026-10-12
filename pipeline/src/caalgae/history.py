@@ -51,10 +51,18 @@ _RECORD_FIELDS = (
     "explicit_no_advisory",
     "detail",
 )
+# Added with the second source (2026-10-12). A history written before then
+# has neither; both default to California's meaning.
+_OPTIONAL_FIELDS = {
+    "record_kind": "official_advisory",
+    "end_kind": "no_advisory_record",
+}
 
 
 def record_to_json(record: Record) -> dict[str, Any]:
     out: dict[str, Any] = {name: getattr(record, name) for name in _RECORD_FIELDS}
+    for name in _OPTIONAL_FIELDS:
+        out[name] = getattr(record, name)
     out["date"] = record.date.isoformat()
     out["end_date"] = record.end_date.isoformat() if record.end_date else None
     out["stamp"] = record.stamp.isoformat() if record.stamp else None
@@ -62,7 +70,9 @@ def record_to_json(record: Record) -> dict[str, Any]:
 
 
 def record_from_json(record_id: str, data: dict[str, Any]) -> Record:
-    fields = {name: data[name] for name in _RECORD_FIELDS}
+    fields: dict[str, Any] = {name: data[name] for name in _RECORD_FIELDS}
+    for name, default in _OPTIONAL_FIELDS.items():
+        fields[name] = data.get(name, default)
     return Record(
         id=record_id,
         date=dt.date.fromisoformat(data["date"]),
@@ -90,11 +100,13 @@ class History:
     entries: dict[str, HistoryEntry]
     files: list[dict[str, Any]]
 
-    @property
-    def last_file_date(self) -> dt.date | None:
-        if not self.files:
-            return None
-        return dt.date.fromisoformat(self.files[-1]["file_date"])
+    def last_file(self, source: str) -> dict[str, Any] | None:
+        mine = [f for f in self.files if f.get("source") == source]
+        return mine[-1] if mine else None
+
+    def last_file_date(self, source: str) -> dt.date | None:
+        last = self.last_file(source)
+        return dt.date.fromisoformat(last["file_date"]) if last else None
 
     def active_records(self) -> list[Record]:
         return [e.record for e in self.entries.values() if e.active]
@@ -153,11 +165,21 @@ def merge(
     run_date: dt.date,
     file_info: dict[str, Any],
 ) -> History:
-    """A new History with this file's records merged in."""
+    """A new History with this file's records merged in.
+
+    Only records of this file's source are compared, so one source's file
+    can never withdraw another source's records. Record ids are prefixed by
+    source where they could collide (Missouri's are ``mo-<objectid>``).
+    """
     today = run_date.isoformat()
+    source = file_info["source"]
     current = {r.id: r for r in records}
+    if any(r.source != source for r in records):
+        raise HistoryError(f"a {source} file carried another source's records")
     entries = dict(history.entries)
-    previously_active = [rid for rid, e in entries.items() if e.active]
+    previously_active = [
+        rid for rid, e in entries.items() if e.active and e.record.source == source
+    ]
     newly_removed = [rid for rid in previously_active if rid not in current]
     if previously_active and (
         len(newly_removed) > MAX_REMOVED_FRACTION * len(previously_active)

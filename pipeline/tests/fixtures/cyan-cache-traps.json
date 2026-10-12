@@ -1,0 +1,63 @@
+{
+ "version": 1,
+ "fetched_at": "2026-10-12T13:00:00Z",
+ "lakes": [
+  {
+   "objectid": 1,
+   "name": "Lake Alpha",
+   "state_abbr": "CA",
+   "areasqkm": 2.5,
+   "centroid_lat": 37.81,
+   "centroid_lng": -122.21
+  },
+  {
+   "objectid": 2,
+   "name": "Beta Reservoir",
+   "state_abbr": "CA",
+   "areasqkm": 12.0,
+   "centroid_lat": 39.06,
+   "centroid_lng": -122.79
+  },
+  {
+   "objectid": 3,
+   "name": "Lake Alpha",
+   "state_abbr": "NV",
+   "areasqkm": 3.0,
+   "centroid_lat": 37.81,
+   "centroid_lng": -122.21
+  },
+  {
+   "objectid": 4,
+   "name": "Gamma Pond",
+   "state_abbr": "CA",
+   "areasqkm": 1.1,
+   "centroid_lat": 36.6,
+   "centroid_lng": -119.5
+  }
+ ],
+ "series": {
+  "1": [
+   {
+    "week_end": "2026-10-10",
+    "cells_per_ml": 554626,
+    "max_cells_per_ml": 602560,
+    "valid_cells": 6
+   },
+   {
+    "week_end": "2026-10-03",
+    "cells_per_ml": 510505,
+    "max_cells_per_ml": 510505,
+    "valid_cells": 6
+   }
+  ],
+  "2": [],
+  "4": [
+   {
+    "week_end": "2026-10-10",
+    "cells_per_ml": 20000,
+    "max_cells_per_ml": 20000,
+    "valid_cells": 1
+   }
+  ]
+ }
+}

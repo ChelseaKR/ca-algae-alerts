@@ -38,7 +38,7 @@ echo "== the checkers' own dependencies (SEC-12/13 applied to this toolchain)"
 # brings a fixed HIGH or CRITICAL back fails here.
 (cd "$tools" && npm audit --audit-level=high --no-fund)
 
-echo "== build the site from the real-data sample fixture"
+echo "== build the site from the real-data sample fixture and the Missouri layer"
 # Served under the same path prefix as production (the default base URL's
 # path), because 404.html links its stylesheet by that absolute path.
 prefix="$(cd "$root/pipeline" && uv run --frozen python -c \
@@ -48,6 +48,8 @@ mkdir -p "$site"
 (cd "$root/pipeline" && uv run --frozen caalgae \
   --fixture-page tests/fixtures/dataset-page-2026-10-12.html \
   --fixture-csv tests/fixtures/responses-sample_2026-10-09.csv \
+  --mo-fixture tests/fixtures/mo-hab-points-2026-10-12.json \
+  --cyan-cache tests/fixtures/cyan-cache-traps.json \
   --run-today 2026-10-12 \
   --history "$work/history.json" \
   --site-out "$site")

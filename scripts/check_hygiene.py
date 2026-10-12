@@ -221,7 +221,12 @@ def _files(globs: Iterable[str]) -> list[Path]:
     for pattern in globs:
         found.update(p for p in ROOT.glob(pattern) if p.is_file())
     this = Path(__file__).resolve()
-    return sorted(p for p in found if p.resolve() != this and ".venv" not in p.parts)
+    # Build output is generated and gitignored: SwiftPM's .build holds
+    # Apple's own generated test runner, markers and all.
+    skipped = {".venv", ".build", "DerivedData", "node_modules"}
+    return sorted(
+        p for p in found if p.resolve() != this and not skipped & set(p.parts)
+    )
 
 
 def scan(globs: Iterable[str], check: Callable[[str], bool]) -> list[str]:

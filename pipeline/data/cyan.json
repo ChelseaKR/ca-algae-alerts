@@ -1,0 +1,5224 @@
+{
+ "fetched_at": "2026-10-12T20:05:27Z",
+ "lakes": [
+  {
+   "areasqkm": 5.702,
+   "centroid_lat": 38.90106781,
+   "centroid_lng": -120.061624,
+   "name": "Fallen Leaf Lake",
+   "objectid": 24301,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.10518716,
+   "centroid_lat": 41.83305577,
+   "centroid_lng": -120.023537,
+   "name": "Fee Reservoir",
+   "objectid": 27858,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.044814040000001,
+   "centroid_lat": 38.97486121,
+   "centroid_lng": -94.3223923,
+   "name": "Lake Jacomo",
+   "objectid": 45796,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 21.13353003,
+   "centroid_lat": 36.87065166,
+   "centroid_lng": -119.287856,
+   "name": "Pine Flat Lake",
+   "objectid": 117764,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.335,
+   "centroid_lat": 41.49983424,
+   "centroid_lng": -121.175989,
+   "name": "Mud Lake",
+   "objectid": 118226,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 64.24601411,
+   "centroid_lat": 38.58673109,
+   "centroid_lng": -122.227492,
+   "name": "Lake Berryessa",
+   "objectid": 119607,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 15.29077022,
+   "centroid_lat": 39.59869246,
+   "centroid_lng": -121.454015,
+   "name": "Lake Oroville",
+   "objectid": 119642,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.75951754,
+   "centroid_lat": 32.89621929,
+   "centroid_lng": -116.78715,
+   "name": "El Capitan Lake",
+   "objectid": 119822,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 10.33674991,
+   "centroid_lat": 33.84049357,
+   "centroid_lng": -117.435702,
+   "name": "Lake Mathews",
+   "objectid": 144168,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.03065215,
+   "centroid_lat": 39.15201018,
+   "centroid_lng": -120.940408,
+   "name": "Rollins Reservoir",
+   "objectid": 144682,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 11.067,
+   "centroid_lat": 38.87265581,
+   "centroid_lng": -120.406573,
+   "name": "Union Valley Reservoir",
+   "objectid": 147299,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.29324288,
+   "centroid_lat": 38.02548578,
+   "centroid_lng": -94.090386,
+   "name": "See Lake",
+   "objectid": 165497,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 2.62356424,
+   "centroid_lat": 38.82471231,
+   "centroid_lng": -120.34307,
+   "name": "Ice House Reservoir",
+   "objectid": 224718,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.343,
+   "centroid_lat": 37.72072654,
+   "centroid_lng": -119.18329,
+   "name": "Thousand Island Lake",
+   "objectid": 231072,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.08605663,
+   "centroid_lat": 38.48996237,
+   "centroid_lng": -122.372341,
+   "name": "Lake Hennessey",
+   "objectid": 231362,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.24769801,
+   "centroid_lat": 36.40787679,
+   "centroid_lng": -119.090793,
+   "name": "Bravo Lake",
+   "objectid": 240496,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 16.23483943,
+   "centroid_lat": 37.60957861,
+   "centroid_lng": -118.740983,
+   "name": "Lake Crowley",
+   "objectid": 275976,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.6420446,
+   "centroid_lat": 34.2867929,
+   "centroid_lng": -114.229955,
+   "name": "Copper Basin Reservoir",
+   "objectid": 345970,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.05484801,
+   "centroid_lat": 37.31186978,
+   "centroid_lng": -119.551084,
+   "name": "Bass Lake",
+   "objectid": 351585,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 25.19050121,
+   "centroid_lat": 39.50092702,
+   "centroid_lng": -91.7760069,
+   "name": "Mark Twain Lake",
+   "objectid": 352964,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 2.80761074,
+   "centroid_lat": 39.3358854,
+   "centroid_lng": -120.629781,
+   "name": "Lake Spaulding",
+   "objectid": 355767,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 57.25763138,
+   "centroid_lat": 41.75136413,
+   "centroid_lng": -120.151761,
+   "name": "Upper Lake",
+   "objectid": 360254,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.86796153,
+   "centroid_lat": 34.48176516,
+   "centroid_lng": -118.752974,
+   "name": "Lake Piru",
+   "objectid": 384915,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.803,
+   "centroid_lat": 40.43796805,
+   "centroid_lng": -120.892481,
+   "name": "Hog Flat Reservoir",
+   "objectid": 385846,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.787,
+   "centroid_lat": 41.5822797,
+   "centroid_lng": -121.599521,
+   "name": "Medicine Lake",
+   "objectid": 386142,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.89895438,
+   "centroid_lat": 36.98450202,
+   "centroid_lng": -120.947769,
+   "name": "Los Banos Reservoir",
+   "objectid": 444857,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.893,
+   "centroid_lat": 37.25991029,
+   "centroid_lng": -118.958283,
+   "name": "Florence Lake",
+   "objectid": 472548,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 16.51835818,
+   "centroid_lat": 33.68001733,
+   "centroid_lng": -117.029653,
+   "name": "Diamond Valley Lake",
+   "objectid": 476105,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.12592131,
+   "centroid_lat": 41.10946783,
+   "centroid_lng": -121.426093,
+   "name": "Horr Pond",
+   "objectid": 478178,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.12764183,
+   "centroid_lat": 34.53766584,
+   "centroid_lng": -118.601858,
+   "name": "Castaic Lake",
+   "objectid": 505561,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.696000000000002,
+   "centroid_lat": 40.46866629,
+   "centroid_lng": -120.954456,
+   "name": "McCoy Flat Reservoir",
+   "objectid": 506442,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.698,
+   "centroid_lat": 39.48532662,
+   "centroid_lng": -95.0166651,
+   "name": "Bean Lake",
+   "objectid": 524825,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 2.85073349,
+   "centroid_lat": 39.3802747,
+   "centroid_lng": -120.156634,
+   "name": "Prosser Creek Reservoir",
+   "objectid": 596413,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.29150243,
+   "centroid_lat": 40.29295086,
+   "centroid_lng": -120.380892,
+   "name": "Hartson Lake",
+   "objectid": 601517,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.63259646,
+   "centroid_lat": 32.92640253,
+   "centroid_lng": -116.91796,
+   "name": "San Vicente Reservoir",
+   "objectid": 625997,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.06223416,
+   "centroid_lat": 39.77227062,
+   "centroid_lng": -121.518948,
+   "name": "Concow Reservoir",
+   "objectid": 630245,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.50889859,
+   "centroid_lat": 35.19454392,
+   "centroid_lng": -120.480736,
+   "name": "Lopez Lake",
+   "objectid": 633224,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.9427117,
+   "centroid_lat": 40.86868894,
+   "centroid_lng": -121.969739,
+   "name": "Pit 7 Reservoir",
+   "objectid": 706091,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.125,
+   "centroid_lat": 34.22296863,
+   "centroid_lng": -117.850342,
+   "name": "San Gabriel Reservoir",
+   "objectid": 746859,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.27081417,
+   "centroid_lat": 33.85576691,
+   "centroid_lng": -117.176714,
+   "name": "Perris Reservoir",
+   "objectid": 747263,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 12.06458771,
+   "centroid_lat": 40.66312412,
+   "centroid_lng": -120.503704,
+   "name": "Horse Lake",
+   "objectid": 747746,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 19.62947908,
+   "centroid_lat": 40.27034466,
+   "centroid_lng": -120.96076,
+   "name": "Mountain Meadows Reservoir",
+   "objectid": 751036,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 12.604,
+   "centroid_lat": 40.62560024,
+   "centroid_lng": -122.559086,
+   "name": "Whiskeytown Lake",
+   "objectid": 752355,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.23621252,
+   "centroid_lat": 41.52312415,
+   "centroid_lng": -122.390102,
+   "name": "Lake Shastina",
+   "objectid": 753924,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.89436569,
+   "centroid_lat": 39.34411204,
+   "centroid_lng": -122.505174,
+   "name": "East Park Reservoir",
+   "objectid": 835673,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.95799576,
+   "centroid_lat": 39.67790224,
+   "centroid_lng": -120.656243,
+   "name": "Gold Lake",
+   "objectid": 838273,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.64161037,
+   "centroid_lat": 41.04930386,
+   "centroid_lng": -120.20813,
+   "name": "Red Rock Lake",
+   "objectid": 844050,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 11.13748482,
+   "centroid_lat": 39.79741574,
+   "centroid_lng": -92.5151176,
+   "name": "Long Branch Lake",
+   "objectid": 961010,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 4.363000000000002,
+   "centroid_lat": 41.02097172,
+   "centroid_lng": -121.633129,
+   "name": "Lake Britton",
+   "objectid": 989163,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.903,
+   "centroid_lat": 41.70549632,
+   "centroid_lng": -120.586973,
+   "name": "Dead Horse Reservoir",
+   "objectid": 995969,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.164,
+   "centroid_lat": 39.78941224,
+   "centroid_lng": -92.2751346,
+   "name": "Daniel Boone Lake",
+   "objectid": 1008554,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 4.02327483,
+   "centroid_lat": 41.97947526,
+   "centroid_lng": -122.303711,
+   "name": "Copco Lake",
+   "objectid": 1075997,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.03467043,
+   "centroid_lat": 41.94484476,
+   "centroid_lng": -120.419494,
+   "name": "Goose Lake",
+   "objectid": 1076436,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 13.07238182,
+   "centroid_lat": 39.47816843,
+   "centroid_lng": -120.135392,
+   "name": "Stampede Reservoir",
+   "objectid": 1079017,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.489,
+   "centroid_lat": 32.78720342,
+   "centroid_lng": -116.77474,
+   "name": "Loveland Reservoir",
+   "objectid": 1084010,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.28277578,
+   "centroid_lat": 40.90550271,
+   "centroid_lng": -120.977007,
+   "name": "Coyote Reservoir",
+   "objectid": 1109669,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.28528808,
+   "centroid_lat": 37.18883876,
+   "centroid_lng": -121.987735,
+   "name": "Lexington Reservoir",
+   "objectid": 1115644,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.09942704,
+   "centroid_lat": 38.82723023,
+   "centroid_lng": -94.3620686,
+   "name": "Lake Winnebago",
+   "objectid": 1126997,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.128,
+   "centroid_lat": 38.99225185,
+   "centroid_lng": -94.3724828,
+   "name": "Lakewood Lake East",
+   "objectid": 1130481,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 4.34996564,
+   "centroid_lat": 40.33489788,
+   "centroid_lng": -123.400632,
+   "name": "Ruth Lake",
+   "objectid": 1194581,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.38958298,
+   "centroid_lat": 37.47476742,
+   "centroid_lng": -121.819364,
+   "name": "Calaveras Reservoir",
+   "objectid": 1236953,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.76248661,
+   "centroid_lat": 41.17864144,
+   "centroid_lng": -124.115773,
+   "name": "Big Lagoon",
+   "objectid": 1239164,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.039,
+   "centroid_lat": 37.92579285,
+   "centroid_lng": -92.8558413,
+   "name": "Lake Niangua",
+   "objectid": 1247559,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.59304723,
+   "centroid_lat": 37.457302,
+   "centroid_lng": -91.0999151,
+   "name": "Number 46 Lake",
+   "objectid": 1249576,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 3.71354814,
+   "centroid_lat": 38.49708595,
+   "centroid_lng": -120.182153,
+   "name": "Salt Springs Reservoir",
+   "objectid": 1315060,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.745,
+   "centroid_lat": 39.11485555,
+   "centroid_lng": -120.439776,
+   "name": "French Meadows Reservoir",
+   "objectid": 1320387,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.08939695,
+   "centroid_lat": 40.94879491,
+   "centroid_lng": -121.992225,
+   "name": "Pit Six Reservoir",
+   "objectid": 1321057,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 185.34495513,
+   "centroid_lat": 38.17524572,
+   "centroid_lng": -92.8313182,
+   "name": "Lake of the Ozarks",
+   "objectid": 1322495,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.23442403,
+   "centroid_lat": 38.34116007,
+   "centroid_lng": -121.499335,
+   "name": "Stone Lake",
+   "objectid": 1322677,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 18.15243109,
+   "centroid_lat": 40.78584159,
+   "centroid_lng": -122.307142,
+   "name": "Shasta Lake",
+   "objectid": 1324771,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.48069324,
+   "centroid_lat": 41.2422886,
+   "centroid_lng": -124.092824,
+   "name": "Stone Lagoon",
+   "objectid": 1359629,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.141,
+   "centroid_lat": 41.67860935,
+   "centroid_lng": -120.910426,
+   "name": "Surveyors Valley Reservoir",
+   "objectid": 1438038,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.49025104,
+   "centroid_lat": 38.08258988,
+   "centroid_lng": -122.736772,
+   "name": "Nicasio Reservoir",
+   "objectid": 1558291,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.69051864,
+   "centroid_lat": 40.36630916,
+   "centroid_lng": -120.512437,
+   "name": "Lake Leavitt",
+   "objectid": 1591804,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.11777143,
+   "centroid_lat": 37.57973207,
+   "centroid_lng": -121.82907,
+   "name": "San Antonio Reservoir",
+   "objectid": 1598784,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.017,
+   "centroid_lat": 37.64794897,
+   "centroid_lng": -90.3322937,
+   "name": "Eugene D Nims Lake",
+   "objectid": 1608539,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 15.43324034,
+   "centroid_lat": 37.01949432,
+   "centroid_lng": -119.66282,
+   "name": "Millerton Lake",
+   "objectid": 1684651,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.2596223,
+   "centroid_lat": 41.20117921,
+   "centroid_lng": -120.400336,
+   "name": "West Valley Reservoir",
+   "objectid": 1686533,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.09561401,
+   "centroid_lat": 39.55963241,
+   "centroid_lng": -122.525941,
+   "name": "Stony Gorge Reservoir",
+   "objectid": 1713728,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.111,
+   "centroid_lat": 41.87407315,
+   "centroid_lng": -120.010093,
+   "name": "Big Mud Lake",
+   "objectid": 1715267,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.135,
+   "centroid_lat": 37.9736433,
+   "centroid_lng": -119.274987,
+   "name": "Saddlebag Lake",
+   "objectid": 1723155,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.59726008,
+   "centroid_lat": 39.5404398,
+   "centroid_lng": -95.0585596,
+   "name": "Lewis and Clark Lake",
+   "objectid": 1730547,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 11.61726051,
+   "centroid_lat": 35.66993212,
+   "centroid_lng": -118.427811,
+   "name": "Isabella Lake",
+   "objectid": 1808275,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.01864444,
+   "centroid_lat": 38.11593531,
+   "centroid_lng": -122.950407,
+   "name": "Abbotts Lagoon",
+   "objectid": 1839107,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.86773869,
+   "centroid_lat": 41.99174198,
+   "centroid_lng": -121.878151,
+   "name": "Indian Tom Lake",
+   "objectid": 1839425,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.236,
+   "centroid_lat": 39.92658825,
+   "centroid_lng": -94.0666047,
+   "name": "Lake Viking",
+   "objectid": 1853279,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 2.073,
+   "centroid_lat": 38.65873774,
+   "centroid_lng": -120.118631,
+   "name": "Silver Lake",
+   "objectid": 1927896,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.813,
+   "centroid_lat": 41.77373979,
+   "centroid_lng": -120.674465,
+   "name": "Telephone Flat Reservoir",
+   "objectid": 1959794,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.03201325,
+   "centroid_lat": 41.62800414,
+   "centroid_lng": -120.791215,
+   "name": "Antelope Plains",
+   "objectid": 1960446,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 9.098,
+   "centroid_lat": 41.73133003,
+   "centroid_lng": -120.880343,
+   "name": "Boles Meadow",
+   "objectid": 2040707,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.11819061,
+   "centroid_lat": 38.65694863,
+   "centroid_lng": -121.195069,
+   "name": "Lake Natoma",
+   "objectid": 2040966,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.68214547,
+   "centroid_lat": 37.98334479,
+   "centroid_lng": -122.687359,
+   "name": "Kent Lake",
+   "objectid": 2072918,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.016,
+   "centroid_lat": 38.99717782,
+   "centroid_lng": -120.309513,
+   "name": "Loon Lake",
+   "objectid": 2164331,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.81849173,
+   "centroid_lat": 39.38640109,
+   "centroid_lng": -120.480431,
+   "name": "Fordyce Lake",
+   "objectid": 2164420,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.261,
+   "centroid_lat": 41.5268962,
+   "centroid_lng": -120.691986,
+   "name": "Kelley Reservoir",
+   "objectid": 2201669,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 943.30537976,
+   "centroid_lat": 33.31357106,
+   "centroid_lng": -115.816778,
+   "name": "Salton Sea",
+   "objectid": 2284567,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.15983193,
+   "centroid_lat": 39.49554953,
+   "centroid_lng": -120.545198,
+   "name": "Jackson Meadows Reservoir",
+   "objectid": 2285072,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.00491436,
+   "centroid_lat": 34.08700788,
+   "centroid_lng": -117.804429,
+   "name": "Puddingstone Reservoir",
+   "objectid": 2314220,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.12401329,
+   "centroid_lat": 33.68675539,
+   "centroid_lng": -117.27055,
+   "name": "Railroad Reservoir",
+   "objectid": 2314624,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.17627688,
+   "centroid_lat": 37.92786709,
+   "centroid_lng": -122.242742,
+   "name": "San Pablo Reservoir",
+   "objectid": 2314640,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.54230201,
+   "centroid_lat": 39.27718226,
+   "centroid_lng": -120.917377,
+   "name": "Scotts Flat Reservoir",
+   "objectid": 2401549,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 160.46261189,
+   "centroid_lat": 39.04075969,
+   "centroid_lng": -122.800716,
+   "name": "Clear Lake",
+   "objectid": 2402914,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.38626875,
+   "centroid_lat": 38.89898108,
+   "centroid_lng": -120.591466,
+   "name": "Stumpy Meadows Reservoir",
+   "objectid": 2437838,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.12757411,
+   "centroid_lat": 37.94585605,
+   "centroid_lng": -119.736559,
+   "name": "Hetch Hetchy Reservoir",
+   "objectid": 2438011,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 29.96043074,
+   "centroid_lat": 41.88392483,
+   "centroid_lng": -121.504458,
+   "name": "Tule Lake",
+   "objectid": 2522922,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.87588303,
+   "centroid_lat": 37.01777111,
+   "centroid_lng": -118.962953,
+   "name": "Wishon Reservoir",
+   "objectid": 2528308,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.32947648,
+   "centroid_lat": 32.69077191,
+   "centroid_lng": -116.531449,
+   "name": "Morena Reservoir",
+   "objectid": 2528473,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.24,
+   "centroid_lat": 37.31106348,
+   "centroid_lng": -93.2091849,
+   "name": "Fellows Lake",
+   "objectid": 2574605,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.275,
+   "centroid_lat": 37.98117303,
+   "centroid_lng": -90.3354593,
+   "name": "Goose Creek Lake",
+   "objectid": 2646153,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.67540338,
+   "centroid_lat": 37.3777456,
+   "centroid_lng": -120.43004,
+   "name": "Yosemite Lake",
+   "objectid": 2682762,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 10.34635289,
+   "centroid_lat": 41.09027795,
+   "centroid_lng": -120.397197,
+   "name": "Moon Lake",
+   "objectid": 2684036,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.58619453,
+   "centroid_lat": 40.95628523,
+   "centroid_lng": -120.907177,
+   "name": "Silva Flat Reservoir",
+   "objectid": 2684038,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.57925842,
+   "centroid_lat": 38.01475989,
+   "centroid_lng": -94.0732099,
+   "name": "Schell Lake",
+   "objectid": 2697340,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.40458698,
+   "centroid_lat": 39.41640787,
+   "centroid_lng": -120.534383,
+   "name": "French Lake",
+   "objectid": 2766821,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.70570157,
+   "centroid_lat": 37.92388108,
+   "centroid_lng": -122.198535,
+   "name": "Briones Reservoir",
+   "objectid": 2796159,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.362,
+   "centroid_lat": 41.75862942,
+   "centroid_lng": -120.646312,
+   "name": "Cow Head Tank",
+   "objectid": 2803773,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.24,
+   "centroid_lat": 37.78864831,
+   "centroid_lng": -119.073602,
+   "name": "June Lake",
+   "objectid": 2807515,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.94511884,
+   "centroid_lat": 41.15162075,
+   "centroid_lng": -122.078818,
+   "name": "Lake McCloud",
+   "objectid": 2887328,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 21.68212469,
+   "centroid_lat": 38.22305001,
+   "centroid_lng": -93.538219,
+   "name": "Harry S Truman Reservoir",
+   "objectid": 2889454,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 12.5330563,
+   "centroid_lat": 34.57683023,
+   "centroid_lng": -119.938793,
+   "name": "Lake Cachuma",
+   "objectid": 2916314,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.8915979,
+   "centroid_lat": 39.33729274,
+   "centroid_lng": -121.316436,
+   "name": "Merle Collins Reservoir",
+   "objectid": 2916829,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.728,
+   "centroid_lat": 41.6823946,
+   "centroid_lng": -121.283307,
+   "name": "Dry Lake",
+   "objectid": 2923663,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.86,
+   "centroid_lat": 38.90592774,
+   "centroid_lng": -94.4715171,
+   "name": "Little Blue River Lakes",
+   "objectid": 2938215,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 4.88528997,
+   "centroid_lat": 36.70399899,
+   "centroid_lng": -117.80961,
+   "name": "Salt Lake",
+   "objectid": 3012913,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 10.72323096,
+   "centroid_lat": 33.66055445,
+   "centroid_lng": -117.351104,
+   "name": "Lake Elsinore",
+   "objectid": 3012916,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.95532507,
+   "centroid_lat": 39.04770727,
+   "centroid_lng": -121.296068,
+   "name": "Camp Far West Reservoir",
+   "objectid": 3037124,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.29796354,
+   "centroid_lat": 38.36411067,
+   "centroid_lng": -122.128017,
+   "name": "Lake Curry",
+   "objectid": 3044163,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.85957959,
+   "centroid_lat": 41.95967091,
+   "centroid_lng": -122.420657,
+   "name": "Iron Gate Reservoir",
+   "objectid": 3124167,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.64018406,
+   "centroid_lat": 39.72917093,
+   "centroid_lng": -120.990224,
+   "name": "Little Grass Valley Reservoir",
+   "objectid": 3127717,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.3806263,
+   "centroid_lat": 33.06037781,
+   "centroid_lng": -117.107364,
+   "name": "Lake Hodges",
+   "objectid": 3128717,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.009,
+   "centroid_lat": 38.47570516,
+   "centroid_lng": -93.6504261,
+   "name": "Number 111 Lake",
+   "objectid": 3131285,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.84356264,
+   "centroid_lat": 37.09790827,
+   "centroid_lng": -121.540091,
+   "name": "Coyote Lake",
+   "objectid": 3163694,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 31.029,
+   "centroid_lat": 37.85501643,
+   "centroid_lng": -93.3300347,
+   "name": "Pomme de Terre Lake",
+   "objectid": 3168599,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 2.07660129,
+   "centroid_lat": 40.51366777,
+   "centroid_lng": -121.309755,
+   "name": "Snag Lake",
+   "objectid": 3248566,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.27070744,
+   "centroid_lat": 35.45320513,
+   "centroid_lng": -120.875481,
+   "name": "Whale Rock Reservoir",
+   "objectid": 3250920,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 17.50056767,
+   "centroid_lat": 38.22282864,
+   "centroid_lng": -120.973568,
+   "name": "Camanche Reservoir",
+   "objectid": 3253758,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.77342493,
+   "centroid_lat": 37.12477362,
+   "centroid_lng": -119.87688,
+   "name": "Hensley Lake",
+   "objectid": 3280345,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.067,
+   "centroid_lat": 41.62942838,
+   "centroid_lng": -120.883954,
+   "name": "Reservoir N",
+   "objectid": 3284568,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.48,
+   "centroid_lat": 40.52998501,
+   "centroid_lng": -93.0324103,
+   "name": "Lake Thunderhead",
+   "objectid": 3330711,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 4.141,
+   "centroid_lat": 34.27435198,
+   "centroid_lng": -116.810182,
+   "name": "Baldwin Lake",
+   "objectid": 3397473,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.921,
+   "centroid_lat": 41.63294924,
+   "centroid_lng": -120.549002,
+   "name": "Raker and Thomas Reservoirs",
+   "objectid": 3405744,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 51.92667476,
+   "centroid_lat": 37.05727823,
+   "centroid_lng": -121.121137,
+   "name": "San Luis Reservoir",
+   "objectid": 3457603,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.18,
+   "centroid_lat": 39.91577888,
+   "centroid_lng": -120.198118,
+   "name": "Frenchman Lake",
+   "objectid": 3488947,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.19663269,
+   "centroid_lat": 41.26750831,
+   "centroid_lng": -120.636273,
+   "name": "Bayley Reservoir",
+   "objectid": 3493480,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.451,
+   "centroid_lat": 38.69872308,
+   "centroid_lng": -120.045425,
+   "name": "Caples Lake",
+   "objectid": 3521340,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.95957279,
+   "centroid_lat": 37.59596506,
+   "centroid_lng": -122.426346,
+   "name": "San Andreas Lake",
+   "objectid": 3526145,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.37142044,
+   "centroid_lat": 37.52920546,
+   "centroid_lng": -122.369289,
+   "name": "Lower Crystal Springs Reservoir",
+   "objectid": 3526146,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.87861512,
+   "centroid_lat": 34.38792589,
+   "centroid_lng": -119.342465,
+   "name": "Lake Casitas",
+   "objectid": 3612366,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.666,
+   "centroid_lat": 34.29374433,
+   "centroid_lng": -117.323458,
+   "name": "Silverwood Lake",
+   "objectid": 3639260,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.979,
+   "centroid_lat": 34.25878223,
+   "centroid_lng": -117.185469,
+   "name": "Lake Arrowhead",
+   "objectid": 3639262,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.016,
+   "centroid_lat": 38.93914409,
+   "centroid_lng": -93.5912272,
+   "name": "Edwin A Pape Lake",
+   "objectid": 3731003,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 4.765000000000002,
+   "centroid_lat": 34.65753679,
+   "centroid_lng": -118.775968,
+   "name": "Pyramid Lake",
+   "objectid": 3759534,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.40970636,
+   "centroid_lat": 37.49587745,
+   "centroid_lng": -122.336278,
+   "name": "Upper Crystal Springs Reservoir",
+   "objectid": 3767538,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.979000000000006,
+   "centroid_lat": 37.83857993,
+   "centroid_lng": -121.575419,
+   "name": "Clifton Court Forebay",
+   "objectid": 3841698,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.83265431,
+   "centroid_lat": 37.15264478,
+   "centroid_lng": -119.427369,
+   "name": "Redinger Lake",
+   "objectid": 3846966,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 232.29030982,
+   "centroid_lat": 40.24702853,
+   "centroid_lng": -120.307111,
+   "name": "Honey Lake",
+   "objectid": 3847157,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.21983133,
+   "centroid_lat": 38.30730102,
+   "centroid_lng": -120.877425,
+   "name": "Lake Amador",
+   "objectid": 3848011,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.84090614,
+   "centroid_lat": 37.89656287,
+   "centroid_lng": -120.588434,
+   "name": "Tulloch Reservoir",
+   "objectid": 3854643,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.05735049,
+   "centroid_lat": 39.01633193,
+   "centroid_lng": -121.042431,
+   "name": "Lake Combie",
+   "objectid": 3880857,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.31232549,
+   "centroid_lat": 40.14283856,
+   "centroid_lng": -121.171743,
+   "name": "Butt Valley Reservoir",
+   "objectid": 3884484,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.48075708,
+   "centroid_lat": 36.20559955,
+   "centroid_lng": -117.960825,
+   "name": "North Haiwee Reservoir",
+   "objectid": 3892332,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.4696554,
+   "centroid_lat": 36.15539035,
+   "centroid_lng": -117.949553,
+   "name": "South Haiwee Reservoir",
+   "objectid": 3892333,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.46005531,
+   "centroid_lat": 41.07398089,
+   "centroid_lng": -120.137,
+   "name": "Boot Lake",
+   "objectid": 4002140,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.78889181,
+   "centroid_lat": 37.59930566,
+   "centroid_lng": -121.721857,
+   "name": "Lake del Valle",
+   "objectid": 4008753,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.079,
+   "centroid_lat": 37.75151479,
+   "centroid_lng": -119.151494,
+   "name": "Gem Lake",
+   "objectid": 4012708,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 10.64845173,
+   "centroid_lat": 35.23350961,
+   "centroid_lng": -119.885712,
+   "name": "Soda Lake",
+   "objectid": 4062805,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 12.07818958,
+   "centroid_lat": 35.74365312,
+   "centroid_lng": -120.942327,
+   "name": "Lake Nacimiento",
+   "objectid": 4094928,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 100.53009162,
+   "centroid_lat": 40.24988276,
+   "centroid_lng": -121.150677,
+   "name": "Lake Almanor",
+   "objectid": 4096679,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 43.13081444,
+   "centroid_lat": 37.75930317,
+   "centroid_lng": -120.380382,
+   "name": "Don Pedro Reservoir",
+   "objectid": 4124417,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.28842838,
+   "centroid_lat": 39.72132315,
+   "centroid_lng": -94.9160595,
+   "name": "Lake Contrary",
+   "objectid": 4210194,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 11.81285946,
+   "centroid_lat": 39.79408945,
+   "centroid_lng": -122.363438,
+   "name": "Black Butte Lake",
+   "objectid": 4244077,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.03110548,
+   "centroid_lat": 33.58865332,
+   "centroid_lng": -117.054558,
+   "name": "Skinner Reservoir",
+   "objectid": 4248648,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.28702477,
+   "centroid_lat": 38.72323389,
+   "centroid_lng": -120.555847,
+   "name": "Jenkinson Lake",
+   "objectid": 4279465,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 30.82292432,
+   "centroid_lat": 36.97191539,
+   "centroid_lng": -90.3381778,
+   "name": "Lake Wappapello",
+   "objectid": 4335455,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 16.25103775,
+   "centroid_lat": 39.60590336,
+   "centroid_lng": -92.6317091,
+   "name": "Thomas Hill Reservoir",
+   "objectid": 4380129,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 3.3403559,
+   "centroid_lat": 38.0341865,
+   "centroid_lng": -120.753597,
+   "name": "Salt Spring Valley Reservoir",
+   "objectid": 4415315,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.24495219,
+   "centroid_lat": 38.26331354,
+   "centroid_lng": -120.845209,
+   "name": "Pardee Reservoir",
+   "objectid": 4450291,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.349,
+   "centroid_lat": 38.86723086,
+   "centroid_lng": -120.145706,
+   "name": "Lake Aloha",
+   "objectid": 4485683,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.42158649,
+   "centroid_lat": 40.45331312,
+   "centroid_lng": -121.309728,
+   "name": "Juniper Lake",
+   "objectid": 4486746,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.798,
+   "centroid_lat": 38.79552764,
+   "centroid_lng": -90.7793443,
+   "name": "Lake Saint Louis",
+   "objectid": 4500171,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 9.08778412,
+   "centroid_lat": 37.08074698,
+   "centroid_lng": -121.04941,
+   "name": "O'Neill Forebay",
+   "objectid": 4571173,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 183.318,
+   "centroid_lat": 38.00760553,
+   "centroid_lng": -119.014772,
+   "name": "Mono Lake",
+   "objectid": 4574796,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.23619604,
+   "centroid_lat": 41.85758704,
+   "centroid_lng": -122.060054,
+   "name": "Meiss Lake",
+   "objectid": 4691420,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.1561774,
+   "centroid_lat": 41.54556753,
+   "centroid_lng": -120.837806,
+   "name": "Dobe Swale",
+   "objectid": 4699173,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 63.07656971,
+   "centroid_lat": 40.90493901,
+   "centroid_lng": -122.726734,
+   "name": "Trinity Lake",
+   "objectid": 4803852,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.766,
+   "centroid_lat": 37.23990591,
+   "centroid_lng": -119.196189,
+   "name": "Huntington Lake",
+   "objectid": 4811281,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.77659935,
+   "centroid_lat": 37.72373862,
+   "centroid_lng": -90.9148873,
+   "name": "Council Bluff Lake",
+   "objectid": 4817777,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 9.0619715,
+   "centroid_lat": 39.11431469,
+   "centroid_lng": -122.539549,
+   "name": "Indian Valley Reservoir",
+   "objectid": 4819963,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.283,
+   "centroid_lat": 41.54618068,
+   "centroid_lng": -120.948713,
+   "name": "Williams Reservoir",
+   "objectid": 4852456,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 22.735,
+   "centroid_lat": 41.60429189,
+   "centroid_lng": -120.651253,
+   "name": "Big Sage Reservoir",
+   "objectid": 4852457,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.499,
+   "centroid_lat": 39.59442972,
+   "centroid_lng": -121.106733,
+   "name": "Sly Creek Reservoir",
+   "objectid": 4931988,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.148,
+   "centroid_lat": 34.1839119,
+   "centroid_lng": -117.870434,
+   "name": "Morris Reservoir",
+   "objectid": 4965514,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.477000000000001,
+   "centroid_lat": 37.83996539,
+   "centroid_lng": -119.111526,
+   "name": "Grant Lake",
+   "objectid": 4977486,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.52324837,
+   "centroid_lat": 35.22267912,
+   "centroid_lng": -119.260232,
+   "name": "Lake Webb",
+   "objectid": 5038207,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.32077804,
+   "centroid_lat": 40.18703081,
+   "centroid_lng": -120.041494,
+   "name": "Duck Lake",
+   "objectid": 5087059,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.551,
+   "centroid_lat": 41.51125238,
+   "centroid_lng": -121.106003,
+   "name": "Beeler Reservoir",
+   "objectid": 5094252,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 16.57190407,
+   "centroid_lat": 38.74575867,
+   "centroid_lng": -121.120084,
+   "name": "Folsom Lake",
+   "objectid": 5097233,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.723,
+   "centroid_lat": 41.68061365,
+   "centroid_lng": -120.946457,
+   "name": "Deadhorse Flat Reservoir",
+   "objectid": 5174585,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.626,
+   "centroid_lat": 41.57051766,
+   "centroid_lng": -120.880032,
+   "name": "Reservoir F",
+   "objectid": 5174591,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.72752355,
+   "centroid_lat": 40.74799521,
+   "centroid_lng": -122.792851,
+   "name": "Lewiston Lake",
+   "objectid": 5176335,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.0998273,
+   "centroid_lat": 33.23669282,
+   "centroid_lng": -116.745441,
+   "name": "Lake Henshaw",
+   "objectid": 5183115,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.16672839,
+   "centroid_lat": 40.97812398,
+   "centroid_lng": -120.140367,
+   "name": "Dodge Reservoir",
+   "objectid": 5208082,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.08318159,
+   "centroid_lat": 40.84321108,
+   "centroid_lng": -120.790727,
+   "name": "Heath Dam Reservoir",
+   "objectid": 5208084,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.24,
+   "centroid_lat": 38.15679763,
+   "centroid_lng": -119.348406,
+   "name": "Twin Lakes",
+   "objectid": 5210184,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.4603762,
+   "centroid_lat": 37.27628783,
+   "centroid_lng": -118.044124,
+   "name": "Deep Springs Lake",
+   "objectid": 5218207,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.33131111,
+   "centroid_lat": 39.52338824,
+   "centroid_lng": -121.609154,
+   "name": "Thermalito Forebay",
+   "objectid": 5261137,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.27394234,
+   "centroid_lat": 37.34882972,
+   "centroid_lng": -119.310468,
+   "name": "Mammoth Pool Reservoir",
+   "objectid": 5294424,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.5957872,
+   "centroid_lat": 37.10288741,
+   "centroid_lng": -118.97542,
+   "name": "Courtright Reservoir",
+   "objectid": 5294558,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.24959804,
+   "centroid_lat": 33.11029676,
+   "centroid_lng": -116.778326,
+   "name": "Lake Sutherland",
+   "objectid": 5327355,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 19.38370092,
+   "centroid_lat": 37.6323914,
+   "centroid_lng": -120.252095,
+   "name": "Lake McClure",
+   "objectid": 5330576,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.88908564,
+   "centroid_lat": 37.58819784,
+   "centroid_lng": -91.1021254,
+   "name": "Amax Tailing Pond",
+   "objectid": 5347950,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.237,
+   "centroid_lat": 38.09528964,
+   "centroid_lng": -91.454221,
+   "name": "Indian Lake",
+   "objectid": 5421807,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 16.48963449,
+   "centroid_lat": 39.47573779,
+   "centroid_lng": -121.667737,
+   "name": "Thermalito Afterbay",
+   "objectid": 5423558,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.44835678,
+   "centroid_lat": 38.0404791,
+   "centroid_lng": -121.79839,
+   "name": "Sherman Lake",
+   "objectid": 5543914,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.71668474,
+   "centroid_lat": 32.69755985,
+   "centroid_lng": -116.988992,
+   "name": "Sweetwater Reservoir",
+   "objectid": 5544036,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.57117652,
+   "centroid_lat": 34.57189565,
+   "centroid_lng": -118.637781,
+   "name": "Elderberry Forebay",
+   "objectid": 5568255,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.097,
+   "centroid_lat": 38.00072988,
+   "centroid_lng": -119.906892,
+   "name": "Cherry Lake",
+   "objectid": 5571550,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.31933024,
+   "centroid_lat": 39.4525201,
+   "centroid_lng": -120.636473,
+   "name": "Bowman Lake",
+   "objectid": 5659554,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.154,
+   "centroid_lat": 38.75810128,
+   "centroid_lng": -94.0411729,
+   "name": "Holden City Lake",
+   "objectid": 5659862,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 2.389,
+   "centroid_lat": 34.58364679,
+   "centroid_lng": -118.381874,
+   "name": "Bouquet Reservoir",
+   "objectid": 5688634,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.693508,
+   "centroid_lat": 40.07090534,
+   "centroid_lng": -95.3496433,
+   "name": "Big Lake",
+   "objectid": 5766118,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 16.469,
+   "centroid_lat": 39.91254122,
+   "centroid_lng": -120.510532,
+   "name": "Lake Davis",
+   "objectid": 5775450,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.39987183,
+   "centroid_lat": 41.98187197,
+   "centroid_lng": -121.795752,
+   "name": "Sheepy Lake",
+   "objectid": 5776831,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.47588931,
+   "centroid_lat": 32.69118814,
+   "centroid_lng": -116.663481,
+   "name": "Barrett Lake",
+   "objectid": 5782443,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.703,
+   "centroid_lat": 38.33843654,
+   "centroid_lng": -119.942161,
+   "name": "Donnell Lake",
+   "objectid": 5783470,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.38739721,
+   "centroid_lat": 32.98042529,
+   "centroid_lng": -114.503151,
+   "name": "Ferguson Lake",
+   "objectid": 5904090,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.71928055,
+   "centroid_lat": 37.06005175,
+   "centroid_lng": -118.220227,
+   "name": "Tinemaha Reservoir",
+   "objectid": 5941618,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 16.29277265,
+   "centroid_lat": 39.44205011,
+   "centroid_lng": -121.131601,
+   "name": "New Bullards Bar Reservoir",
+   "objectid": 6025852,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.7356815,
+   "centroid_lat": 41.05002077,
+   "centroid_lng": -121.983105,
+   "name": "Iron Canyon Reservoir",
+   "objectid": 6051668,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.43445984,
+   "centroid_lat": 37.17059669,
+   "centroid_lng": -121.61902,
+   "name": "Anderson Lake",
+   "objectid": 6057554,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.50703808,
+   "centroid_lat": 36.40533678,
+   "centroid_lng": -118.972879,
+   "name": "Lake Kaweah",
+   "objectid": 6057866,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.90298372,
+   "centroid_lat": 38.16000243,
+   "centroid_lng": -120.788924,
+   "name": "New Hogan Lake",
+   "objectid": 6141360,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.42787953,
+   "centroid_lat": 37.38275303,
+   "centroid_lng": -118.97613,
+   "name": "Lake Thomas A Edison",
+   "objectid": 6258575,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.409000000000002,
+   "centroid_lat": 41.98861512,
+   "centroid_lng": -121.738844,
+   "name": "Lower Klamath Lake",
+   "objectid": 6259667,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.171,
+   "centroid_lat": 39.23819617,
+   "centroid_lng": -121.205986,
+   "name": "Lake Wildwood",
+   "objectid": 6292481,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.75606244,
+   "centroid_lat": 41.28298499,
+   "centroid_lng": -122.340192,
+   "name": "Lake Siskiyou",
+   "objectid": 6293660,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.473,
+   "centroid_lat": 34.52588316,
+   "centroid_lng": -119.66128,
+   "name": "Gibraltar Reservoir",
+   "objectid": 6298977,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.79902813,
+   "centroid_lat": 41.39691343,
+   "centroid_lng": -120.461251,
+   "name": "Payne Reservoir",
+   "objectid": 6300017,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.36259773,
+   "centroid_lat": 35.73878145,
+   "centroid_lng": -119.179114,
+   "name": "Lake Woollomes",
+   "objectid": 6365863,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.55651601,
+   "centroid_lat": 38.73219901,
+   "centroid_lng": -123.052877,
+   "name": "Lake Sonoma",
+   "objectid": 6386454,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.47292803,
+   "centroid_lat": 38.29315238,
+   "centroid_lng": -119.227811,
+   "name": "Bridgeport Reservoir",
+   "objectid": 6415807,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.10844241,
+   "centroid_lat": 37.02263111,
+   "centroid_lng": -119.990547,
+   "name": "Madera Lake",
+   "objectid": 6419385,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.746566720000002,
+   "centroid_lat": 37.1256989,
+   "centroid_lng": -119.290433,
+   "name": "Shaver Lake",
+   "objectid": 6500146,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.49596614,
+   "centroid_lat": 33.49052681,
+   "centroid_lng": -116.970515,
+   "name": "Vail Lake",
+   "objectid": 6506753,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.378,
+   "centroid_lat": 33.66611375,
+   "centroid_lng": -116.693027,
+   "name": "Lake Hemet",
+   "objectid": 6533641,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 101.019,
+   "centroid_lat": 37.58114379,
+   "centroid_lng": -93.7363203,
+   "name": "Stockton Lake",
+   "objectid": 6552665,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 3.31584035,
+   "centroid_lat": 39.36101001,
+   "centroid_lng": -93.0275496,
+   "name": "Cut-Off Lake",
+   "objectid": 6554988,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.26468991,
+   "centroid_lat": 36.45536719,
+   "centroid_lng": -89.5594526,
+   "name": "Point Pleasant Chute",
+   "objectid": 6597766,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 65.52828044,
+   "centroid_lat": 41.86737553,
+   "centroid_lng": -121.152513,
+   "name": "Clear Lake Reservoir",
+   "objectid": 6621487,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.202,
+   "centroid_lat": 41.89862647,
+   "centroid_lng": -120.596342,
+   "name": "Pease Flat",
+   "objectid": 6621489,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.349,
+   "centroid_lat": 40.17716681,
+   "centroid_lng": -92.6438361,
+   "name": "Forest Lake",
+   "objectid": 6675384,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.58434245,
+   "centroid_lat": 41.32170392,
+   "centroid_lng": -121.473064,
+   "name": "Barnum Flat Reservoir",
+   "objectid": 6746132,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.25917886,
+   "centroid_lat": 39.21558484,
+   "centroid_lng": -123.173427,
+   "name": "Lake Mendocino",
+   "objectid": 6776947,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.99813305,
+   "centroid_lat": 37.61007976,
+   "centroid_lng": -120.572548,
+   "name": "Turlock Lake",
+   "objectid": 6828485,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.922,
+   "centroid_lat": 38.54497177,
+   "centroid_lng": -120.239854,
+   "name": "Lower Bear River Reservoir",
+   "objectid": 6861277,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.00603778,
+   "centroid_lat": 39.88945044,
+   "centroid_lng": -121.185191,
+   "name": "Bucks Lake",
+   "objectid": 6862206,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.235,
+   "centroid_lat": 39.29823417,
+   "centroid_lng": -120.582738,
+   "name": "Lake Valley Reservoir",
+   "objectid": 6866878,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.226,
+   "centroid_lat": 38.19607043,
+   "centroid_lng": -119.982324,
+   "name": "Pinecrest Lake",
+   "objectid": 6897073,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.57863092,
+   "centroid_lat": 37.70080237,
+   "centroid_lng": -91.1108965,
+   "name": "New Viburnum Tailings Pond",
+   "objectid": 6988249,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 4.13046514,
+   "centroid_lat": 37.9861386,
+   "centroid_lng": -119.858357,
+   "name": "Lake Eleanor",
+   "objectid": 7020274,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.7574253,
+   "centroid_lat": 41.48361912,
+   "centroid_lng": -120.474141,
+   "name": "Dorris Reservoir",
+   "objectid": 7025155,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.16,
+   "centroid_lat": 41.6494453,
+   "centroid_lng": -120.87834,
+   "name": "Reservoir M",
+   "objectid": 7106307,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.90026546,
+   "centroid_lat": 39.4059071,
+   "centroid_lng": -120.096646,
+   "name": "Boca Reservoir",
+   "objectid": 7108871,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.26427811,
+   "centroid_lat": 32.6265288,
+   "centroid_lng": -116.92392,
+   "name": "Lower Otay Lake",
+   "objectid": 7113541,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.15971784,
+   "centroid_lat": 37.22961382,
+   "centroid_lng": -119.973298,
+   "name": "H. V. Eastman Lake",
+   "objectid": 7141792,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.85,
+   "centroid_lat": 38.21474722,
+   "centroid_lng": -120.060821,
+   "name": "Beardsley Lake",
+   "objectid": 7233979,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.09293326,
+   "centroid_lat": 40.63558731,
+   "centroid_lng": -120.50479,
+   "name": "Craemer Reservoir",
+   "objectid": 7260694,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.01832845,
+   "centroid_lat": 34.771975,
+   "centroid_lng": -118.746114,
+   "name": "Quail Lake",
+   "objectid": 7266997,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.18049721,
+   "centroid_lat": 37.72751045,
+   "centroid_lng": -122.110118,
+   "name": "Lake Chabot",
+   "objectid": 7267763,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.972,
+   "centroid_lat": 38.92795426,
+   "centroid_lng": -94.2531559,
+   "name": "Lake Lotawana",
+   "objectid": 7281839,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 6.94922065,
+   "centroid_lat": 37.8523736,
+   "centroid_lng": -120.85898,
+   "name": "Woodward Reservoir",
+   "objectid": 7313295,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 73.62103604,
+   "centroid_lat": 40.63579693,
+   "centroid_lng": -120.745322,
+   "name": "Eagle Lake",
+   "objectid": 7347596,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 10.90473062,
+   "centroid_lat": 34.25267035,
+   "centroid_lng": -116.930495,
+   "name": "Big Bear Lake",
+   "objectid": 7356038,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.01922817,
+   "centroid_lat": 38.8393838,
+   "centroid_lng": -120.058004,
+   "name": "Lower Echo Lake",
+   "objectid": 7381209,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.15914571,
+   "centroid_lat": 41.23741257,
+   "centroid_lng": -121.148282,
+   "name": "Lower Roberts Reservoir",
+   "objectid": 7388902,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.066,
+   "centroid_lat": 39.59637985,
+   "centroid_lng": -93.2103829,
+   "name": "South Lake",
+   "objectid": 7397345,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.24829704,
+   "centroid_lat": 39.48085674,
+   "centroid_lng": -92.4699874,
+   "name": "Sugar Creek Lake",
+   "objectid": 7399188,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 7.88122276,
+   "centroid_lat": 39.42225154,
+   "centroid_lng": -122.945961,
+   "name": "Lake Pillsbury",
+   "objectid": 7471899,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.79158347,
+   "centroid_lat": 39.44232127,
+   "centroid_lng": -120.309046,
+   "name": "Independence Lake",
+   "objectid": 7472401,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.227,
+   "centroid_lat": 38.71775167,
+   "centroid_lng": -90.4843322,
+   "name": "Creve Coeur Lake",
+   "objectid": 7476172,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.68767527,
+   "centroid_lat": 38.76505582,
+   "centroid_lng": -94.3390227,
+   "name": "Harrisonville City Lake",
+   "objectid": 7476407,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.89712388,
+   "centroid_lat": 41.29815795,
+   "centroid_lng": -121.420455,
+   "name": "Whitehorse Flat Reservoir",
+   "objectid": 7503155,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.56242892,
+   "centroid_lat": 38.86978166,
+   "centroid_lng": -90.1728565,
+   "name": "Alton Slough",
+   "objectid": 7519637,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.2539862,
+   "centroid_lat": 39.53807893,
+   "centroid_lng": -121.528487,
+   "name": "Thermalito Diversion Pool",
+   "objectid": 7556456,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.981025470000002,
+   "centroid_lat": 36.07980359,
+   "centroid_lng": -118.911466,
+   "name": "Lake Success",
+   "objectid": 7575853,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.375,
+   "centroid_lat": 39.32273196,
+   "centroid_lng": -120.265182,
+   "name": "Donner Lake",
+   "objectid": 7593285,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 5.69477187,
+   "centroid_lat": 38.40712103,
+   "centroid_lng": -119.962878,
+   "name": "Spicer Meadow Reservoir",
+   "objectid": 7623938,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.616000000000002,
+   "centroid_lat": 37.15809528,
+   "centroid_lng": -90.7834849,
+   "name": "Clearwater Lake",
+   "objectid": 7643647,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.75692748,
+   "centroid_lat": 38.00456997,
+   "centroid_lng": -94.0581384,
+   "name": "Atkinson Lake",
+   "objectid": 7644703,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 1.191,
+   "centroid_lat": 38.63202894,
+   "centroid_lng": -119.948453,
+   "name": "Upper Blue Lake",
+   "objectid": 7709501,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 2.85204852,
+   "centroid_lat": 37.78198844,
+   "centroid_lng": -122.114159,
+   "name": "Upper San Leandro Reservoir",
+   "objectid": 7711046,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 4.116000000000003,
+   "centroid_lat": 39.07665434,
+   "centroid_lng": -120.393533,
+   "name": "Hell Hole Reservoir",
+   "objectid": 7714899,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.35803299,
+   "centroid_lat": 32.90822867,
+   "centroid_lng": -114.486134,
+   "name": "Senator Wash Reservoir",
+   "objectid": 7716387,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 8.63223343,
+   "centroid_lat": 36.66942468,
+   "centroid_lng": -93.1763965,
+   "name": "Lake Taneycomo",
+   "objectid": 8301845,
+   "state_abbr": "MO"
+  },
+  {
+   "areasqkm": 2.15566843,
+   "centroid_lat": 40.66135577,
+   "centroid_lng": -121.200392,
+   "name": "Poison Lake",
+   "objectid": 8312995,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 13.26161535,
+   "centroid_lat": 41.82815129,
+   "centroid_lng": -124.194766,
+   "name": "Lake Talawa",
+   "objectid": 18289084,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 7.89960653,
+   "centroid_lat": 41.90363854,
+   "centroid_lng": -121.690708,
+   "name": "Lower Klamath Lake Sump",
+   "objectid": 18301069,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 3.33026814,
+   "centroid_lat": 35.81140528,
+   "centroid_lng": -120.914913,
+   "name": "Lake San Antonio",
+   "objectid": 18301108,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.31225019,
+   "centroid_lat": 33.77816358,
+   "centroid_lng": -117.719203,
+   "name": "Irvine Lake",
+   "objectid": 18309488,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 24.03193413,
+   "centroid_lat": 37.98829683,
+   "centroid_lng": -120.510983,
+   "name": "New Melones Lake",
+   "objectid": 18313586,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 1.94190039,
+   "centroid_lat": 34.23298835,
+   "centroid_lng": -118.624749,
+   "name": "Chatsworth Reservoir",
+   "objectid": 18830173,
+   "state_abbr": "CA"
+  },
+  {
+   "areasqkm": 6.86938666,
+   "centroid_lat": 37.66837311,
+   "centroid_lng": -120.660541,
+   "name": "Modesto Reservoir",
+   "objectid": 18832137,
+   "state_abbr": "CA"
+  }
+ ],
+ "series": {
+  "1079017": [
+   {
+    "cells_per_ml": 9550,
+    "max_cells_per_ml": 22491,
+    "valid_cells": 3,
+    "week_end": "2026-06-06"
+   },
+   {
+    "cells_per_ml": 17061,
+    "max_cells_per_ml": 17061,
+    "valid_cells": 3,
+    "week_end": "2026-02-07"
+   },
+   {
+    "cells_per_ml": 19055,
+    "max_cells_per_ml": 19588,
+    "valid_cells": 4,
+    "week_end": "2024-12-14"
+   },
+   {
+    "cells_per_ml": 7656,
+    "max_cells_per_ml": 11588,
+    "valid_cells": 3,
+    "week_end": "2024-12-07"
+   },
+   {
+    "cells_per_ml": 22491,
+    "max_cells_per_ml": 22491,
+    "valid_cells": 3,
+    "week_end": "2023-10-14"
+   },
+   {
+    "cells_per_ml": 7656,
+    "max_cells_per_ml": 7656,
+    "valid_cells": 1,
+    "week_end": "2023-09-30"
+   },
+   {
+    "cells_per_ml": 52966,
+    "max_cells_per_ml": 108643,
+    "valid_cells": 8,
+    "week_end": "2023-09-09"
+   },
+   {
+    "cells_per_ml": 100000,
+    "max_cells_per_ml": 128233,
+    "valid_cells": 8,
+    "week_end": "2023-07-22"
+   }
+  ],
+  "1194581": [
+   {
+    "cells_per_ml": 44875,
+    "max_cells_per_ml": 178649,
+    "valid_cells": 2,
+    "week_end": "2025-12-27"
+   },
+   {
+    "cells_per_ml": 862979,
+    "max_cells_per_ml": 862979,
+    "valid_cells": 5,
+    "week_end": "2025-12-13"
+   },
+   {
+    "cells_per_ml": 839460,
+    "max_cells_per_ml": 862979,
+    "valid_cells": 3,
+    "week_end": "2025-11-29"
+   },
+   {
+    "cells_per_ml": 62517,
+    "max_cells_per_ml": 62517,
+    "valid_cells": 2,
+    "week_end": "2023-12-30"
+   },
+   {
+    "cells_per_ml": 24434,
+    "max_cells_per_ml": 194089,
+    "valid_cells": 2,
+    "week_end": "2022-11-26"
+   },
+   {
+    "cells_per_ml": 19055,
+    "max_cells_per_ml": 73790,
+    "valid_cells": 2,
+    "week_end": "2020-11-28"
+   }
+  ],
+  "119607": [
+   {
+    "cells_per_ml": 114815,
+    "max_cells_per_ml": 114815,
+    "valid_cells": 6,
+    "week_end": "2022-04-30"
+   },
+   {
+    "cells_per_ml": 18030,
+    "max_cells_per_ml": 108643,
+    "valid_cells": 4,
+    "week_end": "2022-04-09"
+   },
+   {
+    "cells_per_ml": 41305,
+    "max_cells_per_ml": 210863,
+    "valid_cells": 5,
+    "week_end": "2021-10-02"
+   },
+   {
+    "cells_per_ml": 60814,
+    "max_cells_per_ml": 89536,
+    "valid_cells": 4,
+    "week_end": "2021-09-25"
+   },
+   {
+    "cells_per_ml": 12942,
+    "max_cells_per_ml": 59156,
+    "valid_cells": 3,
+    "week_end": "2021-01-02"
+   },
+   {
+    "cells_per_ml": 11272,
+    "max_cells_per_ml": 18535,
+    "valid_cells": 2,
+    "week_end": "2020-02-15"
+   },
+   {
+    "cells_per_ml": 9290,
+    "max_cells_per_ml": 19055,
+    "valid_cells": 2,
+    "week_end": "2020-02-08"
+   },
+   {
+    "cells_per_ml": 7870,
+    "max_cells_per_ml": 12942,
+    "valid_cells": 3,
+    "week_end": "2020-01-11"
+   }
+  ],
+  "119642": [],
+  "1239164": [
+   {
+    "cells_per_ml": 10666,
+    "max_cells_per_ml": 19055,
+    "valid_cells": 2,
+    "week_end": "2025-08-23"
+   },
+   {
+    "cells_per_ml": 8091,
+    "max_cells_per_ml": 8091,
+    "valid_cells": 1,
+    "week_end": "2022-12-24"
+   },
+   {
+    "cells_per_ml": 118032,
+    "max_cells_per_ml": 205116,
+    "valid_cells": 3,
+    "week_end": "2022-11-19"
+   },
+   {
+    "cells_per_ml": 183654,
+    "max_cells_per_ml": 255859,
+    "valid_cells": 4,
+    "week_end": "2022-08-27"
+   },
+   {
+    "cells_per_ml": 33113,
+    "max_cells_per_ml": 33113,
+    "valid_cells": 1,
+    "week_end": "2020-12-19"
+   },
+   {
+    "cells_per_ml": 105682,
+    "max_cells_per_ml": 105682,
+    "valid_cells": 3,
+    "week_end": "2020-09-05"
+   }
+  ],
+  "1322495": [],
+  "1324771": [],
+  "1359629": [
+   {
+    "cells_per_ml": 66069,
+    "max_cells_per_ml": 66069,
+    "valid_cells": 1,
+    "week_end": "2026-07-04"
+   },
+   {
+    "cells_per_ml": 128233,
+    "max_cells_per_ml": 155597,
+    "valid_cells": 4,
+    "week_end": "2025-01-18"
+   },
+   {
+    "cells_per_ml": 285759,
+    "max_cells_per_ml": 285759,
+    "valid_cells": 3,
+    "week_end": "2024-11-30"
+   },
+   {
+    "cells_per_ml": 173780,
+    "max_cells_per_ml": 398107,
+    "valid_cells": 4,
+    "week_end": "2023-01-28"
+   },
+   {
+    "cells_per_ml": 483059,
+    "max_cells_per_ml": 483059,
+    "valid_cells": 3,
+    "week_end": "2023-01-21"
+   },
+   {
+    "cells_per_ml": 47424,
+    "max_cells_per_ml": 114815,
+    "valid_cells": 2,
+    "week_end": "2022-10-01"
+   },
+   {
+    "cells_per_ml": 151356,
+    "max_cells_per_ml": 151356,
+    "valid_cells": 6,
+    "week_end": "2022-09-24"
+   },
+   {
+    "cells_per_ml": 255859,
+    "max_cells_per_ml": 255859,
+    "valid_cells": 6,
+    "week_end": "2022-09-17"
+   }
+  ],
+  "1558291": [
+   {
+    "cells_per_ml": 672977,
+    "max_cells_per_ml": 772681,
+    "valid_cells": 3,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 602560,
+    "max_cells_per_ml": 937562,
+    "valid_cells": 3,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 222844,
+    "max_cells_per_ml": 301995,
+    "valid_cells": 3,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 128233,
+    "max_cells_per_ml": 199526,
+    "valid_cells": 3,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 912011,
+    "max_cells_per_ml": 912011,
+    "valid_cells": 3,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 47424,
+    "max_cells_per_ml": 444631,
+    "valid_cells": 3,
+    "week_end": "2026-01-17"
+   },
+   {
+    "cells_per_ml": 263027,
+    "max_cells_per_ml": 586138,
+    "valid_cells": 3,
+    "week_end": "2026-01-10"
+   },
+   {
+    "cells_per_ml": 586138,
+    "max_cells_per_ml": 586138,
+    "valid_cells": 3,
+    "week_end": "2025-12-27"
+   }
+  ],
+  "1684651": [],
+  "1686533": [
+   {
+    "cells_per_ml": 376704,
+    "max_cells_per_ml": 376704,
+    "valid_cells": 3,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 8551,
+    "max_cells_per_ml": 118032,
+    "valid_cells": 2,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 94624,
+    "max_cells_per_ml": 619441,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   },
+   {
+    "cells_per_ml": 794328,
+    "max_cells_per_ml": 912011,
+    "valid_cells": 6,
+    "week_end": "2026-08-08"
+   },
+   {
+    "cells_per_ml": 2398833,
+    "max_cells_per_ml": 3162278,
+    "valid_cells": 6,
+    "week_end": "2026-08-01"
+   },
+   {
+    "cells_per_ml": 4405549,
+    "max_cells_per_ml": 4655861,
+    "valid_cells": 6,
+    "week_end": "2026-07-25"
+   },
+   {
+    "cells_per_ml": 1976970,
+    "max_cells_per_ml": 3837072,
+    "valid_cells": 6,
+    "week_end": "2026-07-18"
+   },
+   {
+    "cells_per_ml": 1584893,
+    "max_cells_per_ml": 1629296,
+    "valid_cells": 6,
+    "week_end": "2026-07-04"
+   }
+  ],
+  "18301108": [
+   {
+    "cells_per_ml": 55976,
+    "max_cells_per_ml": 108643,
+    "valid_cells": 4,
+    "week_end": "2026-05-30"
+   },
+   {
+    "cells_per_ml": 398107,
+    "max_cells_per_ml": 432514,
+    "valid_cells": 5,
+    "week_end": "2026-05-09"
+   },
+   {
+    "cells_per_ml": 1076465,
+    "max_cells_per_ml": 1235948,
+    "valid_cells": 5,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 554626,
+    "max_cells_per_ml": 711214,
+    "valid_cells": 5,
+    "week_end": "2026-04-25"
+   },
+   {
+    "cells_per_ml": 8790,
+    "max_cells_per_ml": 12589,
+    "valid_cells": 2,
+    "week_end": "2025-10-25"
+   },
+   {
+    "cells_per_ml": 22491,
+    "max_cells_per_ml": 22491,
+    "valid_cells": 1,
+    "week_end": "2025-10-18"
+   },
+   {
+    "cells_per_ml": 19055,
+    "max_cells_per_ml": 32211,
+    "valid_cells": 4,
+    "week_end": "2025-10-11"
+   },
+   {
+    "cells_per_ml": 82414,
+    "max_cells_per_ml": 105682,
+    "valid_cells": 5,
+    "week_end": "2025-08-02"
+   }
+  ],
+  "1853279": [],
+  "2040966": [],
+  "2284567": [
+   {
+    "cells_per_ml": 28840,
+    "max_cells_per_ml": 66069,
+    "valid_cells": 3,
+    "week_end": "2026-08-08"
+   },
+   {
+    "cells_per_ml": 11272,
+    "max_cells_per_ml": 11272,
+    "valid_cells": 1,
+    "week_end": "2026-04-11"
+   },
+   {
+    "cells_per_ml": 8091,
+    "max_cells_per_ml": 121339,
+    "valid_cells": 5,
+    "week_end": "2024-08-10"
+   },
+   {
+    "cells_per_ml": 20701,
+    "max_cells_per_ml": 30479,
+    "valid_cells": 8,
+    "week_end": "2023-08-12"
+   },
+   {
+    "cells_per_ml": 210863,
+    "max_cells_per_ml": 222844,
+    "valid_cells": 9,
+    "week_end": "2023-08-05"
+   },
+   {
+    "cells_per_ml": 28054,
+    "max_cells_per_ml": 52966,
+    "valid_cells": 7,
+    "week_end": "2021-08-14"
+   },
+   {
+    "cells_per_ml": 242103,
+    "max_cells_per_ml": 248886,
+    "valid_cells": 4,
+    "week_end": "2021-08-07"
+   },
+   {
+    "cells_per_ml": 420727,
+    "max_cells_per_ml": 457088,
+    "valid_cells": 9,
+    "week_end": "2021-07-31"
+   }
+  ],
+  "231362": [
+   {
+    "cells_per_ml": 7447,
+    "max_cells_per_ml": 18535,
+    "valid_cells": 2,
+    "week_end": "2026-06-06"
+   },
+   {
+    "cells_per_ml": 13305,
+    "max_cells_per_ml": 14454,
+    "valid_cells": 2,
+    "week_end": "2026-05-16"
+   },
+   {
+    "cells_per_ml": 270396,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 5,
+    "week_end": "2026-03-21"
+   },
+   {
+    "cells_per_ml": 444631,
+    "max_cells_per_ml": 524807,
+    "valid_cells": 5,
+    "week_end": "2026-02-07"
+   },
+   {
+    "cells_per_ml": 319154,
+    "max_cells_per_ml": 319154,
+    "valid_cells": 4,
+    "week_end": "2026-01-31"
+   },
+   {
+    "cells_per_ml": 1235948,
+    "max_cells_per_ml": 1235948,
+    "valid_cells": 5,
+    "week_end": "2026-01-24"
+   },
+   {
+    "cells_per_ml": 586138,
+    "max_cells_per_ml": 1721869,
+    "valid_cells": 5,
+    "week_end": "2026-01-17"
+   },
+   {
+    "cells_per_ml": 1380384,
+    "max_cells_per_ml": 2466039,
+    "valid_cells": 5,
+    "week_end": "2026-01-10"
+   }
+  ],
+  "2314220": [
+   {
+    "cells_per_ml": 654636,
+    "max_cells_per_ml": 654636,
+    "valid_cells": 6,
+    "week_end": "2026-05-23"
+   },
+   {
+    "cells_per_ml": 1137627,
+    "max_cells_per_ml": 1306171,
+    "valid_cells": 6,
+    "week_end": "2026-05-16"
+   },
+   {
+    "cells_per_ml": 937562,
+    "max_cells_per_ml": 937562,
+    "valid_cells": 6,
+    "week_end": "2026-05-09"
+   },
+   {
+    "cells_per_ml": 1674943,
+    "max_cells_per_ml": 1770109,
+    "valid_cells": 6,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 711214,
+    "max_cells_per_ml": 711214,
+    "valid_cells": 6,
+    "week_end": "2026-04-25"
+   },
+   {
+    "cells_per_ml": 25823,
+    "max_cells_per_ml": 27290,
+    "valid_cells": 3,
+    "week_end": "2025-12-13"
+   },
+   {
+    "cells_per_ml": 346737,
+    "max_cells_per_ml": 432514,
+    "valid_cells": 6,
+    "week_end": "2025-05-10"
+   },
+   {
+    "cells_per_ml": 376704,
+    "max_cells_per_ml": 510505,
+    "valid_cells": 6,
+    "week_end": "2025-05-03"
+   }
+  ],
+  "2402914": [
+   {
+    "cells_per_ml": 554626,
+    "max_cells_per_ml": 602560,
+    "valid_cells": 6,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 510505,
+    "max_cells_per_ml": 510505,
+    "valid_cells": 6,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 398107,
+    "max_cells_per_ml": 457088,
+    "valid_cells": 6,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 510505,
+    "max_cells_per_ml": 524807,
+    "valid_cells": 6,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 654636,
+    "max_cells_per_ml": 654636,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 554626,
+    "max_cells_per_ml": 570164,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 510505,
+    "max_cells_per_ml": 570164,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 169044,
+    "max_cells_per_ml": 337287,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "2522922": [
+   {
+    "cells_per_ml": 14859,
+    "max_cells_per_ml": 14859,
+    "valid_cells": 1,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 80168,
+    "max_cells_per_ml": 124738,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 92045,
+    "max_cells_per_ml": 159956,
+    "valid_cells": 3,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 1047129,
+    "max_cells_per_ml": 1047129,
+    "valid_cells": 6,
+    "week_end": "2026-06-13"
+   },
+   {
+    "cells_per_ml": 570164,
+    "max_cells_per_ml": 586138,
+    "valid_cells": 6,
+    "week_end": "2026-06-06"
+   },
+   {
+    "cells_per_ml": 602560,
+    "max_cells_per_ml": 619441,
+    "valid_cells": 6,
+    "week_end": "2026-05-30"
+   },
+   {
+    "cells_per_ml": 2147830,
+    "max_cells_per_ml": 2333458,
+    "valid_cells": 6,
+    "week_end": "2026-05-23"
+   },
+   {
+    "cells_per_ml": 691831,
+    "max_cells_per_ml": 887156,
+    "valid_cells": 6,
+    "week_end": "2026-05-16"
+   }
+  ],
+  "2528473": [],
+  "275976": [
+   {
+    "cells_per_ml": 602560,
+    "max_cells_per_ml": 636796,
+    "valid_cells": 6,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 672977,
+    "max_cells_per_ml": 691831,
+    "valid_cells": 6,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 731139,
+    "max_cells_per_ml": 816582,
+    "valid_cells": 6,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 816582,
+    "max_cells_per_ml": 887156,
+    "valid_cells": 6,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 887156,
+    "max_cells_per_ml": 990832,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 356451,
+    "max_cells_per_ml": 356451,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 178649,
+    "max_cells_per_ml": 263027,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 205116,
+    "max_cells_per_ml": 242103,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "2807515": [
+   {
+    "cells_per_ml": 6855,
+    "max_cells_per_ml": 8790,
+    "valid_cells": 4,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 14060,
+    "max_cells_per_ml": 32211,
+    "valid_cells": 3,
+    "week_end": "2026-01-17"
+   },
+   {
+    "cells_per_ml": 39084,
+    "max_cells_per_ml": 39084,
+    "valid_cells": 2,
+    "week_end": "2025-02-22"
+   },
+   {
+    "cells_per_ml": 9550,
+    "max_cells_per_ml": 64269,
+    "valid_cells": 3,
+    "week_end": "2025-02-15"
+   },
+   {
+    "cells_per_ml": 183654,
+    "max_cells_per_ml": 183654,
+    "valid_cells": 2,
+    "week_end": "2025-02-08"
+   },
+   {
+    "cells_per_ml": 18030,
+    "max_cells_per_ml": 71779,
+    "valid_cells": 6,
+    "week_end": "2025-01-25"
+   },
+   {
+    "cells_per_ml": 32211,
+    "max_cells_per_ml": 210863,
+    "valid_cells": 4,
+    "week_end": "2025-01-18"
+   },
+   {
+    "cells_per_ml": 285759,
+    "max_cells_per_ml": 285759,
+    "valid_cells": 2,
+    "week_end": "2024-11-30"
+   }
+  ],
+  "3012916": [
+   {
+    "cells_per_ml": 1458814,
+    "max_cells_per_ml": 1458814,
+    "valid_cells": 6,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 1380384,
+    "max_cells_per_ml": 1419058,
+    "valid_cells": 6,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 1342765,
+    "max_cells_per_ml": 1380384,
+    "valid_cells": 6,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 1202264,
+    "max_cells_per_ml": 1306171,
+    "valid_cells": 6,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 1137627,
+    "max_cells_per_ml": 1137627,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 1306171,
+    "max_cells_per_ml": 1306171,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 1342765,
+    "max_cells_per_ml": 1380384,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 1235948,
+    "max_cells_per_ml": 1270574,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "3124167": [],
+  "3128717": [],
+  "3168599": [],
+  "3250920": [
+   {
+    "cells_per_ml": 9036,
+    "max_cells_per_ml": 9036,
+    "valid_cells": 1,
+    "week_end": "2025-12-06"
+   },
+   {
+    "cells_per_ml": 270396,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 1,
+    "week_end": "2025-05-24"
+   },
+   {
+    "cells_per_ml": 64269,
+    "max_cells_per_ml": 64269,
+    "valid_cells": 3,
+    "week_end": "2025-02-15"
+   },
+   {
+    "cells_per_ml": 75858,
+    "max_cells_per_ml": 75858,
+    "valid_cells": 1,
+    "week_end": "2024-12-14"
+   },
+   {
+    "cells_per_ml": 483059,
+    "max_cells_per_ml": 483059,
+    "valid_cells": 2,
+    "week_end": "2024-06-15"
+   },
+   {
+    "cells_per_ml": 398107,
+    "max_cells_per_ml": 570164,
+    "valid_cells": 3,
+    "week_end": "2024-06-01"
+   },
+   {
+    "cells_per_ml": 586138,
+    "max_cells_per_ml": 586138,
+    "valid_cells": 3,
+    "week_end": "2024-05-25"
+   },
+   {
+    "cells_per_ml": 510505,
+    "max_cells_per_ml": 510505,
+    "valid_cells": 3,
+    "week_end": "2024-05-18"
+   }
+  ],
+  "3280345": [],
+  "3457603": [
+   {
+    "cells_per_ml": 2992264,
+    "max_cells_per_ml": 4285486,
+    "valid_cells": 6,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 2032357,
+    "max_cells_per_ml": 3250873,
+    "valid_cells": 6,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 1018591,
+    "max_cells_per_ml": 1342765,
+    "valid_cells": 6,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 1541700,
+    "max_cells_per_ml": 1770109,
+    "valid_cells": 6,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 1584893,
+    "max_cells_per_ml": 1923092,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 210863,
+    "max_cells_per_ml": 277971,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 1106624,
+    "max_cells_per_ml": 1419058,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 2147830,
+    "max_cells_per_ml": 2535128,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "3488947": [],
+  "3639260": [
+   {
+    "cells_per_ml": 539511,
+    "max_cells_per_ml": 539511,
+    "valid_cells": 3,
+    "week_end": "2026-07-18"
+   },
+   {
+    "cells_per_ml": 310456,
+    "max_cells_per_ml": 310456,
+    "valid_cells": 4,
+    "week_end": "2026-07-04"
+   },
+   {
+    "cells_per_ml": 108643,
+    "max_cells_per_ml": 205116,
+    "valid_cells": 3,
+    "week_end": "2026-06-27"
+   },
+   {
+    "cells_per_ml": 346737,
+    "max_cells_per_ml": 346737,
+    "valid_cells": 4,
+    "week_end": "2026-05-23"
+   },
+   {
+    "cells_per_ml": 188799,
+    "max_cells_per_ml": 319154,
+    "valid_cells": 4,
+    "week_end": "2025-08-23"
+   },
+   {
+    "cells_per_ml": 169044,
+    "max_cells_per_ml": 469894,
+    "valid_cells": 4,
+    "week_end": "2025-08-16"
+   },
+   {
+    "cells_per_ml": 46132,
+    "max_cells_per_ml": 46132,
+    "valid_cells": 2,
+    "week_end": "2025-08-09"
+   },
+   {
+    "cells_per_ml": 51523,
+    "max_cells_per_ml": 205116,
+    "valid_cells": 4,
+    "week_end": "2025-08-02"
+   }
+  ],
+  "3639262": [
+   {
+    "cells_per_ml": 10666,
+    "max_cells_per_ml": 28840,
+    "valid_cells": 3,
+    "week_end": "2026-08-08"
+   },
+   {
+    "cells_per_ml": 16596,
+    "max_cells_per_ml": 54450,
+    "valid_cells": 5,
+    "week_end": "2025-12-13"
+   },
+   {
+    "cells_per_ml": 14060,
+    "max_cells_per_ml": 14060,
+    "valid_cells": 2,
+    "week_end": "2025-12-06"
+   },
+   {
+    "cells_per_ml": 19588,
+    "max_cells_per_ml": 19588,
+    "valid_cells": 5,
+    "week_end": "2025-11-15"
+   },
+   {
+    "cells_per_ml": 18535,
+    "max_cells_per_ml": 18535,
+    "valid_cells": 3,
+    "week_end": "2025-11-08"
+   },
+   {
+    "cells_per_ml": 21878,
+    "max_cells_per_ml": 24434,
+    "valid_cells": 4,
+    "week_end": "2025-11-01"
+   },
+   {
+    "cells_per_ml": 7047,
+    "max_cells_per_ml": 25119,
+    "valid_cells": 4,
+    "week_end": "2025-10-25"
+   },
+   {
+    "cells_per_ml": 23121,
+    "max_cells_per_ml": 25119,
+    "valid_cells": 4,
+    "week_end": "2025-10-11"
+   }
+  ],
+  "3759534": [
+   {
+    "cells_per_ml": 178649,
+    "max_cells_per_ml": 199526,
+    "valid_cells": 4,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 376704,
+    "max_cells_per_ml": 444631,
+    "valid_cells": 4,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 263027,
+    "max_cells_per_ml": 263027,
+    "valid_cells": 4,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 356451,
+    "max_cells_per_ml": 554626,
+    "valid_cells": 4,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 432514,
+    "max_cells_per_ml": 432514,
+    "valid_cells": 4,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 205116,
+    "max_cells_per_ml": 328095,
+    "valid_cells": 4,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 691831,
+    "max_cells_per_ml": 691831,
+    "valid_cells": 4,
+    "week_end": "2026-08-22"
+   },
+   {
+    "cells_per_ml": 496592,
+    "max_cells_per_ml": 496592,
+    "valid_cells": 4,
+    "week_end": "2026-08-15"
+   }
+  ],
+  "3841698": [
+   {
+    "cells_per_ml": 11588,
+    "max_cells_per_ml": 13677,
+    "valid_cells": 3,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 1870682,
+    "max_cells_per_ml": 2398833,
+    "valid_cells": 9,
+    "week_end": "2026-07-04"
+   },
+   {
+    "cells_per_ml": 2466039,
+    "max_cells_per_ml": 2910717,
+    "valid_cells": 9,
+    "week_end": "2026-06-27"
+   },
+   {
+    "cells_per_ml": 1458814,
+    "max_cells_per_ml": 1870682,
+    "valid_cells": 9,
+    "week_end": "2026-06-20"
+   },
+   {
+    "cells_per_ml": 173780,
+    "max_cells_per_ml": 173780,
+    "valid_cells": 9,
+    "week_end": "2024-04-27"
+   },
+   {
+    "cells_per_ml": 28840,
+    "max_cells_per_ml": 69823,
+    "valid_cells": 4,
+    "week_end": "2022-11-26"
+   },
+   {
+    "cells_per_ml": 387258,
+    "max_cells_per_ml": 1169499,
+    "valid_cells": 9,
+    "week_end": "2022-08-27"
+   },
+   {
+    "cells_per_ml": 619441,
+    "max_cells_per_ml": 2398833,
+    "valid_cells": 9,
+    "week_end": "2022-08-20"
+   }
+  ],
+  "384915": [
+   {
+    "cells_per_ml": 105682,
+    "max_cells_per_ml": 346737,
+    "valid_cells": 6,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 255859,
+    "max_cells_per_ml": 619441,
+    "valid_cells": 6,
+    "week_end": "2026-04-25"
+   },
+   {
+    "cells_per_ml": 839460,
+    "max_cells_per_ml": 912011,
+    "valid_cells": 6,
+    "week_end": "2026-04-18"
+   },
+   {
+    "cells_per_ml": 887156,
+    "max_cells_per_ml": 1018591,
+    "valid_cells": 6,
+    "week_end": "2026-04-11"
+   },
+   {
+    "cells_per_ml": 457088,
+    "max_cells_per_ml": 539511,
+    "valid_cells": 6,
+    "week_end": "2026-04-04"
+   },
+   {
+    "cells_per_ml": 337287,
+    "max_cells_per_ml": 366438,
+    "valid_cells": 6,
+    "week_end": "2026-03-28"
+   },
+   {
+    "cells_per_ml": 48753,
+    "max_cells_per_ml": 48753,
+    "valid_cells": 4,
+    "week_end": "2026-03-21"
+   },
+   {
+    "cells_per_ml": 105682,
+    "max_cells_per_ml": 105682,
+    "valid_cells": 3,
+    "week_end": "2024-12-14"
+   }
+  ],
+  "3854643": [
+   {
+    "cells_per_ml": 469894,
+    "max_cells_per_ml": 469894,
+    "valid_cells": 3,
+    "week_end": "2025-02-01"
+   },
+   {
+    "cells_per_ml": 398107,
+    "max_cells_per_ml": 398107,
+    "valid_cells": 3,
+    "week_end": "2025-01-25"
+   },
+   {
+    "cells_per_ml": 205116,
+    "max_cells_per_ml": 205116,
+    "valid_cells": 2,
+    "week_end": "2025-01-11"
+   },
+   {
+    "cells_per_ml": 310456,
+    "max_cells_per_ml": 310456,
+    "valid_cells": 2,
+    "week_end": "2020-02-15"
+   }
+  ],
+  "4008753": [
+   {
+    "cells_per_ml": 139316,
+    "max_cells_per_ml": 139316,
+    "valid_cells": 3,
+    "week_end": "2026-05-16"
+   },
+   {
+    "cells_per_ml": 301995,
+    "max_cells_per_ml": 301995,
+    "valid_cells": 2,
+    "week_end": "2026-01-10"
+   },
+   {
+    "cells_per_ml": 263027,
+    "max_cells_per_ml": 263027,
+    "valid_cells": 3,
+    "week_end": "2025-04-26"
+   },
+   {
+    "cells_per_ml": 912011,
+    "max_cells_per_ml": 912011,
+    "valid_cells": 3,
+    "week_end": "2025-04-05"
+   },
+   {
+    "cells_per_ml": 1674943,
+    "max_cells_per_ml": 1721869,
+    "valid_cells": 3,
+    "week_end": "2024-04-06"
+   },
+   {
+    "cells_per_ml": 1169499,
+    "max_cells_per_ml": 1169499,
+    "valid_cells": 3,
+    "week_end": "2024-03-30"
+   },
+   {
+    "cells_per_ml": 496592,
+    "max_cells_per_ml": 496592,
+    "valid_cells": 2,
+    "week_end": "2024-03-16"
+   },
+   {
+    "cells_per_ml": 937562,
+    "max_cells_per_ml": 937562,
+    "valid_cells": 2,
+    "week_end": "2024-03-09"
+   }
+  ],
+  "4094928": [],
+  "4096679": [],
+  "4335455": [],
+  "4415315": [
+   {
+    "cells_per_ml": 319154,
+    "max_cells_per_ml": 356451,
+    "valid_cells": 4,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 222844,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 6,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 255859,
+    "max_cells_per_ml": 356451,
+    "valid_cells": 6,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 691831,
+    "max_cells_per_ml": 691831,
+    "valid_cells": 6,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 619441,
+    "max_cells_per_ml": 654636,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 691831,
+    "max_cells_per_ml": 691831,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 602560,
+    "max_cells_per_ml": 672977,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 816582,
+    "max_cells_per_ml": 816582,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "4571173": [
+   {
+    "cells_per_ml": 21281,
+    "max_cells_per_ml": 38019,
+    "valid_cells": 4,
+    "week_end": "2026-02-14"
+   },
+   {
+    "cells_per_ml": 6855,
+    "max_cells_per_ml": 7447,
+    "valid_cells": 2,
+    "week_end": "2023-04-01"
+   },
+   {
+    "cells_per_ml": 14060,
+    "max_cells_per_ml": 66069,
+    "valid_cells": 3,
+    "week_end": "2023-03-04"
+   },
+   {
+    "cells_per_ml": 147231,
+    "max_cells_per_ml": 839460,
+    "valid_cells": 7,
+    "week_end": "2023-02-25"
+   },
+   {
+    "cells_per_ml": 18535,
+    "max_cells_per_ml": 108643,
+    "valid_cells": 6,
+    "week_end": "2023-02-18"
+   },
+   {
+    "cells_per_ml": 31333,
+    "max_cells_per_ml": 346737,
+    "valid_cells": 8,
+    "week_end": "2022-09-17"
+   },
+   {
+    "cells_per_ml": 816582,
+    "max_cells_per_ml": 1584893,
+    "valid_cells": 9,
+    "week_end": "2022-09-03"
+   },
+   {
+    "cells_per_ml": 135519,
+    "max_cells_per_ml": 496592,
+    "valid_cells": 9,
+    "week_end": "2022-08-27"
+   }
+  ],
+  "476105": [
+   {
+    "cells_per_ml": 80168,
+    "max_cells_per_ml": 80168,
+    "valid_cells": 1,
+    "week_end": "2026-06-20"
+   },
+   {
+    "cells_per_ml": 356451,
+    "max_cells_per_ml": 554626,
+    "valid_cells": 3,
+    "week_end": "2026-06-06"
+   },
+   {
+    "cells_per_ml": 654636,
+    "max_cells_per_ml": 711214,
+    "valid_cells": 3,
+    "week_end": "2026-05-30"
+   },
+   {
+    "cells_per_ml": 963829,
+    "max_cells_per_ml": 1137627,
+    "valid_cells": 3,
+    "week_end": "2026-05-23"
+   },
+   {
+    "cells_per_ml": 1235948,
+    "max_cells_per_ml": 1235948,
+    "valid_cells": 3,
+    "week_end": "2026-05-16"
+   },
+   {
+    "cells_per_ml": 912011,
+    "max_cells_per_ml": 1076465,
+    "valid_cells": 3,
+    "week_end": "2026-05-09"
+   },
+   {
+    "cells_per_ml": 636796,
+    "max_cells_per_ml": 672977,
+    "valid_cells": 3,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 409261,
+    "max_cells_per_ml": 731139,
+    "valid_cells": 3,
+    "week_end": "2026-04-25"
+   }
+  ],
+  "4803852": [],
+  "4977486": [
+   {
+    "cells_per_ml": 12942,
+    "max_cells_per_ml": 18535,
+    "valid_cells": 3,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 6855,
+    "max_cells_per_ml": 35975,
+    "valid_cells": 4,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 9550,
+    "max_cells_per_ml": 17061,
+    "valid_cells": 5,
+    "week_end": "2026-08-22"
+   },
+   {
+    "cells_per_ml": 7656,
+    "max_cells_per_ml": 16144,
+    "valid_cells": 3,
+    "week_end": "2026-07-18"
+   },
+   {
+    "cells_per_ml": 10375,
+    "max_cells_per_ml": 15704,
+    "valid_cells": 3,
+    "week_end": "2026-05-16"
+   },
+   {
+    "cells_per_ml": 15276,
+    "max_cells_per_ml": 17539,
+    "valid_cells": 3,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 22491,
+    "max_cells_per_ml": 22491,
+    "valid_cells": 3,
+    "week_end": "2026-04-11"
+   },
+   {
+    "cells_per_ml": 18030,
+    "max_cells_per_ml": 25119,
+    "valid_cells": 5,
+    "week_end": "2026-01-17"
+   }
+  ],
+  "5038207": [
+   {
+    "cells_per_ml": 457088,
+    "max_cells_per_ml": 496592,
+    "valid_cells": 5,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 420727,
+    "max_cells_per_ml": 496592,
+    "valid_cells": 5,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 457088,
+    "max_cells_per_ml": 510505,
+    "valid_cells": 5,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 444631,
+    "max_cells_per_ml": 570164,
+    "valid_cells": 5,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 356451,
+    "max_cells_per_ml": 387258,
+    "valid_cells": 5,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 469894,
+    "max_cells_per_ml": 524807,
+    "valid_cells": 5,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 346737,
+    "max_cells_per_ml": 432514,
+    "valid_cells": 5,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 376704,
+    "max_cells_per_ml": 398107,
+    "valid_cells": 5,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "505561": [],
+  "5097233": [],
+  "5176335": [],
+  "5183115": [
+   {
+    "cells_per_ml": 654636,
+    "max_cells_per_ml": 1137627,
+    "valid_cells": 5,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 2147830,
+    "max_cells_per_ml": 2147830,
+    "valid_cells": 6,
+    "week_end": "2025-09-06"
+   },
+   {
+    "cells_per_ml": 1976970,
+    "max_cells_per_ml": 1976970,
+    "valid_cells": 6,
+    "week_end": "2025-08-30"
+   },
+   {
+    "cells_per_ml": 216770,
+    "max_cells_per_ml": 346737,
+    "valid_cells": 5,
+    "week_end": "2024-09-14"
+   },
+   {
+    "cells_per_ml": 2089296,
+    "max_cells_per_ml": 2208005,
+    "valid_cells": 6,
+    "week_end": "2024-06-15"
+   },
+   {
+    "cells_per_ml": 2147830,
+    "max_cells_per_ml": 2398833,
+    "valid_cells": 6,
+    "week_end": "2024-06-08"
+   },
+   {
+    "cells_per_ml": 1018591,
+    "max_cells_per_ml": 1076465,
+    "valid_cells": 6,
+    "week_end": "2024-06-01"
+   },
+   {
+    "cells_per_ml": 77983,
+    "max_cells_per_ml": 118032,
+    "valid_cells": 5,
+    "week_end": "2023-09-23"
+   }
+  ],
+  "5208082": [
+   {
+    "cells_per_ml": 10666,
+    "max_cells_per_ml": 38019,
+    "valid_cells": 4,
+    "week_end": "2026-01-17"
+   },
+   {
+    "cells_per_ml": 111686,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 3,
+    "week_end": "2025-10-04"
+   },
+   {
+    "cells_per_ml": 570164,
+    "max_cells_per_ml": 794328,
+    "valid_cells": 5,
+    "week_end": "2025-09-27"
+   },
+   {
+    "cells_per_ml": 1076465,
+    "max_cells_per_ml": 1169499,
+    "valid_cells": 6,
+    "week_end": "2025-09-20"
+   },
+   {
+    "cells_per_ml": 912011,
+    "max_cells_per_ml": 963829,
+    "valid_cells": 6,
+    "week_end": "2025-09-13"
+   },
+   {
+    "cells_per_ml": 691831,
+    "max_cells_per_ml": 794328,
+    "valid_cells": 6,
+    "week_end": "2025-09-06"
+   },
+   {
+    "cells_per_ml": 691831,
+    "max_cells_per_ml": 937562,
+    "valid_cells": 6,
+    "week_end": "2025-08-30"
+   },
+   {
+    "cells_per_ml": 469894,
+    "max_cells_per_ml": 570164,
+    "valid_cells": 6,
+    "week_end": "2025-08-23"
+   }
+  ],
+  "5261137": [],
+  "5421807": [
+   {
+    "cells_per_ml": 672977,
+    "max_cells_per_ml": 672977,
+    "valid_cells": 5,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 1106624,
+    "max_cells_per_ml": 1106624,
+    "valid_cells": 5,
+    "week_end": "2026-07-25"
+   },
+   {
+    "cells_per_ml": 1169499,
+    "max_cells_per_ml": 1270574,
+    "valid_cells": 5,
+    "week_end": "2026-07-18"
+   },
+   {
+    "cells_per_ml": 1629296,
+    "max_cells_per_ml": 1674943,
+    "valid_cells": 5,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 2089296,
+    "max_cells_per_ml": 2147830,
+    "valid_cells": 5,
+    "week_end": "2026-04-25"
+   },
+   {
+    "cells_per_ml": 731139,
+    "max_cells_per_ml": 751623,
+    "valid_cells": 5,
+    "week_end": "2026-04-18"
+   },
+   {
+    "cells_per_ml": 1235948,
+    "max_cells_per_ml": 1306171,
+    "valid_cells": 5,
+    "week_end": "2026-04-11"
+   },
+   {
+    "cells_per_ml": 772681,
+    "max_cells_per_ml": 816582,
+    "valid_cells": 5,
+    "week_end": "2026-04-04"
+   }
+  ],
+  "5423558": [],
+  "5543914": [
+   {
+    "cells_per_ml": 6486,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 5,
+    "week_end": "2026-08-15"
+   },
+   {
+    "cells_per_ml": 9550,
+    "max_cells_per_ml": 14454,
+    "valid_cells": 2,
+    "week_end": "2026-07-18"
+   },
+   {
+    "cells_per_ml": 41305,
+    "max_cells_per_ml": 47424,
+    "valid_cells": 2,
+    "week_end": "2026-01-24"
+   },
+   {
+    "cells_per_ml": 67920,
+    "max_cells_per_ml": 108643,
+    "valid_cells": 4,
+    "week_end": "2025-02-01"
+   },
+   {
+    "cells_per_ml": 7870,
+    "max_cells_per_ml": 510505,
+    "valid_cells": 3,
+    "week_end": "2024-10-19"
+   },
+   {
+    "cells_per_ml": 7656,
+    "max_cells_per_ml": 17539,
+    "valid_cells": 3,
+    "week_end": "2024-09-14"
+   },
+   {
+    "cells_per_ml": 17539,
+    "max_cells_per_ml": 17539,
+    "valid_cells": 2,
+    "week_end": "2024-07-13"
+   },
+   {
+    "cells_per_ml": 17061,
+    "max_cells_per_ml": 19588,
+    "valid_cells": 3,
+    "week_end": "2024-05-04"
+   }
+  ],
+  "5775450": [],
+  "5941618": [
+   {
+    "cells_per_ml": 586138,
+    "max_cells_per_ml": 1235948,
+    "valid_cells": 6,
+    "week_end": "2026-06-06"
+   },
+   {
+    "cells_per_ml": 672977,
+    "max_cells_per_ml": 1235948,
+    "valid_cells": 6,
+    "week_end": "2026-05-30"
+   },
+   {
+    "cells_per_ml": 216770,
+    "max_cells_per_ml": 539511,
+    "valid_cells": 5,
+    "week_end": "2026-05-23"
+   },
+   {
+    "cells_per_ml": 636796,
+    "max_cells_per_ml": 636796,
+    "valid_cells": 6,
+    "week_end": "2026-05-16"
+   },
+   {
+    "cells_per_ml": 15704,
+    "max_cells_per_ml": 42462,
+    "valid_cells": 2,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 12589,
+    "max_cells_per_ml": 12589,
+    "valid_cells": 2,
+    "week_end": "2026-02-21"
+   },
+   {
+    "cells_per_ml": 92045,
+    "max_cells_per_ml": 92045,
+    "valid_cells": 4,
+    "week_end": "2025-09-13"
+   },
+   {
+    "cells_per_ml": 366438,
+    "max_cells_per_ml": 366438,
+    "valid_cells": 6,
+    "week_end": "2025-09-06"
+   }
+  ],
+  "596413": [
+   {
+    "cells_per_ml": 229087,
+    "max_cells_per_ml": 229087,
+    "valid_cells": 1,
+    "week_end": "2025-11-29"
+   },
+   {
+    "cells_per_ml": 16596,
+    "max_cells_per_ml": 16596,
+    "valid_cells": 1,
+    "week_end": "2025-11-08"
+   },
+   {
+    "cells_per_ml": 15704,
+    "max_cells_per_ml": 15704,
+    "valid_cells": 1,
+    "week_end": "2025-11-01"
+   },
+   {
+    "cells_per_ml": 118032,
+    "max_cells_per_ml": 118032,
+    "valid_cells": 2,
+    "week_end": "2025-01-11"
+   },
+   {
+    "cells_per_ml": 108643,
+    "max_cells_per_ml": 108643,
+    "valid_cells": 2,
+    "week_end": "2024-04-27"
+   },
+   {
+    "cells_per_ml": 121339,
+    "max_cells_per_ml": 121339,
+    "valid_cells": 2,
+    "week_end": "2024-04-20"
+   },
+   {
+    "cells_per_ml": 82414,
+    "max_cells_per_ml": 82414,
+    "valid_cells": 2,
+    "week_end": "2024-03-16"
+   },
+   {
+    "cells_per_ml": 12942,
+    "max_cells_per_ml": 12942,
+    "valid_cells": 1,
+    "week_end": "2023-12-02"
+   }
+  ],
+  "6025852": [
+   {
+    "cells_per_ml": 7656,
+    "max_cells_per_ml": 8091,
+    "valid_cells": 3,
+    "week_end": "2025-10-25"
+   },
+   {
+    "cells_per_ml": 48753,
+    "max_cells_per_ml": 55976,
+    "valid_cells": 3,
+    "week_end": "2025-01-11"
+   },
+   {
+    "cells_per_ml": 9290,
+    "max_cells_per_ml": 16144,
+    "valid_cells": 3,
+    "week_end": "2024-02-03"
+   },
+   {
+    "cells_per_ml": 11912,
+    "max_cells_per_ml": 64269,
+    "valid_cells": 6,
+    "week_end": "2023-12-16"
+   },
+   {
+    "cells_per_ml": 31333,
+    "max_cells_per_ml": 71779,
+    "valid_cells": 4,
+    "week_end": "2023-11-04"
+   },
+   {
+    "cells_per_ml": 10666,
+    "max_cells_per_ml": 84723,
+    "valid_cells": 3,
+    "week_end": "2022-12-03"
+   }
+  ],
+  "625997": [],
+  "6292481": [
+   {
+    "cells_per_ml": 570164,
+    "max_cells_per_ml": 654636,
+    "valid_cells": 3,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 242103,
+    "max_cells_per_ml": 242103,
+    "valid_cells": 3,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 270396,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 3,
+    "week_end": "2025-11-01"
+   },
+   {
+    "cells_per_ml": 420727,
+    "max_cells_per_ml": 420727,
+    "valid_cells": 3,
+    "week_end": "2025-10-25"
+   },
+   {
+    "cells_per_ml": 210863,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 3,
+    "week_end": "2025-10-18"
+   },
+   {
+    "cells_per_ml": 301995,
+    "max_cells_per_ml": 301995,
+    "valid_cells": 3,
+    "week_end": "2025-10-11"
+   },
+   {
+    "cells_per_ml": 277971,
+    "max_cells_per_ml": 277971,
+    "valid_cells": 3,
+    "week_end": "2025-10-04"
+   },
+   {
+    "cells_per_ml": 409261,
+    "max_cells_per_ml": 524807,
+    "valid_cells": 3,
+    "week_end": "2025-09-27"
+   }
+  ],
+  "6293660": [
+   {
+    "cells_per_ml": 25119,
+    "max_cells_per_ml": 25119,
+    "valid_cells": 3,
+    "week_end": "2026-06-27"
+   },
+   {
+    "cells_per_ml": 73790,
+    "max_cells_per_ml": 77983,
+    "valid_cells": 4,
+    "week_end": "2026-02-07"
+   },
+   {
+    "cells_per_ml": 69823,
+    "max_cells_per_ml": 139316,
+    "valid_cells": 3,
+    "week_end": "2026-01-24"
+   },
+   {
+    "cells_per_ml": 270396,
+    "max_cells_per_ml": 1018591,
+    "valid_cells": 6,
+    "week_end": "2026-01-17"
+   },
+   {
+    "cells_per_ml": 124738,
+    "max_cells_per_ml": 432514,
+    "valid_cells": 4,
+    "week_end": "2025-12-06"
+   },
+   {
+    "cells_per_ml": 38019,
+    "max_cells_per_ml": 43652,
+    "valid_cells": 4,
+    "week_end": "2025-11-15"
+   },
+   {
+    "cells_per_ml": 12246,
+    "max_cells_per_ml": 12246,
+    "valid_cells": 5,
+    "week_end": "2025-08-16"
+   },
+   {
+    "cells_per_ml": 75858,
+    "max_cells_per_ml": 376704,
+    "valid_cells": 5,
+    "week_end": "2025-01-25"
+   }
+  ],
+  "633224": [],
+  "6386454": [
+   {
+    "cells_per_ml": 51523,
+    "max_cells_per_ml": 51523,
+    "valid_cells": 1,
+    "week_end": "2026-01-17"
+   },
+   {
+    "cells_per_ml": 102802,
+    "max_cells_per_ml": 102802,
+    "valid_cells": 2,
+    "week_end": "2026-01-10"
+   },
+   {
+    "cells_per_ml": 135519,
+    "max_cells_per_ml": 554626,
+    "valid_cells": 3,
+    "week_end": "2025-12-27"
+   },
+   {
+    "cells_per_ml": 337287,
+    "max_cells_per_ml": 337287,
+    "valid_cells": 2,
+    "week_end": "2025-11-15"
+   },
+   {
+    "cells_per_ml": 183654,
+    "max_cells_per_ml": 420727,
+    "valid_cells": 3,
+    "week_end": "2023-12-23"
+   }
+  ],
+  "6415807": [
+   {
+    "cells_per_ml": 524807,
+    "max_cells_per_ml": 602560,
+    "valid_cells": 3,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 524807,
+    "max_cells_per_ml": 524807,
+    "valid_cells": 4,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 387258,
+    "max_cells_per_ml": 586138,
+    "valid_cells": 6,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 100000,
+    "max_cells_per_ml": 128233,
+    "valid_cells": 5,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 183654,
+    "max_cells_per_ml": 751623,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 1235948,
+    "max_cells_per_ml": 1342765,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 1106624,
+    "max_cells_per_ml": 1629296,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 963829,
+    "max_cells_per_ml": 1342765,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "6506753": [
+   {
+    "cells_per_ml": 248886,
+    "max_cells_per_ml": 636796,
+    "valid_cells": 7,
+    "week_end": "2026-08-08"
+   },
+   {
+    "cells_per_ml": 937562,
+    "max_cells_per_ml": 1235948,
+    "valid_cells": 8,
+    "week_end": "2026-08-01"
+   },
+   {
+    "cells_per_ml": 1047129,
+    "max_cells_per_ml": 1306171,
+    "valid_cells": 8,
+    "week_end": "2026-07-25"
+   },
+   {
+    "cells_per_ml": 1270574,
+    "max_cells_per_ml": 1584893,
+    "valid_cells": 8,
+    "week_end": "2026-07-18"
+   },
+   {
+    "cells_per_ml": 1235948,
+    "max_cells_per_ml": 1674943,
+    "valid_cells": 8,
+    "week_end": "2026-07-04"
+   },
+   {
+    "cells_per_ml": 1169499,
+    "max_cells_per_ml": 1458814,
+    "valid_cells": 8,
+    "week_end": "2026-06-27"
+   },
+   {
+    "cells_per_ml": 387258,
+    "max_cells_per_ml": 1047129,
+    "valid_cells": 8,
+    "week_end": "2026-06-20"
+   },
+   {
+    "cells_per_ml": 1419058,
+    "max_cells_per_ml": 1674943,
+    "valid_cells": 8,
+    "week_end": "2026-06-06"
+   }
+  ],
+  "6533641": [
+   {
+    "cells_per_ml": 839460,
+    "max_cells_per_ml": 1458814,
+    "valid_cells": 4,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 672977,
+    "max_cells_per_ml": 731139,
+    "valid_cells": 4,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 510505,
+    "max_cells_per_ml": 731139,
+    "valid_cells": 4,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 862979,
+    "max_cells_per_ml": 1169499,
+    "valid_cells": 4,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 1270574,
+    "max_cells_per_ml": 1541700,
+    "valid_cells": 4,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 510505,
+    "max_cells_per_ml": 691831,
+    "valid_cells": 4,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 937562,
+    "max_cells_per_ml": 937562,
+    "valid_cells": 4,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 1076465,
+    "max_cells_per_ml": 1306171,
+    "valid_cells": 4,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "6552665": [],
+  "6776947": [
+   {
+    "cells_per_ml": 22491,
+    "max_cells_per_ml": 34995,
+    "valid_cells": 4,
+    "week_end": "2025-08-09"
+   },
+   {
+    "cells_per_ml": 17539,
+    "max_cells_per_ml": 17539,
+    "valid_cells": 4,
+    "week_end": "2025-08-02"
+   },
+   {
+    "cells_per_ml": 9036,
+    "max_cells_per_ml": 9036,
+    "valid_cells": 1,
+    "week_end": "2023-07-08"
+   },
+   {
+    "cells_per_ml": 33113,
+    "max_cells_per_ml": 285759,
+    "valid_cells": 3,
+    "week_end": "2021-10-30"
+   },
+   {
+    "cells_per_ml": 42462,
+    "max_cells_per_ml": 248886,
+    "valid_cells": 3,
+    "week_end": "2021-09-25"
+   },
+   {
+    "cells_per_ml": 135519,
+    "max_cells_per_ml": 178649,
+    "valid_cells": 4,
+    "week_end": "2021-09-18"
+   },
+   {
+    "cells_per_ml": 80168,
+    "max_cells_per_ml": 210863,
+    "valid_cells": 4,
+    "week_end": "2021-09-04"
+   },
+   {
+    "cells_per_ml": 151356,
+    "max_cells_per_ml": 151356,
+    "valid_cells": 5,
+    "week_end": "2021-08-21"
+   }
+  ],
+  "6862206": [],
+  "7108871": [
+   {
+    "cells_per_ml": 6486,
+    "max_cells_per_ml": 16144,
+    "valid_cells": 3,
+    "week_end": "2026-07-04"
+   },
+   {
+    "cells_per_ml": 77983,
+    "max_cells_per_ml": 77983,
+    "valid_cells": 2,
+    "week_end": "2025-02-01"
+   },
+   {
+    "cells_per_ml": 44875,
+    "max_cells_per_ml": 51523,
+    "valid_cells": 5,
+    "week_end": "2024-06-15"
+   },
+   {
+    "cells_per_ml": 55976,
+    "max_cells_per_ml": 159956,
+    "valid_cells": 3,
+    "week_end": "2024-01-06"
+   },
+   {
+    "cells_per_ml": 97275,
+    "max_cells_per_ml": 151356,
+    "valid_cells": 5,
+    "week_end": "2023-12-30"
+   },
+   {
+    "cells_per_ml": 111686,
+    "max_cells_per_ml": 155597,
+    "valid_cells": 5,
+    "week_end": "2023-12-16"
+   },
+   {
+    "cells_per_ml": 672977,
+    "max_cells_per_ml": 816582,
+    "valid_cells": 5,
+    "week_end": "2023-12-02"
+   },
+   {
+    "cells_per_ml": 301995,
+    "max_cells_per_ml": 539511,
+    "valid_cells": 5,
+    "week_end": "2023-11-18"
+   }
+  ],
+  "7141792": [
+   {
+    "cells_per_ml": 4405549,
+    "max_cells_per_ml": 4405549,
+    "valid_cells": 6,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 3076097,
+    "max_cells_per_ml": 3162278,
+    "valid_cells": 6,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 4405549,
+    "max_cells_per_ml": 4405549,
+    "valid_cells": 6,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 2032357,
+    "max_cells_per_ml": 2333458,
+    "valid_cells": 6,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 2679168,
+    "max_cells_per_ml": 2831392,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 1458814,
+    "max_cells_per_ml": 1458814,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 2606154,
+    "max_cells_per_ml": 2606154,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 2754229,
+    "max_cells_per_ml": 3076097,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "7266997": [
+   {
+    "cells_per_ml": 114815,
+    "max_cells_per_ml": 114815,
+    "valid_cells": 2,
+    "week_end": "2026-01-31"
+   },
+   {
+    "cells_per_ml": 159956,
+    "max_cells_per_ml": 159956,
+    "valid_cells": 3,
+    "week_end": "2025-12-06"
+   },
+   {
+    "cells_per_ml": 248886,
+    "max_cells_per_ml": 248886,
+    "valid_cells": 3,
+    "week_end": "2025-09-06"
+   },
+   {
+    "cells_per_ml": 21878,
+    "max_cells_per_ml": 147231,
+    "valid_cells": 3,
+    "week_end": "2025-08-30"
+   },
+   {
+    "cells_per_ml": 52966,
+    "max_cells_per_ml": 52966,
+    "valid_cells": 2,
+    "week_end": "2025-01-18"
+   },
+   {
+    "cells_per_ml": 71779,
+    "max_cells_per_ml": 71779,
+    "valid_cells": 3,
+    "week_end": "2024-08-24"
+   },
+   {
+    "cells_per_ml": 277971,
+    "max_cells_per_ml": 301995,
+    "valid_cells": 3,
+    "week_end": "2024-04-27"
+   },
+   {
+    "cells_per_ml": 387258,
+    "max_cells_per_ml": 387258,
+    "valid_cells": 2,
+    "week_end": "2024-02-10"
+   }
+  ],
+  "7267763": [
+   {
+    "cells_per_ml": 337287,
+    "max_cells_per_ml": 337287,
+    "valid_cells": 1,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 731139,
+    "max_cells_per_ml": 731139,
+    "valid_cells": 2,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 539511,
+    "max_cells_per_ml": 539511,
+    "valid_cells": 2,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 483059,
+    "max_cells_per_ml": 483059,
+    "valid_cells": 2,
+    "week_end": "2026-07-25"
+   },
+   {
+    "cells_per_ml": 539511,
+    "max_cells_per_ml": 539511,
+    "valid_cells": 2,
+    "week_end": "2026-03-28"
+   },
+   {
+    "cells_per_ml": 420727,
+    "max_cells_per_ml": 420727,
+    "valid_cells": 2,
+    "week_end": "2026-03-21"
+   },
+   {
+    "cells_per_ml": 731139,
+    "max_cells_per_ml": 731139,
+    "valid_cells": 1,
+    "week_end": "2026-01-03"
+   },
+   {
+    "cells_per_ml": 398107,
+    "max_cells_per_ml": 398107,
+    "valid_cells": 2,
+    "week_end": "2025-11-01"
+   }
+  ],
+  "7281839": [],
+  "7347596": [
+   {
+    "cells_per_ml": 731139,
+    "max_cells_per_ml": 1380384,
+    "valid_cells": 5,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 121339,
+    "max_cells_per_ml": 1458814,
+    "valid_cells": 3,
+    "week_end": "2026-08-22"
+   },
+   {
+    "cells_per_ml": 89536,
+    "max_cells_per_ml": 1047129,
+    "valid_cells": 4,
+    "week_end": "2026-08-15"
+   },
+   {
+    "cells_per_ml": 469894,
+    "max_cells_per_ml": 751623,
+    "valid_cells": 5,
+    "week_end": "2026-07-04"
+   },
+   {
+    "cells_per_ml": 54450,
+    "max_cells_per_ml": 619441,
+    "valid_cells": 3,
+    "week_end": "2026-06-27"
+   },
+   {
+    "cells_per_ml": 194089,
+    "max_cells_per_ml": 457088,
+    "valid_cells": 4,
+    "week_end": "2026-05-09"
+   },
+   {
+    "cells_per_ml": 147231,
+    "max_cells_per_ml": 366438,
+    "valid_cells": 2,
+    "week_end": "2026-05-02"
+   },
+   {
+    "cells_per_ml": 178649,
+    "max_cells_per_ml": 270396,
+    "valid_cells": 2,
+    "week_end": "2026-04-18"
+   }
+  ],
+  "7356038": [
+   {
+    "cells_per_ml": 2606154,
+    "max_cells_per_ml": 2606154,
+    "valid_cells": 5,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 2606154,
+    "max_cells_per_ml": 2606154,
+    "valid_cells": 5,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 2466039,
+    "max_cells_per_ml": 3837072,
+    "valid_cells": 5,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 1976970,
+    "max_cells_per_ml": 2398833,
+    "valid_cells": 5,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 2535128,
+    "max_cells_per_ml": 5058246,
+    "valid_cells": 5,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 1629296,
+    "max_cells_per_ml": 1721869,
+    "valid_cells": 5,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 1870682,
+    "max_cells_per_ml": 2269865,
+    "valid_cells": 5,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 1819701,
+    "max_cells_per_ml": 2089296,
+    "valid_cells": 5,
+    "week_end": "2026-08-22"
+   }
+  ],
+  "7471899": [
+   {
+    "cells_per_ml": 912011,
+    "max_cells_per_ml": 1342765,
+    "valid_cells": 3,
+    "week_end": "2026-10-10"
+   },
+   {
+    "cells_per_ml": 1202264,
+    "max_cells_per_ml": 1770109,
+    "valid_cells": 3,
+    "week_end": "2026-10-03"
+   },
+   {
+    "cells_per_ml": 469894,
+    "max_cells_per_ml": 510505,
+    "valid_cells": 3,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 387258,
+    "max_cells_per_ml": 409261,
+    "valid_cells": 3,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 483059,
+    "max_cells_per_ml": 483059,
+    "valid_cells": 3,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 147231,
+    "max_cells_per_ml": 248886,
+    "valid_cells": 3,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 16596,
+    "max_cells_per_ml": 30479,
+    "valid_cells": 3,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 92045,
+    "max_cells_per_ml": 398107,
+    "valid_cells": 3,
+    "week_end": "2026-08-15"
+   }
+  ],
+  "751036": [
+   {
+    "cells_per_ml": 7244,
+    "max_cells_per_ml": 92045,
+    "valid_cells": 6,
+    "week_end": "2026-06-27"
+   },
+   {
+    "cells_per_ml": 8091,
+    "max_cells_per_ml": 15704,
+    "valid_cells": 4,
+    "week_end": "2026-06-13"
+   },
+   {
+    "cells_per_ml": 82414,
+    "max_cells_per_ml": 82414,
+    "valid_cells": 2,
+    "week_end": "2025-10-11"
+   },
+   {
+    "cells_per_ml": 36983,
+    "max_cells_per_ml": 69823,
+    "valid_cells": 5,
+    "week_end": "2025-09-13"
+   },
+   {
+    "cells_per_ml": 11912,
+    "max_cells_per_ml": 11912,
+    "valid_cells": 2,
+    "week_end": "2025-07-12"
+   },
+   {
+    "cells_per_ml": 12246,
+    "max_cells_per_ml": 71779,
+    "valid_cells": 4,
+    "week_end": "2025-07-05"
+   },
+   {
+    "cells_per_ml": 24434,
+    "max_cells_per_ml": 52966,
+    "valid_cells": 6,
+    "week_end": "2025-02-22"
+   },
+   {
+    "cells_per_ml": 118032,
+    "max_cells_per_ml": 128233,
+    "valid_cells": 6,
+    "week_end": "2025-02-01"
+   }
+  ],
+  "752355": [
+   {
+    "cells_per_ml": 7244,
+    "max_cells_per_ml": 7244,
+    "valid_cells": 1,
+    "week_end": "2026-08-01"
+   },
+   {
+    "cells_per_ml": 12246,
+    "max_cells_per_ml": 12246,
+    "valid_cells": 1,
+    "week_end": "2026-07-18"
+   },
+   {
+    "cells_per_ml": 28840,
+    "max_cells_per_ml": 28840,
+    "valid_cells": 1,
+    "week_end": "2025-12-27"
+   },
+   {
+    "cells_per_ml": 32211,
+    "max_cells_per_ml": 32211,
+    "valid_cells": 1,
+    "week_end": "2025-12-13"
+   },
+   {
+    "cells_per_ml": 147231,
+    "max_cells_per_ml": 147231,
+    "valid_cells": 3,
+    "week_end": "2025-02-01"
+   },
+   {
+    "cells_per_ml": 7244,
+    "max_cells_per_ml": 94624,
+    "valid_cells": 4,
+    "week_end": "2025-01-25"
+   },
+   {
+    "cells_per_ml": 14859,
+    "max_cells_per_ml": 33113,
+    "valid_cells": 2,
+    "week_end": "2024-12-14"
+   },
+   {
+    "cells_per_ml": 67920,
+    "max_cells_per_ml": 67920,
+    "valid_cells": 2,
+    "week_end": "2024-11-09"
+   }
+  ],
+  "753924": [
+   {
+    "cells_per_ml": 111686,
+    "max_cells_per_ml": 1047129,
+    "valid_cells": 5,
+    "week_end": "2026-09-19"
+   },
+   {
+    "cells_per_ml": 2679168,
+    "max_cells_per_ml": 2754229,
+    "valid_cells": 6,
+    "week_end": "2026-09-12"
+   },
+   {
+    "cells_per_ml": 1306171,
+    "max_cells_per_ml": 1923092,
+    "valid_cells": 6,
+    "week_end": "2026-09-05"
+   },
+   {
+    "cells_per_ml": 1976970,
+    "max_cells_per_ml": 2089296,
+    "valid_cells": 6,
+    "week_end": "2026-08-29"
+   },
+   {
+    "cells_per_ml": 1923092,
+    "max_cells_per_ml": 1923092,
+    "valid_cells": 6,
+    "week_end": "2026-08-22"
+   },
+   {
+    "cells_per_ml": 1137627,
+    "max_cells_per_ml": 1169499,
+    "valid_cells": 6,
+    "week_end": "2026-08-15"
+   },
+   {
+    "cells_per_ml": 963829,
+    "max_cells_per_ml": 1018591,
+    "valid_cells": 6,
+    "week_end": "2026-08-08"
+   },
+   {
+    "cells_per_ml": 4168694,
+    "max_cells_per_ml": 4528976,
+    "valid_cells": 6,
+    "week_end": "2026-06-06"
+   }
+  ],
+  "7593285": [
+   {
+    "cells_per_ml": 7447,
+    "max_cells_per_ml": 9550,
+    "valid_cells": 3,
+    "week_end": "2026-09-26"
+   },
+   {
+    "cells_per_ml": 31333,
+    "max_cells_per_ml": 31333,
+    "valid_cells": 4,
+    "week_end": "2026-02-07"
+   },
+   {
+    "cells_per_ml": 25823,
+    "max_cells_per_ml": 27290,
+    "valid_cells": 3,
+    "week_end": "2026-01-24"
+   },
+   {
+    "cells_per_ml": 15704,
+    "max_cells_per_ml": 20137,
+    "valid_cells": 4,
+    "week_end": "2025-12-06"
+   },
+   {
+    "cells_per_ml": 30479,
+    "max_cells_per_ml": 48753,
+    "valid_cells": 5,
+    "week_end": "2025-11-29"
+   },
+   {
+    "cells_per_ml": 21281,
+    "max_cells_per_ml": 21281,
+    "valid_cells": 3,
+    "week_end": "2025-08-23"
+   },
+   {
+    "cells_per_ml": 14859,
+    "max_cells_per_ml": 22491,
+    "valid_cells": 3,
+    "week_end": "2025-03-29"
+   },
+   {
+    "cells_per_ml": 32211,
+    "max_cells_per_ml": 32211,
+    "valid_cells": 2,
+    "week_end": "2024-11-30"
+   }
+  ],
+  "8301845": [],
+  "835673": [
+   {
+    "cells_per_ml": 35975,
+    "max_cells_per_ml": 293765,
+    "valid_cells": 2,
+    "week_end": "2026-04-11"
+   },
+   {
+    "cells_per_ml": 235505,
+    "max_cells_per_ml": 235505,
+    "valid_cells": 3,
+    "week_end": "2025-09-27"
+   },
+   {
+    "cells_per_ml": 301995,
+    "max_cells_per_ml": 301995,
+    "valid_cells": 2,
+    "week_end": "2025-09-20"
+   },
+   {
+    "cells_per_ml": 155597,
+    "max_cells_per_ml": 155597,
+    "valid_cells": 2,
+    "week_end": "2025-08-30"
+   },
+   {
+    "cells_per_ml": 248886,
+    "max_cells_per_ml": 255859,
+    "valid_cells": 3,
+    "week_end": "2025-06-21"
+   },
+   {
+    "cells_per_ml": 222844,
+    "max_cells_per_ml": 222844,
+    "valid_cells": 3,
+    "week_end": "2025-04-19"
+   },
+   {
+    "cells_per_ml": 169044,
+    "max_cells_per_ml": 169044,
+    "valid_cells": 2,
+    "week_end": "2024-10-05"
+   },
+   {
+    "cells_per_ml": 337287,
+    "max_cells_per_ml": 356451,
+    "valid_cells": 3,
+    "week_end": "2024-09-21"
+   }
+  ],
+  "989163": [
+   {
+    "cells_per_ml": 319154,
+    "max_cells_per_ml": 420727,
+    "valid_cells": 2,
+    "week_end": "2025-12-20"
+   },
+   {
+    "cells_per_ml": 432514,
+    "max_cells_per_ml": 731139,
+    "valid_cells": 2,
+    "week_end": "2025-12-13"
+   },
+   {
+    "cells_per_ml": 293765,
+    "max_cells_per_ml": 602560,
+    "valid_cells": 2,
+    "week_end": "2025-11-22"
+   },
+   {
+    "cells_per_ml": 469894,
+    "max_cells_per_ml": 469894,
+    "valid_cells": 1,
+    "week_end": "2024-08-10"
+   },
+   {
+    "cells_per_ml": 1770109,
+    "max_cells_per_ml": 1770109,
+    "valid_cells": 2,
+    "week_end": "2024-07-27"
+   },
+   {
+    "cells_per_ml": 14060,
+    "max_cells_per_ml": 14060,
+    "valid_cells": 1,
+    "week_end": "2024-04-06"
+   },
+   {
+    "cells_per_ml": 147231,
+    "max_cells_per_ml": 147231,
+    "valid_cells": 1,
+    "week_end": "2024-03-16"
+   },
+   {
+    "cells_per_ml": 539511,
+    "max_cells_per_ml": 539511,
+    "valid_cells": 2,
+    "week_end": "2023-12-16"
+   }
+  ]
+ },
+ "version": 1
+}

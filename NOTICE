@@ -29,5 +29,38 @@ These files contain that data or data derived from it:
 pipeline/tests/fixtures/responses-traps_2026-10-09.csv is hand-built test
 data in the same column layout. Its waterbodies are invented.
 
-The project is independent and is not affiliated with or endorsed by the
-State Water Resources Control Board or any California agency.
+Data: Missouri Department of Natural Resources
+----------------------------------------------
+
+Harmful algal bloom cases from the department's public map layer,
+https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6,
+used under the State of Missouri Data Policy (https://mo.gov/data-policy),
+which requires this disclaimer wherever the data is shown:
+
+"The data made available here has been modified for use from its original
+source, which is the State of Missouri. THE STATE OF MISSOURI MAKES NO
+REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS, ACCURACY, TIMELINESS, OR
+CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. THE STATE OF MISSOURI
+EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY
+IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+The data is subject to change as modifications and updates are complete. It
+is understood that the information contained in the Web feed is being used
+at one’s own risk."
+
+The State may withdraw permission at any time. Files: pipeline/data/history.json
+(records whose source is mo-dnr-hab) and
+pipeline/tests/fixtures/mo-hab-points-2026-10-12.json.
+
+
+Data: U.S. Environmental Protection Agency, CyAN
+------------------------------------------------
+
+Weekly satellite cyanobacteria estimates from the Cyanobacteria Assessment
+Network (https://www.epa.gov/water-research/cyanobacteria-assessment-network-cyan),
+derived from Copernicus Sentinel-3 data. A U.S. Government work; EPA does not
+endorse this project. Files: pipeline/data/cyan.json and
+pipeline/tests/fixtures/cyan-*.json (cyan-cache-traps.json is hand-built).
+
+
+The project is independent and is not affiliated with or endorsed by any state
+or federal agency.

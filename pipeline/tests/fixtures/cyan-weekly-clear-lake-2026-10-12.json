@@ -1,0 +1,96 @@
+{
+ "metaInfo": {
+  "locationName": "Clear Lake",
+  "locationLat": 39.04076,
+  "locationLng": -122.80071,
+  "description": "location with image file name as L20262772026283.L3m_7D_CYAN_CI_cyano_CYAN_CONUS_300m_1_3_web.png",
+  "status": "Finished",
+  "requestTimestampLong": 1791834365310,
+  "requestTimestamp": "10-12-2026 19:46:05:310 UTC",
+  "queryDateLong": 1791834365310,
+  "queryDate": "10-12-2026 19:46:05:310 UTC",
+  "url": {
+   "type": "application/json",
+   "href": "http://tomcat:8080/cyan/cyano/location/data/39.04076/-122.80071"
+  }
+ },
+ "outputs": [
+  {
+   "imageDateLong": 1791604800000,
+   "imageDate": "10-10-2026 04:00:00:0 UTC",
+   "satelliteImageType": "OLCI",
+   "satelliteImageFrequency": "Weekly",
+   "cellConcentration": 554625.7,
+   "maxCellConcentration": 602559.6,
+   "latitude": 39.0397,
+   "longitude": -122.802,
+   "validCellsCount": 6
+  },
+  {
+   "imageDateLong": 1791000000000,
+   "imageDate": "10-03-2026 04:00:00:0 UTC",
+   "satelliteImageType": "OLCI",
+   "satelliteImageFrequency": "Weekly",
+   "cellConcentration": 510504.97,
+   "maxCellConcentration": 510504.97,
+   "latitude": 39.0397,
+   "longitude": -122.802,
+   "validCellsCount": 6
+  },
+  {
+   "imageDateLong": 1790395200000,
+   "imageDate": "09-26-2026 04:00:00:0 UTC",
+   "satelliteImageType": "OLCI",
+   "satelliteImageFrequency": "Weekly",
+   "cellConcentration": 398107.16,
+   "maxCellConcentration": 457088.2,
+   "latitude": 39.0397,
+   "longitude": -122.802,
+   "validCellsCount": 6
+  },
+  {
+   "imageDateLong": 1789790400000,
+   "imageDate": "09-19-2026 04:00:00:0 UTC",
+   "satelliteImageType": "OLCI",
+   "satelliteImageFrequency": "Weekly",
+   "cellConcentration": 510504.97,
+   "maxCellConcentration": 524807.44,
+   "latitude": 39.0397,
+   "longitude": -122.802,
+   "validCellsCount": 6
+  },
+  {
+   "imageDateLong": 1789185600000,
+   "imageDate": "09-12-2026 04:00:00:0 UTC",
+   "satelliteImageType": "OLCI",
+   "satelliteImageFrequency": "Weekly",
+   "cellConcentration": 654636.2,
+   "maxCellConcentration": 654636.2,
+   "latitude": 39.0397,
+   "longitude": -122.802,
+   "validCellsCount": 6
+  },
+  {
+   "imageDateLong": 1788580800000,
+   "imageDate": "09-05-2026 04:00:00:0 UTC",
+   "satelliteImageType": "OLCI",
+   "satelliteImageFrequency": "Weekly",
+   "cellConcentration": 554625.7,
+   "maxCellConcentration": 570164.3,
+   "latitude": 39.0397,
+   "longitude": -122.802,
+   "validCellsCount": 6
+  },
+  {
+   "imageDateLong": 0,
+   "imageDate": "08-22-2026 04:00:00:0 UTC",
+   "satelliteImageType": "OLCI",
+   "satelliteImageFrequency": "Weekly",
+   "cellConcentration": 0.0,
+   "maxCellConcentration": 0.0,
+   "latitude": 39.04,
+   "longitude": -122.8,
+   "validCellsCount": 0
+  }
+ ]
+}

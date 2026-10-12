@@ -45,7 +45,7 @@ def test_blank_end_date_stays_unknown(traps: normalize.Normalized) -> None:
 
 def test_casing_variants_share_a_water_key(traps: normalize.Normalized) -> None:
     keys = {r.water_key for r in traps.records if r.water_name.lower() == "delta lake"}
-    assert keys == {"riverside|delta lake"}
+    assert keys == {"ca|riverside|delta lake"}
 
 
 def test_coordinates_outside_california_or_blank_are_dropped() -> None:

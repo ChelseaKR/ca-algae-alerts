@@ -195,3 +195,12 @@ ul.water-index li { break-inside: avoid; }
   dl { grid-template-columns: 1fr; }
   dd { margin-bottom: 0.5rem; }
 }
+
+.disclaimer {
+  border: 1px solid var(--border);
+  padding: 0.25rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.satellite { margin-top: 2rem; }
+h3 { font-size: 1.05rem; margin-top: 1.5rem; }
