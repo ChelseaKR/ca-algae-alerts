@@ -1,7 +1,7 @@
 {% extends "base.html.jinja" %}
 {% from "_macros.html.jinja" import advisory_table %}
 {% block content %}
-<h1>Toxic algae advisories at California lakes and rivers</h1>
+<h1>Toxic algae advisories at {{ "California and Missouri" if "MO" in states_present else "California" }} lakes and rivers</h1>
 <p class="lede">
   Which waters have a harmful algal bloom advisory on file with the state,
   when it was posted, and whether the state has recorded an end. For anyone
