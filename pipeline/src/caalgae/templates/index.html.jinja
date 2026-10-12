@@ -1,0 +1,29 @@
+{% extends "base.html.jinja" %}
+{% from "_macros.html.jinja" import advisory_table %}
+{% block content %}
+<h1>Toxic algae advisories at California lakes and rivers</h1>
+<p class="lede">
+  Which waters have a harmful algal bloom advisory on file with the state,
+  when it was posted, and whether the state has recorded an end. For anyone
+  heading to the water: swimmers, families, paddlers, anglers and dog owners.
+</p>
+<p class="muted">
+  From the state's file dated {{ source_file.file_date|date }}{% if source_file.newest_record_date %}, whose newest record is from {{ source_file.newest_record_date|date }}{% endif %}.
+  An advisory stays listed until the state records an end. A water that is
+  not listed has no advisory on file, which is not the same as being free of algae.
+</p>
+
+<h2>Advisories posted in the last {{ recent_days }} days</h2>
+{% if recent %}
+{{ advisory_table(recent, root, "Advisories posted in the last " ~ recent_days ~ " days, newest first") }}
+{% else %}
+<p>The state's file has no advisory posted in the last {{ recent_days }} days. Older advisories with no all-clear recorded are listed on the next page.</p>
+{% endif %}
+<p><a href="{{ root }}advisories/">See all {{ recent|length + older_count }} waters whose latest record is an advisory</a>, including {{ older_count }} older ones the state never recorded an end for.</p>
+
+<h2>Bringing a dog?</h2>
+<p>Dogs swim through scum and drink lake water, so algae affects them more than most people. <a href="{{ root }}dogs/">How to read an advisory before a lake day with your dog</a>.</p>
+
+<h2>Find a lake</h2>
+<p><a href="{{ root }}county/">Browse {{ water_count }} lakes and rivers by county</a>. Each has its own page with every state record since 2016.</p>
+{% endblock %}

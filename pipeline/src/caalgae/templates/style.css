@@ -1,0 +1,197 @@
+/* Algae Alerts (working title) -- plain, accessible, no build step. */
+
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #10222b;
+  --muted: #3e5560;
+  --link: #075a73;
+  --link-visited: #3a3a7a;
+  --border: #c3d3da;
+  --header-bg: #ebf4f6;
+  --row-alt: #f3f8fa;
+  --focus: #075a73;
+  --advisory-bg: #fff4e0;
+  --advisory-border: #9a5b00;
+  --record-bg: #eef3f5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1619;
+    --fg: #e8f1f4;
+    --muted: #b4c7ce;
+    --link: #7fd0ea;
+    --link-visited: #b7b7ff;
+    --border: #2f4650;
+    --header-bg: #13232a;
+    --row-alt: #111d22;
+    --focus: #7fd0ea;
+    --advisory-bg: #2a2010;
+    --advisory-border: #e0a440;
+    --record-bg: #16252b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+  /* Long source URLs appear in every footer. Without this they cannot
+     break, and the page scrolls sideways at 320px (SC 1.4.10). */
+  overflow-wrap: anywhere;
+}
+
+.wrap {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+}
+
+a { color: var(--link); text-underline-offset: 0.15em; }
+a:visited { color: var(--link-visited); }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--bg);
+  color: var(--fg);
+  padding: 0.75rem 1rem;
+  z-index: 10;
+  border: 2px solid var(--focus);
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.site-header, .site-footer {
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+}
+.site-footer { border-top: 1px solid var(--border); border-bottom: none; margin-top: 2rem; }
+.site-header .wrap { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; align-items: baseline; justify-content: space-between; }
+.site-name a { font-weight: 700; text-decoration: none; font-size: 1.1rem; }
+.site-tagline { color: var(--muted); font-size: 0.9rem; }
+nav a { margin-right: 1rem; }
+.site-footer p { color: var(--muted); font-size: 0.9rem; }
+/* The footer's analytics opt-out is a button, because it changes a setting
+   rather than going anywhere, drawn like the links next to it. The padding
+   keeps it a 24px target (WCAG 2.2 SC 2.5.8). */
+.link-button {
+  font: inherit;
+  color: var(--link);
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
+  min-height: 24px;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  cursor: pointer;
+}
+
+h1 { font-size: 1.6rem; margin-top: 1.25rem; }
+h2 { font-size: 1.2rem; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+.lede { font-size: 1.05rem; }
+.muted { color: var(--muted); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+th, td {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+thead th {
+  border-bottom: 2px solid var(--fg);
+  white-space: nowrap;
+}
+tbody tr:nth-child(even) { background: var(--row-alt); }
+
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; }
+dt { font-weight: 600; }
+dd { margin: 0; }
+
+ul.water-index {
+  columns: 2 16rem;
+  gap: 2rem;
+  padding-left: 1.1rem;
+}
+ul.water-index li { break-inside: avoid; }
+
+@media (max-width: 30rem) {
+  ul.water-index { columns: 1; }
+  /* Header labels such as "Attribution required" wrap on a narrow screen
+     instead of making the table, and so the page, scroll sideways at 320px
+     (SC 1.4.10). */
+  thead th { white-space: normal; }
+}
+
+/* Breadcrumb trail (water and county pages). Each link keeps a 24px target
+   (WCAG 2.2 SC 2.5.8). The separator is decorative: the second `content`
+   gives it empty alt text where supported, so screen readers skip it. */
+.breadcrumb ol {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+}
+.breadcrumb li { display: flex; align-items: center; }
+.breadcrumb li + li::before {
+  content: "\203A";
+  content: "\203A" / "";
+  color: var(--muted);
+  margin-right: 0.5rem;
+}
+.breadcrumb a {
+  display: inline-block;
+  margin-right: 0;
+  min-height: 24px;
+  padding: 0.125rem 0;
+}
+.breadcrumb a[aria-current="page"] { color: var(--fg); text-decoration: none; }
+
+/* Status box. Color is never the only signal: the words carry the status
+   and the border only repeats it (SC 1.4.1). */
+.status {
+  border-left: 6px solid var(--border);
+  background: var(--record-bg);
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+}
+.status-advisory { border-left-color: var(--advisory-border); background: var(--advisory-bg); }
+.status p { margin: 0.4rem 0; }
+.status-line { font-size: 1.05rem; }
+
+@media (max-width: 40rem) {
+  /* Wide history tables scroll inside themselves, never the page. */
+  table { display: block; overflow-x: auto; }
+  /* A term and its definition stack, so a long question never pushes the
+     page wider than the screen (SC 1.4.10). */
+  dl { grid-template-columns: 1fr; }
+  dd { margin-bottom: 0.5rem; }
+}

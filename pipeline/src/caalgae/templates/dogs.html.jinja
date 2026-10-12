@@ -1,0 +1,33 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>Is this lake safe for my dog?</h1>
+<p class="lede">
+  The state's records cannot answer that with a yes. They can tell you
+  whether an advisory is on file for a lake, when it was posted, and whether
+  the state has recorded an end. Here is how to read them before a lake day
+  with your dog.
+</p>
+
+<h2>Why dogs are more exposed</h2>
+<p>{{ dog_advice }}</p>
+
+<h2>What each advisory level asks</h2>
+<dl>
+  <dt>Caution</dt><dd>{{ guidance.caution }}</dd>
+  <dt>Warning</dt><dd>{{ guidance.warning }}</dd>
+  <dt>Danger</dt><dd>{{ guidance.danger }}</dd>
+  <dt>Other signs</dt><dd>{{ guidance.other_advisory }}</dd>
+</dl>
+<p class="muted">A summary. The sign posted at the water and the state's own guidance govern.</p>
+
+<h2>Reading a lake's page</h2>
+<ul>
+  <li><strong>"Last posted &hellip;, no all-clear recorded"</strong> means the state's latest record for that spot is an advisory. It stays that way until the state records an end, even if the advisory is old.</li>
+  <li><strong>"The state's latest record &hellip; recommends no advisory"</strong> is an explicit record from that date. It is not an all-clear for today: blooms can form within days.</li>
+  <li><strong>A lake with no page here</strong> has no advisory record at all. Most lakes are never tested, so that tells you nothing about the water.</li>
+</ul>
+
+<h2>At the water</h2>
+<p>Keep your dog out of water that looks green, blue-green, brown or milky, has scum or paint-like streaks, or has mats along the shore. Bring fresh drinking water so your dog does not drink from the lake.</p>
+<p><a href="{{ root }}advisories/">See every water with an advisory on file</a>, or <a href="{{ root }}county/">find a lake by county</a>.</p>
+{% endblock %}

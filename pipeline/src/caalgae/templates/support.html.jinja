@@ -1,0 +1,20 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>Support</h1>
+{% if support_email %}
+<p class="lede">Email <a href="mailto:{{ support_email }}">{{ support_email }}</a>.</p>
+{% else %}
+<p class="lede">A support address will be listed here before the app is released.</p>
+{% endif %}
+<h2>Questions</h2>
+<dl>
+  <dt>Is a lake with no advisory OK to swim in?</dt>
+  <dd>The records cannot say. Most waters are never tested. See <a href="{{ root }}about/#limits">the limits of the data</a>.</dd>
+  <dt>Why does an old advisory still show?</dt>
+  <dd>The state never recorded an end for it. It stays listed, with its date, until the state does.</dd>
+  <dt>A lake's record looks wrong.</dt>
+  <dd>The records are the state's. Data questions go to {{ source.contact }}. Problems with this site go to the address above.</dd>
+  <dt>When do app alerts arrive?</dt>
+  <dd>Within about a day of the state publishing an advisory. iOS decides exactly when the app checks.</dd>
+</dl>
+{% endblock %}

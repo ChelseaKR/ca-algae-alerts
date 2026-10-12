@@ -1,7 +1,7 @@
 """``caalgae``: one run, end to end.
 
 dataset page -> discover the dated Responses CSV -> download -> normalize ->
-merge into history -> snapshot (schema-validated) -> site (step two).
+merge into history -> snapshot (schema-validated) -> site.
 
 Every refusal is one ``caalgae: run refused -- nothing published:`` line and
 a non-zero exit, before anything is written. History is written only after
@@ -19,7 +19,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from caalgae import fetch, normalize, snapshot
+from caalgae import fetch, normalize, site, snapshot
 from caalgae import history as hist
 from caalgae.sources import CA_SWRCB_FHAB
 
@@ -35,10 +35,14 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     p = argparse.ArgumentParser(prog="caalgae", description=__doc__)
     p.add_argument("--history", type=Path, default=DEFAULT_HISTORY)
     p.add_argument("--snapshot-out", type=Path, default=None)
+    p.add_argument("--site-out", type=Path, default=None)
     p.add_argument("--fixture-page", type=Path, default=None)
     p.add_argument("--fixture-csv", type=Path, default=None)
     p.add_argument("--fixture-fetched-at", default=None)
     p.add_argument("--run-today", default=None, help="YYYY-MM-DD (tests only)")
+    p.add_argument("--base-url", default="")
+    p.add_argument("--support-email", default="")
+    p.add_argument("--app-store-url", default="")
     return p.parse_args(argv)
 
 
@@ -102,6 +106,14 @@ def run(args: argparse.Namespace) -> int:
     snapshot.validate(snap)
     if args.snapshot_out is not None:
         snapshot.write(snap, args.snapshot_out)
+    if args.site_out is not None:
+        site.build_site(
+            snap,
+            args.site_out,
+            base_url=args.base_url,
+            support_email=args.support_email,
+            app_store_url=args.app_store_url,
+        )
     hist.save(merged, args.history)
     for reason, count in sorted(normalized.quarantine.items()):
         print(f"caalgae: quarantined {count} row(s): {reason}")

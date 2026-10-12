@@ -1,0 +1,39 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>About the data and its limits</h1>
+<p class="lede">
+  {{ site_name }} republishes the California State Water Resources Control
+  Board's harmful algal bloom advisory records, one page per water, with the
+  full history since 2016. It adds nothing the state did not record.
+</p>
+
+<h2 id="limits">What the data cannot tell you</h2>
+<ul>
+  <li><strong>Absence of an advisory does not mean a water is safe.</strong> Most lakes and rivers are never tested, reports come from the public and partner agencies on a voluntary basis, and the state says its data "is not exhaustive of all ambient conditions across the state."</li>
+  <li><strong>An advisory is a recommendation.</strong> In the state's words, "a recommended advisory may or may not result in a posting of the advisory on the ground." Here, "posted" means published in the state's records.</li>
+  <li><strong>End dates are often blank.</strong> "Advisory 'End Date' can be blank for a long time." A blank end date is unknown, never "ended".</li>
+  <li><strong>Timing.</strong> The pipeline reads the state's file once a day. The state's own map is updated daily. Check the <a href="{{ source.official_map_url }}">official map</a> and posted signs before you go.</li>
+</ul>
+
+<h2 id="status">How a status is decided</h2>
+<p>Each report is one spot at a water. For each spot, the latest record that decides anything wins:</p>
+<ul>
+  <li>An advisory (Caution, Warning, Danger, or another sign type the state uses) means the spot reads "last posted &hellip;, no all-clear recorded" until the state records an end.</li>
+  <li>The state's "None" record (no advisory recommended) or an end date the state recorded ends it, with that date.</li>
+  <li>"NA - refer to Report Details" and blank levels change nothing.</li>
+</ul>
+<p>A water shows an advisory if any of its spots does, at the highest level among them. Rows the pipeline could not place honestly are left out and counted: {{ quarantine.total }} in the current file{% for reason, n in quarantine.by_reason.items() %}{% if loop.first %} ({% else %}; {% endif %}{{ n }} {{ reason }}{% if loop.last %}){% endif %}{% endfor %}.</p>
+
+<h2 id="source">Source and license</h2>
+<dl>
+  <dt>Agency</dt><dd>{{ source.agency }}</dd>
+  <dt>Program</dt><dd>{{ source.program }}</dd>
+  <dt>Dataset</dt><dd><a href="{{ source.dataset_url }}">{{ source.dataset_url }}</a></dd>
+  <dt>License</dt><dd>{{ source.license }}; "{{ source.rights }}" (read {{ source.license_read_on|date }})</dd>
+  <dt>File used</dt><dd>{{ source_file.file_name }} ({{ source_file.rows_read }} rows), read {{ source_file.fetched_at[:10]|date }}</dd>
+  <dt>Data questions</dt><dd>The state program: {{ source.contact }}</dd>
+</dl>
+
+<h2 id="app">The iPhone app</h2>
+<p>A paid iPhone app is in development. Browsing and every lake's history will be free; alerts for your favorite lakes and a Home Screen widget will be a one-time purchase. The app checks this site's data file about once a day, so an alert comes within about a day of the state publishing a new advisory, not in real time.</p>
+{% endblock %}

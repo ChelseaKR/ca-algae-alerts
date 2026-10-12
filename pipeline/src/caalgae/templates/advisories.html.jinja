@@ -1,0 +1,12 @@
+{% extends "base.html.jinja" %}
+{% from "_macros.html.jinja" import advisory_table %}
+{% block content %}
+<h1>Every water with an algae advisory on file</h1>
+<p class="lede">
+  {{ waters|length }} lakes, rivers and shorelines whose latest deciding state
+  record is an advisory, newest posting first. Some were posted years ago:
+  the state never recorded an end for them, so they stay listed with their date.
+</p>
+<p class="muted">Reporting and follow-up monitoring are voluntary, so an old advisory may describe a bloom that has since gone. The date is the only thing the record tells you.</p>
+{{ advisory_table(waters, root, "Every water whose latest record is an advisory, newest first") }}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>Algae advisory records by county</h1>
+<p class="lede">California counties with at least one lake, river or shoreline in the state's harmful algal bloom records.</p>
+<table>
+  <caption class="visually-hidden">Counties with the number of waters on record and how many have an advisory with no all-clear recorded</caption>
+  <thead><tr><th scope="col">County</th><th scope="col">Waters on record</th><th scope="col">Latest record is an advisory</th></tr></thead>
+  <tbody>
+  {% for name, slug, total, open in rows %}
+    <tr><td><a href="{{ root }}county/{{ slug }}/">{{ name }}</a></td><td>{{ total }}</td><td>{{ open }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if no_county %}
+<h2>County not recorded, or outside California</h2>
+<p>The state's records name no California county for these waters. Some are shared with Nevada or Arizona.</p>
+<ul class="water-index">
+{% for w in no_county %}
+  <li><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a>{% if w.county_text %} ({{ w.county_text }}){% endif %}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

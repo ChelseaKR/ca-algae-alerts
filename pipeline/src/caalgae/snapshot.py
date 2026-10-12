@@ -125,7 +125,12 @@ def build_waterbodies(
         for entry in group:
             by_site[entry.record.site_id].append(entry)
         sites, statuses = [], []
-        for site_id in sorted(by_site, key=lambda s: (len(s), s)):
+        # Newest activity first, so a lake's page leads with what changed last.
+        newest = {
+            site_id: max(e.record.sort_key() for e in site_entries)
+            for site_id, site_entries in by_site.items()
+        }
+        for site_id in sorted(by_site, key=lambda s: newest[s], reverse=True):
             site, site_status = _site_json(site_id, by_site[site_id], run_date)
             sites.append(site)
             statuses.append(site_status)

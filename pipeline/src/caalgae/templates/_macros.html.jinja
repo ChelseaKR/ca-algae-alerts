@@ -1,0 +1,32 @@
+{% macro status_box(status) %}
+<div class="status status-{{ status.kind }}{% if status.tier %} tier-{{ status.tier }}{% endif %}">
+  <p class="status-line"><strong>{{ headline(status) }}</strong></p>
+  {% if status.kind == "no_advisory_recorded" and status.last_advisory %}
+  <p>Last advisory on file: {{ status.last_advisory|date }}.</p>
+  {% endif %}
+  {% if status.kind == "advisory" and status.planned_end %}
+  <p>The state set an end date of {{ status.planned_end|date }}.</p>
+  {% endif %}
+  {% if status.kind == "advisory" and status.sites_with_advisory > 1 %}
+  <p>{{ status.sites_with_advisory }} reported spots here have an advisory with no all-clear recorded.</p>
+  {% endif %}
+  <p class="muted">{{ caveat(status) }}</p>
+</div>
+{% endmacro %}
+
+{% macro advisory_table(waters, root, caption) %}
+<table>
+  <caption class="visually-hidden">{{ caption }}</caption>
+  <thead><tr><th scope="col">Water</th><th scope="col">County</th><th scope="col">Level</th><th scope="col">Last posted</th></tr></thead>
+  <tbody>
+  {% for w in waters %}
+    <tr>
+      <td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td>
+      <td>{{ w.counties|join(", ") if w.counties else (w.county_text or "Not recorded") }}</td>
+      <td>{{ level_name(w.status) }}</td>
+      <td>{{ w.status.posted|date }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endmacro %}

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% if ga4_measurement_id %}
+{% include "_ga4.html.jinja" +%}
+{% endif %}
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+{% if noindex %}
+<meta name="robots" content="noindex">
+{% endif %}
+{% if canonical_url %}
+<link rel="canonical" href="{{ canonical_url }}">
+<meta property="og:url" content="{{ canonical_url }}">
+{% endif %}
+<link rel="stylesheet" href="{{ root }}assets/style.css">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ description }}">
+<meta property="og:site_name" content="{{ site_name }}">
+<meta name="twitter:card" content="summary">
+{% if structured_data %}
+{# schema.org data. Only facts the page itself shows; tojson escapes <, >
+   and &, so no water name can close this element. #}
+<script type="application/ld+json">{{ structured_data|tojson }}</script>
+{% endif %}
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="wrap">
+    <p class="site-name"><a href="{{ root }}">{{ site_name }}</a> <span class="site-tagline">California lake &amp; river algae advisories</span></p>
+    <nav aria-label="Primary">
+      <a href="{{ root }}">Latest</a>
+      <a href="{{ root }}advisories/">All advisories</a>
+      <a href="{{ root }}county/">By county</a>
+      <a href="{{ root }}dogs/">Dogs</a>
+      <a href="{{ root }}about/">About</a>
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap">
+{% if breadcrumb %}
+<nav aria-label="Breadcrumb" class="breadcrumb">
+  <ol>
+    {% for name, url in breadcrumb %}
+    {% if loop.last %}
+    <li><a href="{{ url }}" aria-current="page">{{ name }}</a></li>
+    {% else %}
+    <li><a href="{{ url }}">{{ name }}</a></li>
+    {% endif %}
+    {% endfor %}
+  </ol>
+</nav>
+{% endif %}
+{% block content %}{% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <p>{{ source.attribution }} {{ site_name }} is independent and is not affiliated with or endorsed by any California agency.</p>
+    <p>State data file {{ source_file.file_name }}, read {{ source_file.fetched_at[:10]|date }}. Official map: <a href="{{ source.official_map_url }}">{{ source.official_map_url }}</a></p>
+    <p><a href="{{ source.dataset_url }}">Dataset on data.ca.gov</a> &middot; <a href="{{ root }}about/">about the data</a> &middot; <a href="{{ root }}privacy/">privacy</a> &middot; <a href="{{ root }}support/">support</a></p>
+    {% if ga4_measurement_id %}
+    <p id="analytics-choice" hidden><button type="button" id="analytics-opt-out" class="link-button" hidden>Opt out of analytics</button> <span id="analytics-status" role="status"></span></p>
+    {% endif %}
+  </div>
+</footer>
+</body>
+</html>

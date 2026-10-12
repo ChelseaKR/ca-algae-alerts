@@ -47,13 +47,15 @@ smoke:
 		--fixture-csv tests/fixtures/responses-traps_2026-10-09.csv \
 		--run-today 2026-10-12 \
 		--history $(TMP)/smoke/history.json \
-		--snapshot-out $(TMP)/smoke/snapshot.json
+		--snapshot-out $(TMP)/smoke/snapshot.json \
+		--site-out $(TMP)/smoke/site
 	test -f $(TMP)/smoke/snapshot.json
+	test -f $(TMP)/smoke/site/index.html
 
-# CQ-10: the wheel builds, and the schema ships inside it.
+# CQ-10: the wheel builds, and the schema and templates ship inside it.
 build:
 	cd $(PIPELINE) && uv build --wheel --out-dir $(TMP)/dist
-	cd $(PIPELINE) && $(UV_RUN) python -c "import sys, zipfile, glob; n = zipfile.ZipFile(glob.glob(sys.argv[1] + '/*.whl')[0]).namelist(); sys.exit(0 if 'caalgae/snapshot.v1.json' in n else 'wheel is missing caalgae/snapshot.v1.json')" $(TMP)/dist
+	cd $(PIPELINE) && $(UV_RUN) python -c "import sys, zipfile, glob; n = zipfile.ZipFile(glob.glob(sys.argv[1] + '/*.whl')[0]).namelist(); sys.exit(0 if {'caalgae/snapshot.v1.json', 'caalgae/templates/base.html.jinja'} <= set(n) else 'wheel is missing the schema or templates')" $(TMP)/dist
 
 audit:
 	cd $(PIPELINE) && uv export --frozen --no-emit-project --format requirements-txt --quiet --output-file $(TMP)/audit/requirements.txt
