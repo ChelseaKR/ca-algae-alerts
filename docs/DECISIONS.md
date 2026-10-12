@@ -182,16 +182,20 @@ CyAN, build decisions:
   in `pipeline/data/cyan.json`. A failed refresh keeps the cache, and every
   reading shows its week.
 
-## 0011 — robots.txt: a 404 is "no rules"; any other error is off-limits (2026-10-12, owner to confirm)
+## 0011 — robots.txt: missing is "no rules"; errors and redirects are off-limits (owner, 2026-10-12)
 
-The owner's ruling: hosts whose robots.txt returns an error (for example
-ArcGIS's 403 "Invalid URL") are off-limits, and Missouri is added only if
-its host's robots.txt is readable and allows the paths. Missouri's host
-(`gis.dnr.mo.gov`) and CyAN's (`qed.epa.gov`) both answer **404**: there is
-no robots file. This build reads a 404 as RFC 9309 does, "no rules", and so
-added both; the CyAN instruction came with the research's note that its
-host's robots.txt is a 404. The stricter reading ("not readable", so
-off-limits) would remove both: set `enabled=False` on `MO_DNR_HAB` and
-`EPA_CYAN`. Every live run checks robots.txt first (`fetch.robots_allows`):
-a readable file is enforced, a 404 passes, and any other status stops that
-source without touching California.
+The owner's ruling, settled 2026-10-12:
+
+- A **404 or missing robots.txt** counts as **no rules**. Missouri's host
+  (`gis.dnr.mo.gov`) and CyAN's (`qed.epa.gov`) both answer 404, so both
+  sources stay on.
+- A **403, a 5xx, or a redirect to a page that is not a robots.txt** makes
+  the host **off-limits** (ArcGIS's `servicesN.arcgis.com` 403 "Invalid
+  URL" is the example). So does any other status, or no answer.
+- A readable robots.txt is enforced for our User-Agent.
+
+Every live run checks robots.txt first (`fetch.robots_allows`), before any
+other request to that host. An off-limits host stops that source only;
+California is never stopped by Missouri or CyAN. Tests cover each case,
+including a redirect to a sign-in page (off-limits) and a redirect to
+another robots.txt (read).

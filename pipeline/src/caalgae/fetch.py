@@ -174,12 +174,10 @@ def robots_allows(client: httpx.Client, url: str) -> None:
     """Read the host's robots.txt before touching it (docs/DECISIONS.md 0011).
 
     - 200: parsed and enforced for our User-Agent.
-    - 404: the host publishes no robots.txt, so it sets no rules (RFC 9309
-      §2.3.1.3). Recorded as such in docs/LICENSES-AND-ATTRIBUTION.md, and an
-      owner decision to confirm.
-    - Anything else, including 403 and 5xx (ArcGIS's 403 "Invalid URL"), or
-      no answer: the host is off-limits under the owner's ruling of
-      2026-10-12, and nothing is fetched from it.
+    - 404 (no robots.txt): no rules. The owner's ruling of 2026-10-12.
+    - A redirect to anything but a robots.txt, 403, 5xx (ArcGIS's 403
+      "Invalid URL"), any other status, or no answer: the host is
+      off-limits and nothing is fetched from it. Same ruling.
     """
     parts = urllib.parse.urlsplit(url)
     robots_url = f"{parts.scheme}://{parts.netloc}/robots.txt"
@@ -187,6 +185,12 @@ def robots_allows(client: httpx.Client, url: str) -> None:
         response = client.get(robots_url)
     except httpx.HTTPError as error:
         raise RobotsOffLimits(f"{robots_url} did not answer: {error}") from error
+    final_path = urllib.parse.urlsplit(str(response.url)).path
+    if response.history and final_path != "/robots.txt":
+        raise RobotsOffLimits(
+            f"{robots_url} redirected to {response.url}, not a robots file; "
+            "the host is off-limits"
+        )
     if response.status_code == 404:
         return
     if response.status_code != 200:

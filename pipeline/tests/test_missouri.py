@@ -161,3 +161,39 @@ def test_a_robots_disallow_is_obeyed() -> None:
     ):
         missouri.fetch_cases(client)
     assert not layer.called
+
+
+@respx.mock
+def test_a_robots_redirect_to_a_non_robots_page_is_off_limits() -> None:
+    respx.get("https://gis.dnr.mo.gov/robots.txt").mock(
+        return_value=httpx.Response(
+            302, headers={"location": "https://gis.dnr.mo.gov/login"}
+        )
+    )
+    respx.get("https://gis.dnr.mo.gov/login").mock(
+        return_value=httpx.Response(200, text="<html>sign in</html>")
+    )
+    layer = respx.get(missouri.QUERY_URL).mock(return_value=httpx.Response(200))
+    with (
+        fetch.make_client() as client,
+        pytest.raises(fetch.RobotsOffLimits, match="redirected"),
+    ):
+        missouri.fetch_cases(client)
+    assert not layer.called
+
+
+@respx.mock
+def test_a_robots_redirect_to_another_robots_file_is_read() -> None:
+    respx.get("https://gis.dnr.mo.gov/robots.txt").mock(
+        return_value=httpx.Response(
+            301, headers={"location": "https://www.gis.dnr.mo.gov/robots.txt"}
+        )
+    )
+    respx.get("https://www.gis.dnr.mo.gov/robots.txt").mock(
+        return_value=httpx.Response(200, text="User-agent: *\nAllow: /\n")
+    )
+    respx.get(missouri.QUERY_URL).mock(
+        return_value=httpx.Response(200, content=MO_POINTS.read_bytes())
+    )
+    with fetch.make_client() as client:
+        assert missouri.fetch_cases(client) == MO_POINTS.read_bytes()

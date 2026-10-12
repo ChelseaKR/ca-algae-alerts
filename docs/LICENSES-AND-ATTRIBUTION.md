@@ -47,12 +47,11 @@ refuses one if it ever did, and the tests try each.
   **404, no file**. `https://www.epa.gov/robots.txt` is 200.
 
 How the pipeline treats robots.txt for these hosts (`fetch.robots_allows`,
-checked on every live run before any other request): a readable file is
-enforced; a 404 means the host publishes no rules (RFC 9309 §2.3.1.3); any
-other status, including ArcGIS's 403 "Invalid URL" and 5xx, or no answer,
-makes the host off-limits and nothing is fetched (the owner's ruling of
-2026-10-12). Treating a 404 as "no rules" is an owner decision to confirm
-(docs/DECISIONS.md 0011).
+checked on every live run before any other request), per the owner's ruling
+of 2026-10-12 (docs/DECISIONS.md 0011): a readable file is enforced; a 404 or
+missing file means no rules; a 403, a 5xx, a redirect to a page that is not a
+robots.txt, any other status, or no answer makes the host off-limits, and
+nothing is fetched from it.
 
 ## Crawl budget
 
