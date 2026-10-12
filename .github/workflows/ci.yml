@@ -1,0 +1,105 @@
+name: ci
+
+# The merge-blocking pipeline (CI-CD-STANDARD §1), on Trout Truck's shape:
+#
+# - verify: `make verify` and nothing else (format, lint, type, test with a
+#   90% branch floor, offline smoke, wheel build, dependency audit, SAST,
+#   secrets, hygiene), so a green check here is the same claim as a green
+#   `make verify` on a laptop.
+# - ios: `swift test` on ios/AlgaeCore, the app's Foundation-only data layer.
+#   The full app target and its UI tests run locally on the simulator (see
+#   ios/README.md); a headless xcodebuild lane is not proven on a runner yet.
+#
+# Private repository: verify's runner comes from the CI_RUNS_ON repository
+# variable (the portfolio's self-hosted Mac runners, set only once a runner is
+# registered); unset, it is GitHub-hosted. The ios job runs on pull requests
+# only, because hosted macOS minutes cost ten times Linux.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# One group per commit on a push, one per branch on a pull request
+# (CI-CD-STANDARD §11c): a ref-only key evicts pending runs on main.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'pull_request' && 'pr' || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ${{ fromJSON(vars.CI_RUNS_ON || '"ubuntu-latest"') }}
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          # `make secrets` runs `gitleaks git` over every commit.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: install uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: "pipeline/uv.lock"
+
+      - name: install pinned gitleaks and osv-scanner
+        # Pinned release binaries checked against hashes committed here.
+        # The architecture follows the runner, so a self-hosted arm64 runner
+        # gets arm64 binaries.
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256_X64: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+          OSV_SCANNER_VERSION: 2.6.0
+          OSV_SCANNER_SHA256_AMD64: ca69b3d3cd08f889a49dc0a383122f71cc528b83803671df5fd874d97485b108
+        run: |
+          set -euo pipefail
+          if [ "$(uname -m)" != "x86_64" ]; then
+            echo "::error::this job pins x86_64 binaries; add arm64 hashes before pointing CI_RUNS_ON at an arm64 runner"
+            exit 1
+          fi
+          bin="$RUNNER_TEMP/bin"
+          mkdir -p "$bin"
+          archive="$RUNNER_TEMP/gitleaks.tar.gz"
+          curl -sSfL -o "$archive" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256_X64}  ${archive}" | sha256sum --check --strict
+          tar -xzf "$archive" -C "$bin" gitleaks
+          curl -sSfL -o "$bin/osv-scanner" \
+            "https://github.com/google/osv-scanner/releases/download/v${OSV_SCANNER_VERSION}/osv-scanner_linux_amd64"
+          echo "${OSV_SCANNER_SHA256_AMD64}  $bin/osv-scanner" | sha256sum --check --strict
+          chmod +x "$bin/osv-scanner"
+          echo "$bin" >> "$GITHUB_PATH"
+
+      - name: make verify
+        run: make verify
+
+  ios:
+    if: github.event_name != 'push'
+    runs-on: macos-14
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: cache swiftpm build
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ios/AlgaeCore/.build
+          key: spm-algaecore-${{ runner.os }}-${{ hashFiles('ios/AlgaeCore/Package.swift', 'ios/AlgaeCore/Package.resolved') }}
+          restore-keys: |
+            spm-algaecore-${{ runner.os }}-
+
+      - name: swift test
+        working-directory: ios/AlgaeCore
+        run: swift test
