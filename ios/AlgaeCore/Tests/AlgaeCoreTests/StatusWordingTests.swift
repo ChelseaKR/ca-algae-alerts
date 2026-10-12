@@ -1,0 +1,46 @@
+import XCTest
+@testable import AlgaeCore
+
+/// Pins the sentences to the website's (`pipeline/src/caalgae/wording.py`)
+/// and checks that nothing the app says claims a water is safe.
+final class StatusWordingTests: XCTestCase {
+    let advisory = Status(kind: .advisory, tier: .caution, level: "Caution", posted: PlainDate(year: 2026, month: 9, day: 20), sitesWithAdvisory: 1)
+    let lifted = Status(kind: .noAdvisoryRecorded, liftKind: .noAdvisoryRecord, liftDate: PlainDate(year: 2026, month: 9, day: 1))
+    let ended = Status(kind: .noAdvisoryRecorded, liftKind: .endDate, liftDate: PlainDate(year: 2025, month: 9, day: 30))
+    let undetermined = Status(kind: .undetermined)
+
+    func testHeadlinesMatchTheWebsite() {
+        XCTAssertEqual(StatusWording.headline(advisory), "Caution advisory, last posted Sep 20, 2026. No all-clear recorded.")
+        XCTAssertEqual(StatusWording.headline(lifted), "The state's latest record, from Sep 1, 2026, recommends no advisory.")
+        XCTAssertEqual(StatusWording.headline(ended), "The state recorded an end date of Sep 30, 2025.")
+        XCTAssertEqual(StatusWording.headline(undetermined), "Reports on file, with no advisory level the state has classified.")
+    }
+
+    func testOtherAdvisoryUsesTheStatesOwnWords() {
+        let mat = Status(kind: .advisory, tier: .otherAdvisory, level: "Algal mat alert sign", posted: PlainDate(year: 2026, month: 9, day: 25), sitesWithAdvisory: 1)
+        XCTAssertEqual(StatusWording.levelName(mat), "Algal mat alert sign")
+    }
+
+    func testNothingTheAppSaysClaimsSafety() throws {
+        var lines: [String] = [StatusWording.dogAdvice, FreeTier.unlockSummary]
+        for s in [advisory, lifted, ended, undetermined] {
+            lines += [StatusWording.headline(s), StatusWording.shortLine(s), StatusWording.caveat(s), StatusWording.dogAnswer(name: "X", status: s)]
+        }
+        lines += AdvisoryTier.allCases.map(StatusWording.guidance)
+        let snapshot = try Fixtures.traps()
+        for w in snapshot.waterbodies {
+            lines += [StatusWording.headline(w.status), StatusWording.dogAnswer(name: w.name, status: w.status)]
+        }
+        for line in lines { XCTAssertEqual(affirmativeSafetyClaims(line), [], line) }
+    }
+
+    func testGuardIsNotVacuous() {
+        XCTAssertEqual(affirmativeSafetyClaims("Lake X is safe for dogs."), ["Lake X is safe for dogs"])
+        XCTAssertEqual(affirmativeSafetyClaims("All-clear recorded."), ["All-clear recorded"])
+    }
+
+    func testLiftNeverUsesAdvisoryWording() {
+        XCTAssertFalse(StatusWording.shortLine(lifted).contains("Caution"))
+        XCTAssertTrue(StatusWording.shortLine(lifted).contains("Sep 1, 2026"))
+    }
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Algae Alerts</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<!--
+	algaealerts://water/<id> opens one lake (WaterLink in AlgaeCore);
+	algaealerts://unlock opens the purchase screen. The widget links this
+	way. Opening one makes no network request.
+	-->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>net.chelseakr.algaealerts.link</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>algaealerts</string>
+			</array>
+		</dict>
+	</array>
+	<!--
+	Export compliance: the only encryption is the HTTPS that URLSession and
+	StoreKit use from iOS itself, which is exempt. Declaring it here means
+	App Store Connect does not ask on every upload.
+	-->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+	<!--
+	Background App Refresh only — no remote-notification/VoIP/audio modes,
+	since there is no server push (docs/DECISIONS.md 0006). This is what lets
+	BGAppRefreshTask run at all; iOS still decides exactly when.
+	-->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>net.chelseakr.algaealerts.refresh</string>
+	</array>
+</dict>
+</plist>

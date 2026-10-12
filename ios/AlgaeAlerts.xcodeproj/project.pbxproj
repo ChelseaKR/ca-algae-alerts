@@ -1,0 +1,832 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03C3A43421D3C08FDF0353DF /* AlgaeCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0F737FDF57F6103C37D48DF8 /* AlgaeCore */; };
+		1C8828AA68306B54746AA8DF /* AlgaeAlertsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CA93D24D1FFE64E35E6F53 /* AlgaeAlertsApp.swift */; };
+		2175BE904FA8DACDE33C92CF /* snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = 4575059782B1DF2CAB4F3741 /* snapshot.json */; };
+		29FD9346E130735709753859 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B63ADA62FCB97F745616137 /* Theme.swift */; };
+		34A02C184389FCEB3A7AC7EC /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B120916499F2B6CA357F1C /* NotificationScheduler.swift */; };
+		378CF33F17D41970C2EA0F94 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 930F5FF400E874AEA0961C76 /* PrivacyInfo.xcprivacy */; };
+		38FD33C8BA1FA1A964769AF6 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743806DE1B3DBAAF469444DD /* BackgroundRefresh.swift */; };
+		4D3640752B6C6AD5C4B207D1 /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E009B95F7BA00963B56345B0 /* WidgetBridge.swift */; };
+		59F2A095D7FC6AA4974EA1FA /* AlgaeCore in Frameworks */ = {isa = PBXBuildFile; productRef = D335BD8A0C2B02DE2FDB1F69 /* AlgaeCore */; };
+		5D1AC3C766CB750B7223A01C /* AlgaeAlertsWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DC6404F7BC492CB724B1E1B4 /* AlgaeAlertsWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		619EDDA14AA828C69B4B5510 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D383D648E132D4C6DAD025 /* IntroView.swift */; };
+		686BCFD79ABED2A4C577825D /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07123009D33136C478782276 /* AppRouter.swift */; };
+		6B990C09D17B178112B1D3F7 /* FavoriteLakesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD69F20802E188E0EEE0D3E5 /* FavoriteLakesWidget.swift */; };
+		8B174C3CC782E9BE0DD0C53B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46E892F9F420D45E9BFF0760 /* Assets.xcassets */; };
+		8C11B4DEE5609FA4A3A82C46 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7D20D9F1D12679CC737A09DD /* PrivacyInfo.xcprivacy */; };
+		99DB9D206ADC8D25E9A3F675 /* AdvisoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 671BFB2ACA5727BE7DD2D249 /* AdvisoriesView.swift */; };
+		9A042C7DE60506C5A3E505CC /* AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE10E44FF7B02472B22B66C /* AppUITests.swift */; };
+		9A48FC4B8F39D8C432D3D7CA /* LakeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86CD5B05C537BCCC502198C /* LakeDetailView.swift */; };
+		9C52704FD23AD9321870F362 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59F903ADCFB6B48CE7666F3C /* SwiftUI.framework */; };
+		AD15F6931B3500BA6F54638C /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44046A4247D9E9FBC1298DA8 /* AboutView.swift */; };
+		C0E7E3FDC92FBAAF73F7C680 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52BC3969564AB3A48F413620 /* FavoritesView.swift */; };
+		C1062847D15C6B6F29BE5FF9 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C416A1661193134F3CAD78 /* RootView.swift */; };
+		D42ECADE2F450DB29185010D /* AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8C99163417BCCD0F3624F6 /* AppTests.swift */; };
+		DFD01BF7FF259C487D20982A /* AlgaeCore in Frameworks */ = {isa = PBXBuildFile; productRef = C61D49D28E59CE02C93C08A2 /* AlgaeCore */; };
+		E514D5E868851C906A45F09F /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF81ECCB553CED89E0B5F94 /* AppEnvironment.swift */; };
+		E96E1FDF6F7DCADE365CC6A2 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE23FC8CCCA4C290A6AFEAB /* PurchaseManager.swift */; };
+		F70637C302EAC9517E6D28F5 /* PurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAF921E10EA1A47C25CC564 /* PurchaseView.swift */; };
+		FD2F177212B181CB0ECF7AF9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E31305011D585B0392D5795 /* WidgetKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2F0D6062A7EA5EB873789EDE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E93A31CDC7422BE749BF7B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 20D8F07C5BFAE105A6CD9CD9;
+			remoteInfo = AlgaeAlerts;
+		};
+		98C83C023938094AD35EEAB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E93A31CDC7422BE749BF7B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 673DDB2D4E3451B4F9C71329;
+			remoteInfo = AlgaeAlertsWidgets;
+		};
+		C52C68C0FE97995CCFA73D20 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A7E93A31CDC7422BE749BF7B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 20D8F07C5BFAE105A6CD9CD9;
+			remoteInfo = AlgaeAlerts;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6188CF61F7C0274175FAA13E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5D1AC3C766CB750B7223A01C /* AlgaeAlertsWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		07123009D33136C478782276 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		09B120916499F2B6CA357F1C /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
+		1CE0AD0CD64B4DB3AFC5A532 /* AlgaeAlertsWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AlgaeAlertsWidgets.entitlements; sourceTree = "<group>"; };
+		3E31305011D585B0392D5795 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		40D383D648E132D4C6DAD025 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
+		44046A4247D9E9FBC1298DA8 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		4575059782B1DF2CAB4F3741 /* snapshot.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snapshot.json; sourceTree = "<group>"; };
+		46E892F9F420D45E9BFF0760 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4CAA1BFE0ECA5E7386D78F61 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		52BC3969564AB3A48F413620 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		59F903ADCFB6B48CE7666F3C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		60163715BDA2452BD86090A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		671BFB2ACA5727BE7DD2D249 /* AdvisoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisoriesView.swift; sourceTree = "<group>"; };
+		68CA93D24D1FFE64E35E6F53 /* AlgaeAlertsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgaeAlertsApp.swift; sourceTree = "<group>"; };
+		69D90C1CAA5DED14F04B49E1 /* Configuration.storekit */ = {isa = PBXFileReference; path = Configuration.storekit; sourceTree = "<group>"; };
+		743806DE1B3DBAAF469444DD /* BackgroundRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefresh.swift; sourceTree = "<group>"; };
+		7B63ADA62FCB97F745616137 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		7D20D9F1D12679CC737A09DD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		8EF81ECCB553CED89E0B5F94 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		930F5FF400E874AEA0961C76 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A0C416A1661193134F3CAD78 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		AA8C99163417BCCD0F3624F6 /* AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTests.swift; sourceTree = "<group>"; };
+		ABE23FC8CCCA4C290A6AFEAB /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		ACE10E44FF7B02472B22B66C /* AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUITests.swift; sourceTree = "<group>"; };
+		AD69F20802E188E0EEE0D3E5 /* FavoriteLakesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteLakesWidget.swift; sourceTree = "<group>"; };
+		C3129080FD678A6052384C25 /* AlgaeAlertsUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AlgaeAlertsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C536295682D1166D8127D67F /* AlgaeAlerts.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AlgaeAlerts.entitlements; sourceTree = "<group>"; };
+		CEAF921E10EA1A47C25CC564 /* PurchaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseView.swift; sourceTree = "<group>"; };
+		D615471CB5DE41512DAF9726 /* AlgaeCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AlgaeCore; path = AlgaeCore; sourceTree = SOURCE_ROOT; };
+		D86CD5B05C537BCCC502198C /* LakeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakeDetailView.swift; sourceTree = "<group>"; };
+		DC6404F7BC492CB724B1E1B4 /* AlgaeAlertsWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = AlgaeAlertsWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E009B95F7BA00963B56345B0 /* WidgetBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBridge.swift; sourceTree = "<group>"; };
+		ECFAD7D2AA18D433D523C88B /* AlgaeAlerts.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = AlgaeAlerts.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6D515FF179C6EE41C84481A /* AlgaeAlertsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AlgaeAlertsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		24DB90D30F53167406C1FC90 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03C3A43421D3C08FDF0353DF /* AlgaeCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63F5D2D16789982A68BF5808 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DFD01BF7FF259C487D20982A /* AlgaeCore in Frameworks */,
+				FD2F177212B181CB0ECF7AF9 /* WidgetKit.framework in Frameworks */,
+				9C52704FD23AD9321870F362 /* SwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B131A8AFA06DD27355874BC1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59F2A095D7FC6AA4974EA1FA /* AlgaeCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0B9A6E895477B819AC8FDD97 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				D615471CB5DE41512DAF9726 /* AlgaeCore */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		10558BA4A0B9D5D7F2350EE8 /* AlgaeAlertsUITests */ = {
+			isa = PBXGroup;
+			children = (
+				ACE10E44FF7B02472B22B66C /* AppUITests.swift */,
+			);
+			path = AlgaeAlertsUITests;
+			sourceTree = "<group>";
+		};
+		19F7E395A9086123982D49C8 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				68CA93D24D1FFE64E35E6F53 /* AlgaeAlertsApp.swift */,
+				8EF81ECCB553CED89E0B5F94 /* AppEnvironment.swift */,
+				07123009D33136C478782276 /* AppRouter.swift */,
+				743806DE1B3DBAAF469444DD /* BackgroundRefresh.swift */,
+				09B120916499F2B6CA357F1C /* NotificationScheduler.swift */,
+				ABE23FC8CCCA4C290A6AFEAB /* PurchaseManager.swift */,
+				E009B95F7BA00963B56345B0 /* WidgetBridge.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		20187A9CFADEB4E23411BEF5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ECFAD7D2AA18D433D523C88B /* AlgaeAlerts.app */,
+				F6D515FF179C6EE41C84481A /* AlgaeAlertsTests.xctest */,
+				C3129080FD678A6052384C25 /* AlgaeAlertsUITests.xctest */,
+				DC6404F7BC492CB724B1E1B4 /* AlgaeAlertsWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		26EB7865910EF3C8BC0576B7 /* AlgaeAlerts */ = {
+			isa = PBXGroup;
+			children = (
+				C536295682D1166D8127D67F /* AlgaeAlerts.entitlements */,
+				69D90C1CAA5DED14F04B49E1 /* Configuration.storekit */,
+				19F7E395A9086123982D49C8 /* App */,
+				7D944CEFA05C5A71791C1669 /* Resources */,
+				BF0C8ED278137276E6D4B5FE /* Views */,
+			);
+			path = AlgaeAlerts;
+			sourceTree = "<group>";
+		};
+		6FCCF411792FDB2AC00D64AE /* AlgaeAlertsTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA8C99163417BCCD0F3624F6 /* AppTests.swift */,
+			);
+			path = AlgaeAlertsTests;
+			sourceTree = "<group>";
+		};
+		7D944CEFA05C5A71791C1669 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				46E892F9F420D45E9BFF0760 /* Assets.xcassets */,
+				4CAA1BFE0ECA5E7386D78F61 /* Info.plist */,
+				7D20D9F1D12679CC737A09DD /* PrivacyInfo.xcprivacy */,
+				4575059782B1DF2CAB4F3741 /* snapshot.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A3488FE80B4B97F05D620DAF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				59F903ADCFB6B48CE7666F3C /* SwiftUI.framework */,
+				3E31305011D585B0392D5795 /* WidgetKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF0C8ED278137276E6D4B5FE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				44046A4247D9E9FBC1298DA8 /* AboutView.swift */,
+				671BFB2ACA5727BE7DD2D249 /* AdvisoriesView.swift */,
+				52BC3969564AB3A48F413620 /* FavoritesView.swift */,
+				40D383D648E132D4C6DAD025 /* IntroView.swift */,
+				D86CD5B05C537BCCC502198C /* LakeDetailView.swift */,
+				CEAF921E10EA1A47C25CC564 /* PurchaseView.swift */,
+				A0C416A1661193134F3CAD78 /* RootView.swift */,
+				7B63ADA62FCB97F745616137 /* Theme.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C009A81B784209888AB9335E = {
+			isa = PBXGroup;
+			children = (
+				26EB7865910EF3C8BC0576B7 /* AlgaeAlerts */,
+				6FCCF411792FDB2AC00D64AE /* AlgaeAlertsTests */,
+				10558BA4A0B9D5D7F2350EE8 /* AlgaeAlertsUITests */,
+				CD5A5010484AE732E07D58BB /* AlgaeAlertsWidgets */,
+				0B9A6E895477B819AC8FDD97 /* Packages */,
+				A3488FE80B4B97F05D620DAF /* Frameworks */,
+				20187A9CFADEB4E23411BEF5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CD5A5010484AE732E07D58BB /* AlgaeAlertsWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				1CE0AD0CD64B4DB3AFC5A532 /* AlgaeAlertsWidgets.entitlements */,
+				AD69F20802E188E0EEE0D3E5 /* FavoriteLakesWidget.swift */,
+				60163715BDA2452BD86090A4 /* Info.plist */,
+				930F5FF400E874AEA0961C76 /* PrivacyInfo.xcprivacy */,
+			);
+			path = AlgaeAlertsWidgets;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		20D8F07C5BFAE105A6CD9CD9 /* AlgaeAlerts */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B18740FA35805E7CDDDDB56F /* Build configuration list for PBXNativeTarget "AlgaeAlerts" */;
+			buildPhases = (
+				10F34D0EDCCB39B07D6BB70E /* Sources */,
+				6FF1C3680AA551BD24025AF7 /* Resources */,
+				B131A8AFA06DD27355874BC1 /* Frameworks */,
+				6188CF61F7C0274175FAA13E /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A4E5A5B0E30CC9D7AAF42D50 /* PBXTargetDependency */,
+			);
+			name = AlgaeAlerts;
+			packageProductDependencies = (
+				D335BD8A0C2B02DE2FDB1F69 /* AlgaeCore */,
+			);
+			productName = AlgaeAlerts;
+			productReference = ECFAD7D2AA18D433D523C88B /* AlgaeAlerts.app */;
+			productType = "com.apple.product-type.application";
+		};
+		44125B54D93161AE363FA30F /* AlgaeAlertsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 675644A1D805534B4F415303 /* Build configuration list for PBXNativeTarget "AlgaeAlertsTests" */;
+			buildPhases = (
+				C2231A19A27E919E4E84974B /* Sources */,
+				24DB90D30F53167406C1FC90 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				036C9F550AFCAAFCBCF524D6 /* PBXTargetDependency */,
+			);
+			name = AlgaeAlertsTests;
+			packageProductDependencies = (
+				0F737FDF57F6103C37D48DF8 /* AlgaeCore */,
+			);
+			productName = AlgaeAlertsTests;
+			productReference = F6D515FF179C6EE41C84481A /* AlgaeAlertsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4B2DC688A8518B8E6954C654 /* AlgaeAlertsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8E4D2035EF5D6CA167FE1DD7 /* Build configuration list for PBXNativeTarget "AlgaeAlertsUITests" */;
+			buildPhases = (
+				424041AAB31D9CBAE386EF0E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				08A0298BE98A17104217E0AA /* PBXTargetDependency */,
+			);
+			name = AlgaeAlertsUITests;
+			packageProductDependencies = (
+			);
+			productName = AlgaeAlertsUITests;
+			productReference = C3129080FD678A6052384C25 /* AlgaeAlertsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		673DDB2D4E3451B4F9C71329 /* AlgaeAlertsWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9E10E04093C3DA8B259CD8FF /* Build configuration list for PBXNativeTarget "AlgaeAlertsWidgets" */;
+			buildPhases = (
+				55EFB2EDCA70E6128FB65AF5 /* Sources */,
+				C1726B3EE73FE961EB690A8C /* Resources */,
+				63F5D2D16789982A68BF5808 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AlgaeAlertsWidgets;
+			packageProductDependencies = (
+				C61D49D28E59CE02C93C08A2 /* AlgaeCore */,
+			);
+			productName = AlgaeAlertsWidgets;
+			productReference = DC6404F7BC492CB724B1E1B4 /* AlgaeAlertsWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A7E93A31CDC7422BE749BF7B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					20D8F07C5BFAE105A6CD9CD9 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					44125B54D93161AE363FA30F = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					4B2DC688A8518B8E6954C654 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 20D8F07C5BFAE105A6CD9CD9;
+					};
+					673DDB2D4E3451B4F9C71329 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 94B01C5ABDBBDDA5E372E62E /* Build configuration list for PBXProject "AlgaeAlerts" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C009A81B784209888AB9335E;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4653192EA3BCD7E274A5FF18 /* XCLocalSwiftPackageReference "AlgaeCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 20187A9CFADEB4E23411BEF5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				20D8F07C5BFAE105A6CD9CD9 /* AlgaeAlerts */,
+				673DDB2D4E3451B4F9C71329 /* AlgaeAlertsWidgets */,
+				44125B54D93161AE363FA30F /* AlgaeAlertsTests */,
+				4B2DC688A8518B8E6954C654 /* AlgaeAlertsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6FF1C3680AA551BD24025AF7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8B174C3CC782E9BE0DD0C53B /* Assets.xcassets in Resources */,
+				8C11B4DEE5609FA4A3A82C46 /* PrivacyInfo.xcprivacy in Resources */,
+				2175BE904FA8DACDE33C92CF /* snapshot.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1726B3EE73FE961EB690A8C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				378CF33F17D41970C2EA0F94 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		10F34D0EDCCB39B07D6BB70E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AD15F6931B3500BA6F54638C /* AboutView.swift in Sources */,
+				99DB9D206ADC8D25E9A3F675 /* AdvisoriesView.swift in Sources */,
+				1C8828AA68306B54746AA8DF /* AlgaeAlertsApp.swift in Sources */,
+				E514D5E868851C906A45F09F /* AppEnvironment.swift in Sources */,
+				686BCFD79ABED2A4C577825D /* AppRouter.swift in Sources */,
+				38FD33C8BA1FA1A964769AF6 /* BackgroundRefresh.swift in Sources */,
+				C0E7E3FDC92FBAAF73F7C680 /* FavoritesView.swift in Sources */,
+				619EDDA14AA828C69B4B5510 /* IntroView.swift in Sources */,
+				9A48FC4B8F39D8C432D3D7CA /* LakeDetailView.swift in Sources */,
+				34A02C184389FCEB3A7AC7EC /* NotificationScheduler.swift in Sources */,
+				E96E1FDF6F7DCADE365CC6A2 /* PurchaseManager.swift in Sources */,
+				F70637C302EAC9517E6D28F5 /* PurchaseView.swift in Sources */,
+				C1062847D15C6B6F29BE5FF9 /* RootView.swift in Sources */,
+				29FD9346E130735709753859 /* Theme.swift in Sources */,
+				4D3640752B6C6AD5C4B207D1 /* WidgetBridge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		424041AAB31D9CBAE386EF0E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A042C7DE60506C5A3E505CC /* AppUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55EFB2EDCA70E6128FB65AF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B990C09D17B178112B1D3F7 /* FavoriteLakesWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2231A19A27E919E4E84974B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D42ECADE2F450DB29185010D /* AppTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		036C9F550AFCAAFCBCF524D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 20D8F07C5BFAE105A6CD9CD9 /* AlgaeAlerts */;
+			targetProxy = C52C68C0FE97995CCFA73D20 /* PBXContainerItemProxy */;
+		};
+		08A0298BE98A17104217E0AA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 20D8F07C5BFAE105A6CD9CD9 /* AlgaeAlerts */;
+			targetProxy = 2F0D6062A7EA5EB873789EDE /* PBXContainerItemProxy */;
+		};
+		A4E5A5B0E30CC9D7AAF42D50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 673DDB2D4E3451B4F9C71329 /* AlgaeAlertsWidgets */;
+			targetProxy = 98C83C023938094AD35EEAB2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		357C62AFE3834890FBC179E2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		47BA3C2D96585C930A3E1CEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AlgaeAlerts;
+			};
+			name = Release;
+		};
+		4BB8567C870A45A5AE1CAA2A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		666C94605EF46BDD547FDBF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AlgaeAlerts.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AlgaeAlerts";
+			};
+			name = Release;
+		};
+		69C1B01E8E100AE77C43A026 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AlgaeAlerts;
+			};
+			name = Debug;
+		};
+		8AC957556EB10078CAEFA1C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = AlgaeAlertsWidgets/AlgaeAlertsWidgets.entitlements;
+				INFOPLIST_FILE = AlgaeAlertsWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts.widgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8BCEFB6C5E471805E82CD142 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = AlgaeAlertsWidgets/AlgaeAlertsWidgets.entitlements;
+				INFOPLIST_FILE = AlgaeAlertsWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts.widgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A3EC3687E04B71D43A165220 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AlgaeAlerts/AlgaeAlerts.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = AlgaeAlerts/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D5DCD893315DF962D613E47B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AlgaeAlerts/AlgaeAlerts.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = AlgaeAlerts/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E4D91081FC7F2F4C6C627D79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = net.chelseakr.algaealerts.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AlgaeAlerts.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AlgaeAlerts";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		675644A1D805534B4F415303 /* Build configuration list for PBXNativeTarget "AlgaeAlertsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E4D91081FC7F2F4C6C627D79 /* Debug */,
+				666C94605EF46BDD547FDBF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8E4D2035EF5D6CA167FE1DD7 /* Build configuration list for PBXNativeTarget "AlgaeAlertsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69C1B01E8E100AE77C43A026 /* Debug */,
+				47BA3C2D96585C930A3E1CEB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		94B01C5ABDBBDDA5E372E62E /* Build configuration list for PBXProject "AlgaeAlerts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BB8567C870A45A5AE1CAA2A /* Debug */,
+				357C62AFE3834890FBC179E2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9E10E04093C3DA8B259CD8FF /* Build configuration list for PBXNativeTarget "AlgaeAlertsWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AC957556EB10078CAEFA1C3 /* Debug */,
+				8BCEFB6C5E471805E82CD142 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B18740FA35805E7CDDDDB56F /* Build configuration list for PBXNativeTarget "AlgaeAlerts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5DCD893315DF962D613E47B /* Debug */,
+				A3EC3687E04B71D43A165220 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4653192EA3BCD7E274A5FF18 /* XCLocalSwiftPackageReference "AlgaeCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = AlgaeCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0F737FDF57F6103C37D48DF8 /* AlgaeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlgaeCore;
+		};
+		C61D49D28E59CE02C93C08A2 /* AlgaeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlgaeCore;
+		};
+		D335BD8A0C2B02DE2FDB1F69 /* AlgaeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AlgaeCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A7E93A31CDC7422BE749BF7B /* Project object */;
+}

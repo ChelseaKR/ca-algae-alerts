@@ -1,0 +1,97 @@
+# XcodeGen spec. `xcodegen generate` (run from ios/) writes
+# AlgaeAlerts.xcodeproj; both are committed. Regenerate after adding or
+# removing a file. Placeholders the owner replaces before submission
+# (docs/app-store/README.md): the bundle id net.chelseakr.algaealerts, the
+# App Group, the product id, and DEVELOPMENT_TEAM (empty here on purpose;
+# simulator builds sign ad hoc with CODE_SIGN_IDENTITY=-).
+name: AlgaeAlerts
+options:
+  bundleIdPrefix: net.chelseakr
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+packages:
+  AlgaeCore:
+    path: AlgaeCore
+targets:
+  AlgaeAlerts:
+    type: application
+    platform: iOS
+    sources:
+      - path: AlgaeAlerts
+        excludes: ["Configuration.storekit"]
+      - path: AlgaeAlerts/Configuration.storekit
+        buildPhase: none
+    dependencies:
+      - package: AlgaeCore
+      - target: AlgaeAlertsWidgets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: net.chelseakr.algaealerts
+        INFOPLIST_FILE: AlgaeAlerts/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: AlgaeAlerts/AlgaeAlerts.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+  AlgaeAlertsWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AlgaeAlertsWidgets
+    dependencies:
+      - package: AlgaeCore
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: net.chelseakr.algaealerts.widgets
+        INFOPLIST_FILE: AlgaeAlertsWidgets/Info.plist
+        CODE_SIGN_ENTITLEMENTS: AlgaeAlertsWidgets/AlgaeAlertsWidgets.entitlements
+        SKIP_INSTALL: YES
+  AlgaeAlertsTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [AlgaeAlertsTests]
+    dependencies:
+      - target: AlgaeAlerts
+      - package: AlgaeCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: net.chelseakr.algaealerts.tests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/AlgaeAlerts.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AlgaeAlerts"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+  AlgaeAlertsUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [AlgaeAlertsUITests]
+    dependencies:
+      - target: AlgaeAlerts
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: net.chelseakr.algaealerts.uitests
+        TEST_TARGET_NAME: AlgaeAlerts
+schemes:
+  AlgaeAlerts:
+    build:
+      targets:
+        AlgaeAlerts: all
+        AlgaeAlertsWidgets: all
+    run:
+      config: Debug
+      storeKitConfiguration: AlgaeAlerts/Configuration.storekit
+    test:
+      config: Debug
+      storeKitConfiguration: AlgaeAlerts/Configuration.storekit
+      targets:
+        - AlgaeAlertsTests
+        - AlgaeAlertsUITests
