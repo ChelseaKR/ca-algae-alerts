@@ -1,0 +1,33 @@
+ca-algae-alerts (github.com/ChelseaKR/ca-algae-alerts)
+Copyright (c) 2026 Chelsea Kelly-Reif
+
+The software in this repository is licensed under the Elastic License 2.0.
+See LICENSE.
+
+
+Data: California State Water Resources Control Board
+----------------------------------------------------
+
+Harmful algal bloom advisory records come from the State Water Resources
+Control Board's Freshwater and Estuarine Harmful Algal Bloom (FHAB) Program,
+published on the California Open Data Portal as "Surface Water - Freshwater
+Harmful Algal Blooms":
+https://data.ca.gov/dataset/surface-water-freshwater-harmful-algal-blooms
+
+The dataset page states "License: Other (Public Domain)" and "Rights: No
+Restrictions on Public Use" (read 2026-10-12). This repository uses no
+state seals, logos or marks.
+
+These files contain that data or data derived from it:
+
+- pipeline/data/history.json
+- pipeline/tests/fixtures/responses-sample_2026-10-09.csv (real rows)
+- pipeline/tests/fixtures/dataset-page-2026-10-12.html (the dataset page)
+- ios/AlgaeAlerts/Resources/snapshot.json
+- the snapshot and website the pipeline builds
+
+pipeline/tests/fixtures/responses-traps_2026-10-09.csv is hand-built test
+data in the same column layout. Its waterbodies are invented.
+
+The project is independent and is not affiliated with or endorsed by the
+State Water Resources Control Board or any California agency.

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ChelseaKR/ca-algae-alerts/schema/snapshot.v1.json",
+  "title": "Algae advisory snapshot, version 1",
+  "description": "Every waterbody with at least one advisory action on file, its reported sites, every record, and a status derived only from explicit records. A blank end date is unknown, never ended. No status means safe.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "run_date", "sources", "source_file", "quarantine", "waterbodies"],
+  "$defs": {
+    "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "dateOrNull": {"anyOf": [{"$ref": "#/$defs/date"}, {"type": "null"}]},
+    "tier": {"enum": ["danger", "warning", "caution", "other_advisory", "no_advisory", "not_classified", "unknown"]},
+    "advisoryTier": {"enum": ["danger", "warning", "caution", "other_advisory"]},
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "tier", "level", "posted", "planned_end", "lift_kind", "lift_date", "last_advisory", "sites_with_advisory"],
+      "properties": {
+        "kind": {"enum": ["advisory", "no_advisory_recorded", "undetermined"]},
+        "tier": {"anyOf": [{"$ref": "#/$defs/advisoryTier"}, {"type": "null"}]},
+        "level": {"type": ["string", "null"]},
+        "posted": {"$ref": "#/$defs/dateOrNull"},
+        "planned_end": {"$ref": "#/$defs/dateOrNull"},
+        "lift_kind": {"enum": ["no_advisory_record", "end_date", null]},
+        "lift_date": {"$ref": "#/$defs/dateOrNull"},
+        "last_advisory": {"$ref": "#/$defs/dateOrNull"},
+        "sites_with_advisory": {"type": "integer", "minimum": 0}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "advisory"}}},
+          "then": {"properties": {"tier": {"$ref": "#/$defs/advisoryTier"}, "posted": {"$ref": "#/$defs/date"}, "lift_kind": {"const": null}, "lift_date": {"const": null}, "sites_with_advisory": {"minimum": 1}}}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "no_advisory_recorded"}}},
+          "then": {"properties": {"tier": {"const": null}, "posted": {"const": null}, "lift_kind": {"enum": ["no_advisory_record", "end_date"]}, "lift_date": {"$ref": "#/$defs/date"}}}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "undetermined"}}},
+          "then": {"properties": {"tier": {"const": null}, "posted": {"const": null}, "lift_kind": {"const": null}, "lift_date": {"const": null}}}
+        }
+      ]
+    }
+  },
+  "properties": {
+    "schema_version": {"const": 1},
+    "generated_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "run_date": {"$ref": "#/$defs/date"},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "state", "agency", "program", "dataset_url", "official_map_url", "license", "rights", "license_read_on", "attribution", "contact"],
+        "properties": {
+          "id": {"type": "string"},
+          "state": {"type": "string", "pattern": "^[A-Z]{2}$"}
+        }
+      }
+    },
+    "source_file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "url", "file_name", "file_date", "fetched_at", "rows_read", "newest_record_date"],
+      "properties": {
+        "source": {"type": "string"},
+        "url": {"type": "string", "pattern": "^https://"},
+        "file_name": {"type": "string"},
+        "file_date": {"$ref": "#/$defs/date"},
+        "fetched_at": {"type": "string"},
+        "rows_read": {"type": "integer", "minimum": 1},
+        "newest_record_date": {"$ref": "#/$defs/dateOrNull"}
+      }
+    },
+    "quarantine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "by_reason"],
+      "properties": {
+        "total": {"type": "integer", "minimum": 0},
+        "by_reason": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}}
+      }
+    },
+    "waterbodies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "state", "name", "county_text", "counties", "center", "status", "sites", "records"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z]{2}-[a-z0-9-]+$"},
+          "state": {"type": "string", "pattern": "^[A-Z]{2}$"},
+          "name": {"type": "string", "minLength": 1},
+          "county_text": {"type": "string"},
+          "counties": {"type": "array", "items": {"type": "string"}},
+          "center": {
+            "anyOf": [
+              {"type": "null"},
+              {"type": "object", "additionalProperties": false, "required": ["lat", "lon"], "properties": {"lat": {"type": "number"}, "lon": {"type": "number"}}}
+            ]
+          },
+          "status": {"$ref": "#/$defs/status"},
+          "sites": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "landmark", "lat", "lon", "status"],
+              "properties": {
+                "id": {"type": "string"},
+                "landmark": {"type": "string"},
+                "lat": {"type": ["number", "null"]},
+                "lon": {"type": ["number", "null"]},
+                "status": {"$ref": "#/$defs/status"}
+              }
+            }
+          },
+          "records": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "site", "date", "level", "tier", "explicit_no_advisory", "end_date", "detail", "source", "removed_from_source"],
+              "properties": {
+                "id": {"type": "string"},
+                "site": {"type": "string"},
+                "date": {"$ref": "#/$defs/date"},
+                "level": {"type": "string"},
+                "tier": {"$ref": "#/$defs/tier"},
+                "explicit_no_advisory": {"type": "boolean"},
+                "end_date": {"$ref": "#/$defs/dateOrNull"},
+                "detail": {"type": "string"},
+                "source": {"type": "string"},
+                "removed_from_source": {"$ref": "#/$defs/dateOrNull"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
