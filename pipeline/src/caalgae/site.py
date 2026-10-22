@@ -20,6 +20,7 @@ from collections import defaultdict
 from importlib import resources
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlencode
 
 import jinja2
 
@@ -44,6 +45,61 @@ DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
 # Never copy another product's id here: it would mix this site's visits into
 # that property.
 GA4_MEASUREMENT_ID = ""
+# Amazon Associates dog-gear links (docs/DECISIONS.md 0013). Website only: the
+# iOS app has no web view and never shows them. This is Lake Notice's own
+# tracking id, never Trout Truck's. PLACEHOLDER, deliberately empty: the owner
+# has not created the second Associates id yet. Empty, the gear block and the
+# privacy paragraph render nothing and no Amazon URL is built anywhere; set,
+# one line here turns both on. The links are dog gear for lake days, as plain
+# search links. Never a home toxin test kit: a negative strip is not safety
+# and nothing here may imply it (tests/test_site_affiliate.py fails on any
+# test-kit wording in the categories or in a built page).
+AMAZON_ASSOCIATE_TAG = ""
+AMAZON_SEARCH_URL = "https://www.amazon.com/s"
+# Amazon's required wording, byte for byte: do not paraphrase it.
+AMAZON_ASSOCIATE_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
+AFFILIATE_LINK_REL = "sponsored nofollow noopener"
+# Label, then the search terms. Generic categories: a search has no product to
+# go out of stock, so the page states no price, rating or "best" claim.
+GEAR_CATEGORIES: tuple[tuple[str, str], ...] = (
+    ("Dog life jacket", "dog life jacket"),
+    ("Portable dog water bottle", "portable dog water bottle"),
+    ("Dog rinse sprayer for after a swim", "dog rinse sprayer bath"),
+)
+# How each state's agency is named in the non-endorsement sentence.
+AGENCY_GEAR_NAME = {"CA": "the Water Board", "MO": "Missouri DNR"}
+
+
+def amazon_search_url(terms: str) -> str:
+    """An Amazon search URL for ``terms`` carrying the associate tag."""
+    return f"{AMAZON_SEARCH_URL}?{urlencode({'k': terms, 'tag': AMAZON_ASSOCIATE_TAG})}"
+
+
+def gear_links() -> list[dict[str, str]]:
+    """The gear block's links; none at all while the tag is empty."""
+    if not AMAZON_ASSOCIATE_TAG:
+        return []
+    return [
+        {"label": label, "url": amazon_search_url(terms)}
+        for label, terms in GEAR_CATEGORIES
+    ]
+
+
+def gear_endorsement(state: str | None = None) -> str:
+    """The sentence that keeps a commercial link from implying that the agency
+    whose data the page shows endorses it. With no state, it names both."""
+    if state is None:
+        return (
+            f"The links are {SITE_NAME}'s, not the Water Board's or Missouri "
+            "DNR's, and neither agency endorses them or Amazon."
+        )
+    agency = AGENCY_GEAR_NAME[state]
+    return (
+        f"The links are {SITE_NAME}'s, not {agency}'s, and {agency} does not "
+        "endorse them or Amazon."
+    )
+
+
 GA4_DENIED_REGIONS = [
     "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR",
     "HU", "IS", "IE", "IT", "LV", "LI", "LT", "LU", "MT", "NL", "NO", "PL",
@@ -104,6 +160,9 @@ class SiteBuilder:
             "app_store_url": app_store_url,
             "ga4_measurement_id": ga4_measurement_id,
             "ga4_denied_regions": GA4_DENIED_REGIONS,
+            "affiliate_enabled": bool(AMAZON_ASSOCIATE_TAG),
+            "amazon_disclosure": AMAZON_ASSOCIATE_DISCLOSURE,
+            "gear_endorsement_all": gear_endorsement(),
             "source": source,
             "source_file": snap["source_file"],
             "source_files": snap["source_files"],
@@ -248,6 +307,9 @@ class SiteBuilder:
                 "means for people, children and dogs."
             ),
             water=water,
+            gear_links=gear_links(),
+            affiliate_rel=AFFILIATE_LINK_REL,
+            gear_endorsement=gear_endorsement(water["state"]),
             water_source=water_source,
             satellite_source=satellite_source,
             county=county,

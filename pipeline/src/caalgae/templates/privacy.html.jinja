@@ -16,7 +16,14 @@
   script or SDK in either.
 </p>
 {% endif %}
-<p class="muted">Last updated 2026-10-12. Covers this website and the {{ site_name }} iPhone app.</p>
+{% if affiliate_enabled %}
+<p>
+  The website's lake pages do carry plain links to Amazon.com that earn the
+  owner a commission; they are links, not ads, scripts or trackers. See
+  <a href="#affiliate">Gear links</a>.
+</p>
+{% endif %}
+<p class="muted">Last updated {{ "2026-10-22" if affiliate_enabled else "2026-10-12" }}. Covers this website and the {{ site_name }} iPhone app.</p>
 
 <h2 id="site">The website</h2>
 {% if ga4_measurement_id %}
@@ -80,6 +87,30 @@
 </ul>
 {% endif %}
 
+{% if affiliate_enabled %}
+<h2 id="affiliate">Gear links</h2>
+<p>
+  Each lake page has a short &ldquo;Dog gear for lake days&rdquo; list of
+  links that search Amazon.com. They are affiliate links: this site is a
+  participant in the Amazon Services LLC Associates Program, so if you buy
+  something after following one, the site&rsquo;s owner earns a commission,
+  and it costs you nothing extra. {{ amazon_disclosure }}
+  {{ gear_endorsement_all }}
+</p>
+<ul>
+  <li>The links are on the website, never in the iPhone app.</li>
+  <li>They are ordinary links. Nothing loads from Amazon when a page opens,
+      and this site adds no script, pixel or tracking for them.</li>
+  <li>Once you click, Amazon&rsquo;s own site and privacy notice apply, and
+      Amazon uses the link&rsquo;s tag to credit this site.{% if ga4_measurement_id %}
+      The analytics described above can count a click on any link to another
+      site, under the same opt-outs.{% endif %}</li>
+  <li>The links never change what this site says about a water or its
+      advisory, and no product they search for makes a water&rsquo;s
+      condition different.</li>
+</ul>
+
+{% endif %}
 <h2 id="app">The iPhone app</h2>
 <ul>
   <li><strong>No analytics:</strong> the app has no analytics, no tracking and

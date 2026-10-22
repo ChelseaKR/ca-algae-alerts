@@ -45,8 +45,10 @@ chooses that design, which would be its own change.
 ## After the site is live
 
 - GA4: create a property named Lake Notice, put its measurement id in
-  `GA4_MEASUREMENT_ID` in `site.py` (empty until then), and mark
-  `app_store_click` and `gear_click` as key events.
+  `GA4_MEASUREMENT_ID` in `site.py` (empty until then). The site sends no
+  custom events yet (no `app_store_click`, no `gear_click`): the affiliate
+  links add no tracking (DECISIONS 0013), so there is nothing to mark as a
+  key event until that is built.
 - Affiliate links: create a second Amazon Associates tracking id for this site
   and put it in `AMAZON_ASSOCIATE_TAG` in `site.py` (empty until then, which
   renders no gear block and no privacy paragraph). It is not Trout Truck's
