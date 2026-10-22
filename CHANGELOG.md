@@ -5,6 +5,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- The product is named Lake Notice and the domain is lakenotice.com
+  (docs/DECISIONS.md 0012). The site name, both iOS display names, the
+  default base URL and the listing draft change; bundle ids, the App Group,
+  the product id and the snapshot URL do not (docs/DOMAIN.md).
+
 ### Added
 
 - Pipeline: discovers the dated FHAB Responses CSV from the data.ca.gov

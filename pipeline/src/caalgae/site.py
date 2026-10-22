@@ -27,10 +27,15 @@ from caalgae import wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
 
-SITE_NAME = "Algae Alerts (working title)"
+# The product name, the domain and the site's default base URL live here and
+# nowhere else in code; tests/test_naming.py checks every other place that
+# carries the name (the two Info.plist display names, README, the style sheet
+# header, the listing draft) against SITE_NAME.
+SITE_NAME = "Lake Notice"
+SITE_DOMAIN = "lakenotice.com"
 STATE_NAMES = {"CA": "California", "MO": "Missouri"}
 STATE_SOURCE = {"CA": "ca-swrcb-fhab", "MO": "mo-dnr-hab"}
-DEFAULT_BASE_URL = "https://chelseakr.github.io/ca-algae-alerts/"
+DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
 # Empty until the owner creates a GA4 property for this site
 # (docs/OWNER-STEPS in the hand-off). Set, every page carries the tag and the
 # privacy page describes it; empty, the privacy page says nothing is collected.
