@@ -1,14 +1,14 @@
 # App Store listing (draft)
 
-Draft copy for the US App Store. Nothing is submitted. Name and subtitle
-wait on the name decision (NAMES.md in the hand-off); `<Name>` marks where
-it goes. Per docs/DECISIONS.md 0005, the subtitle, the first screenshot
+Draft copy for the US App Store. Nothing is submitted. The name is Lake
+Notice (docs/DECISIONS.md 0012); its App Store availability is unverified
+until the record is created. Per docs/DECISIONS.md 0005, the subtitle, the first screenshot
 caption and the keywords lead with dogs; the description covers everyone.
 Never "safe", never "real time", no uniqueness claims ("only", "first").
 
 ## Name (30 characters max)
 
-`<Name>`. Working title: Algae Alerts.
+`Lake Notice` (11)
 
 ## Subtitle (30 characters max)
 

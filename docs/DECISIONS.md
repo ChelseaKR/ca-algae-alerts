@@ -199,3 +199,30 @@ other request to that host. An off-limits host stops that source only;
 California is never stopped by Missouri or CyAN. Tests cover each case,
 including a redirect to a sign-in page (off-limits) and a redirect to
 another robots.txt (read).
+
+## 0012 — The name is Lake Notice; the domain is lakenotice.com (owner, 2026-10-21)
+
+The working title Algae Alerts is retired. The product, the site and both
+iOS display names are **Lake Notice**; the domain is **lakenotice.com** in
+the member account created for this app (registered by the owner; nothing
+in this repository registers or changes it). The name has no "bloom" and nothing in it or in the copy
+that changes with it says "safe" or leads with fear (0002).
+
+What changed: `SITE_NAME` and the default base URL in `site.py` (so titles,
+the home-page structured data, `og:site_name`, the privacy and about copy
+and the sitemap base follow), both `CFBundleDisplayName` values, the README,
+the style sheet header and the listing draft. `pipeline/tests/test_naming.py`
+fails if any of those names drifts from `SITE_NAME`.
+
+What did not change, on purpose: the bundle ids, the widget id, the App Group,
+the StoreKit product id, the URL scheme, the background task id and the
+snapshot URL. They are set when the App Store record is created, and shipped
+builds keep what they were built with, so changing them is a separate
+owner-gated decision (proposed values: docs/DOMAIN.md). Internal code names
+(the `AlgaeAlerts` Xcode project and targets, the `AlgaeCore` package, the
+`caalgae` module, the repository name, the fetch User-Agent and the
+analytics opt-out storage key) are not user-visible and stay.
+
+Not done: a trademark screen (USPTO TESS) and an App Store name availability
+check. Both are the owner's before the record is created.
+
