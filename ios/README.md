@@ -36,8 +36,8 @@ temporary folder and skips the network.
 rebuilt from `pipeline/data/history.json` by `scripts/sync-bundled-snapshot.sh`
 with no network. The app shows the newer of that and the last one it
 downloaded. Its one network request is a conditional GET of
-`https://chelseakr.github.io/ca-algae-alerts/snapshot/v1.json`, which does not
-serve until GitHub Pages is turned on (docs/DECISIONS.md 0008). Until then a
+`https://lakenotice.com/snapshot/v1.json`, which does not serve until the site
+is published (docs/DECISIONS.md 0013, docs/DOMAIN.md). Until then a
 check fails, the app says "The last check for newer data did not finish",
 and keeps showing the bundled data with its date.
 
