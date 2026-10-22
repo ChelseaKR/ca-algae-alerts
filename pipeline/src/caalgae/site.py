@@ -36,9 +36,13 @@ SITE_DOMAIN = "lakenotice.com"
 STATE_NAMES = {"CA": "California", "MO": "Missouri"}
 STATE_SOURCE = {"CA": "ca-swrcb-fhab", "MO": "mo-dnr-hab"}
 DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
-# Empty until the owner creates a GA4 property for this site
-# (docs/OWNER-STEPS in the hand-off). Set, every page carries the tag and the
-# privacy page describes it; empty, the privacy page says nothing is collected.
+# PLACEHOLDER, deliberately empty: the owner has not created a GA4 property
+# for Lake Notice yet (docs/DOMAIN.md, "After the site is live"). When she
+# does, the change is this one line, a measurement id of the form "G-XXXXXXXXXX".
+# Set, every page carries the tag and the privacy page describes it; empty,
+# no page loads any script and the privacy page says nothing is collected.
+# Never copy another product's id here: it would mix this site's visits into
+# that property.
 GA4_MEASUREMENT_ID = ""
 GA4_DENIED_REGIONS = [
     "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR",
