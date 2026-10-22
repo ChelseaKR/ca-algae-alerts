@@ -9,11 +9,20 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 - The product is named Lake Notice and the domain is lakenotice.com
   (docs/DECISIONS.md 0012). The site name, both iOS display names, the
-  default base URL and the listing draft change; bundle ids, the App Group,
-  the product id and the snapshot URL do not (docs/DOMAIN.md).
+  default base URL and the listing draft change; bundle ids, the App Group
+  and the product id do not (docs/DOMAIN.md).
+- The app's snapshot and site URLs are https://lakenotice.com/snapshot/v1.json
+  and https://lakenotice.com/ (docs/DECISIONS.md 0013); the site is served from
+  this repository. The publish workflow has its daily schedule, skipped until
+  the PAGES_ENABLED variable is set.
+- Missouri stays in 1.0 pending the owner's confirmation of its status-code
+  readings (docs/MISSOURI-READINGS.md).
 
 ### Added
 
+- Website: a dog-gear block of Amazon search links on lake pages and a
+  privacy-page section, both off until `AMAZON_ASSOCIATE_TAG` in `site.py` is
+  set (docs/DECISIONS.md 0013). Never a home toxin test kit.
 - Pipeline: discovers the dated FHAB Responses CSV from the data.ca.gov
   dataset page, normalizes it with the state's own advisory levels and a
   mapped tier, keeps an append-only history seeded from the 2026-10-09 file,
