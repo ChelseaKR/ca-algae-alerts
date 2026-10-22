@@ -226,3 +226,51 @@ analytics opt-out storage key) are not user-visible and stay.
 Not done: a trademark screen (USPTO TESS) and an App Store name availability
 check. Both are the owner's before the record is created.
 
+
+## 0013 — Serve lakenotice.com from this repo; Missouri in 1.0 pending confirmation; affiliates with a second id (owner, 2026-10-22)
+
+Four owner decisions made on 2026-10-22, recorded together.
+
+**Hosting: design A.** lakenotice.com is served from this repository with
+GitHub Pages and the existing `upload-pages-artifact` and `deploy-pages` jobs.
+There is no second repository, no deploy key and no gh-pages branch (Trout
+Truck needed that only because its app was already in review with a github.io
+URL; no build of this app has shipped). The app's permanent URLs are therefore
+`https://lakenotice.com/snapshot/v1.json` and `https://lakenotice.com/`
+(`SnapshotEndpoint`), keyed to `SITE_DOMAIN` in `site.py` by
+`tests/test_preflight_urls.py`. This supersedes the github.io URL in 0008.
+Shipped builds keep their URL, so the domain must stay registered with
+auto-renew on; if it ever lapses, the app falls back to its bundled snapshot
+and says so. `publish.yml` now carries the daily schedule (`41 14 * * *`,
+07:41 PDT, 06:41 PST after 2026-11-01) but a scheduled run is skipped while
+`PAGES_ENABLED` is unset, so nothing is committed or published until the owner
+sets that variable. `GA4_MEASUREMENT_ID` stays empty (a documented
+placeholder) until the property exists.
+
+**Missouri is in 1.0, pending her confirmation.** The status-code readings and
+the closed-case rule are unchanged and are listed exactly as coded in
+`docs/MISSOURI-READINGS.md`. The owner confirms them before the first publish;
+if she does not, Missouri goes off by its one switch and 1.0 is California
+only. Nothing was changed to those readings.
+
+**Affiliates: yes, dog gear only, a second Amazon tracking id.** Plain Amazon
+search links on lake pages (dog life jacket, portable dog water bottle,
+post-swim rinse), `rel="sponsored nofollow noopener"`, Amazon's sentence "As an
+Amazon Associate I earn from qualifying purchases.", and a sentence that the
+links are Lake Notice's and not the Water Board's (Missouri DNR's on Missouri
+pages), with a privacy-page section. Same design as Trout Truck 0029, with
+three differences: the id is Lake Notice's own (never `trouttruck-20`) and is
+an empty constant, `AMAZON_ASSOCIATE_TAG`, so the block and the privacy
+paragraph render nothing until the owner creates the id and sets it; there is
+no GA4 click event (the site sends none yet); and **never a home toxin test
+kit**, because a negative strip is not safety and nothing on the site may imply
+that a product makes water safe. The block's own text says no gear changes
+what is in the water. `tests/test_site_affiliate.py` fails on test-kit or
+safety wording in the categories or any built page. If the Associates account
+has made fewer than 3 qualifying sales within 180 days of opening it, Amazon
+closes it; the links then come out in one edit (delete `GEAR_CATEGORIES` and
+the include in `water.html.jinja`).
+
+**iOS submission waits for Trout Truck's App Review verdict**, as for the
+other apps. Nothing to do now; the snapshot URL above is already final for
+the first build.

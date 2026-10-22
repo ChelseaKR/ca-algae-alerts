@@ -18,10 +18,10 @@
    `net.chelseakr.algaealerts.fullaccess`, USD 9.99, display name "Full
    Access". It must match `PurchaseManager.productID` and
    `ios/AlgaeAlerts/Configuration.storekit`.
-4. Decide hosting: the app fetches
-   `https://chelseakr.github.io/ca-algae-alerts/snapshot/v1.json`, which does
-   not serve until Pages is on (docs/DECISIONS.md 0008). If a domain is
-   chosen instead, change `SnapshotEndpoint` before the first build ships,
-   because shipped builds keep the URL they were built with.
+4. Hosting is decided (docs/DECISIONS.md 0013): the app fetches
+   `https://lakenotice.com/snapshot/v1.json`, which does not serve until the
+   site is published (docs/DOMAIN.md). `SnapshotEndpoint` already carries
+   that URL, and shipped builds keep the URL they were built with, so the
+   domain must stay registered with auto-renew on.
 5. Privacy policy and support URLs: the site's `/privacy/` and `/support/`
    pages, once published.

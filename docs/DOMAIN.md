@@ -1,13 +1,14 @@
 # Serving lakenotice.com
 
-Status: the domain is registered and nothing is published. The publish
-workflow is manual-only, `PAGES_ENABLED` is unset (so a run uploads the
-built site as an artifact and deploys nothing), and no workflow in this
-repository changes that. Trout Truck's runbook
+Status: the domain is registered and nothing is published. Hosting is
+decided (docs/DECISIONS.md 0013): this repository serves lakenotice.com with
+GitHub Pages directly, so there is no second repository, no deploy key and no
+gh-pages branch. `publish.yml` carries its daily schedule, but
+`PAGES_ENABLED` is unset, so every run uploads the built site as an artifact
+and deploys nothing until the owner sets that variable. Trout Truck's runbook
 (`_agent-tools/remediate-2026-10-01/tt-domain/RUNBOOK.md`, Design B) is the
-model for the order of steps; this repository builds and deploys with
-GitHub Pages directly, so it has no separate site repository and no deploy
-key.
+model for the order of steps where it applies; the owner runbook for this
+site is `_agent-tools/growth/lake-notice-publish-runbook-2026-10-22.md`.
 
 ## What the build reads
 
@@ -34,11 +35,24 @@ chooses that design, which would be its own change.
    `lakenotice.com`; DNS A records to GitHub's four Pages addresses and a
    `www` CNAME to `chelseakr.github.io` (Trout Truck's runbook lists them).
 4. Set the variables: `SITE_BASE_URL=https://lakenotice.com`,
-   `SUPPORT_EMAIL`, then `PAGES_ENABLED=true`; add the schedule line the
-   comment at the top of `publish.yml` describes; run publish once.
+   `SUPPORT_EMAIL`, then `PAGES_ENABLED=true`; run publish once. The schedule
+   line is already in `publish.yml` and only deploys once `PAGES_ENABLED` is
+   true.
 5. Search Console: the domain property is verified; submit
    `https://lakenotice.com/sitemap.xml`.
 6. Enforce HTTPS once GitHub offers it.
+
+## After the site is live
+
+- GA4: create a property named Lake Notice, put its measurement id in
+  `GA4_MEASUREMENT_ID` in `site.py` (empty until then). The site sends no
+  custom events yet (no `app_store_click`, no `gear_click`): the affiliate
+  links add no tracking (DECISIONS 0013), so there is nothing to mark as a
+  key event until that is built.
+- Affiliate links: create a second Amazon Associates tracking id for this site
+  and put it in `AMAZON_ASSOCIATE_TAG` in `site.py` (empty until then, which
+  renders no gear block and no privacy paragraph). It is not Trout Truck's
+  `trouttruck-20`. DECISIONS 0013.
 
 ## iOS identifiers to decide when the App Store record is created
 
@@ -54,8 +68,9 @@ values in parentheses:
   `PurchaseManager.productID` and `Configuration.storekit`
 - Background task id: `net.chelseakr.lakenotice.refresh`
 - URL scheme: `lakenotice` (`algaealerts`); `WaterLink.scheme`, `Info.plist`
-- Snapshot URL: `https://lakenotice.com/snapshot/v1.json`
-  (`https://chelseakr.github.io/ca-algae-alerts/snapshot/v1.json`), and the
-  site URL `https://lakenotice.com/`, both in `SnapshotEndpoint`. Decide this
-  before the first build ships: installed builds keep the URL they were built
-  with.
+
+Already decided and done (DECISIONS 0013): the snapshot URL
+`https://lakenotice.com/snapshot/v1.json` and the site URL
+`https://lakenotice.com/`, both in `SnapshotEndpoint`. Installed builds keep
+the URL they were built with, so the domain must stay registered with
+auto-renew on.

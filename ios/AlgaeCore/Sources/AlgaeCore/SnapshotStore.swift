@@ -51,11 +51,13 @@ public struct SnapshotStore: Sendable {
 }
 
 public enum SnapshotEndpoint {
-    /// Where the pipeline publishes the snapshot. GitHub Pages is off until
-    /// the owner decides on hosting (docs/DECISIONS.md 0008); until then a
-    /// check fails politely and the app keeps the copy it ships with.
-    public static let url = URL(string: "https://chelseakr.github.io/ca-algae-alerts/snapshot/v1.json")!
-    public static let siteURL = URL(string: "https://chelseakr.github.io/ca-algae-alerts/")!
+    /// Where the pipeline publishes the snapshot: `snapshot/v1.json` under the
+    /// site's own domain (docs/DECISIONS.md 0013). The domain is
+    /// `SITE_DOMAIN` in pipeline/src/caalgae/site.py and a test fails if the
+    /// two drift. Until the site is live a check fails politely and the app
+    /// keeps the copy it ships with. Shipped builds keep this URL.
+    public static let url = URL(string: "https://lakenotice.com/snapshot/v1.json")!
+    public static let siteURL = URL(string: "https://lakenotice.com/")!
 }
 
 public enum RefreshOutcome: Equatable, Sendable {

@@ -19,7 +19,7 @@ Please report security problems privately. Do not open a public issue.
   vulnerability" button on the
   [Security tab](https://github.com/ChelseaKR/ca-algae-alerts/security).
 - **By email:** write to the support address shown on the site's
-  [support page](https://chelseakr.github.io/ca-algae-alerts/support/)
+  [support page](https://lakenotice.com/support/)
   with "security" in the subject.
 
 **The support page does not show an address yet.** It appears once the

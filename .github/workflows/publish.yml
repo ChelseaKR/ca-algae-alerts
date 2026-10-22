@@ -1,19 +1,28 @@
 name: publish
 
-# Live fetch -> history -> snapshot -> site. MANUAL ONLY for now: GitHub
-# Pages is off until the owner decides on Pages and a domain (Pages on a
-# private repository may be billable). When she turns it on:
-#   1. add `schedule: - cron: "41 14 * * *"` below (07:41 PDT, after the
-#      state's overnight republish; a non-zero minute avoids the busiest slot);
-#   2. set the repository variable PAGES_ENABLED=true.
-# Until then a dispatch runs the pipeline, commits history if it changed, and
-# uploads the built site as a run artifact for review. Nothing is deployed.
+# Live fetch -> history -> snapshot -> site, daily at 14:41 UTC.
+#
+# The schedule is inert until the owner sets the repository variable
+# PAGES_ENABLED=true: a scheduled run is skipped while it is unset, so the
+# schedule alone commits nothing and deploys nothing. A manual dispatch always
+# runs the pipeline, commits history if it changed, and, with PAGES_ENABLED
+# unset, uploads the built site as a run artifact for review and deploys
+# nothing. The owner's order of steps is docs/DOMAIN.md.
+#
+# Why 14:41 UTC: GitHub cron is UTC and ignores daylight saving. 14:41 UTC is
+# 07:41 PDT now (after the state's overnight republish; a non-zero minute
+# avoids the busiest slot) and becomes 06:41 PST when clocks fall back on
+# 2026-11-01. The site goes live after that, so it runs at 06:41 PST in
+# winter. Before launch, check the state's overnight republish time once; if
+# it is later than 06:41, change the hour to 15 (07:41 PST, 08:41 PDT).
 #
 # A refused or failed run (page reshaped, file older than the last run,
 # truncated file, schema violation) exits non-zero before anything is
 # committed or uploaded.
 
 on:
+  schedule:
+    - cron: "41 14 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -25,6 +34,9 @@ concurrency:
 
 jobs:
   build:
+    # A scheduled run does nothing until PAGES_ENABLED is true; a manual run
+    # always goes ahead.
+    if: github.event_name != 'schedule' || vars.PAGES_ENABLED == 'true'
     # Hosted on purpose: this job commits to main and builds what gets
     # deployed, so it never runs on a shared self-hosted runner or reuses a
     # dependency cache (CI-CD-STANDARD §8c).
