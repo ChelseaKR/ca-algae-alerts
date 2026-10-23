@@ -7,6 +7,15 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Each sitemap URL's `lastmod` is the newest record date the page shows, not
+  the build date: a water's newest record, a county's or state's newest water,
+  and the newest record overall for the home, advisories, county index and dogs
+  pages. About, privacy and support carry no `lastmod`. A date after the
+  snapshot's `run_date` is dropped. Two builds of one snapshot give the same
+  sitemap bytes.
+- A water page's breadcrumb (visible trail and BreadcrumbList) is now Home,
+  the water's first county, the water, linking to the county page. Waters with
+  no county keep Home, the water.
 - The sitemap lists only waters with a state advisory in the last 24 months of
   the build's data date (`INDEX_WINDOW_MONTHS` in `site.py`). Every other water
   page is still built and linked, with `noindex,follow` and no canonical, and
