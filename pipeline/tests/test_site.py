@@ -89,7 +89,9 @@ def test_every_relative_link_resolves(sample_site: Path) -> None:
 def test_sitemap_lists_every_indexable_page(sample_site: Path) -> None:
     sitemap = (sample_site / "sitemap.xml").read_text()
     locs = re.findall(r"<loc>([^<]+)</loc>", sitemap)
-    assert len(locs) == len(pages(sample_site)) - 1  # all but the 404
+    # All but the 404 and the waters staged out of the sitemap.
+    staged = len(staging_problems_inputs(sample_site)[1])
+    assert len(locs) == len(pages(sample_site)) - 1 - staged
     assert all(loc.startswith(site.DEFAULT_BASE_URL) for loc in locs)
     assert "404" not in sitemap
 
@@ -321,3 +323,124 @@ def test_base_url_and_support_email(tmp_path: Path) -> None:
         in (out / "index.html").read_text()
     )
     assert "help@example.org" in (out / "support" / "index.html").read_text()
+
+
+# -- sitemap staging: only waters with a recent advisory are indexable ----------
+
+_ROBOTS = re.compile(r'<meta name="robots" content="([^"]*)"')
+
+
+def staging_problems_inputs(root: Path) -> tuple[list[str], list[str]]:
+    """(water ids with an indexable page, water ids staged out) as the
+    snapshot and the constant say they should be."""
+    snap = snapshot_of(root)
+    run = dt.date.fromisoformat(snap["run_date"])
+    keep, out = [], []
+    for w in snap["waterbodies"]:
+        (keep if site.is_indexable(w, run, site.INDEX_WINDOW_MONTHS) else out).append(
+            w["id"]
+        )
+    return keep, out
+
+
+def staging_problems(root: Path) -> list[str]:
+    """Disagreements between the snapshot's rule, each water page's robots
+    tag and the sitemap, and a check that the counts add up."""
+    keep, out = staging_problems_inputs(root)
+    locs = set(re.findall(r"<loc>([^<]+)</loc>", (root / "sitemap.xml").read_text()))
+    problems = []
+    listed = noindex = 0
+    for wid in keep + out:
+        raw = (root / "water" / wid / "index.html").read_text(encoding="utf-8")
+        robots = _ROBOTS.search(raw)
+        url = f"{site.DEFAULT_BASE_URL}water/{wid}/"
+        in_map = url in locs
+        listed += in_map
+        noindex += bool(robots)
+        if wid in keep and (robots or not in_map):
+            problems.append(f"{wid}: recent but noindex or missing from the sitemap")
+        if wid in out and (not robots or in_map):
+            problems.append(f"{wid}: stale but indexable or in the sitemap")
+        if robots and robots.group(1) != "noindex,follow":
+            problems.append(f"{wid}: robots is {robots.group(1)}")
+        if bool(robots) == in_map:
+            problems.append(f"{wid}: sitemap and robots disagree")
+    if listed + noindex != len(keep) + len(out):
+        problems.append(f"counts do not add up: {listed} + {noindex}")
+    return problems
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_sitemap_and_robots_follow_the_recent_advisory_rule(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    root: Path = request.getfixturevalue(which)
+    keep, out = staging_problems_inputs(root)
+    assert keep and out  # the fixtures exercise both sides of the rule
+    assert staging_problems(root) == []
+
+
+def test_months_before_clamps_the_day() -> None:
+    assert site.months_before(dt.date(2026, 10, 22), 24) == dt.date(2024, 10, 22)
+    assert site.months_before(dt.date(2026, 3, 31), 1) == dt.date(2026, 2, 28)
+    assert site.months_before(dt.date(2026, 1, 15), 1) == dt.date(2025, 12, 15)
+    water = {"status": {"last_advisory": "2024-10-22"}}
+    assert site.is_indexable(water, dt.date(2026, 10, 22), 24)
+    assert not site.is_indexable(water, dt.date(2026, 10, 23), 24)
+    assert not site.is_indexable(
+        {"status": {"last_advisory": None}}, dt.date(2026, 1, 1), 24
+    )
+
+
+def test_other_pages_stay_indexable(traps_site: Path) -> None:
+    for rel in ["index.html", "advisories/index.html", "dogs/index.html",
+                "county/index.html", "county/alameda/index.html"]:  # fmt: skip
+        assert _ROBOTS.search((traps_site / rel).read_text()) is None, rel
+
+
+def test_staging_changes_only_the_head_of_a_water_page(
+    tmp_path: Path, traps_site: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(site, "INDEX_WINDOW_MONTHS", 1200)
+    everything = build(tmp_path)
+    _, out = staging_problems_inputs(traps_site)
+    assert out
+
+    def body(path: Path) -> str:
+        return re.sub(r"<head>.*?</head>", "", path.read_text(), flags=re.S)
+
+    for wid in out:
+        rel = Path("water") / wid / "index.html"
+        assert body(traps_site / rel) == body(everything / rel)
+
+
+@pytest.mark.parametrize("sabotage", ["stale_in_sitemap", "recent_noindex", "disagree"])
+def test_staging_guard_catches_each_sabotage(sabotage: str, tmp_path: Path) -> None:
+    # Negative controls: break a built copy, assert the break applied, then
+    # assert the guard reports it.
+    root = build(tmp_path)
+    keep, out = staging_problems_inputs(root)
+    assert staging_problems(root) == []
+    sitemap = root / "sitemap.xml"
+    before = sitemap.read_text()
+    if sabotage == "stale_in_sitemap":
+        url = f"{site.DEFAULT_BASE_URL}water/{out[0]}/"
+        sitemap.write_text(
+            before.replace("</urlset>", f"<url><loc>{url}</loc></url></urlset>")
+        )
+        assert sitemap.read_text() != before
+    elif sabotage == "recent_noindex":
+        page = root / "water" / keep[0] / "index.html"
+        raw = page.read_text()
+        page.write_text(
+            raw.replace(
+                "<title>", '<meta name="robots" content="noindex,follow"><title>', 1
+            )
+        )
+        assert page.read_text() != raw
+    else:
+        url = f"{site.DEFAULT_BASE_URL}water/{keep[0]}/"
+        assert f"<loc>{url}</loc>" in before
+        sitemap.write_text(before.replace(f"<loc>{url}</loc>", "<loc>x</loc>"))
+        assert sitemap.read_text() != before
+    assert staging_problems(root) != []

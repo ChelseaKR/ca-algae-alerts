@@ -7,6 +7,10 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- The sitemap lists only waters with a state advisory in the last 24 months of
+  the build's data date (`INDEX_WINDOW_MONTHS` in `site.py`). Every other water
+  page is still built and linked, with `noindex,follow` and no canonical, and
+  an identical body. Home, advisories, county and dogs pages are unchanged.
 - The product is named Lake Notice and the domain is lakenotice.com
   (docs/DECISIONS.md 0012). The site name, both iOS display names, the
   default base URL and the listing draft change; bundle ids, the App Group
