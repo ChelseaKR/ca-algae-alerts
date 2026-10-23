@@ -7,6 +7,10 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Every page title is at most 60 characters and every description at most 155,
+  so search results no longer cut them off. A water's title is now its name and
+  "toxic algae advisories"; two waters in one state with the same name carry
+  their county in the title. Descriptions drop "County not recorded".
 - The product is named Lake Notice and the domain is lakenotice.com
   (docs/DECISIONS.md 0012). The site name, both iOS display names, the
   default base URL and the listing draft change; bundle ids, the App Group
