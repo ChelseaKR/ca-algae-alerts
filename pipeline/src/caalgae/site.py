@@ -18,6 +18,7 @@ import datetime as dt
 import json
 import shutil
 from collections import Counter, defaultdict
+from collections.abc import Iterable
 from importlib import resources
 from pathlib import Path
 from typing import Any
@@ -215,6 +216,22 @@ def is_indexable(water: dict[str, Any], run_date: dt.date, months: int) -> bool:
     return dt.date.fromisoformat(last) >= months_before(run_date, months)
 
 
+def water_lastmod(water: dict[str, Any]) -> dt.date | None:
+    """The newest date this water's page shows: its records (the history
+    table), its status's last-posted date and its last advisory. None when the
+    water has no dated record. Never the wall clock or the build date."""
+    days = [r["date"] for r in water["records"]]
+    for key in ("posted", "last_advisory"):
+        if water["status"].get(key):
+            days.append(water["status"][key])
+    return max(map(dt.date.fromisoformat, days), default=None)
+
+
+def newest(days: Iterable[dt.date | None]) -> dt.date | None:
+    present = [d for d in days if d is not None]
+    return max(present) if present else None
+
+
 class SiteBuilder:
     def __init__(
         self,
@@ -232,6 +249,7 @@ class SiteBuilder:
         self.env = _env()
         self.run_date = dt.date.fromisoformat(snap["run_date"])
         self.urls: list[str] = []
+        self.lastmods: dict[str, str] = {}
         self.sources = {s["id"]: s for s in snap["sources"]}
         source = self.sources["ca-swrcb-fhab"]
         self.common: dict[str, Any] = {
@@ -263,6 +281,14 @@ class SiteBuilder:
                 self.by_county[county].append(water)
             if not water["counties"]:
                 self.no_county.append(water)
+        # A date after the snapshot's run_date cannot be real: that water gets
+        # no lastmod and does not move its county, state or the site-wide date.
+        self.water_dates: dict[str, dt.date] = {}
+        for water in self.waters:
+            day = water_lastmod(water)
+            if day is not None and day <= self.run_date:
+                self.water_dates[water["id"]] = day
+        self.site_date = newest(self.water_dates.values())
 
     # -- helpers --------------------------------------------------------
 
@@ -276,6 +302,7 @@ class SiteBuilder:
         if rel == "404.html":
             root = self.base_url
         canonical = None if context.get("noindex") else self.base_url + rel
+        lastmod: dt.date | None = context.pop("lastmod", None)
         html = self.env.get_template(template).render(
             **self.common,
             root=root or "./",
@@ -290,6 +317,11 @@ class SiteBuilder:
         path.write_text(html, encoding="utf-8")
         if canonical:
             self.urls.append(canonical)
+            if lastmod is not None and lastmod <= self.run_date:
+                self.lastmods[canonical] = lastmod.isoformat()
+
+    def _newest_of(self, waters: Iterable[dict[str, Any]]) -> dt.date | None:
+        return newest(self.water_dates.get(w["id"]) for w in waters)
 
     def _crumbs(self, *trail: tuple[str, str]) -> list[tuple[str, str]]:
         return [("Home", self.base_url), *trail]
@@ -321,6 +353,7 @@ class SiteBuilder:
                 "and rivers, newest first, with each lake's history since 2016 "
                 "for swimmers and dogs."
             ),
+            lastmod=self.site_date,
             recent=recent,
             older_count=len(open_) - len(recent),
             water_count=len(self.waters),
@@ -344,6 +377,7 @@ class SiteBuilder:
                 "algae advisory, newest first, including old ones the state "
                 "never recorded an end for."
             ),
+            lastmod=self.site_date,
             waters=self.open_advisories(),
             breadcrumb=crumbs,
             structured_data={
@@ -365,7 +399,13 @@ class SiteBuilder:
 
     def water_page(self, water: dict[str, Any]) -> None:
         rel = f"water/{water['id']}/"
-        crumbs = self._crumbs((water["name"], self.base_url + rel))
+        trail = [(water["name"], self.base_url + rel)]
+        if water["counties"]:
+            first = water["counties"][0]
+            trail.insert(
+                0, (f"{first} County", self.base_url + f"county/{slugify(first)}/")
+            )
+        crumbs = self._crumbs(*trail)
         sites = {s["id"]: s for s in water["sites"]}
         county = (
             f"{' and '.join(water['counties'])} County"
@@ -404,6 +444,7 @@ class SiteBuilder:
             ),
             noindex=not indexable,
             robots="noindex,follow",
+            lastmod=self.water_dates.get(water["id"]),
             water=water,
             gear_links=gear_links(),
             affiliate_rel=AFFILIATE_LINK_REL,
@@ -442,6 +483,7 @@ class SiteBuilder:
             title=f"California algae advisories by county | {SITE_NAME}",
             description="Lakes and rivers with California toxic algae advisory records, by county.",
             rows=rows,
+            lastmod=self._newest_of(w for ws in self.by_county.values() for w in ws),
             no_county=self.no_county,
             breadcrumb=crumbs,
             structured_data={
@@ -471,6 +513,7 @@ class SiteBuilder:
                     f"lakes and rivers in {county} County, California."
                 ),
                 county=county,
+                lastmod=self._newest_of(waters),
                 waters=ordered,
                 breadcrumb=crumbs_c,
                 structured_data={
@@ -499,6 +542,7 @@ class SiteBuilder:
                     f"lakes and rivers in {name}, from the state's own records."
                 ),
                 state=state,
+                lastmod=self._newest_of(waters),
                 state_name=name,
                 waters=ordered,
                 state_source=self.sources[STATE_SOURCE[state]],
@@ -535,6 +579,9 @@ class SiteBuilder:
                     "@context": "https://schema.org",
                     **self._breadcrumb_data(crumbs),
                 },
+                # Only the dogs page shows record data; about, privacy and
+                # support have no content date in the repo, so no lastmod.
+                lastmod=self.site_date if rel == "dogs/" else None,
                 counties_known=len(CA_COUNTIES),
                 tiers=["caution", "warning", "danger", "other_advisory"],
             )
@@ -557,7 +604,7 @@ class SiteBuilder:
             encoding="utf-8",
         )
         sitemap = self.env.get_template("sitemap.xml.jinja").render(
-            urls=sorted(self.urls), lastmod=self.snap["run_date"]
+            entries=[(u, self.lastmods.get(u)) for u in sorted(self.urls)]
         )
         (self.out / "sitemap.xml").write_text(sitemap, encoding="utf-8")
         (self.out / "robots.txt").write_text(
