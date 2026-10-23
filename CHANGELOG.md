@@ -7,6 +7,10 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- The sitemap lists only waters with a state advisory in the last 24 months of
+  the build's data date (`INDEX_WINDOW_MONTHS` in `site.py`). Every other water
+  page is still built and linked, with `noindex,follow` and no canonical, and
+  an identical body. Home, advisories, county and dogs pages are unchanged.
 - Every page title is at most 60 characters and every description at most 155,
   so search results no longer cut them off. A water's title is now its name and
   "toxic algae advisories"; two waters in one state with the same name carry

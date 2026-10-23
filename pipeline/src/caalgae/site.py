@@ -13,6 +13,7 @@ Global Privacy Control or Do Not Track (``_ga4.html.jinja``).
 
 from __future__ import annotations
 
+import calendar
 import datetime as dt
 import json
 import shutil
@@ -37,6 +38,16 @@ SITE_DOMAIN = "lakenotice.com"
 STATE_NAMES = {"CA": "California", "MO": "Missouri"}
 STATE_SOURCE = {"CA": "ca-swrcb-fhab", "MO": "mo-dnr-hab"}
 DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
+# Sitemap staging (owner decision, 2026-10-23). A water page is listed in the
+# sitemap and indexable only when the state recorded an advisory for it within
+# this many months of the build's data date (``run_date``, never the wall
+# clock). Every other water page is still built and linked, with
+# ``noindex,follow`` and no canonical, and its body is identical. Most waters
+# have one or two state records, so unstaged they are near-copies of each other
+# (growth/lake-notice-page-audit-2026-10-23.md). To undo: set this to a number
+# that reaches back past 2016, such as 1200, and every water is indexable
+# again; the sitemap and the robots tags both follow this one value.
+INDEX_WINDOW_MONTHS = 24
 
 
 # Search results show about 60 characters of a title and 155 of a
@@ -187,6 +198,23 @@ def _advisory_sort(water: dict[str, Any]) -> tuple[str, int, str]:
     return (s["posted"] or "", TIER_RANK.get(s["tier"] or "", 0), water["name"])
 
 
+def months_before(day: dt.date, months: int) -> dt.date:
+    """``day`` minus ``months`` calendar months, the day clamped to the month."""
+    index = day.year * 12 + (day.month - 1) - months
+    year, month = divmod(index, 12)
+    last = calendar.monthrange(year, month + 1)[1]
+    return dt.date(year, month + 1, min(day.day, last))
+
+
+def is_indexable(water: dict[str, Any], run_date: dt.date, months: int) -> bool:
+    """True when the state's last advisory for this water falls within
+    ``months`` months before ``run_date``."""
+    last = water["status"].get("last_advisory")
+    if not last:
+        return False
+    return dt.date.fromisoformat(last) >= months_before(run_date, months)
+
+
 class SiteBuilder:
     def __init__(
         self,
@@ -255,6 +283,7 @@ class SiteBuilder:
             breadcrumb=context.pop("breadcrumb", None),
             structured_data=context.pop("structured_data", None),
             noindex=context.pop("noindex", False),
+            robots=context.pop("robots", "noindex"),
             **context,
         )
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -359,6 +388,7 @@ class SiteBuilder:
                 "longitude": water["center"]["lon"],
             }
         water_source = self.sources[STATE_SOURCE[water["state"]]]
+        indexable = is_indexable(water, self.run_date, INDEX_WINDOW_MONTHS)
         satellite_source = self.sources.get("epa-cyan")
         self._write(
             rel,
@@ -372,6 +402,8 @@ class SiteBuilder:
                 None if county == "County not recorded" else county,
                 wording.headline(water["status"]),
             ),
+            noindex=not indexable,
+            robots="noindex,follow",
             water=water,
             gear_links=gear_links(),
             affiliate_rel=AFFILIATE_LINK_REL,
