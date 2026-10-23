@@ -9,6 +9,7 @@
   {% endif %}
   {% if status.kind == "advisory" and status.sites_with_advisory > 1 %}
   <p>{{ status.sites_with_advisory }} reported spots here have an advisory with no all-clear recorded.</p>
+  <p class="muted">The level in the headline is the highest among those spots. Other spots can be at a lower level; each spot's latest status is listed under Reported spots below.</p>
   {% endif %}
   <p class="muted">{{ caveat(status) }}</p>
 </div>
@@ -30,6 +31,7 @@
   {% endfor %}
   </tbody>
 </table>
+<p class="muted">Where a water has more than one reported spot with an advisory, the level shown is the highest among them.</p>
 {% endmacro %}
 
 {% macro satellite_box(sat, explainer, source) %}

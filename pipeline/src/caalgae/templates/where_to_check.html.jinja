@@ -1,0 +1,58 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>{{ page_title }}</h1>
+<p class="lede">
+  No single page covers every lake. These are the pages people use to check a
+  California algae advisory, what each one covers and what it does not. Check
+  more than one, and read the signs posted at the water.
+</p>
+<p class="muted">
+  This page is a dated snapshot. We read each page below on
+  {{ as_of|date }}, and pages change, move and go out of date without notice.
+  Open the link to see what it says now. Lake Notice is independent and no
+  agency or organization listed here has reviewed or approved this page.
+</p>
+
+<h2 id="table">Sources</h2>
+<table>
+  <caption class="visually-hidden">Where to check an algae advisory in California: each source, the date we read it, what it covers and what it does not</caption>
+  <thead><tr><th scope="col">Source</th><th scope="col">Read on</th><th scope="col">What it covers</th><th scope="col">What it does not cover</th></tr></thead>
+  <tbody>
+  {% for s in sources %}
+    <tr id="{{ s.slug }}">
+      <td>
+        {% if s.url %}<a href="{{ s.url }}">{{ s.name }}</a>{% else %}<a href="{{ root }}">{{ s.name }}</a> (this site){% endif %}
+        {% if s.also_url %}<br><a href="{{ s.also_url }}">{{ s.also_label }}</a>{% endif %}
+      </td>
+      <td><time datetime="{{ s.read_on.isoformat() }}">{{ s.read_on|date }}</time></td>
+      <td>{{ s.covers }}</td>
+      <td>{{ s.does_not_cover }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2 id="counties">Counties</h2>
+<p>
+  The five counties with the most waters in Lake Notice's data on
+  {{ as_of|date }} were {% for name, n in county_counts %}{{ name }} ({{ n }}){% if not loop.last %}{% if loop.revindex == 2 %} and {% else %}, {% endif %}{% endif %}{% endfor %}.
+  We list a county only where we read a page of its own. On {{ as_of|date }}
+  we could not load the environmental health pages for
+  {{ unread[:-1]|join(", ") }} and {{ unread[-1] }}, so this page says nothing about them.
+</p>
+
+<h2 id="levels">Why two pages can show different levels</h2>
+<p>
+  Sources cover different spots and different days. A water's headline on
+  Lake Notice shows the highest level among its reported spots, so a page that
+  covers only one swim area can show a lower level for the same lake. Each
+  water page lists every spot and its latest status.
+</p>
+
+<h2 id="more">More</h2>
+<p>
+  <a href="{{ root }}about/">About the data and its limits</a> &middot;
+  <a href="{{ root }}dogs/">Dogs and algae</a> &middot;
+  <a href="{{ root }}county/">Find a lake by county</a>
+</p>
+{% endblock %}

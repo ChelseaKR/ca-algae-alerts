@@ -14,7 +14,7 @@ from typing import Any
 import pytest
 from paths import PAGE, SAMPLE, TRAPS
 
-from caalgae import cli, site
+from caalgae import cli, site, where_to_check
 
 _LD = re.compile(r'<script type="application/ld\+json">(.*?)</script>', re.S)
 _NAV = re.compile(r'<nav aria-label="Breadcrumb".*?</nav>', re.S)
@@ -101,6 +101,8 @@ def expected_lastmods(snap: dict[str, Any]) -> dict[str, str | None]:
     expected[f"{base}county/"] = newest([i for ids in counties.values() for i in ids])
     for rel in _STATIC:
         expected[base + rel] = None
+    # A fixed fact about the page itself (its newest read date), not a record date.
+    expected[base + "where-to-check/"] = where_to_check.AS_OF.isoformat()
     return expected
 
 
@@ -115,7 +117,7 @@ def lastmod_problems(root: Path) -> list[str]:
             problems.append(f"{loc}: not a known page")
         elif (lastmod or None) != expected[loc]:
             problems.append(f"{loc}: lastmod {lastmod!r}, expected {expected[loc]!r}")
-        if lastmod and lastmod > run:
+        if lastmod and lastmod > run and not loc.endswith("/where-to-check/"):
             problems.append(f"{loc}: lastmod {lastmod} is after run_date {run}")
     return problems
 
@@ -181,7 +183,13 @@ def test_future_record_gets_no_lastmod_and_moves_no_aggregate(
     loc = f"{site.DEFAULT_BASE_URL}water/{victim['id']}/"
     assert loc in after and not after[loc]
     assert before[loc]
-    assert all(not v or v <= snap["run_date"] for v in after.values())
+    # Every record-derived lastmod stays within run_date; the where-to-check
+    # page carries its own fixed data date instead.
+    assert all(
+        not v or v <= snap["run_date"]
+        for k, v in after.items()
+        if not k.endswith("/where-to-check/")
+    )
     assert max(v for v in after.values() if v) <= max(v for v in before.values() if v)
     assert lastmod_problems_for(out, snap) == []
 

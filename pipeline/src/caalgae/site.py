@@ -26,7 +26,7 @@ from urllib.parse import urlencode
 
 import jinja2
 
-from caalgae import wording
+from caalgae import where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
 
@@ -588,6 +588,34 @@ class SiteBuilder:
         self._write("404.html", "404.html.jinja", title=f"Page not found | {SITE_NAME}",
                     description="Page not found.", noindex=True)  # fmt: skip
 
+    def where_to_check_page(self) -> None:
+        """The dated "where to check" page. Its lastmod is the page's own data
+        date (the newest read date in ``where_to_check.SOURCES``), set directly:
+        it is a fixed fact about the page, not a record date, so the run-date
+        ceiling that guards record dates does not apply."""
+        rel = "where-to-check/"
+        crumbs = self._crumbs((where_to_check.TITLE, self.base_url + rel))
+        self._write(
+            rel,
+            "where_to_check.html.jinja",
+            title=f"{where_to_check.TITLE} | {SITE_NAME}",
+            description=where_to_check.DESCRIPTION,
+            page_title=where_to_check.TITLE,
+            sources=[
+                {**vars(src), "slug": slugify(src.name)}
+                for src in where_to_check.SOURCES
+            ],
+            county_counts=where_to_check.COUNTY_COUNTS,
+            unread=where_to_check.UNREAD_COUNTIES,
+            as_of=where_to_check.AS_OF,
+            breadcrumb=crumbs,
+            structured_data={
+                "@context": "https://schema.org",
+                **self._breadcrumb_data(crumbs),
+            },
+        )
+        self.lastmods[self.base_url + rel] = where_to_check.AS_OF.isoformat()
+
     def extras(self) -> None:
         assets = self.out / "assets"
         assets.mkdir(parents=True, exist_ok=True)
@@ -624,6 +652,7 @@ class SiteBuilder:
         self.counties()
         self.state_pages()
         self.static_pages()
+        self.where_to_check_page()
         self.extras()
 
 
