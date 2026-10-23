@@ -75,6 +75,31 @@
    "quarantined_by_reason": {
     "missing observation date": 18
    }
+  },
+  {
+   "source": "ca-swrcb-fhab",
+   "url": "https://publish.data.ca.gov/dataset/ab672540-aecd-42f1-9b05-9aad326f97ec/resource/4283c060-c22f-48f5-a75c-8bccf0c54a99/download/hab-responses_2026-10-22.csv",
+   "file_name": "hab-responses_2026-10-22.csv",
+   "file_date": "2026-10-22",
+   "fetched_at": "2026-10-23T14:51:05Z",
+   "rows_read": 14452,
+   "quarantined": 249,
+   "quarantined_by_reason": {
+    "missing or unreadable advisory date": 205,
+    "not linked to a bloom report": 44
+   }
+  },
+  {
+   "source": "mo-dnr-hab",
+   "url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+   "file_name": "HAB_SUBMIT_POINTS layer 6 (public water bodies)",
+   "file_date": "2026-10-23",
+   "fetched_at": "2026-10-23T14:51:05Z",
+   "rows_read": 279,
+   "quarantined": 18,
+   "quarantined_by_reason": {
+    "missing observation date": 18
+   }
   }
  ],
  "records": {
@@ -4012,6 +4037,30 @@
     "stamp": null
    },
    "first_seen": "2026-10-12",
+   "last_seen": "2026-10-23"
+  },
+  "mo-37951": {
+   "record": {
+    "source": "mo-dnr-hab",
+    "state": "MO",
+    "site_id": "mo-37951",
+    "water_key": "mo||pierce city city park recreational pond",
+    "water_name": "Pierce City City Park Recreational Pond",
+    "county_text": "",
+    "landmark": "Pierce City City Park Recreational Pond",
+    "lat": 36.940729,
+    "lon": -93.997615,
+    "level": "Report (report)",
+    "tier": "not_classified",
+    "explicit_no_advisory": false,
+    "detail": "Case review.",
+    "record_kind": "official_advisory",
+    "end_kind": "dissipated",
+    "date": "2026-10-09",
+    "end_date": null,
+    "stamp": null
+   },
+   "first_seen": "2026-10-23",
    "last_seen": "2026-10-23"
   },
   "mo-38243": {
