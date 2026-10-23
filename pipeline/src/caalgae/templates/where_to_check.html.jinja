@@ -38,7 +38,7 @@
   {{ as_of|date }} were {% for name, n in county_counts %}{{ name }} ({{ n }}){% if not loop.last %}{% if loop.revindex == 2 %} and {% else %}, {% endif %}{% endif %}{% endfor %}.
   We list a county only where we read a page of its own. On {{ as_of|date }}
   we could not load the environmental health pages for
-  {{ unread|join(", ") }}, so this page says nothing about them.
+  {{ unread[:-1]|join(", ") }} and {{ unread[-1] }}, so this page says nothing about them.
 </p>
 
 <h2 id="levels">Why two pages can show different levels</h2>
