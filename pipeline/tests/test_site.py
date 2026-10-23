@@ -321,3 +321,101 @@ def test_base_url_and_support_email(tmp_path: Path) -> None:
         in (out / "index.html").read_text()
     )
     assert "help@example.org" in (out / "support" / "index.html").read_text()
+
+
+# -- search-result metadata: length and uniqueness -----------------------------
+
+_TITLE = re.compile(r"<title>(.*?)</title>", re.S)
+_DESCRIPTION = re.compile(r'<meta name="description" content="(.*?)"', re.S)
+
+
+def meta_problems(root: Path) -> list[str]:
+    """Pages whose title or description is cut off in search results (over
+    60 and 155 characters), missing, or shared with another page."""
+    problems = []
+    seen: dict[str, str] = {}
+    for page in pages(root):
+        rel = str(page.relative_to(root))
+        raw = page.read_text(encoding="utf-8")
+        title, description = _TITLE.search(raw), _DESCRIPTION.search(raw)
+        if not title or not description:
+            problems.append(f"{rel}: missing title or description")
+            continue
+        t, d = html.unescape(title.group(1)), html.unescape(description.group(1))
+        if len(t) > site.TITLE_MAX:
+            problems.append(f"{rel}: title is {len(t)} characters: {t}")
+        if len(d) > site.DESCRIPTION_MAX:
+            problems.append(f"{rel}: description is {len(d)} characters: {d}")
+        if t in seen:
+            problems.append(f"{rel}: title shared with {seen[t]}: {t}")
+        seen[t] = rel
+    return problems
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_titles_and_descriptions_fit_search_results(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    assert meta_problems(request.getfixturevalue(which)) == []
+
+
+def test_meta_guard_catches_a_long_title_and_a_shared_title(tmp_path: Path) -> None:
+    # Negative control: sabotage a built copy and assert the sabotage applied
+    # before asserting the guard noticed it.
+    root = build(tmp_path)
+    first, second = pages(root)[:2]
+    before = first.read_text(encoding="utf-8")
+    first.write_text(
+        _TITLE.sub("<title>" + "long " * 20 + "</title>", before, count=1),
+        encoding="utf-8",
+    )
+    assert first.read_text(encoding="utf-8") != before  # sabotage applied
+    other = second.read_text(encoding="utf-8")
+    title = _TITLE.search(other)
+    assert title
+    second.write_text(
+        _TITLE.sub("<title>Same</title>", other, count=1), encoding="utf-8"
+    )
+    third = pages(root)[2]
+    third.write_text(
+        _TITLE.sub("<title>Same</title>", third.read_text(encoding="utf-8"), count=1),
+        encoding="utf-8",
+    )
+    problems = meta_problems(root)
+    assert any("title is" in p for p in problems)
+    assert any("title shared with" in p for p in problems)
+
+
+def test_water_title_and_description_fit_for_any_name() -> None:
+    long_name = (
+        "Tributary to Some Extraordinarily Long Named Creek near the Old Mill " * 2
+    )
+    headline = wording.headline(
+        {
+            "kind": "advisory",
+            "tier": "danger",
+            "level": "Danger",
+            "posted": "2026-10-16",
+        }
+    )
+    for name in ["Clear Lake", long_name.strip()]:
+        assert len(site.water_title(name, None)) <= site.TITLE_MAX
+        assert len(site.water_title(name, "Alameda and Contra Costa")) <= site.TITLE_MAX
+        assert len(site.water_description(name, "Alameda County", headline)) <= (
+            site.DESCRIPTION_MAX
+        )
+    # The status and its date are never the part cut.
+    assert headline in site.water_description("Clear Lake", "Lake County", headline)
+    assert site.water_title("Bear Creek", "Mono").startswith("Bear Creek, Mono County")
+    assert site.water_title("Clear Lake", None).startswith("Clear Lake toxic algae")
+
+
+def test_water_pages_that_share_a_name_get_different_titles() -> None:
+    def w(i: str, county: str) -> dict[str, Any]:
+        return {"state": "CA", "name": "Bear Creek", "id": i, "counties": [county]}
+
+    waters = [w("ca-a-bear-creek", "Mono"), w("ca-b-bear-creek", "Inyo")]
+    titles = {
+        site.water_title(x["name"], site.SiteBuilder._county_label(x)) for x in waters
+    }
+    assert len(titles) == 2

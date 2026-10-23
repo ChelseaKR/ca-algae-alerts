@@ -16,7 +16,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import shutil
-from collections import defaultdict
+from collections import Counter, defaultdict
 from importlib import resources
 from pathlib import Path
 from typing import Any
@@ -37,6 +37,58 @@ SITE_DOMAIN = "lakenotice.com"
 STATE_NAMES = {"CA": "California", "MO": "Missouri"}
 STATE_SOURCE = {"CA": "ca-swrcb-fhab", "MO": "mo-dnr-hab"}
 DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
+
+
+# Search results show about 60 characters of a title and 155 of a
+# description; longer ones are cut mid-phrase. Every page is held to both.
+TITLE_MAX = 60
+DESCRIPTION_MAX = 155
+
+
+def fit(candidates: list[str], limit: int) -> str:
+    """The first candidate within ``limit``; failing that, the last one cut at
+    a word boundary with an ellipsis, so a very long name still fits."""
+    for candidate in candidates:
+        if len(candidate) <= limit:
+            return candidate
+    last = candidates[-1]
+    return last[: limit - 1].rsplit(" ", 1)[0].rstrip(" ,:;|-") + "\u2026"
+
+
+def water_title(name: str, county: str | None) -> str:
+    """A waterbody page title of at most TITLE_MAX characters. ``county`` is
+    passed only when another water in the same state has the same name, so two
+    "Bear Creek" pages never share a title."""
+    where = f"{name}, {county} County" if county else name
+    short = f"{name}, {county}" if county else name
+    tail = f" | {SITE_NAME}"
+    return fit(
+        [
+            f"{where} toxic algae advisories{tail}",
+            f"{where} algae advisories{tail}",
+            f"{short} algae advisories{tail}",
+            f"{short}{tail}",
+            f"{name}{tail}",
+        ],
+        TITLE_MAX,
+    )
+
+
+def water_description(name: str, place: str | None, headline: str) -> str:
+    """A waterbody page description of at most DESCRIPTION_MAX characters.
+    The status and its date come first and are never the part that is cut."""
+    lead = f"{name}, {place}: " if place else f"{name}: "
+    return fit(
+        [
+            f"{lead}{headline} Every state advisory record since 2016.",
+            f"{lead}{headline} State records since 2016.",
+            f"{lead}{headline}",
+            f"{name}: {headline}",
+        ],
+        DESCRIPTION_MAX,
+    )
+
+
 # PLACEHOLDER, deliberately empty: the owner has not created a GA4 property
 # for Lake Notice yet (docs/DOMAIN.md, "After the site is live"). When she
 # does, the change is this one line, a measurement id of the form "G-XXXXXXXXXX".
@@ -172,6 +224,9 @@ class SiteBuilder:
             "quarantine": snap["quarantine"],
         }
         self.waters = snap["waterbodies"]
+        self._name_counts = Counter(
+            (w["state"], w["name"].casefold()) for w in self.waters
+        )
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
         self.by_county: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.no_county: list[dict[str, Any]] = []
@@ -231,11 +286,11 @@ class SiteBuilder:
         self._write(
             "",
             "index.html.jinja",
-            title=f"California lake toxic algae advisories, by date | {SITE_NAME}",
+            title=f"California lake toxic algae advisories by date | {SITE_NAME}",
             description=(
                 "Toxic algae (harmful algal bloom) advisories at California lakes "
-                "and rivers, newest first, with each lake's history since 2016. "
-                "For swimmers, families, paddlers, anglers and dog owners."
+                "and rivers, newest first, with each lake's history since 2016 "
+                "for swimmers and dogs."
             ),
             recent=recent,
             older_count=len(open_) - len(recent),
@@ -254,11 +309,11 @@ class SiteBuilder:
         self._write(
             "advisories/",
             "advisories.html.jinja",
-            title=f"Every California algae advisory with no all-clear recorded | {SITE_NAME}",
+            title=f"California algae advisories with no all-clear | {SITE_NAME}",
             description=(
                 "Every California waterbody whose latest state record is an "
-                "algae advisory, newest posting first, including old advisories "
-                "the state never recorded an end for."
+                "algae advisory, newest first, including old ones the state "
+                "never recorded an end for."
             ),
             waters=self.open_advisories(),
             breadcrumb=crumbs,
@@ -267,6 +322,17 @@ class SiteBuilder:
                 **self._breadcrumb_data(crumbs),
             },
         )
+
+    def _name_is_shared(self, water: dict[str, Any]) -> bool:
+        """True when another water in the same state has this name."""
+        return self._name_counts[(water["state"], water["name"].casefold())] > 1
+
+    @staticmethod
+    def _county_label(water: dict[str, Any]) -> str | None:
+        """The county to name in a title, or None when there is none."""
+        if water["counties"]:
+            return " and ".join(water["counties"])
+        return None
 
     def water_page(self, water: dict[str, Any]) -> None:
         rel = f"water/{water['id']}/"
@@ -297,14 +363,14 @@ class SiteBuilder:
         self._write(
             rel,
             "water.html.jinja",
-            title=(
-                f"{water['name']} toxic algae advisories and history "
-                f"(swimming, kids, dogs) | {SITE_NAME}"
+            title=water_title(
+                water["name"],
+                self._county_label(water) if self._name_is_shared(water) else None,
             ),
-            description=(
-                f"{water['name']}, {county}: {wording.headline(water['status'])} "
-                "Every state advisory record since 2016, with what each level "
-                "means for people, children and dogs."
+            description=water_description(
+                water["name"],
+                None if county == "County not recorded" else county,
+                wording.headline(water["status"]),
             ),
             water=water,
             gear_links=gear_links(),
@@ -361,7 +427,13 @@ class SiteBuilder:
             self._write(
                 rel,
                 "county.html.jinja",
-                title=f"{county} County lake toxic algae advisories | {SITE_NAME}",
+                title=fit(
+                    [
+                        f"{county} County lake toxic algae advisories | {SITE_NAME}",
+                        f"{county} County algae advisories | {SITE_NAME}",
+                    ],
+                    TITLE_MAX,
+                ),
                 description=(
                     f"Toxic algae advisory status and history for {len(waters)} "
                     f"lakes and rivers in {county} County, California."
@@ -407,8 +479,8 @@ class SiteBuilder:
 
     def static_pages(self) -> None:
         pages = [
-            ("dogs/", "dogs.html.jinja", "Is this lake safe for my dog? Reading California algae advisories",
-             "How to read California toxic algae advisories before taking your dog to a lake: what each level means, why no advisory is not an all-clear, and signs to watch for."),
+            ("dogs/", "dogs.html.jinja", "Is this lake safe for my dog? Algae advisories",
+             "How to read California algae advisories before a lake trip with your dog: what each level means, why no advisory is not an all-clear, and signs to watch."),
             ("about/", "about.html.jinja", "About the data and its limits",
              "Where the advisories come from, how a status is decided, and what the data cannot tell you."),
             ("privacy/", "privacy.html.jinja", "Privacy policy",
