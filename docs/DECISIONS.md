@@ -276,12 +276,14 @@ other apps. Nothing to do now; the snapshot URL above is already final for
 the first build.
 
 
-## 0014 — Dog-gear links on the dogs page only, with the existing Associates id (owner, 2026-10-30)
+## 0015 — Dog-gear links on the dogs page only, with the existing Associates id (owner, 2026-10-30)
 
 The owner approved a small Amazon Associates section on the Dogs and algae
-page (`/dogs/`) and nowhere else. This narrows 0013, which placed the block on
-every lake page, after Trout Truck lost most of its search impressions within
-two days of shipping an identical affiliate block on about 1,900 pages.
+page (`/dogs/`) and nowhere else. This narrows the affiliate part of 0013,
+which put the gear block on every lake page (off until a tag was set). The
+block comes off lake pages because Trout Truck lost most of its search
+impressions within two days of shipping an identical affiliate block on about
+1,900 pages.
 
 - **Placement.** Only `dogs.html.jinja` includes `_gear.html.jinja`, and
   `site.py` passes gear links to the dogs page alone. Lake, county, state,

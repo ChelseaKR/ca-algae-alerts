@@ -1,4 +1,4 @@
-"""The dog-gear affiliate block (docs/DECISIONS.md 0013, narrowed by 0014).
+"""The dog-gear affiliate block (docs/DECISIONS.md 0013, narrowed by 0015).
 
 Off while AMAZON_ASSOCIATE_TAG is empty: no block, no Amazon URL, no privacy
 paragraph. On, the Dogs and algae page, and no other page, carries three to

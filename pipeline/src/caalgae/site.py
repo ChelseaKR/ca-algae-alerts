@@ -109,7 +109,7 @@ def water_description(name: str, place: str | None, headline: str) -> str:
 # Never copy another product's id here: it would mix this site's visits into
 # that property.
 GA4_MEASUREMENT_ID = ""
-# Amazon Associates dog-gear links (docs/DECISIONS.md 0013, narrowed by 0014).
+# Amazon Associates dog-gear links (docs/DECISIONS.md 0013, narrowed by 0015).
 # Website only, and only on the Dogs and algae page (/dogs/): never on a lake,
 # county, state or any other page, and never in the iOS app, which has no web
 # view. The one config value is the tracking id below. It defaults to the
@@ -593,7 +593,7 @@ class SiteBuilder:
                 counties_known=len(CA_COUNTIES),
                 tiers=["caution", "warning", "danger", "other_advisory"],
                 # The gear block is on the dogs page and nowhere else
-                # (DECISIONS 0014); every other page gets no links.
+                # (DECISIONS 0015); every other page gets no links.
                 gear_links=gear_links() if rel == "dogs/" else [],
                 affiliate_rel=AFFILIATE_LINK_REL,
                 gear_endorsement=gear_endorsement(),

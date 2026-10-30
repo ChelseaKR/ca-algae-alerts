@@ -53,7 +53,7 @@ chooses that design, which would be its own change.
   Associates id `trouttruck-20`, so lakenotice.com must be on that account's
   website list before the links ship. They appear on the dogs page only. To
   use a Lake Notice id instead, create it and change that one constant; `""`
-  removes the block and the privacy paragraph. DECISIONS 0013 and 0014.
+  removes the block and the privacy paragraph. DECISIONS 0013 and 0015.
 
 ## iOS identifiers to decide when the App Store record is created
 

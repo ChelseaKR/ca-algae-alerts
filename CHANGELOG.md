@@ -9,7 +9,7 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 - The dog-gear Amazon links are on the Dogs and algae page only, never on a
   lake page, with five searches tied to that page's advice, and they are on by
-  default with the owner's existing Associates id (docs/DECISIONS.md 0014).
+  default with the owner's existing Associates id (docs/DECISIONS.md 0015).
 
 - Each sitemap URL's `lastmod` is the newest record date the page shows, not
   the build date: a water's newest record, a county's or state's newest water,
