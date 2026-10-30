@@ -5,6 +5,15 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- What a person should do after contact with water that may have toxic algae
+  (shower or rinse off with tap water; call a doctor or Poison Control at
+  1-800-222-1222 if sick), paraphrased from the CDC and the California Water
+  Boards' advisory signs, on every lake page, the dogs page, About and the
+  app's lake screen.
+- A "not medical advice" line in every page's footer, on About and in the app.
+
 ### Changed
 
 - Each sitemap URL's `lastmod` is the newest record date the page shows, not

@@ -79,6 +79,26 @@ DOG_ADVICE = (
 )
 
 
+# What a person should do after contact, paraphrased from the CDC ("If you
+# or your animal go in water with an algal bloom, rinse off with tap water
+# right after"; "contact a healthcare provider or the Poison Control hotline
+# at 1-800-222-1222") and the California Water Boards' posted advisory signs
+# ("Call your doctor or veterinarian if you or your pet get sick after going
+# into the water") and HABs Portal infographic ("Shower immediately"). It
+# adds no medical claim of its own.
+HUMAN_ADVICE = (
+    "If you or a child go in water that may have toxic algae, shower or rinse "
+    "off with tap water right away. If anyone gets sick afterward, call a "
+    "doctor or Poison Control at 1-800-222-1222."
+)
+
+NOT_MEDICAL_ADVICE = (
+    "Lake Notice republishes state records for information only. It is not "
+    "medical advice, and records can be late or wrong. In an emergency, call "
+    "911. For a possible poisoning, call Poison Control at 1-800-222-1222."
+)
+
+
 def date_label(day: dt.date | str | None) -> str:
     """``Oct 9, 2026``. Never called without a date: a missing date is a
     different sentence, not a blank."""

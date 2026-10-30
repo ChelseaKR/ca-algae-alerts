@@ -11,6 +11,8 @@
 {% endif %}
 <p>Before you go, check the <a href="{{ water_source.official_map_url }}">state's official algae page</a> and any signs posted at the water.{% if app_store_url %} The <a href="{{ app_store_url }}">iPhone app</a> can alert you when {{ water.name }} gets a new advisory.{% endif %}</p>
 
+<p id="after-contact"><strong>After contact with the water:</strong> {{ human_advice }}</p>
+
 <h2 id="dogs">Dogs at {{ water.name }}</h2>
 <p>{{ dog_answer(water.name, water.status) }}</p>
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>
