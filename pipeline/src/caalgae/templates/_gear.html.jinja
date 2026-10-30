@@ -1,22 +1,22 @@
 {#
-  The dog-gear block (docs/DECISIONS.md 0013). Renders nothing while
-  AMAZON_ASSOCIATE_TAG in site.py is empty (gear_links is then an empty list).
-  Plain Amazon search links, never a product and never a home toxin test kit.
+  The dog-gear block (docs/DECISIONS.md 0013, narrowed by 0014). Included by
+  dogs.html.jinja only; no lake, county, state or other page includes it.
+  Renders nothing while AMAZON_ASSOCIATE_TAG in site.py is empty (gear_links is
+  then an empty list). As on Trout Truck, the "Affiliate links" label and the
+  disclosure come before the links. Plain Amazon search links, never a product,
+  never a price, and never a home toxin test kit.
 #}
 {% if gear_links %}
 <section class="gear" aria-labelledby="gear-heading">
-  <h2 id="gear-heading">Dog gear for lake days</h2>
+  <p class="muted">Affiliate links</p>
+  <h2 id="gear-heading">Gear that helps you follow this advice</h2>
   <p>
-    Heading to {{ water.name }} with your dog? These links search Amazon for
-    dog gear. They point to search results, not to any one product. No gear
-    changes what is in the water: keep your dog out of water that has an
-    advisory on file, or that looks green, blue-green or scummy.
+    These links search Amazon for dog gear that goes with the advice above.
+    They point to search results, not to any one product. No gear changes
+    what is in the water or protects your dog from it: keep your dog out of
+    water that has an advisory on file, or that looks green, blue-green or
+    scummy.
   </p>
-  <ul>
-    {% for g in gear_links %}
-    <li><a href="{{ g.url }}" rel="{{ affiliate_rel }}">{{ g.label }}</a></li>
-    {% endfor %}
-  </ul>
   <p class="muted" id="gear-disclosure">
     These are affiliate links: if you buy something after following one, this
     site earns a commission, and it costs you nothing extra.
@@ -24,5 +24,10 @@
     {{ gear_endorsement }}
     <a href="{{ root }}privacy/#affiliate">More in the privacy policy</a>.
   </p>
+  <ul>
+    {% for g in gear_links %}
+    <li><a href="{{ g.url }}" rel="{{ affiliate_rel }}">{{ g.label }}</a>: {{ g.why }}</li>
+    {% endfor %}
+  </ul>
 </section>
 {% endif %}

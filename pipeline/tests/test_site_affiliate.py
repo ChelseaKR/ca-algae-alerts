@@ -1,18 +1,17 @@
-"""The dog-gear affiliate block (docs/DECISIONS.md 0013).
+"""The dog-gear affiliate block (docs/DECISIONS.md 0013, narrowed by 0014).
 
 Off while AMAZON_ASSOCIATE_TAG is empty: no block, no Amazon URL, no privacy
-paragraph. On, every lake page carries three plain Amazon search links with
-the exact rel, Amazon's sentence and a non-endorsement sentence naming the
-agency; no other page does; no wording anywhere offers a home toxin test kit
-or says a product makes water safe. HTML is read with html.parser, never a
-regex. Each guard has a negative control that first asserts its sabotage
-applied.
+paragraph. On, the Dogs and algae page, and no other page, carries three to
+five plain Amazon search links with the exact rel, the tag, Amazon's sentence
+and a non-endorsement sentence naming both agencies; lake pages carry no
+Amazon link at all; no wording anywhere offers a home toxin test kit or says a
+product makes water safe. HTML is read with html.parser, never a regex. Each
+guard has a negative control that first asserts its sabotage applied.
 """
 
 from __future__ import annotations
 
 import html
-import json
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
@@ -112,6 +111,10 @@ def all_pages(root: Path) -> list[Path]:
     return sorted(root.rglob("*.html"))
 
 
+def dogs_page(root: Path) -> Path:
+    return root / "dogs" / "index.html"
+
+
 def lake_pages(root: Path) -> list[Path]:
     """The pages that carry a water's own status: water/<id>/index.html."""
     return sorted((root / "water").glob("*/index.html"))
@@ -144,101 +147,113 @@ def off_problems(root: Path) -> list[str]:
 
 
 def test_the_constant_and_the_links_agree() -> None:
-    # Empty (the shipped state until the owner creates the id) means no links;
-    # set, it is a US Associates id of its own, never Trout Truck's.
+    # Empty means no links; set, it is a US Associates id. The shipped default
+    # is the owner's existing id until Lake Notice has one of its own.
     tag = site.AMAZON_ASSOCIATE_TAG
+    assert tag == "trouttruck-20"
     assert (site.gear_links() == []) == (tag == "")
-    if tag:
-        assert tag.endswith("-20") and tag != "trouttruck-20"
+    assert tag.endswith("-20")
+    assert 3 <= len(site.GEAR_CATEGORIES) <= 5
+    for link in site.gear_links():
+        assert parse_qs(urlsplit(link["url"]).query)["tag"] == [tag]
 
 
 def test_empty_tag_renders_nothing(off_site: Path) -> None:
     assert lake_pages(off_site), "the fixture build has no lake pages"
+    assert dogs_page(off_site).exists()
     assert off_problems(off_site) == []
 
 
 def test_off_guard_is_not_vacuous(on_site: Path) -> None:
     # Negative control: the same checker, run on a build whose tag was set,
     # must report the block (so "absent when empty" cannot pass by accident).
-    assert parse(lake_pages(on_site)[0]).has_section
+    assert parse(dogs_page(on_site)).has_section
     problems = off_problems(on_site)
     assert any("gear block present" in p for p in problems)
     assert any("Amazon URL present" in p for p in problems)
     assert any("privacy page" in p for p in problems)
 
 
-def test_tagged_block_on_every_lake_page(on_site: Path) -> None:
+def test_tagged_block_on_the_dogs_page(on_site: Path) -> None:
+    page = dogs_page(on_site)
+    g = parse(page)
+    assert g.has_section
+    amazon = [(h, r) for h, r in g.links if "amazon." in h]
+    assert len(amazon) == len(site.GEAR_CATEGORIES)
+    assert 3 <= len(amazon) <= 5
+    # The one other link in the block is the privacy policy, without rel.
+    assert [h for h, _ in g.links if "amazon." not in h] == ["../privacy/#affiliate"]
+    for href, rel in amazon:
+        assert rel == REL, rel  # the exact rel, no more, no less
+        parts = urlsplit(href)
+        assert (parts.scheme, parts.netloc, parts.path) == (
+            "https", "www.amazon.com", "/s"
+        ), href  # fmt: skip
+        query = parse_qs(parts.query)
+        assert sorted(query) == ["k", "tag"], href
+        assert query["tag"] == [TAG], href
+    assert [h for h, _ in amazon] == g.amazon_hrefs  # no Amazon link outside it
+    text = block_text(g)
+    assert DISCLOSURE in text
+    assert site.gear_endorsement() in text
+    # The disclosure comes before the first link, as on Trout Truck.
+    raw = page.read_text(encoding="utf-8")
+    assert raw.index(DISCLOSURE) < raw.index("https://www.amazon.com/s")
+    # Each item says which piece of the page's advice it goes with.
+    for _label, _terms, why in site.GEAR_CATEGORIES:
+        assert why in text, why
+
+
+def test_no_amazon_link_on_any_lake_page(on_site: Path) -> None:
     pages = lake_pages(on_site)
     assert len(pages) >= 2
-    states = set()
     for page in pages:
         g = parse(page)
-        assert g.has_section, page
-        amazon = [(h, r) for h, r in g.links if "amazon." in h]
-        assert len(amazon) == len(site.GEAR_CATEGORIES) == 3, page
-        # The one other link in the block is the privacy policy, without rel.
-        assert [h for h, _ in g.links if "amazon." not in h] == [
-            "../../privacy/#affiliate"
-        ]
-        for href, rel in amazon:
-            assert rel == REL, (page, rel)  # the exact rel, no more, no less
-            parts = urlsplit(href)
-            assert (parts.scheme, parts.netloc, parts.path) == (
-                "https", "www.amazon.com", "/s"
-            ), href  # fmt: skip
-            query = parse_qs(parts.query)
-            assert sorted(query) == ["k", "tag"], href
-            assert query["tag"] == [TAG], href
-        assert [h for h, _ in amazon] == g.amazon_hrefs, (
-            page
-        )  # no Amazon link outside the block
-        text = block_text(g)
-        assert DISCLOSURE in text, page
-        if "Missouri" in page.read_text(encoding="utf-8")[:4000]:
-            states.add("MO")
-        for agency in ("the Water Board", "Missouri DNR"):
-            if f"not {agency}'s, and {agency} does not endorse them or Amazon." in text:
-                states.add(agency)
-    assert "the Water Board" in states, "no California page names the Water Board"
-    assert "Missouri DNR" in states, "no Missouri page names Missouri DNR"
+        assert not g.has_section, page
+        assert g.amazon_hrefs == [], page
+        assert "amazon." not in page.read_text(encoding="utf-8").casefold(), page
 
 
-def test_california_pages_name_the_water_board_and_missouri_pages_name_dnr(
-    on_site: Path,
-) -> None:
-    snap_waters = json.loads((on_site / "snapshot" / "v1.json").read_text())[
-        "waterbodies"
-    ]
-    by_state = {"CA": 0, "MO": 0}
-    for w in snap_waters:
-        page = on_site / "water" / w["id"] / "index.html"
-        if not page.exists():
-            continue
-        text = block_text(parse(page))
-        want = site.gear_endorsement(w["state"])
-        assert want in text, (w["name"], text)
-        other = "MO" if w["state"] == "CA" else "CA"
-        assert site.gear_endorsement(other) not in text
-        by_state[w["state"]] += 1
-    assert by_state["CA"] and by_state["MO"], by_state
+def test_lake_page_guard_is_not_vacuous(on_site: Path) -> None:
+    # Negative control: put a tagged link into a lake page's HTML and the same
+    # parser must find it, after asserting the sabotage applied.
+    raw = lake_pages(on_site)[0].read_text(encoding="utf-8")
+    link = site.amazon_search_url("dog life jacket")
+    sabotaged = raw.replace("</main>", f'<a href="{link}">x</a></main>', 1)
+    assert sabotaged != raw  # the sabotage applied
+    g = Gear()
+    g.feed(sabotaged)
+    assert g.amazon_hrefs == [link]
+    assert "amazon." in sabotaged.casefold()
 
 
-def test_block_only_on_lake_pages_and_nowhere_in_data(on_site: Path) -> None:
-    lakes = set(lake_pages(on_site))
+def test_block_only_on_the_dogs_page_and_nowhere_in_data(on_site: Path) -> None:
+    dogs = dogs_page(on_site)
+    privacy = on_site / "privacy" / "index.html"
     for page in all_pages(on_site):
-        text = page.read_text(encoding="utf-8")
-        if page in lakes:
+        if page == dogs:
             continue
-        assert not parse(page).has_section, page
-        if page != on_site / "privacy" / "index.html":
-            assert "amazon." not in text.casefold(), page
+        g = parse(page)
+        assert not g.has_section, page
+        assert g.amazon_hrefs == [], page
+        if page != privacy:  # privacy names Amazon.com in prose, never a link
+            assert "amazon." not in page.read_text(encoding="utf-8").casefold(), page
     for rel in ("sitemap.xml", "robots.txt", "snapshot/v1.json"):
         assert "amazon." not in (on_site / rel).read_text(encoding="utf-8").casefold()
-    # JSON-LD blocks (script elements) on lake pages carry no Amazon URL either.
-    for page in lakes:
-        assert page.read_text(encoding="utf-8").count("amazon.com") == len(
-            site.GEAR_CATEGORIES
-        ), page
+    # JSON-LD blocks (script elements) on the dogs page carry no Amazon URL.
+    assert dogs.read_text(encoding="utf-8").count("amazon.com") == len(
+        site.GEAR_CATEGORIES
+    )
+
+
+def test_no_amazon_script_image_or_price(on_site: Path) -> None:
+    raw = dogs_page(on_site).read_text(encoding="utf-8")
+    for tag in ("<script", "<img", "<iframe", "<link"):
+        for chunk in raw.split(tag)[1:]:
+            assert "amazon" not in chunk.split(">", 1)[0].casefold(), tag
+    text = block_text(parse(dogs_page(on_site)))
+    assert "$" not in text
+    assert "price" not in text.casefold()
 
 
 def test_privacy_paragraph_only_when_set(on_site: Path) -> None:
@@ -248,17 +263,18 @@ def test_privacy_paragraph_only_when_set(on_site: Path) -> None:
     assert DISCLOSURE in flat
     assert site.gear_endorsement() in flat
     assert "Amazon Services LLC Associates Program" in flat
+    assert "Dogs and algae</a> page, and no other page" in flat
+    assert "lake page" not in flat
 
 
 def test_no_test_kit_or_safety_wording_anywhere(on_site: Path) -> None:
-    labels = " ".join(f"{label} {terms}" for label, terms in site.GEAR_CATEGORIES)
+    labels = " ".join(" ".join(c) for c in site.GEAR_CATEGORIES)
     for needle in FORBIDDEN:
         assert needle not in labels.casefold(), needle
-    for page in lake_pages(on_site):
-        text = block_text(parse(page)).casefold()
-        for needle in FORBIDDEN:
-            assert needle not in text, (page, needle)
-        assert affirmative_safety_claims(block_text(parse(page))) == []
+    text = block_text(parse(dogs_page(on_site)))
+    for needle in FORBIDDEN:
+        assert needle not in text.casefold(), needle
+    assert affirmative_safety_claims(text) == []
     privacy = " ".join(
         (on_site / "privacy" / "index.html").read_text(encoding="utf-8").split()
     ).casefold()
@@ -271,27 +287,29 @@ def test_no_test_kit_or_safety_wording_anywhere(on_site: Path) -> None:
 def test_forbidden_wording_guard_is_not_vacuous(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    # Negative control: put a test kit into the categories and the same
-    # scans must flag it, after asserting the sabotage applied.
+    # Negative control: put a test kit and a safety claim into the categories
+    # and the same scans must flag them, after asserting the sabotage applied.
     original = site.GEAR_CATEGORIES
-    sabotaged = (*original, ("Home toxin test kit", "algae toxin test kit"))
+    sabotaged = (
+        *original,
+        ("Home toxin test kit", "algae toxin test kit", "Keeps your dog safe."),
+    )
     monkeypatch.setattr(site, "GEAR_CATEGORIES", sabotaged)
     assert original != site.GEAR_CATEGORIES  # the sabotage applied
     out = build(tmp_path, TAG)
-    page = lake_pages(out)[0]
-    text = block_text(parse(page)).casefold()
-    assert "home toxin test kit" in text
-    assert [n for n in FORBIDDEN if n in text], "the scan did not flag a test kit"
-    labels = " ".join(f"{label} {terms}" for label, terms in site.GEAR_CATEGORIES)
+    text = block_text(parse(dogs_page(out)))
+    assert "home toxin test kit" in text.casefold()
+    assert [n for n in FORBIDDEN if n in text.casefold()], "the scan missed it"
+    assert affirmative_safety_claims(text) != []
+    labels = " ".join(" ".join(c) for c in site.GEAR_CATEGORIES)
     assert [n for n in FORBIDDEN if n in labels.casefold()]
 
 
 def test_a_changed_tag_leaves_no_trace_of_the_old_one(tmp_path: Path) -> None:
     out = build(tmp_path, "other-20")
     for page in all_pages(out):
-        text = page.read_text(encoding="utf-8")
-        assert TAG not in text
-    assert "tag=other-20" in lake_pages(out)[0].read_text(encoding="utf-8")
+        assert TAG not in page.read_text(encoding="utf-8")
+    assert "tag=other-20" in dogs_page(out).read_text(encoding="utf-8")
 
 
 def test_ios_sources_carry_no_amazon_link() -> None:

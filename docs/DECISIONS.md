@@ -274,3 +274,35 @@ the include in `water.html.jinja`).
 **iOS submission waits for Trout Truck's App Review verdict**, as for the
 other apps. Nothing to do now; the snapshot URL above is already final for
 the first build.
+
+
+## 0014 — Dog-gear links on the dogs page only, with the existing Associates id (owner, 2026-10-30)
+
+The owner approved a small Amazon Associates section on the Dogs and algae
+page (`/dogs/`) and nowhere else. This narrows 0013, which placed the block on
+every lake page, after Trout Truck lost most of its search impressions within
+two days of shipping an identical affiliate block on about 1,900 pages.
+
+- **Placement.** Only `dogs.html.jinja` includes `_gear.html.jinja`, and
+  `site.py` passes gear links to the dogs page alone. Lake, county, state,
+  advisories, home and every other page carry no Amazon link.
+  `tests/test_site_affiliate.py` checks this, with a negative control that a
+  tagged link put into a lake page is caught.
+- **Tracking id.** `AMAZON_ASSOCIATE_TAG` defaults to the owner's existing id,
+  `trouttruck-20`, instead of waiting for a second id. Amazon's three
+  qualifying sales in 180 days count across the whole Associates account, so
+  sales here count toward Trout Truck's deadline (about 2027-04-17). Before
+  this ships, the owner adds lakenotice.com to that account's website list;
+  a Lake Notice id of its own is a one-line change to the constant.
+- **Items.** Five generic Amazon searches, each tied to the page's own advice:
+  a water bottle and a collapsible bowl (bring fresh drinking water so the dog
+  does not drink from the lake), a long leash (keep the dog out of the water
+  and away from scum), a rinse bottle and a towel (rinse the dog with fresh
+  water if it goes in, and do not let it lick its coat). No life jacket: it
+  ties to no algae advice. Search links, not products, so nothing goes stale.
+- **Unchanged from 0013.** Plain links with `rel="sponsored nofollow noopener"`,
+  no Amazon script, image or price, Amazon's sentence and the "Affiliate links"
+  label before the links, the non-endorsement sentence naming both agencies, a
+  privacy-page section, no click tracking, never in the iOS app, never a home
+  toxin test kit, and the block's own text says no gear changes what is in the
+  water. Removal is one edit: set the tag to `""`.

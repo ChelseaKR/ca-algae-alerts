@@ -109,27 +109,38 @@ def water_description(name: str, place: str | None, headline: str) -> str:
 # Never copy another product's id here: it would mix this site's visits into
 # that property.
 GA4_MEASUREMENT_ID = ""
-# Amazon Associates dog-gear links (docs/DECISIONS.md 0013). Website only: the
-# iOS app has no web view and never shows them. This is Lake Notice's own
-# tracking id, never Trout Truck's. PLACEHOLDER, deliberately empty: the owner
-# has not created the second Associates id yet. Empty, the gear block and the
-# privacy paragraph render nothing and no Amazon URL is built anywhere; set,
-# one line here turns both on. The links are dog gear for lake days, as plain
-# search links. Never a home toxin test kit: a negative strip is not safety
-# and nothing here may imply it (tests/test_site_affiliate.py fails on any
-# test-kit wording in the categories or in a built page).
-AMAZON_ASSOCIATE_TAG = ""
+# Amazon Associates dog-gear links (docs/DECISIONS.md 0013, narrowed by 0014).
+# Website only, and only on the Dogs and algae page (/dogs/): never on a lake,
+# county, state or any other page, and never in the iOS app, which has no web
+# view. The one config value is the tracking id below. It defaults to the
+# owner's existing Associates id, trouttruck-20, which needs lakenotice.com on
+# that account's website list before this ships; a Lake Notice id of its own
+# is a one-line change here. Empty, the gear block and the privacy paragraph
+# render nothing and no Amazon URL is built anywhere. Never a home toxin test
+# kit: a negative strip is not safety, and nothing here may imply that gear
+# makes algae exposure any less of a risk (tests/test_site_affiliate.py fails on
+# test-kit or safety wording in the categories or in a built page).
+AMAZON_ASSOCIATE_TAG = "trouttruck-20"
 AMAZON_SEARCH_URL = "https://www.amazon.com/s"
 # Amazon's required wording, byte for byte: do not paraphrase it.
 AMAZON_ASSOCIATE_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
 AFFILIATE_LINK_REL = "sponsored nofollow noopener"
-# Label, then the search terms. Generic categories: a search has no product to
-# go out of stock, so the page states no price, rating or "best" claim.
-GEAR_CATEGORIES: tuple[tuple[str, str], ...] = (
-    ("Dog life jacket", "dog life jacket"),
-    ("Portable dog water bottle", "portable dog water bottle"),
-    ("Dog rinse sprayer for after a swim", "dog rinse sprayer bath"),
-)
+# Label, the search terms, then the line tying the item to the dogs page's own
+# advice (DOG_ADVICE and "At the water"). Generic searches, not products, so
+# nothing goes stale and the page states no price, rating or "best" claim.
+GEAR_CATEGORIES: tuple[tuple[str, str, str], ...] = (
+    ("Portable dog water bottle", "portable dog water bottle",
+     "Bring fresh drinking water so your dog does not drink from the lake."),
+    ("Collapsible dog water bowl", "collapsible dog water bowl",
+     "Something to pour that fresh water into, away from the shore."),
+    ("Long dog leash", "long dog leash",
+     "Keep your dog out of the water and away from scum on the shore where "
+     "an advisory is on file or the water looks green, blue-green or scummy."),
+    ("Portable dog rinse bottle", "portable dog rinse shower bottle",
+     "If your dog does go in, rinse it off with fresh water you brought."),
+    ("Dog drying towel", "dog drying towel",
+     "Dry its coat after the rinse, and do not let it lick its coat."),
+)  # fmt: skip
 # How each state's agency is named in the non-endorsement sentence.
 AGENCY_GEAR_NAME = {"CA": "the Water Board", "MO": "Missouri DNR"}
 
@@ -144,8 +155,8 @@ def gear_links() -> list[dict[str, str]]:
     if not AMAZON_ASSOCIATE_TAG:
         return []
     return [
-        {"label": label, "url": amazon_search_url(terms)}
-        for label, terms in GEAR_CATEGORIES
+        {"label": label, "url": amazon_search_url(terms), "why": why}
+        for label, terms, why in GEAR_CATEGORIES
     ]
 
 
@@ -446,9 +457,6 @@ class SiteBuilder:
             robots="noindex,follow",
             lastmod=self.water_dates.get(water["id"]),
             water=water,
-            gear_links=gear_links(),
-            affiliate_rel=AFFILIATE_LINK_REL,
-            gear_endorsement=gear_endorsement(water["state"]),
             water_source=water_source,
             satellite_source=satellite_source,
             county=county,
@@ -584,6 +592,11 @@ class SiteBuilder:
                 lastmod=self.site_date if rel == "dogs/" else None,
                 counties_known=len(CA_COUNTIES),
                 tiers=["caution", "warning", "danger", "other_advisory"],
+                # The gear block is on the dogs page and nowhere else
+                # (DECISIONS 0014); every other page gets no links.
+                gear_links=gear_links() if rel == "dogs/" else [],
+                affiliate_rel=AFFILIATE_LINK_REL,
+                gear_endorsement=gear_endorsement(),
             )
         self._write("404.html", "404.html.jinja", title=f"Page not found | {SITE_NAME}",
                     description="Page not found.", noindex=True)  # fmt: skip
