@@ -192,18 +192,25 @@ def build(
     generated_at: dt.datetime,
     quarantine: Counter[str],
     cyan_cache: dict[str, Any] | None = None,
+    hidden_sources: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """The snapshot. Each waterbody's ``satellite`` block comes from the
-    EPA CyAN cache (``cyan.py``) and never touches its status."""
+    EPA CyAN cache (``cyan.py``) and never touches its status.
+
+    A source in ``hidden_sources`` is left out entirely: its waters, its
+    file and its entry in ``sources`` (docs/DECISIONS.md 0014). Its history
+    is untouched."""
+    if CA_SWRCB_FHAB.id in hidden_sources:
+        raise SnapshotError("California cannot be hidden; a run without it is refused")
+    shown = [s for s in enabled_sources() if s.id not in hidden_sources]
     primary = _file_json(history, CA_SWRCB_FHAB.id)
     if primary is None:
         raise SnapshotError("no California source file on record")
-    files = [
-        f
-        for f in (_file_json(history, s.id) for s in enabled_sources())
-        if f is not None
-    ]
-    waters = build_waterbodies(history.entries.values(), run_date)
+    files = [f for f in (_file_json(history, s.id) for s in shown) if f is not None]
+    waters = build_waterbodies(
+        (e for e in history.entries.values() if e.record.source not in hidden_sources),
+        run_date,
+    )
     satellite = cyan.blocks(cyan_cache, waters) if cyan_cache else {}
     for water in waters:
         water["satellite"] = satellite.get(water["id"])
@@ -211,7 +218,7 @@ def build(
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "run_date": run_date.isoformat(),
-        "sources": [s.as_json() for s in enabled_sources()],
+        "sources": [s.as_json() for s in shown],
         "source_file": primary,
         "source_files": files,
         "quarantine": {

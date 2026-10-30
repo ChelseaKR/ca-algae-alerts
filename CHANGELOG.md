@@ -7,6 +7,16 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Missouri fails closed (DECISIONS 0014). If the department's layer is gone
+  or changed (HTTP 404 or 410, an error answer, missing fields, too few or no
+  usable rows), the run leaves Missouri off the site entirely and still
+  publishes California. After a passing failure, Missouri is shown with its
+  read date for at most 2 days after the last good read, then hidden. A
+  malformed Missouri answer no longer stops the whole run.
+- Missouri pages, the Missouri state page and About quote the Missouri
+  Department of Natural Resources' "general purposes only" map disclaimer
+  verbatim, with a link to it.
+
 - Each sitemap URL's `lastmod` is the newest record date the page shows, not
   the build date: a water's newest record, a county's or state's newest water,
   and the newest record overall for the home, advisories, county index and dogs

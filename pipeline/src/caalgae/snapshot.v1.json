@@ -296,6 +296,12 @@
           "required_disclaimer": {
             "type": "string"
           },
+          "publisher_caveat": {
+            "type": "string"
+          },
+          "publisher_caveat_url": {
+            "type": "string"
+          },
           "revocable": {
             "type": "boolean"
           }
