@@ -83,7 +83,11 @@ jobs:
 
   ios:
     if: github.event_name != 'push'
-    runs-on: macos-14
+    # macos-15, not macos-14: GitHub retires the macos-14 image on
+    # 2026-11-02 and runs brownouts before then. No Xcode is selected here,
+    # so this uses the image default (Xcode 16.4 on macos-15), which
+    # satisfies AlgaeCore's swift-tools-version 5.10.
+    runs-on: macos-15
     timeout-minutes: 15
     permissions:
       contents: read
