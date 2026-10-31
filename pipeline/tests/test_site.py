@@ -278,12 +278,41 @@ def test_home_structured_data_is_a_website(traps_site: Path) -> None:
 # -- analytics -------------------------------------------------------------
 
 
-def test_no_analytics_by_default_and_privacy_says_so(traps_site: Path) -> None:
+# Every other GA4 web stream in the portfolio's account (2026-10-31). Lake
+# Notice's id must never be one of them, or its visits land in another
+# product's reports.
+OTHER_PRODUCTS_GA4_IDS = {
+    "G-ZYL3RMXCZF",  # Trout Truck
+    "G-L2JN3PQ75P",  # Family Greenhouse
+    "G-45H8Q9H93F",  # GTFS Scorecard
+    "G-YKGPZ76LVE",  # Next Home Game
+    "G-6RWDSWTRR7",  # chelseakr.com
+}
+
+
+def test_default_build_carries_lake_notices_own_ga4_id(traps_site: Path) -> None:
+    measurement_id = site.GA4_MEASUREMENT_ID
+    assert re.fullmatch(r"G-[A-Z0-9]{10}", measurement_id)
+    assert measurement_id not in OTHER_PRODUCTS_GA4_IDS
     for page in pages(traps_site):
+        if page.suffix == ".html":
+            assert f'var id = "{measurement_id}";' in page.read_text(), page
+    privacy = text_of(traps_site / "privacy" / "index.html")
+    assert "Google Analytics 4" in privacy
+    assert "Last updated 2026-10-31" in privacy
+    assert "Global Privacy Control" in privacy
+
+
+def test_no_analytics_without_an_id_and_privacy_says_so(
+    tmp_path: Path, traps_site: Path
+) -> None:
+    out = tmp_path / "no-ga"
+    site.build_site(snapshot_of(traps_site), out, ga4_measurement_id="")
+    for page in pages(out):
         assert "googletagmanager" not in page.read_text()
-    assert "nothing" in text_of(
-        traps_site / "privacy" / "index.html"
-    ).lower() or "No cookies" in text_of(traps_site / "privacy" / "index.html")
+    privacy = text_of(out / "privacy" / "index.html")
+    assert "no analytics" in privacy
+    assert "Google Analytics" not in privacy
 
 
 def test_ga4_when_configured_honors_gpc_before_loading(
@@ -542,3 +571,67 @@ def test_water_pages_that_share_a_name_get_different_titles() -> None:
         site.water_title(x["name"], site.SiteBuilder._county_label(x)) for x in waters
     }
     assert len(titles) == 2
+
+
+# -- matching names nearby ---------------------------------------------------
+
+
+def _water(
+    wid: str, name: str, lat: float, lon: float, state: str = "CA"
+) -> dict[str, Any]:
+    return {"id": wid, "name": name, "state": state, "center": {"lat": lat, "lon": lon}}
+
+
+def test_name_key_ignores_case_word_order_and_a_trailing_state() -> None:
+    assert site.name_key("Big bear lake ca") == site.name_key("Big Bear Lake")
+    assert site.name_key("Lake Crowley") == site.name_key("Crowley Lake")
+    assert site.name_key("Bear Creek") != site.name_key("Bear Lake")
+    assert site.name_key("Unnamed pond") == ()
+    assert site.name_key("CA") == ()
+
+
+def test_same_name_nearby_needs_a_match_a_center_and_distance() -> None:
+    waters = [
+        _water("a", "Big Bear Lake", 34.24, -116.91),
+        _water("b", "Big bear lake ca", 34.243, -116.912),
+        _water("far", "Big Bear Lake", 38.0, -120.0),
+        _water("other-state", "Big Bear Lake", 34.24, -116.91, state="MO"),
+        _water("unnamed-1", "Unnamed pond", 34.24, -116.91),
+        _water("unnamed-2", "Unnamed pond", 34.24, -116.91),
+        {"id": "nocenter", "name": "Big Bear Lake", "state": "CA", "center": None},
+    ]
+    nearby = site.same_name_nearby(waters)
+    assert {k: [w["id"] for w in v] for k, v in nearby.items()} == {
+        "a": ["b"],
+        "b": ["a"],
+    }
+    assert site.miles_between(waters[0]["center"], waters[2]["center"]) > (
+        site.SAME_NAME_NEARBY_MILES
+    )
+
+
+def test_water_page_links_matching_names_nearby_with_their_own_status(
+    tmp_path: Path, traps_site: Path
+) -> None:
+    snap = snapshot_of(traps_site)
+    original = next(w for w in snap["waterbodies"] if w["center"])
+    twin = json.loads(json.dumps(original))
+    twin["id"] = original["id"] + "-ca"
+    twin["name"] = original["name"].lower() + " ca"
+    snap["waterbodies"].append(twin)
+    out = tmp_path / "twins"
+    site.build_site(snap, out)
+    page = text_of(out / "water" / original["id"] / "index.html")
+    assert "Matching names nearby" in page
+    assert "may be the same water" in page
+    assert twin["name"] in page
+    assert wording.headline(twin["status"]) in page
+    raw = (out / "water" / original["id"] / "index.html").read_text()
+    assert f'href="../../water/{twin["id"]}/"' in raw
+    lone = next(
+        w for w in snap["waterbodies"]
+        if site.name_key(w["name"]) != site.name_key(original["name"])
+    )  # fmt: skip
+    assert "Matching names nearby" not in text_of(
+        out / "water" / lone["id"] / "index.html"
+    )

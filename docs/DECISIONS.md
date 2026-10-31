@@ -274,3 +274,18 @@ the include in `water.html.jinja`).
 **iOS submission waits for Trout Truck's App Review verdict**, as for the
 other apps. Nothing to do now; the snapshot URL above is already final for
 the first build.
+
+## 0014 — GA4 is on, with Lake Notice's own property (2026-10-31)
+
+The owner's portfolio rule (GA4 on every public site, 2026-09-17) applies
+here, and the site has been live since 2026-10-22. Property 561648146
+("Lake Notice", account ChelseaKR) was created through the Admin API with the
+same settings as Trout Truck's: 14-month retention, Google signals off,
+enhanced measurement without site search, form interactions or page changes,
+and `purchase` as the only key event (the site sends no custom events yet).
+`GA4_MEASUREMENT_ID` is `G-75YLGQKDHG`, so 0007's tag and privacy text are
+now live. Nothing else in 0007 changes: the app collects nothing, and the tag
+never loads under Global Privacy Control, Do Not Track or the footer opt-out.
+Owner-only steps in the GA web interface, as for the other properties:
+accept the Data Processing Terms, turn data sharing off, and leave
+user-provided data collection off.

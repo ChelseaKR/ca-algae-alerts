@@ -11,6 +11,16 @@
 {% endif %}
 <p>Before you go, check the <a href="{{ water_source.official_map_url }}">state's official algae page</a> and any signs posted at the water.{% if app_store_url %} The <a href="{{ app_store_url }}">iPhone app</a> can alert you when {{ water.name }} gets a new advisory.{% endif %}</p>
 
+{% if same_name_nearby %}
+<h2 id="same-name">Matching names nearby</h2>
+<p>The state's file also has {{ "this entry" if same_name_nearby|length == 1 else "these entries" }} with a name that matches {{ water.name }}, within {{ same_name_miles }} miles of it. {{ "It" if same_name_nearby|length == 1 else "They" }} may be the same water, listed under another county or spelling. Each entry has its own records:</p>
+<ul>
+{% for other in same_name_nearby %}
+  <li><a href="{{ root }}water/{{ other.id }}/">{{ other.name }}</a>, {{ other.place }}: {{ other.headline }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
 <h2 id="dogs">Dogs at {{ water.name }}</h2>
 <p>{{ dog_answer(water.name, water.status) }}</p>
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>
