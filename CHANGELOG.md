@@ -7,6 +7,18 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Google Analytics 4 is on for the website: Lake Notice's own property
+  (measurement id `G-75YLGQKDHG`, docs/DECISIONS.md 0014). The tag is the one
+  already built in (not loaded under Global Privacy Control, Do Not Track or the
+  footer opt-out; ad signals denied; EEA, UK and Switzerland cookieless). The
+  privacy page's GA4 text is now live, dated 2026-10-31, and says the data file
+  the app downloads carries no analytics. The iPhone app is unchanged.
+- A water page whose name matches another entry in the state's file within 6
+  miles (another county, a stray "CA", swapped words) lists those entries with
+  their own status, as "may be the same water". 56 pages on the 2026-10-29
+  snapshot, for example Big Bear Lake, Lake Tulloch and Crowley Lake.
+- The advisories page title and description name "toxic algae" and the level
+  and date that each row shows.
 - Each sitemap URL's `lastmod` is the newest record date the page shows, not
   the build date: a water's newest record, a county's or state's newest water,
   and the newest record overall for the home, advisories, county index and dogs

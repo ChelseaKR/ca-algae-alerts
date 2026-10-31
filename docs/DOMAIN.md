@@ -44,8 +44,8 @@ chooses that design, which would be its own change.
 
 ## After the site is live
 
-- GA4: create a property named Lake Notice, put its measurement id in
-  `GA4_MEASUREMENT_ID` in `site.py` (empty until then). The site sends no
+- GA4: done 2026-10-31 (property 561648146, `G-75YLGQKDHG`, DECISIONS
+  0014). The owner-only GA settings in DECISIONS 0014 remain. The site sends no
   custom events yet (no `app_store_click`, no `gear_click`): the affiliate
   links add no tracking (DECISIONS 0013), so there is nothing to mark as a
   key event until that is built.

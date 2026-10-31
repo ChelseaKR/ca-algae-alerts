@@ -16,6 +16,8 @@ from __future__ import annotations
 import calendar
 import datetime as dt
 import json
+import math
+import re
 import shutil
 from collections import Counter, defaultdict
 from collections.abc import Iterable
@@ -101,14 +103,13 @@ def water_description(name: str, place: str | None, headline: str) -> str:
     )
 
 
-# PLACEHOLDER, deliberately empty: the owner has not created a GA4 property
-# for Lake Notice yet (docs/DOMAIN.md, "After the site is live"). When she
-# does, the change is this one line, a measurement id of the form "G-XXXXXXXXXX".
-# Set, every page carries the tag and the privacy page describes it; empty,
-# no page loads any script and the privacy page says nothing is collected.
-# Never copy another product's id here: it would mix this site's visits into
-# that property.
-GA4_MEASUREMENT_ID = ""
+# Lake Notice's own GA4 web stream (property 561648146, "Lake Notice", created
+# 2026-10-31 in the ChelseaKR account; DECISIONS 0007). Set, every page carries
+# the tag and the privacy page describes it; empty, no page loads any script
+# and the privacy page says nothing is collected. Never copy another
+# product's id here: it would mix this site's visits into that property
+# (tests/test_site.py checks this one against the portfolio's other ids).
+GA4_MEASUREMENT_ID = "G-75YLGQKDHG"
 # Amazon Associates dog-gear links (docs/DECISIONS.md 0013). Website only: the
 # iOS app has no web view and never shows them. This is Lake Notice's own
 # tracking id, never Trout Truck's. PLACEHOLDER, deliberately empty: the owner
@@ -227,6 +228,66 @@ def water_lastmod(water: dict[str, Any]) -> dt.date | None:
     return max(map(dt.date.fromisoformat, days), default=None)
 
 
+# Matching names nearby. The state's file sometimes lists one water as two or
+# more entries: under two counties (Lake Tulloch), with a stray suffix ("Big
+# bear lake ca") or with the words swapped ("Lake Crowley"). Identity stays
+# as DECISIONS 0009 defines it; a water page only links to entries whose names
+# match its own and whose centers lie within this distance, with each entry's
+# own status, so a visitor who lands on one entry sees the others. Names that
+# start "Unnamed" never match. On the 2026-10-29 snapshot this puts the
+# section on 56 water pages (Big Bear Lake, Lake Tulloch, Crowley Lake, Clear
+# Lake, Lake Havasu and others); the page says "may be the same water", never
+# that it is.
+SAME_NAME_NEARBY_MILES = 6
+_NAME_WORD = re.compile(r"[a-z0-9]+")
+_STATE_SUFFIXES = {"ca", "california", "mo", "missouri"}
+_EARTH_RADIUS_MILES = 3958.8
+
+
+def name_key(name: str) -> tuple[str, ...]:
+    """A water's name as a sorted tuple of words, without a trailing state
+    word, so "Lake Crowley" matches "Crowley Lake" and "Big bear lake ca"
+    matches "Big Bear Lake". Empty for a name that cannot be matched."""
+    words = _NAME_WORD.findall(name.casefold())
+    while words and words[-1] in _STATE_SUFFIXES:
+        words.pop()
+    if not words or words[0] == "unnamed":
+        return ()
+    return tuple(sorted(words))
+
+
+def miles_between(a: dict[str, float], b: dict[str, float]) -> float:
+    """Great-circle distance between two ``{"lat", "lon"}`` points, in miles."""
+    lat1, lon1, lat2, lon2 = map(math.radians, (a["lat"], a["lon"], b["lat"], b["lon"]))
+    h = (
+        math.sin((lat2 - lat1) / 2) ** 2
+        + math.cos(lat1) * math.cos(lat2) * math.sin((lon2 - lon1) / 2) ** 2
+    )
+    return 2 * _EARTH_RADIUS_MILES * math.asin(math.sqrt(h))
+
+
+def same_name_nearby(waters: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    """For each water id, the other waters in the same state whose names match
+    (``name_key``) and whose centers are within SAME_NAME_NEARBY_MILES. A water
+    with no center is never matched."""
+    groups: dict[tuple[str, tuple[str, ...]], list[dict[str, Any]]] = defaultdict(list)
+    for water in waters:
+        key = name_key(water["name"])
+        if key and water.get("center"):
+            groups[(water["state"], key)].append(water)
+    nearby: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for group in groups.values():
+        for i, a in enumerate(group):
+            for b in group[i + 1 :]:
+                if miles_between(a["center"], b["center"]) <= SAME_NAME_NEARBY_MILES:
+                    nearby[a["id"]].append(b)
+                    nearby[b["id"]].append(a)
+    return {
+        wid: sorted(others, key=lambda w: (w["name"].casefold(), w["id"]))
+        for wid, others in nearby.items()
+    }
+
+
 def newest(days: Iterable[dt.date | None]) -> dt.date | None:
     present = [d for d in days if d is not None]
     return max(present) if present else None
@@ -273,6 +334,7 @@ class SiteBuilder:
         self._name_counts = Counter(
             (w["state"], w["name"].casefold()) for w in self.waters
         )
+        self._same_name_nearby = same_name_nearby(self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
         self.by_county: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.no_county: list[dict[str, Any]] = []
@@ -371,11 +433,11 @@ class SiteBuilder:
         self._write(
             "advisories/",
             "advisories.html.jinja",
-            title=f"California algae advisories with no all-clear | {SITE_NAME}",
+            title=f"All California toxic algae advisories on file | {SITE_NAME}",
             description=(
-                "Every California waterbody whose latest state record is an "
-                "algae advisory, newest first, including old ones the state "
-                "never recorded an end for."
+                "Every California lake and river whose latest state record is a "
+                "toxic algae advisory, with its level and date, including old "
+                "ones with no recorded end."
             ),
             lastmod=self.site_date,
             waters=self.open_advisories(),
@@ -397,6 +459,21 @@ class SiteBuilder:
             return " and ".join(water["counties"])
         return None
 
+    @staticmethod
+    def _place(water: dict[str, Any]) -> str:
+        """Where a water is, as its page's lede says it."""
+        if water["counties"]:
+            return f"{' and '.join(water['counties'])} County"
+        # Missouri's layer names no county; California's rows sometimes omit it.
+        return str(
+            water["county_text"]
+            or (
+                "County not recorded"
+                if water["state"] == "CA"
+                else STATE_NAMES[water["state"]]
+            )
+        )
+
     def water_page(self, water: dict[str, Any]) -> None:
         rel = f"water/{water['id']}/"
         trail = [(water["name"], self.base_url + rel)]
@@ -407,19 +484,7 @@ class SiteBuilder:
             )
         crumbs = self._crumbs(*trail)
         sites = {s["id"]: s for s in water["sites"]}
-        county = (
-            f"{' and '.join(water['counties'])} County"
-            if water["counties"]
-            else (
-                water["county_text"]
-                # Missouri's layer names no county; California's rows sometimes omit it.
-                or (
-                    "County not recorded"
-                    if water["state"] == "CA"
-                    else STATE_NAMES[water["state"]]
-                )
-            )
-        )
+        county = self._place(water)
         about: dict[str, Any] = {"@type": "BodyOfWater", "name": water["name"]}
         if water["center"]:
             about["geo"] = {
@@ -454,6 +519,16 @@ class SiteBuilder:
             county=county,
             sites=sites,
             county_links=[(c, slugify(c)) for c in water["counties"]],
+            same_name_nearby=[
+                {
+                    "id": other["id"],
+                    "name": other["name"],
+                    "place": self._place(other),
+                    "headline": wording.headline(other["status"]),
+                }
+                for other in self._same_name_nearby.get(water["id"], [])
+            ],
+            same_name_miles=SAME_NAME_NEARBY_MILES,
             breadcrumb=crumbs,
             structured_data={
                 "@context": "https://schema.org",
