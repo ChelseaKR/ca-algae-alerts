@@ -25,6 +25,15 @@ decides a status. Each live run checks each host's robots.txt first
 (`fetch.robots_allows`). A Missouri or CyAN failure warns and keeps the
 last data; only a California failure stops the run.
 
+New York (docs/DECISIONS.md 0016) is history only and off by default
+(`site.NY_HISTORY_ENABLED`). `newyork.py` builds it from the pinned cache in
+`data/ny/`; the daily run never fetches it. About once a year, when DEC posts a
+season, `uv run --frozen python -m caalgae.newyork` reads data.ny.gov's
+robots.txt and then the dataset (three requests, at least 2 s apart), rewrites
+the cache and prints its new SHA-256 for `newyork.PINNED_SHA256`. Preview the
+section with `--ny-history on` (add `--ny-cache tests/fixtures/ny` for the
+small fixture).
+
 ```sh
 uv sync
 uv run pytest

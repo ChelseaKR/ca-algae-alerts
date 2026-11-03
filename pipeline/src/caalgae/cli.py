@@ -24,7 +24,7 @@ from typing import Any
 
 import httpx
 
-from caalgae import cyan, fetch, missouri, normalize, site, snapshot
+from caalgae import cyan, fetch, missouri, newyork, normalize, site, snapshot
 from caalgae import history as hist
 from caalgae.sources import CA_SWRCB_FHAB, EPA_CYAN, MO_DNR_HAB
 
@@ -52,6 +52,18 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     p.add_argument("--mo-fixture", type=Path, default=None)
     p.add_argument("--cyan-cache", type=Path, default=None)
     p.add_argument("--cyan-refresh", choices=("auto", "never", "force"), default="auto")
+    p.add_argument(
+        "--ny-history",
+        choices=("config", "on", "off"),
+        default="config",
+        help="New York bloom history section; 'config' follows site.NY_HISTORY_ENABLED",
+    )
+    p.add_argument(
+        "--ny-cache",
+        type=Path,
+        default=None,
+        help="a New York cache directory other than the pinned one (tests, previews)",
+    )
     return p.parse_args(argv)
 
 
@@ -179,6 +191,24 @@ def _cyan(
     return cache
 
 
+def _new_york(args: argparse.Namespace) -> newyork.History | None:
+    """The New York history section, history only (docs/DECISIONS.md 0016).
+    Built from the cache in the repository, never fetched by this run. A
+    missing or altered cache warns and builds the site without it."""
+    wanted = args.ny_history == "on" or (
+        args.ny_history == "config" and site.NY_HISTORY_ENABLED
+    )
+    if not wanted:
+        return None
+    try:
+        if args.ny_cache is not None:
+            return newyork.load(args.ny_cache, pinned=None)
+        return newyork.load()
+    except newyork.NYDataError as error:
+        _warn(f"New York history not built: {error}")
+        return None
+
+
 def run(args: argparse.Namespace) -> int:
     run_date = (
         dt.date.fromisoformat(args.run_today)
@@ -207,6 +237,7 @@ def run(args: argparse.Namespace) -> int:
             base_url=args.base_url,
             support_email=args.support_email,
             app_store_url=args.app_store_url,
+            ny_history=_new_york(args),
         )
     hist.save(merged, args.history)
     for reason, count in sorted((quarantine + mo_quarantine).items()):

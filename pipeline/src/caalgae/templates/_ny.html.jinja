@@ -1,0 +1,23 @@
+{# New York's yearly bloom history (docs/DECISIONS.md 0016). History only:
+   never call a row an advisory, never show a current status, never treat a
+   last report as an end. tests/test_newyork.py holds every sentence here to
+   that rule. #}
+{% macro ny_note(ny_source, root) %}
+<section class="ny-note" aria-labelledby="what-this-is">
+<h2 id="what-this-is">What this record is, and what it is not</h2>
+<ul>
+  <li><strong>It is history.</strong> Each row is a year in which New York's Department of Environmental Conservation (DEC) confirmed a harmful algal bloom at the water, with the first and last dates a bloom was reported there that year and how many reports DEC received.</li>
+  <li><strong>It is not an advisory and not a current status.</strong> {{ site_name }} shows no current status for any New York water: it does not republish DEC's live bloom notifications.</li>
+  <li><strong>A last report date is not an end date.</strong> It is the date of the last report DEC received that year. It does not say when a bloom went away.</li>
+  <li><strong>A year without a row is not a finding.</strong> It means DEC's summary has no confirmed bloom for the water that year. It does not mean there was no bloom, and nothing on this page says the water is free of algae or toxins.</li>
+  <li>{{ site_name }} does not send alerts for New York waters.</li>
+</ul>
+<p><strong>Before you go:</strong> check <a href="{{ ny_source.notifications_url }}">DEC's harmful algal bloom notifications</a> and any signs posted at the water.</p>
+</section>
+{% endmacro %}
+
+{% macro ny_source_section(ny, ny_source) %}
+<h2 id="source">Source</h2>
+<p>{{ ny_attribution }} <a href="{{ ny_source.dataset_url }}">The dataset on data.ny.gov</a> (DEC updated its rows {{ ny.rows_updated_at[:10]|date }}; {{ site_name }} read it {{ ny.fetched_at[:10]|date }}). <a href="{{ ny_source.program_url }}">DEC's harmful algal bloom program</a>.</p>
+<p class="muted">From the <a href="{{ ny_source.terms_url }}">OPEN-NY Terms of Use</a>: &ldquo;{{ ny_source.no_vouch }}&rdquo;</p>
+{% endmacro %}

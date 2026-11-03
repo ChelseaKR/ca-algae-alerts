@@ -5,6 +5,18 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- New York bloom history (docs/DECISIONS.md 0016), **off by default**
+  (`site.NY_HISTORY_ENABLED`). When on: a `/state/ny/` page and one page per
+  named water from New York DEC's yearly summary of confirmed blooms, 2019 to
+  2025 (477 waters), as history only, never an advisory, a status or an end,
+  with no alerts and nothing in the app's snapshot. Only waters with 2 or more
+  bloom years or 5 or more reports may be indexed (284), and while
+  `NY_INDEX_LIMIT` is 50 only the 50 with the most reports. Built from a
+  pinned cache in `pipeline/data/ny/`; `python -m caalgae.newyork` refreshes
+  it about once a year.
+
 ### Changed
 
 - Google Analytics 4 is on for the website: Lake Notice's own property
