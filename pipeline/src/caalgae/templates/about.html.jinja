@@ -53,6 +53,12 @@
 {% endif %}
 {% endfor %}
 
+{% if ny_history %}
+<h3 id="ny-dec-habs-yearly">New York State Department of Environmental Conservation</h3>
+<p>New York pages are a different kind of record: DEC's yearly summary of the waters where it confirmed a harmful algal bloom, with the first and last report dates each year. They are history only. They show no current status, a last report date is not an end date, and {{ site_name }} sends no alerts for them. <a href="{{ root }}state/ny/">New York bloom history</a> explains what the summary does and does not say.</p>
+<p>{{ ny_attribution }}</p>
+{% endif %}
+
 <h2 id="satellite">About the satellite estimates</h2>
 <p>{{ satellite_explainer }}</p>
 

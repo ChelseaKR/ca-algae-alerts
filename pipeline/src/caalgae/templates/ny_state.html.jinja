@@ -1,0 +1,27 @@
+{% extends "base.html.jinja" %}
+{% from "_ny.html.jinja" import ny_note, ny_source_section with context %}
+{% block content %}
+<h1>New York: algae bloom history by water</h1>
+<p class="lede">New York DEC's yearly summary lists a confirmed harmful algal bloom at {{ waters|length }} named lakes, ponds and rivers in at least one year from {{ ny.first_year }} to {{ ny.last_year }}. Each has a page with every year on record.</p>
+{{ ny_note(ny_source, root) }}
+
+<h2 id="waters">Waters with a confirmed bloom on record</h2>
+<p>Waters with the most reports come first. {{ ny.unnamed_rows }} rows for waters DEC lists as unnamed have no page here.</p>
+<table>
+  <caption class="visually-hidden">New York waters with a confirmed bloom in DEC's yearly summary, most reports first</caption>
+  <thead><tr><th scope="col">Water</th><th scope="col">County</th><th scope="col">Years with a confirmed bloom</th><th scope="col">Reports</th><th scope="col">Most recent year on record</th></tr></thead>
+  <tbody>
+  {% for w in waters %}
+    <tr>
+      <td><a href="{{ root }}state/ny/{{ w.slug }}/">{{ w.name }}</a></td>
+      <td>{{ w.counties|join(", ") }}</td>
+      <td>{{ w.year_count }}</td>
+      <td>{{ w.report_count }}</td>
+      <td>{{ w.last_year }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{{ ny_source_section(ny, ny_source) }}
+{% endblock %}
