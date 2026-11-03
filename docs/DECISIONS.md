@@ -289,3 +289,27 @@ never loads under Global Privacy Control, Do Not Track or the footer opt-out.
 Owner-only steps in the GA web interface, as for the other properties:
 accept the Data Processing Terms, turn data sharing off, and leave
 user-provided data collection off.
+
+## 0015 — Announce new and changed pages to IndexNow after each deploy (2026-11-03)
+
+ChatGPT search leans on Bing's index, and IndexNow is how a site tells Bing
+(and the other participating engines) that a page is new or changed instead
+of waiting for the next crawl. Trout Truck and Next Home Game have run this
+since 2026-10-23, and both get HTTP 200 from the endpoint on their daily runs;
+this is the same `indexnow.py`, renamed to this package.
+
+`publish.yml` picks the pages in the build job, before the deploy replaces the
+live site: a sitemap URL is announced when it is new or its `lastmod` differs
+from the live `sitemap.xml`. Because a page's `lastmod` is its newest record
+date, not the build date, an unchanged day announces nothing and sends no
+request. Only https URLs on lakenotice.com, only built pages without a robots
+noindex, at most 10,000 a request. A separate `indexnow` job submits the list
+only after `deploy` succeeded. If the live sitemap cannot be read, nothing is
+announced (unknown is not "everything changed"). The script exits 0 on any
+problem and prints a notice, so there is no `continue-on-error` (the
+standards ban it) and a refused ping never opens the publish-failure issue.
+
+The key file at the site root is public by design: the protocol checks
+ownership by fetching it. It lives in `templates/` and only a build for
+lakenotice.com carries it. To stop announcing, delete the `indexnow` job and
+the two IndexNow steps; nothing else depends on them.
