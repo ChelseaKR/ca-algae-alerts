@@ -17,6 +17,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Every water page now opens with one dated sentence: the state's data date,
+  the water and its county, and the status headline, so the page answers "is
+  there an algae advisory at this lake?" in its first line. A water outside
+  the 24-month index window is indexable again when the state has published
+  five or more records for it, which lists 118 more water pages on the
+  2026-11-03 snapshot (docs/DECISIONS.md 0016).
 - Google Analytics 4 is on for the website: Lake Notice's own property
   (measurement id `G-75YLGQKDHG`, docs/DECISIONS.md 0014). The tag is the one
   already built in (not loaded under Global Privacy Control, Do Not Track or the

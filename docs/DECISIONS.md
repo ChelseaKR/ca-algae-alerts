@@ -313,3 +313,33 @@ The key file at the site root is public by design: the protocol checks
 ownership by fetching it. It lives in `templates/` and only a build for
 lakenotice.com carries it. To stop announcing, delete the `indexnow` job and
 the two IndexNow steps; nothing else depends on them.
+
+## 0016 — Open water pages with a dated answer; index waters with five or more records (2026-11-03)
+
+Measured on 2026-11-03: Trout Truck got 34 engaged ChatGPT visits from
+2026-10-20 to 2026-11-03, nearly all landing on a water page. Lake Notice got
+none, but its GA4 tag has only run since 2026-10-31 and the site went live
+2026-10-22. ChatGPT search leans on Bing, and IndexNow (0015) merged the same
+day. So most of the gap is age and Bing discovery, which no page change fixes.
+Two page changes still help:
+
+- **A dated answer first.** Every water page's first sentence now reads "As
+  of the state's data dated <file date>, the records for <water> (<county>)
+  show: <headline>". It is the status box's headline (0002 wording), with the
+  water, the county and the date of the state's file, so it stays true when a
+  search snippet or an assistant quotes it alone. A status that is not an
+  advisory adds "That is not a finding that the water is safe now." in the
+  same paragraph. Without a file date there is no "as of" clause. Trout
+  Truck's pages open the same way ("last scheduled the week of <date>, as of
+  the schedule check on <date>").
+- **Five records make a page indexable.** The 2026-10-23 staging keeps a water
+  page out of the index unless the state recorded an advisory in the last 24
+  months, because one- and two-record pages were 85 to 92% template. That
+  also hid waters people ask about (Lake Arrowhead, Shasta Lake, Lake Merced,
+  Lake Natoma, Trinity Lake, two Salton Sea entries), whose pages carry 8 to
+  89 records. A water is now also indexable with at least
+  `INDEX_MIN_RECORDS = 5` state records, whatever their age. On the
+  2026-11-03 snapshot that lists 118 more water pages (426 of 1,128 instead
+  of 308) and leaves every one- to four-record page out. **Owner to confirm**:
+  this widens the owner's 2026-10-23 staging rule. To undo, set the constant to a
+  number no water reaches.

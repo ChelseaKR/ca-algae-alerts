@@ -51,6 +51,14 @@ DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
 # that reaches back past 2016, such as 1200, and every water is indexable
 # again; the sitemap and the robots tags both follow this one value.
 INDEX_WINDOW_MONTHS = 24
+# A water outside that window is still indexable when the state has published
+# at least this many records for it (DECISIONS 0016). The audit's thin pages
+# were the ones with one or two records, 85 to 92% template; a page with five
+# or more has its own history table. On the 2026-11-03 snapshot this adds 118
+# waters (Salton Sea, Trinity Lake, Lake Merced, Lake Natoma and others) to
+# the 308 the window keeps. To undo: set it to a number no water reaches,
+# such as 100000.
+INDEX_MIN_RECORDS = 5
 
 
 # Search results show about 60 characters of a title and 155 of a
@@ -208,9 +216,18 @@ def months_before(day: dt.date, months: int) -> dt.date:
     return dt.date(year, month + 1, min(day.day, last))
 
 
-def is_indexable(water: dict[str, Any], run_date: dt.date, months: int) -> bool:
+def is_indexable(
+    water: dict[str, Any],
+    run_date: dt.date,
+    months: int,
+    min_records: int | None = None,
+) -> bool:
     """True when the state's last advisory for this water falls within
-    ``months`` months before ``run_date``."""
+    ``months`` months before ``run_date``, or when the state has published at
+    least ``min_records`` records for it (INDEX_MIN_RECORDS by default)."""
+    floor = INDEX_MIN_RECORDS if min_records is None else min_records
+    if len(water.get("records", [])) >= floor:
+        return True
     last = water["status"].get("last_advisory")
     if not last:
         return False
@@ -494,6 +511,14 @@ class SiteBuilder:
             }
         water_source = self.sources[STATE_SOURCE[water["state"]]]
         indexable = is_indexable(water, self.run_date, INDEX_WINDOW_MONTHS)
+        file_date = next(
+            (
+                f.get("file_date")
+                for f in self.snap["source_files"]
+                if f["source"] == STATE_SOURCE[water["state"]]
+            ),
+            None,
+        )
         satellite_source = self.sources.get("epa-cyan")
         self._write(
             rel,
@@ -517,6 +542,7 @@ class SiteBuilder:
             water_source=water_source,
             satellite_source=satellite_source,
             county=county,
+            summary=wording.summary(water["name"], county, water["status"], file_date),
             sites=sites,
             county_links=[(c, slugify(c)) for c in water["counties"]],
             same_name_nearby=[

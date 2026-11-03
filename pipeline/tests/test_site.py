@@ -132,6 +132,50 @@ def test_lift_reads_as_the_states_record_with_its_date(traps_site: Path) -> None
     assert "Last advisory on file: Jul 1, 2026." in text
 
 
+def lede_of(page: Path) -> str:
+    match = re.search(r'<p class="lede">(.*?)</p>', page.read_text(), re.S)
+    assert match
+    return html.unescape(re.sub(r"\s+", " ", _TAG.sub(" ", match.group(1)))).strip()
+
+
+def test_water_page_opens_with_a_dated_answer(traps_site: Path) -> None:
+    # The first sentence after the h1 names the water, its county, the date
+    # of the state's file and the status, so it reads correctly when quoted
+    # on its own. It is the status box's headline, never a new claim.
+    water = traps_site / "water"
+    assert lede_of(water / "ca-alameda-lake-alpha" / "index.html").startswith(
+        "As of the state's data dated Oct 9, 2026, the records for Lake Alpha "
+        "(Alameda County) show: Caution advisory, last posted Sep 20, 2026. "
+        "No all-clear recorded."
+    )
+    beta = lede_of(water / "ca-lake-beta-reservoir" / "index.html")
+    assert (
+        "show: The state's latest record, from Sep 1, 2026, recommends no "
+        "advisory. That is not a finding that the water is safe now." in beta
+    )
+    theta = lede_of(water / "ca-marin-theta-lake" / "index.html")
+    assert "no advisory level the state has classified" in theta
+    assert "not a finding that the water is safe now" in theta
+
+
+def test_summary_leaves_out_a_missing_date_and_never_says_safe() -> None:
+    advisory = {"kind": "advisory", "tier": "danger", "posted": "2026-10-16"}
+    line = wording.summary("Lake X", "Alameda County", advisory, None)
+    assert line == (
+        "The state's records for Lake X (Alameda County) show: Danger advisory, "
+        "last posted Oct 16, 2026. No all-clear recorded."
+    )
+    assert "As of" not in line and "safe" not in line
+    none = {"kind": "no_advisory_recorded", "lift_kind": "no_advisory_record",
+            "lift_date": "2026-09-01"}  # fmt: skip
+    line = wording.summary("Lake X", None, none, "2026-10-30")
+    assert line.startswith(
+        "As of the state's data dated Oct 30, 2026, the records for Lake X show:"
+    )
+    assert affirmative_safety_claims(line) == []
+    assert line.endswith("That is not a finding that the water is safe now.")
+
+
 def test_undetermined_is_not_presented_as_clear(traps_site: Path) -> None:
     text = text_of(traps_site / "water" / "ca-marin-theta-lake" / "index.html")
     assert "no advisory level the state has classified" in text
@@ -230,6 +274,8 @@ def test_wording_module_never_says_safe_affirmatively() -> None:
             wording.headline(s),
             wording.caveat(s),
             wording.dog_answer("X", s),
+            wording.summary("X", "Y County", s, "2026-09-01"),
+            wording.summary("X", None, s, None),
         ):
             assert affirmative_safety_claims(line) == [], line
     for line in [*wording.LEVEL_GUIDANCE.values(), wording.DOG_ADVICE]:
@@ -448,6 +494,35 @@ def test_months_before_clamps_the_day() -> None:
     assert not site.is_indexable(
         {"status": {"last_advisory": None}}, dt.date(2026, 1, 1), 24
     )
+
+
+def test_enough_records_make_a_stale_water_indexable() -> None:
+    old = {"status": {"last_advisory": "2019-07-15"}}
+    run = dt.date(2026, 11, 3)
+    assert not site.is_indexable({**old, "records": [{}] * 4}, run, 24, 5)
+    assert site.is_indexable({**old, "records": [{}] * 5}, run, 24, 5)
+    # A water with no advisory ever is indexable on its records alone.
+    never = {"status": {"last_advisory": None}, "records": [{}] * 5}
+    assert site.is_indexable(never, run, 24, 5)
+    assert not site.is_indexable({**never, "records": [{}] * 4}, run, 24, 5)
+    # The default floor is the module constant, read at call time.
+    assert site.INDEX_MIN_RECORDS == 5
+    assert not site.is_indexable({**old, "records": [{}] * 4}, run, 24)
+
+
+def test_record_floor_reaches_the_sitemap_and_robots(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The fixtures' stale waters have one record each; a floor of 1 must list
+    # them all, and the sitemap and robots tags must still agree.
+    root = build(tmp_path)
+    _, before = staging_problems_inputs(root)
+    assert "ca-nevada-state-zeta-lake" in before
+    monkeypatch.setattr(site, "INDEX_MIN_RECORDS", 1)
+    root = build(tmp_path / "floor")
+    keep, out = staging_problems_inputs(root)
+    assert "ca-nevada-state-zeta-lake" in keep and out == []
+    assert staging_problems(root) == []
 
 
 def test_other_pages_stay_indexable(traps_site: Path) -> None:
