@@ -638,6 +638,8 @@ class SiteBuilder:
              "What the website and the iPhone app collect."),
             ("support/", "support.html.jinja", "Support",
              "Help with the website and the iPhone app."),
+            ("terms/", "terms.html.jinja", "Terms of use",
+             "Who runs Lake Notice, what it is and is not, and why it is never a determination about a water."),
         ]  # fmt: skip
         for rel, template, title, description in pages:
             name = title.split("?")[0] if rel == "dogs/" else title
@@ -654,8 +656,8 @@ class SiteBuilder:
                     "@context": "https://schema.org",
                     **self._breadcrumb_data(crumbs),
                 },
-                # Only the dogs page shows record data; about, privacy and
-                # support have no content date in the repo, so no lastmod.
+                # Only the dogs page shows record data; about, privacy,
+                # support and terms have no content date in the repo, so no lastmod.
                 lastmod=self.site_date if rel == "dogs/" else None,
                 counties_known=len(CA_COUNTIES),
                 tiers=["caution", "warning", "danger", "other_advisory"],

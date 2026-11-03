@@ -7,6 +7,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A plain-language terms of use page at /terms/, linked from every page's
+  footer next to privacy and listed in the sitemap. It names who runs the
+  site, says in bold that the site is not a safety determination, tells
+  readers to follow posted signs and the managing agency, says the records
+  can be wrong or late, and sets California law. It never calls a water safe
+  (DECISIONS 0002); its affiliate paragraph renders only once the Associates
+  tag is set (0013). Not reviewed by an attorney.
 - After each deploy, new and changed pages are announced to IndexNow
   (https://www.indexnow.org/documentation), which Bing and the other
   participating engines share, so they are crawled sooner. The list comes from
