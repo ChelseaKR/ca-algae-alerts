@@ -5,6 +5,16 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- After each deploy, new and changed pages are announced to IndexNow
+  (https://www.indexnow.org/documentation), which Bing and the other
+  participating engines share, so they are crawled sooner. The list comes from
+  comparing the new `sitemap.xml` with the live one; a day with no change
+  sends nothing. A failed or refused announcement logs a notice and never
+  fails the deploy. The key file at the site root is public by design
+  (docs/DECISIONS.md 0015).
+
 ### Changed
 
 - Google Analytics 4 is on for the website: Lake Notice's own property

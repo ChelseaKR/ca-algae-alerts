@@ -24,11 +24,11 @@ from collections.abc import Iterable
 from importlib import resources
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import where_to_check, wording
+from caalgae import indexnow, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
 
@@ -715,6 +715,12 @@ class SiteBuilder:
             encoding="utf-8",
         )
         (self.out / ".nojekyll").write_text("", encoding="utf-8")
+        # The IndexNow ownership file (indexnow.py), served from the domain's
+        # root. Public by design. Only a build for lakenotice.com carries it,
+        # because the key proves ownership of that one host; find_key reads the
+        # templates directory, which holds exactly one such file.
+        if urlsplit(self.base_url).hostname == SITE_DOMAIN:
+            indexnow.copy_key_file(Path(__file__).parent / "templates", self.out)
 
     def build(self) -> None:
         if self.out.exists():
