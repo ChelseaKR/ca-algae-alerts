@@ -123,6 +123,30 @@ def headline(status: dict[str, Any]) -> str:
     return "Reports on file, with no advisory level the state has classified."
 
 
+def summary(
+    name: str, place: str | None, status: dict[str, Any], file_date: str | None
+) -> str:
+    """The first sentence of a water page: the answer to "is there an algae
+    advisory at <name>?", with the date of the state's data it comes from,
+    so it still reads correctly when quoted on its own (a search snippet, an
+    assistant's answer). Built from ``headline``, so it says nothing the
+    status box does not. Without a file date there is no "as of" clause: a
+    missing date is left out, never filled in. A status that is not an
+    advisory carries the not-safe sentence in the same paragraph. Website
+    only: the app shows the status box, so StatusWording.swift has no copy."""
+    where = f"{name} ({place})" if place else name
+    if file_date:
+        line = (
+            f"As of the state's data dated {date_label(file_date)}, "
+            f"the records for {where} show: {headline(status)}"
+        )
+    else:
+        line = f"The state's records for {where} show: {headline(status)}"
+    if status["kind"] != "advisory":
+        line += " That is not a finding that the water is safe now."
+    return line
+
+
 def caveat(status: dict[str, Any]) -> str:
     """The sentence that keeps a status from reading as a promise."""
     if status["kind"] == "advisory":
