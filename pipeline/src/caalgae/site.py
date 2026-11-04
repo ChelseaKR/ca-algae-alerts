@@ -194,6 +194,7 @@ def _env() -> jinja2.Environment:
         caveat=wording.caveat,
         level_name=wording.level_name,
         newer_posting=wording.newer_posting,
+        older_higher=wording.older_higher,
         dog_answer=wording.dog_answer,
         guidance=wording.LEVEL_GUIDANCE,
         guidance_for=wording.guidance_for,
@@ -549,6 +550,7 @@ class SiteBuilder:
                 note
                 for note in (
                     wording.newer_posting(water),
+                    wording.older_higher(water),
                     wording.age_note(water, file_date),
                 )
                 if note

@@ -155,8 +155,14 @@ def _center(sites: list[dict[str, Any]]) -> dict[str, float] | None:
 
 
 def build_waterbodies(
-    entries: Iterable[hist.HistoryEntry], run_date: dt.date
+    entries: Iterable[hist.HistoryEntry],
+    run_date: dt.date,
+    file_dates: dict[str, dt.date] | None = None,
 ) -> list[dict[str, Any]]:
+    """``file_dates`` is each source's file date, the day a water's
+    12-month headline window is measured back from (decision 0017); a
+    source without one is measured from ``run_date``."""
+    dates = file_dates or {}
     by_water: dict[str, list[hist.HistoryEntry]] = defaultdict(list)
     for entry in entries:
         by_water[entry.record.water_key].append(entry)
@@ -188,7 +194,9 @@ def build_waterbodies(
                 "county_text": first.county_text,
                 "counties": counties_of(first.county_text),
                 "center": _center(sites),
-                "status": status_json(st.water_status(statuses)),
+                "status": status_json(
+                    st.water_status(statuses, dates.get(first.source, run_date))
+                ),
                 "sites": sites,
                 "records": [_record_json(e, spot[e.record.site_id]) for e in records],
             }
@@ -243,7 +251,12 @@ def build(
         for f in (_file_json(history, s.id) for s in enabled_sources())
         if f is not None
     ]
-    waters = build_waterbodies(history.entries.values(), run_date)
+    file_dates = {
+        s.id: day
+        for s in enabled_sources()
+        if (day := history.last_file_date(s.id)) is not None
+    }
+    waters = build_waterbodies(history.entries.values(), run_date, file_dates)
     satellite = cyan.blocks(cyan_cache, waters) if cyan_cache else {}
     for water in waters:
         water["satellite"] = satellite.get(water["id"])

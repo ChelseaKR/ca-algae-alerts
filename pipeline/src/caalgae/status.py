@@ -18,11 +18,14 @@ An advisory record that carries an end date on or before the run date is
 also an explicit end (``lift_kind = "end_date"``); a blank end date is
 unknown and changes nothing.
 
-A waterbody shows an advisory if any of its sites does. Its level is the
-highest among those sites, and its posted date is the date that level was
-last posted, never another site's date: a 2020 Danger at one spot and a 2026
-Caution at another is "Danger, last posted 2020", not "Danger, posted 2026"
-(decision 0017). The newer, lower posting is shown beside it by the site.
+A waterbody shows an advisory if any of its sites does. Which posting
+leads (the owner's rule, decision 0017): the highest level posted in the
+``HEADLINE_WINDOW_MONTHS`` (12) months before the state's file date, at that
+level's own last posted date; if no site's advisory was posted in that
+window, the newest posting, with its own level. A level and a date always
+come from the same posting: a 2017 Danger at one spot and a 2026 Caution at
+another is never "Danger, posted 2026". Older, higher advisories with no
+all-clear stay on file and the site names them beside the headline.
 
 A "site" here is a reported spot, which ``snapshot`` identifies by the
 state's coordinates (decision 0017): the state files the same monitoring
@@ -32,6 +35,7 @@ coordinates is an explicit record at the same spot.
 
 from __future__ import annotations
 
+import calendar
 import dataclasses
 import datetime as dt
 from collections.abc import Iterable
@@ -93,20 +97,46 @@ def site_status(records: Iterable[Record], run_date: dt.date) -> Status:
     )
 
 
-def water_status(site_statuses: Iterable[Status]) -> Status:
+HEADLINE_WINDOW_MONTHS = 12
+
+
+def window_start(as_of: dt.date, months: int = HEADLINE_WINDOW_MONTHS) -> dt.date:
+    """``as_of`` minus ``months`` calendar months, the day clamped to the
+    month (Feb 29 back a year is Feb 28)."""
+    index = as_of.year * 12 + (as_of.month - 1) - months
+    year, month0 = divmod(index, 12)
+    last = calendar.monthrange(year, month0 + 1)[1]
+    return dt.date(year, month0 + 1, min(as_of.day, last))
+
+
+def headline_site(advisories: list[Status], as_of: dt.date) -> Status:
+    """The posting a water's headline leads with (decision 0017): the
+    highest level posted on or after ``window_start(as_of)``, the latest at
+    that level; with none in the window, the newest posting, the highest
+    level on a tie."""
+    start = window_start(as_of)
+    recent = [s for s in advisories if s.posted and s.posted >= start]
+    if recent:
+        return max(
+            recent,
+            key=lambda s: (TIER_RANK[s.tier or ""], s.posted or dt.date.min),
+        )
+    return max(
+        advisories,
+        key=lambda s: (s.posted or dt.date.min, TIER_RANK[s.tier or ""]),
+    )
+
+
+def water_status(site_statuses: Iterable[Status], as_of: dt.date) -> Status:
+    """``as_of`` is the date of the state's file the records came from."""
     statuses = list(site_statuses)
     last_advisory = max(
         (s.last_advisory for s in statuses if s.last_advisory), default=None
     )
     advisories = [s for s in statuses if s.kind == ADVISORY]
     if advisories:
-        # The highest level, and of the sites at that level the one posted
-        # last. Its date goes with its level: another site's newer posting
-        # at a lower level never dates this one.
-        top = max(
-            advisories,
-            key=lambda s: (TIER_RANK[s.tier or ""], s.posted or dt.date.min),
-        )
+        # Its date goes with its level: another site's posting never dates it.
+        top = headline_site(advisories, as_of)
         return Status(
             kind=ADVISORY,
             tier=top.tier,

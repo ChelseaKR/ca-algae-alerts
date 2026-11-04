@@ -30,7 +30,7 @@ INFO = {
     "file_name": "hab-responses_2026-11-03.csv",
     "file_date": FILE_DATE,
     "fetched_at": "2026-11-03T14:00:00Z",
-    "rows_read": 6,
+    "rows_read": 10,
     "quarantined": 0,
 }
 
@@ -68,14 +68,26 @@ def rec(
 
 TMDL = (33.662428, -117.3555)
 INLET = (33.656111, -117.30444)
-ELM_GROVE = (33.66581, -117.33548)
+LAKEWIDE_2017 = (33.672408, -117.36903)
+LAUNCH_2021 = (33.671406, -117.3705)
+CITY_SPOTS = {
+    "15340": ("4057", (33.67269, -117.35977), "Launch Pointe Boat Ramp (city site)"),
+    "15341": ("4059", (33.66334, -117.35421), "mid-lake (city site)"),
+    "15342": ("4056", (33.66581, -117.33548), "Elm Grove Beach (city site)"),
+    "15343": ("4058", (33.666661, -117.37807), "West Marina (city site)"),
+    "15344": ("4105", (33.641586, -117.34358), "Perret Park"),
+}
 
 
-def elsinore() -> list[Record]:
+def history_only() -> list[Record]:
+    """Elsinore's records before the city's 2026 monitoring spots: nothing
+    posted in the 12 months before the file."""
     return [
-        rec("9001", "2431", "2020-09-03", "Danger", *INLET, "Inlet Channel"),
+        rec("159", "1524", "2017-07-28", "Danger", *LAKEWIDE_2017, "Lake Elsinore"),
+        rec("714", "2431", "2020-09-03", "Danger", *INLET, "Inlet Channel"),
+        rec("701", "2635", "2021-07-19", "Caution", *LAUNCH_2021, "Launch Point"),
         rec(
-            "9002",
+            "5550",
             "3289",
             "2022-12-08",
             "Danger",
@@ -85,7 +97,14 @@ def elsinore() -> list[Record]:
         rec(
             "13297", "3927", "2026-01-05", "None", *TMDL, "In open water near TMDL LE02"
         ),
-        rec("15342", "4056", "2026-09-24", "Caution", *ELM_GROVE, "Elm Grove Beach"),
+    ]
+
+
+def elsinore() -> list[Record]:
+    """The above plus the five Cautions posted Sep 24, 2026."""
+    return history_only() + [
+        rec(rid, report, "2026-09-24", "Caution", *point, landmark)
+        for rid, (report, point, landmark) in CITY_SPOTS.items()
     ]
 
 
@@ -118,7 +137,7 @@ def test_a_none_at_the_same_coordinates_under_a_new_report_ends_the_old_one() ->
     assert sites["3927"]["status"]["lift_date"] == "2026-01-05"
     # Every record still points at a listed spot.
     assert {r["site"] for r in w["records"]} <= set(sites)
-    assert w["status"]["sites_with_advisory"] == 2
+    assert w["status"]["sites_with_advisory"] == 8
 
 
 def test_negative_control_a_meter_apart_is_another_spot() -> None:
@@ -134,7 +153,7 @@ def test_negative_control_a_meter_apart_is_another_spot() -> None:
     sites = {s["id"]: s for s in w["sites"]}
     assert sites["3289"]["status"]["kind"] == "advisory"
     assert sites["3289"]["status"]["posted"] == "2022-12-08"
-    assert w["status"]["sites_with_advisory"] == 3
+    assert w["status"]["sites_with_advisory"] == 9
 
 
 def test_reports_without_coordinates_are_never_merged() -> None:
@@ -146,8 +165,8 @@ def test_reports_without_coordinates_are_never_merged() -> None:
 
 
 def test_other_sources_are_not_matched_by_coordinates() -> None:
-    a = dataclasses.replace(elsinore()[1], source="mo-dnr-hab")
-    b = dataclasses.replace(elsinore()[2], source="mo-dnr-hab")
+    a = dataclasses.replace(elsinore()[3], source="mo-dnr-hab")
+    b = dataclasses.replace(elsinore()[4], source="mo-dnr-hab")
     assert snapshot.spot_ids(
         [
             hist.HistoryEntry(record=a, first_seen=FILE_DATE, last_seen=FILE_DATE),
@@ -156,32 +175,78 @@ def test_other_sources_are_not_matched_by_coordinates() -> None:
     ) == {"3289": "3289", "3927": "3927"}
 
 
-# -- the headline's date belongs to its level ---------------------------------
+# -- the headline rule (owner, 0017) -----------------------------------------
 
 
-def test_elsinore_reads_danger_with_the_dangers_own_date() -> None:
+def test_elsinore_leads_with_the_caution_posted_in_the_last_12_months() -> None:
     w = water(elsinore())
     assert wording.headline(w["status"]) == (
-        "Danger advisory, last posted Sep 3, 2020. No all-clear recorded."
+        "Caution advisory, last posted Sep 24, 2026. No all-clear recorded."
+    )
+    assert w["status"]["sites_with_advisory"] == 8
+    assert wording.newer_posting(w) is None
+    assert wording.older_higher(w) == (
+        "An older, higher advisory is also on file: Danger advisory, last "
+        "posted Sep 3, 2020 at 2 reported spots. No all-clear recorded."
+    )
+    assert wording.age_note(w, FILE_DATE) is None  # 40 days old
+
+
+def test_negative_control_a_fresh_danger_at_one_spot_still_leads() -> None:
+    records = [
+        dataclasses.replace(r, level="Danger", tier="danger") if r.id == "15344" else r
+        for r in elsinore()
+    ]
+    assert next(r for r in records if r.id == "15344").tier == "danger"  # applied
+    w = water(records)
+    assert wording.headline(w["status"]) == (
+        "Danger advisory, last posted Sep 24, 2026. No all-clear recorded."
+    )
+    assert wording.older_higher(w) is None
+
+
+def test_nothing_in_12_months_leads_with_the_newest_posting_and_its_age() -> None:
+    w = water(history_only())
+    # The 2022 Danger at TMDL LE02 ended at the same coordinates on
+    # 2026-01-05, so the newest posting left is the 2021 Caution.
+    assert wording.headline(w["status"]) == (
+        "Caution advisory, last posted Jul 19, 2021. No all-clear recorded."
+    )
+    assert wording.older_higher(w) == (
+        "An older, higher advisory is also on file: Danger advisory, last "
+        "posted Sep 3, 2020 at 2 reported spots. No all-clear recorded."
+    )
+    assert wording.age_note(w, FILE_DATE) == (
+        "That level was last posted Jul 19, 2021, more than 5 years before the "
+        "state's data dated Nov 3, 2026, and the state has not recorded an end "
+        "to it. The state's newest record of any kind for Lake Elsinore is from "
+        "Jan 5, 2026."
+    )
+
+
+def test_a_newer_lower_posting_is_named_when_a_higher_one_leads() -> None:
+    records = [
+        dataclasses.replace(r, date=dt.date(2026, 3, 10)) if r.id == "714" else r
+        for r in elsinore()
+    ]
+    w = water(records)
+    assert wording.headline(w["status"]) == (
+        "Danger advisory, last posted Mar 10, 2026. No all-clear recorded."
     )
     assert wording.newer_posting(w) == (
         "The newest advisory posting here is lower: Caution advisory, posted "
-        "Sep 24, 2026 at 1 reported spot. No all-clear recorded."
+        "Sep 24, 2026 at 5 reported spots. No all-clear recorded."
     )
-
-
-def test_age_note_says_how_old_and_when_the_state_last_wrote() -> None:
-    w = water(elsinore())
     assert wording.age_note(w, FILE_DATE) == (
-        "That level was last posted Sep 3, 2020, more than 6 years before the "
-        "state's data dated Nov 3, 2026, and the state has not recorded an end "
-        "to it. The state's newest record of any kind for Lake Elsinore is from "
+        "That level was last posted Mar 10, 2026, 7 months before the state's "
+        "data dated Nov 3, 2026, and the state has not recorded an end to it. "
+        "The state's newest record of any kind for Lake Elsinore is from "
         "Sep 24, 2026."
     )
 
 
 def test_no_age_note_or_newer_line_for_a_fresh_single_posting() -> None:
-    w = water([elsinore()[3]])
+    w = water([elsinore()[-1]])
     assert wording.age_note(w, FILE_DATE) is None
     assert wording.newer_posting(w) is None
     assert wording.age_note(w, None) is None
@@ -189,22 +254,22 @@ def test_no_age_note_or_newer_line_for_a_fresh_single_posting() -> None:
     assert wording._age(100) == "3 months"
 
 
-def test_a_new_lower_posting_keeps_the_water_on_the_recent_list() -> None:
+def test_a_fresh_posting_keeps_the_water_on_the_recent_list() -> None:
     w = water(elsinore())
-    assert not wording.is_recent(w["status"], dt.date(2026, 10, 1))
     assert wording.is_recent_water(w, dt.date(2026, 10, 1))
     assert not wording.is_recent_water(w, RUN)
+    old = water(history_only())
+    assert not wording.is_recent_water(old, dt.date(2026, 10, 1))
 
 
-def test_the_water_page_shows_all_three_sentences(tmp_path: Path) -> None:
+def test_the_water_page_and_list_show_the_chosen_headline(tmp_path: Path) -> None:
     snap = build(elsinore())
     site_mod.build_site(snap, tmp_path, ga4_measurement_id="")
     page = html.unescape(
         (tmp_path / "water" / "ca-riverside-lake-elsinore" / "index.html").read_text()
     )
-    assert "Danger advisory, last posted Sep 3, 2020. No all-clear recorded." in page
+    assert "Caution advisory, last posted Sep 24, 2026. No all-clear recorded." in page
     assert "Danger advisory, last posted Sep 24, 2026" not in page
-    assert "The newest advisory posting here is lower: Caution advisory" in page
-    assert "more than 6 years before the state's data dated Nov 3, 2026" in page
+    assert "An older, higher advisory is also on file: Danger advisory" in page
     listing = html.unescape((tmp_path / "advisories" / "index.html").read_text())
-    assert "Danger advisory. The newest advisory posting here is lower" in listing
+    assert "Caution advisory. An older, higher advisory is also on file" in listing

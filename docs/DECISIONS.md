@@ -344,7 +344,7 @@ Two page changes still help:
   this widens the owner's 2026-10-23 staging rule. To undo, set the constant to a
   number no water reaches.
 
-## 0017 — A spot is the state's coordinates; a headline's date belongs to its level; old advisories say their age (2026-11-03)
+## 0017 — A spot is the state's coordinates; the headline leads with the highest level of the last 12 months, dated by its own posting; old advisories say their age (owner, 2026-11-03)
 
 Found 2026-11-03: Lake Notice showed "Danger advisory, last posted Sep 24,
 2026" for Lake Elsinore. Every record the state posted there that day was a
@@ -358,13 +358,13 @@ both fixed here:
 - **The headline mixed two records.** `water_status` took the highest level
   from one spot and the newest date from any spot. 81 of 540 waters with an
   advisory in the 2026-11-03 snapshot showed a level that was not posted on
-  the date shown. Now the date is the date that level was last posted. The
-  level is still the highest among spots with no all-clear (unchanged).
-  When another spot has a newer posting at a lower level, the water page and
-  the advisory lists add "The newest advisory posting here is lower: <level>,
-  posted <date> at <n> reported spots. No all-clear recorded." The home
-  page's "posted in the last 30 days" list and the newest-first order use
-  the newest posting at any level, so a new lower posting is not hidden.
+  the date shown. Now a headline's level and date always come from the same
+  posting. When another spot has a newer posting at a lower level, the water
+  page and the advisory lists add "The newest advisory posting here is
+  lower: <level>, posted <date> at <n> reported spots. No all-clear
+  recorded." The home page's "posted in the last 30 days" list and the
+  newest-first order use the newest posting at any level, so a new lower
+  posting is not hidden.
 - **A reported spot was a bloom report id.** The state files the same
   monitoring spot under a new bloom report each season, with the same
   coordinates to six decimals (Lake Elsinore's "In open water near TMDL
@@ -391,18 +391,25 @@ Instead, an advisory whose level was last posted more than `STALE_DAYS` (90)
 before the state's file date now says so on its page: "That level was last
 posted <date>, <age> before the state's data dated <date>, and the state has
 not recorded an end to it. The state's newest record of any kind for <water>
-is from <date>." On the 2026-11-03 file that is 396 of 479 California waters
-with an advisory; 344 were last posted over a year earlier.
+is from <date>." On the 2026-11-03 file, under the headline rule below,
+that is 370 of 479 California waters with an advisory.
 
-**Owner to confirm**: the headline still leads with the highest level. For
-Lake Elsinore that is now "Danger advisory, last posted Jul 28, 2017" (a
-lake-wide 2017 report never followed up), with the Sep 24, 2026 Caution on
-the next line. Leading with the newest posting instead ("Caution, last posted
-Sep 24, 2026", with the 2017 Danger on the next line) would match what the
-state currently posts at the monitored spots. It would also put a newer,
-lower level above an older, higher one that nobody lifted. This build keeps
-the conservative order. Switching is a one-line change in `water_status`
-plus its tests.
-
-The app needs no change. It reads the same fields; its headline and its
-"newest posting first" order now use the level's own date.
+**Which posting leads (owner, 2026-11-03).** The headline is the highest
+advisory level posted in the 12 months before the state's file date
+(`HEADLINE_WINDOW_MONTHS`, calendar months), at that level's own last posted
+date. If no spot had an advisory posted in those 12 months, the headline is
+the newest posting, with its own level, and the age sentence above. A
+higher advisory posted before the window, with no all-clear, is never
+dropped. It no longer leads, and the water page and the advisory lists name
+it: "An older, higher advisory is also on file: <level>, last posted <date>
+at <n> reported spots. No all-clear recorded." Lake Elsinore now leads with
+"Caution advisory, last posted Sep 24, 2026", the level the state posted at
+the five city spots that day. Its 2017 Danger reports are on the next line.
+A Danger posted within the 12 months still leads over a newer Caution
+(tested). On the 2026-11-03 file this changes 60 of 479 headlines from the
+previous build of this decision. All 60 now lead with a lower, more recent
+level, and each names the older, higher one.
+The app needs no change. It reads the same fields, and its headline and its
+"newest posting first" order use the headline posting's own level and date.
+The app does not show the older, higher line. Each spot's own status is
+listed on its lake screen.

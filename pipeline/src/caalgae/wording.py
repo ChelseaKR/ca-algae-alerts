@@ -257,6 +257,36 @@ def newer_posting(water: dict[str, Any]) -> str | None:
     )
 
 
+def older_higher(water: dict[str, Any]) -> str | None:
+    """The sentence for an advisory at a higher level than the headline's,
+    posted before the 12-month headline window and never lifted, or None.
+    It stays on file and in view (0002); it no longer leads (0017).
+    Website only."""
+    status = water["status"]
+    if status["kind"] != "advisory":
+        return None
+    rank = _TIER_ORDER.get(status.get("tier") or "", 0)
+    higher = [
+        site["status"]
+        for site in water["sites"]
+        if site["status"]["kind"] == "advisory"
+        and site["status"]["posted"]
+        and _TIER_ORDER.get(site["status"].get("tier") or "", 0) > rank
+    ]
+    if not higher:
+        return None
+    top_rank = max(_TIER_ORDER.get(st.get("tier") or "", 0) for st in higher)
+    at_top = [
+        st for st in higher if _TIER_ORDER.get(st.get("tier") or "", 0) == top_rank
+    ]
+    latest = max(str(st["posted"]) for st in at_top)
+    spots = "1 reported spot" if len(at_top) == 1 else f"{len(at_top)} reported spots"
+    return (
+        f"An older, higher advisory is also on file: {level_name(at_top[0])}, "
+        f"last posted {date_label(latest)} at {spots}. No all-clear recorded."
+    )
+
+
 def _age(days: int) -> str:
     if days >= 730:
         return f"more than {days // 365} years"
