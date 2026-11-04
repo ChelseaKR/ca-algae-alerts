@@ -87,7 +87,38 @@ def test_water_takes_any_open_advisory_and_the_highest_tier(
     danger = dataclasses.replace(open_, tier="danger", posted=dt.date(2026, 1, 1))
     top = st.water_status([open_, danger])
     assert top.tier == "danger"
-    assert top.posted == dt.date(2026, 9, 25)  # newest posting across sites
+    # The date is the Danger's own, not the newer lower posting's (0017).
+    assert open_.posted == dt.date(2026, 9, 25)
+    assert top.posted == dt.date(2026, 1, 1)
+
+
+def test_water_headline_date_belongs_to_its_level() -> None:
+    """Lake Elsinore, 2026-11-03: a Danger last posted 2020-09-03 at one spot
+    and Cautions posted 2026-09-24 at others read "Danger, posted Sep 24,
+    2026". The headline's level and date must come from the same posting."""
+    old_danger = st.Status(
+        kind=st.ADVISORY,
+        tier="danger",
+        level="Danger",
+        posted=dt.date(2020, 9, 3),
+        sites_with_advisory=1,
+    )
+    new_caution = st.Status(
+        kind=st.ADVISORY,
+        tier="caution",
+        level="Caution",
+        posted=dt.date(2026, 9, 24),
+        sites_with_advisory=1,
+    )
+    newer_danger = dataclasses.replace(old_danger, posted=dt.date(2022, 12, 8))
+    w = st.water_status([new_caution, old_danger, newer_danger])
+    assert (w.tier, w.level, w.posted) == ("danger", "Danger", dt.date(2022, 12, 8))
+    assert w.sites_with_advisory == 3
+    # Negative control: the old rule (newest date across every site) gives
+    # the false pairing, so this test can fail.
+    mixed = max(s.posted for s in (new_caution, old_danger, newer_danger) if s.posted)
+    assert (w.tier, mixed) == ("danger", dt.date(2026, 9, 24))
+    assert w.posted != mixed
 
 
 def test_water_lifted_only_when_no_site_is_open(traps: normalize.Normalized) -> None:

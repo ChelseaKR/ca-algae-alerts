@@ -343,3 +343,66 @@ Two page changes still help:
   of 308) and leaves every one- to four-record page out. **Owner to confirm**:
   this widens the owner's 2026-10-23 staging rule. To undo, set the constant to a
   number no water reaches.
+
+## 0017 — A spot is the state's coordinates; a headline's date belongs to its level; old advisories say their age (2026-11-03)
+
+Found 2026-11-03: Lake Notice showed "Danger advisory, last posted Sep 24,
+2026" for Lake Elsinore. Every record the state posted there that day was a
+Caution, at the five city monitoring spots. The Danger came from bloom reports
+filed between 2016 and 2022. The City of Lake Elsinore's Lake Watch page said
+"no advisory at this time" (its update dated Aug 25, 2026; its lab table,
+updated 9/17/26, shows microcystin at or below 0.33 ppb through 9/5/26). The
+state's file is newer than that page and still records Caution. Two defects,
+both fixed here:
+
+- **The headline mixed two records.** `water_status` took the highest level
+  from one spot and the newest date from any spot. 81 of 540 waters with an
+  advisory in the 2026-11-03 snapshot showed a level that was not posted on
+  the date shown. Now the date is the date that level was last posted. The
+  level is still the highest among spots with no all-clear (unchanged).
+  When another spot has a newer posting at a lower level, the water page and
+  the advisory lists add "The newest advisory posting here is lower: <level>,
+  posted <date> at <n> reported spots. No all-clear recorded." The home
+  page's "posted in the last 30 days" list and the newest-first order use
+  the newest posting at any level, so a new lower posting is not hidden.
+- **A reported spot was a bloom report id.** The state files the same
+  monitoring spot under a new bloom report each season, with the same
+  coordinates to six decimals (Lake Elsinore's "In open water near TMDL
+  LE02" is report 3289 in 2022 and 3927 in 2023 to 2026). So a later "None"
+  at that spot never reached the older report's Danger. California reports
+  that share their latest coordinates are now one spot, named by the report
+  with the newest record. That makes the "None" an explicit record at the
+  same reported spot, which is what 0002 already requires. Measured on the
+  2026-11-03 file: 2,740 reports become 2,185 spots; 280 spots hold more than
+  one report, and where their landmarks differ they are spellings of one
+  station ("Oaks Arm (DWR site CL-4)" and "(CL-04)"). Spots with an advisory
+  fall from 1,322 to 1,088, and 15 waters move from an advisory to the
+  state's latest record recommending none. Nothing is matched by name or by
+  distance: two points a meter apart stay two spots, and a report without
+  coordinates is its own spot. Missouri is not matched (its readings are
+  owner-confirmed per case, 0013).
+
+The state's data has no other end signal. Checked on the 2026-11-03 files:
+`DisplayAdvisoryToMap` is "Yes" on all 14,519 rows; `Advisory_End_Date` is
+filled on 326; `Case_Status` and `Case_End_Date` mark a staff folder, which
+the data dictionary says "does not reflect the severity" and "can stay in
+open status for a lengthy period". So silence still ends nothing (0002).
+Instead, an advisory whose level was last posted more than `STALE_DAYS` (90)
+before the state's file date now says so on its page: "That level was last
+posted <date>, <age> before the state's data dated <date>, and the state has
+not recorded an end to it. The state's newest record of any kind for <water>
+is from <date>." On the 2026-11-03 file that is 396 of 479 California waters
+with an advisory; 344 were last posted over a year earlier.
+
+**Owner to confirm**: the headline still leads with the highest level. For
+Lake Elsinore that is now "Danger advisory, last posted Jul 28, 2017" (a
+lake-wide 2017 report never followed up), with the Sep 24, 2026 Caution on
+the next line. Leading with the newest posting instead ("Caution, last posted
+Sep 24, 2026", with the 2017 Danger on the next line) would match what the
+state currently posts at the monitored spots. It would also put a newer,
+lower level above an older, higher one that nobody lifted. This build keeps
+the conservative order. Switching is a one-line change in `water_status`
+plus its tests.
+
+The app needs no change. It reads the same fields; its headline and its
+"newest posting first" order now use the level's own date.
