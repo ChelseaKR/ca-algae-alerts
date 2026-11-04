@@ -128,6 +128,24 @@ def headline(status: dict[str, Any]) -> str:
     return "Reports on file, with no advisory level the state has classified."
 
 
+# The sentence every status that is not an advisory carries (0002).
+NOT_A_FINDING = "That is not a finding that the water is safe now."
+
+
+def title_status(status: dict[str, Any], short: bool = False) -> str | None:
+    """The headline's level and last posted date for a page title, such as
+    "Danger advisory, last posted Nov 3, 2026": the headline's first
+    sentence, so a title says nothing the status box does not. ``short``
+    leaves out "last posted" ("Danger advisory, Nov 3, 2026") for a title
+    that would not fit otherwise; the date is never left out. None for any
+    status that is not an advisory (decision 0018). Website only, like
+    ``summary``."""
+    if status["kind"] != "advisory":
+        return None
+    when = date_label(status["posted"])
+    return f"{level_name(status)}, {when if short else 'last posted ' + when}"
+
+
 def summary(
     name: str, place: str | None, status: dict[str, Any], file_date: str | None
 ) -> str:
@@ -148,7 +166,7 @@ def summary(
     else:
         line = f"The state's records for {where} show: {headline(status)}"
     if status["kind"] != "advisory":
-        line += " That is not a finding that the water is safe now."
+        line += f" {NOT_A_FINDING}"
     return line
 
 

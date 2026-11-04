@@ -637,6 +637,119 @@ def test_water_title_and_description_fit_for_any_name() -> None:
     assert site.water_title("Clear Lake", None).startswith("Clear Lake toxic algae")
 
 
+_TITLE_DATE = re.compile(r"[A-Z][a-z]{2} \d{1,2}, \d{4}")
+
+
+def snippet_problems(root: Path) -> list[str]:
+    """Water pages whose search title or description says more than the page
+    (DECISIONS 0002 and 0018): a sentence that claims safety, a title date
+    the page's first line does not carry, or a status that is not an
+    advisory without its not-a-finding sentence."""
+    problems = []
+    for page in sorted((root / "water").glob("*/index.html")):
+        rel = str(page.relative_to(root))
+        raw = page.read_text(encoding="utf-8")
+        title, description = _TITLE.search(raw), _DESCRIPTION.search(raw)
+        assert title and description
+        t, d = html.unescape(title.group(1)), html.unescape(description.group(1))
+        lede = lede_of(page)
+        for text in (t, d):
+            problems += [f"{rel}: {s}" for s in affirmative_safety_claims(text)]
+        for day in _TITLE_DATE.findall(t):
+            if day not in lede:
+                problems.append(f"{rel}: title date {day} is not in the first line")
+        if wording.NOT_A_FINDING in lede and wording.NOT_A_FINDING not in d:
+            problems.append(f"{rel}: description drops the not-a-finding sentence")
+    return problems
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_search_snippets_say_only_what_the_page_says(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    assert snippet_problems(request.getfixturevalue(which)) == []
+
+
+def test_advisory_titles_lead_with_the_level_and_its_date(traps_site: Path) -> None:
+    water = traps_site / "water"
+
+    def title(wid: str) -> str:
+        found = _TITLE.search((water / wid / "index.html").read_text())
+        assert found
+        return html.unescape(found.group(1))
+
+    assert title("ca-alameda-lake-alpha") == (
+        "Lake Alpha algae: Caution advisory, last posted Sep 20, 2026"
+    )
+    assert title("ca-nevada-state-zeta-lake").endswith("Jul 15, 2019")
+    # No status in the title unless it is an advisory: "recommends no
+    # advisory" needs its not-a-finding sentence, which a title cannot hold.
+    assert title("ca-lake-beta-reservoir").endswith("algae advisories | Lake Notice")
+    assert title("ca-marin-theta-lake").endswith("algae advisories | Lake Notice")
+    beta = _DESCRIPTION.search(
+        (water / "ca-lake-beta-reservoir" / "index.html").read_text()
+    )
+    assert beta and wording.NOT_A_FINDING in html.unescape(beta.group(1))
+    alpha = _DESCRIPTION.search(
+        (water / "ca-alameda-lake-alpha" / "index.html").read_text()
+    )
+    assert alpha and html.unescape(alpha.group(1)).startswith(
+        "Lake Alpha, Alameda County: Caution advisory, last posted Sep 20, 2026. "
+        "No all-clear recorded. From the state's data dated Oct 9, 2026."
+    )
+
+
+def test_title_status_drops_last_posted_before_the_date() -> None:
+    danger = {"kind": "advisory", "tier": "danger", "posted": "2026-10-19"}
+    nov = {**danger, "posted": "2026-11-03"}
+    assert site.water_title("Castaic Lake", None, nov) == (
+        "Castaic Lake algae: Danger advisory, last posted Nov 3, 2026"
+    )
+    assert site.water_title("Castaic Lake", None, danger) == (
+        "Castaic Lake algae: Danger advisory, Oct 19, 2026"
+    )
+    assert site.water_title("San Luis Reservoir", None, danger) == (
+        "San Luis Reservoir algae: Danger advisory, Oct 19, 2026"
+    )
+    long_name = "Pierce City City Park Recreational Pond"
+    assert site.water_title(long_name, None, danger) == f"{long_name} | Lake Notice"
+    none = {"kind": "no_advisory_recorded", "lift_kind": "no_advisory_record",
+            "lift_date": "2026-09-01"}  # fmt: skip
+    assert wording.title_status(none) is None
+    assert site.water_title("Mission Bay", None, none) == (
+        "Mission Bay toxic algae advisories | Lake Notice"
+    )
+    line = site.water_description("Mission Bay", "San Diego County",
+                                  wording.headline(none), "2026-11-03",
+                                  advisory=False)  # fmt: skip
+    assert line.endswith(wording.NOT_A_FINDING)
+    assert len(line) <= site.DESCRIPTION_MAX
+
+
+def test_snippet_check_catches_a_title_or_description_that_says_more(
+    tmp_path: Path,
+) -> None:
+    # Negative control: each sabotage must be applied and must be reported.
+    root = build(tmp_path)
+    alpha = root / "water" / "ca-alameda-lake-alpha" / "index.html"
+    beta = root / "water" / "ca-lake-beta-reservoir" / "index.html"
+    raw = alpha.read_text(encoding="utf-8")
+    changed = raw.replace(
+        "last posted Sep 20, 2026</title>", "last posted Oct 1, 2026</title>"
+    )
+    assert changed != raw
+    alpha.write_text(changed, encoding="utf-8")
+    raw = beta.read_text(encoding="utf-8")
+    changed = re.sub(r'(<meta name="description" content=")[^"]*"',
+                     r'\1Beta Reservoir is safe to swim."', raw, count=1)  # fmt: skip
+    assert changed != raw
+    beta.write_text(changed, encoding="utf-8")
+    problems = snippet_problems(root)
+    assert any("title date Oct 1, 2026" in p for p in problems)
+    assert any("safe to swim" in p for p in problems)
+    assert any("drops the not-a-finding sentence" in p for p in problems)
+
+
 def test_water_pages_that_share_a_name_get_different_titles() -> None:
     def w(i: str, county: str) -> dict[str, Any]:
         return {"state": "CA", "name": "Bear Creek", "id": i, "counties": [county]}

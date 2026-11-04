@@ -24,6 +24,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- A water page with an advisory now has a search title that leads with the
+  level and date from its headline, for example "Castaic Lake algae: Danger
+  advisory, last posted Nov 3, 2026". Before, every title read "<water> toxic
+  algae advisories | Lake Notice". Descriptions add the date of the state's
+  file. A description whose status is not an advisory now carries the same
+  not-a-finding sentence as the page's first line. Before, 603 descriptions
+  left it out (docs/DECISIONS.md 0018).
 - A water's headline now leads with the highest advisory level posted in
   the 12 months before the state's file date, dated by that posting. If
   nothing was posted in those 12 months, it leads with the newest posting.
