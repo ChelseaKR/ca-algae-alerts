@@ -77,36 +77,76 @@ def fit(candidates: list[str], limit: int) -> str:
     return last[: limit - 1].rsplit(" ", 1)[0].rstrip(" ,:;|-") + "\u2026"
 
 
-def water_title(name: str, county: str | None) -> str:
+def water_title(
+    name: str, county: str | None, status: dict[str, Any] | None = None
+) -> str:
     """A waterbody page title of at most TITLE_MAX characters. ``county`` is
     passed only when another water in the same state has the same name, so two
-    "Bear Creek" pages never share a title."""
+    "Bear Creek" pages never share a title.
+
+    A water with an advisory leads with its name, then the headline's level
+    and its last posted date (``wording.title_status``), because that is what
+    a search for "<water> algae" asks (DECISIONS 0018). "last posted" is
+    dropped before the word "algae" or the date is. Any other status gets
+    no status in the title: "recommends no advisory" needs its not-a-finding
+    sentence next to it (0002), and a title has no room for one. A name too
+    long for the status falls back to the plain title, never a cut date."""
     where = f"{name}, {county} County" if county else name
     short = f"{name}, {county}" if county else name
     tail = f" | {SITE_NAME}"
-    return fit(
-        [
-            f"{where} toxic algae advisories{tail}",
-            f"{where} algae advisories{tail}",
-            f"{short} algae advisories{tail}",
-            f"{short}{tail}",
-            f"{name}{tail}",
-        ],
-        TITLE_MAX,
-    )
+    plain = [
+        f"{where} toxic algae advisories{tail}",
+        f"{where} algae advisories{tail}",
+        f"{short} algae advisories{tail}",
+        f"{short}{tail}",
+        f"{name}{tail}",
+    ]
+    if status and wording.title_status(status):
+        posted = wording.title_status(status)
+        dated = wording.title_status(status, short=True)
+        candidates = [
+            f"{where} toxic algae: {posted}",
+            f"{where} algae: {posted}",
+            f"{where} algae: {dated}",
+            f"{where}: {dated}",
+            f"{short}: {dated}",
+        ]
+        for candidate in candidates:
+            if len(candidate) <= TITLE_MAX:
+                return candidate
+    return fit(plain, TITLE_MAX)
 
 
-def water_description(name: str, place: str | None, headline: str) -> str:
+def water_description(
+    name: str,
+    place: str | None,
+    headline: str,
+    file_date: str | None = None,
+    advisory: bool = True,
+) -> str:
     """A waterbody page description of at most DESCRIPTION_MAX characters.
-    The status and its date come first and are never the part that is cut."""
+    The status and its date come first and are never the part that is cut.
+
+    A status that is not an advisory carries the same not-a-finding sentence
+    as the page's first line (0002), in every candidate: a search snippet is
+    quoted on its own. The date of the state's file follows when it fits
+    (0018); without one, nothing is put in its place."""
     lead = f"{name}, {place}: " if place else f"{name}: "
+    answer = headline if advisory else f"{headline} {wording.NOT_A_FINDING}"
+    dated = (
+        [f"From the state's data dated {wording.date_label(file_date)}."]
+        if file_date
+        else []
+    )
+    extras = [
+        " ".join(["", *dated, "Every state advisory record since 2016."]),
+        " ".join(["", *dated, "State records since 2016."]),
+        " ".join(["", *dated]),
+        " Every state advisory record since 2016.",
+        "",
+    ]
     return fit(
-        [
-            f"{lead}{headline} Every state advisory record since 2016.",
-            f"{lead}{headline} State records since 2016.",
-            f"{lead}{headline}",
-            f"{name}: {headline}",
-        ],
+        [*(f"{lead}{answer}{extra}" for extra in extras), f"{name}: {answer}", answer],
         DESCRIPTION_MAX,
     )
 
@@ -529,11 +569,14 @@ class SiteBuilder:
             title=water_title(
                 water["name"],
                 self._county_label(water) if self._name_is_shared(water) else None,
+                water["status"],
             ),
             description=water_description(
                 water["name"],
                 None if county == "County not recorded" else county,
                 wording.headline(water["status"]),
+                file_date,
+                advisory=water["status"]["kind"] == "advisory",
             ),
             noindex=not indexable,
             robots="noindex,follow",

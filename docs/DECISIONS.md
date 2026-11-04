@@ -413,3 +413,49 @@ The app needs no change. It reads the same fields, and its headline and its
 "newest posting first" order use the headline posting's own level and date.
 The app does not show the older, higher line. Each spot's own status is
 listed on its lake screen.
+
+## 0018 — Search titles lead with the advisory and its date; descriptions carry the state's file date and the not-a-finding sentence (2026-11-03)
+
+Measured in Search Console on 2026-11-03 (all data, 2026-10-22 to
+2026-11-03): 666 impressions and 35 clicks (5.3%). Water pages had 559 of the
+impressions and 28 of the clicks, across 152 pages, mostly at positions 5
+to 9. Google showed only 13 queries; the rest are below its privacy
+threshold. Five of the 13 ask "is <water> safe to swim in", and most of the
+rest are "<water> algae". Every water title read "<water> toxic algae
+advisories | Lake Notice", which is the same for a Danger posted today and a
+Caution posted in 2019, so the result did not show the answer the searcher
+came for.
+
+- **An advisory's title leads with the water, the level and its date.**
+  "Castaic Lake algae: Danger advisory, last posted Nov 3, 2026". The level
+  and date are the headline's (0002 wording, 0017's headline posting), so a
+  title never says more than the status box. To fit the 60-character limit,
+  "toxic" goes first, then "last posted" ("Lake Berryessa algae: Caution
+  advisory, Aug 28, 2026"), then "algae". The date is never dropped. A name
+  too long for any of those keeps the plain title. On the 2026-11-03 snapshot,
+  312 of 352 indexable water pages with an advisory get a dated title. The
+  site name is left out of those titles to make room: `og:site_name` still
+  names it, and Google shows the site name above the title.
+- **Any other status keeps the plain title.** "The state's latest record
+  recommends no advisory" must be followed by the not-a-finding sentence
+  (0002), and a title has no room for both.
+- **Descriptions match the page's first line (0016).** After the status, a
+  description adds "From the state's data dated <file date>." when it fits
+  (341 of 427 indexable pages). A status that is not an advisory now carries
+  "That is not a finding that the water is safe now." in every candidate.
+  Before, it was missing from all 603 such descriptions (75 of them
+  indexable), because descriptions were built from the headline alone.
+- **No "safe" question in titles.** A title such as "Is Lake Berryessa safe
+  to swim?" would pass the copy guard, because the guard skips questions.
+  It is not used. A title is often quoted without the description (browser
+  tabs, shares, an assistant's citation), and on more than a thousand pages
+  it would make "safe" the word the site is known for in search. **Owner to
+  confirm** if the question form is wanted later. It would go in
+  `site.water_title`, with the not-a-finding sentence in the description.
+
+A test checks every built water page. Its title and description must pass
+the copy guard. Any date in the title must appear in the page's first line.
+A status that is not an advisory must keep the not-a-finding sentence in its
+description. A negative control changes a title's date and puts a safety
+claim in a description, and checks that both are reported. To undo, call
+`water_title` without the status.
