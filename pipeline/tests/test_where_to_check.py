@@ -298,11 +298,14 @@ def test_headline_note_appears_only_with_several_advisory_spots(
         if w["status"]["kind"] == "advisory" and w["status"].get("sites_with_advisory") == 1
     ]  # fmt: skip
     assert many and one
-    note = "The level in the headline is the highest among those spots."
+    note = (
+        "The headline shows the highest level posted in the 12 months before "
+        "the state's data, or the newest posting if none was."
+    )
     for w in many:
         assert note in text_of(sample_site / "water" / w["id"] / "index.html")
     for w in one:
         assert note not in text_of(sample_site / "water" / w["id"] / "index.html")
-    assert "the level shown is the highest among them" in text_of(
+    assert "the level shown is the highest posted in the 12 months" in text_of(
         sample_site / "advisories" / "index.html"
     )

@@ -21,6 +21,11 @@ import datetime as dt
 from typing import Any
 
 RECENT_DAYS = 30
+# An advisory whose level was last posted longer ago than this, measured
+# against the state's file date, gets a sentence saying how old it is
+# (decision 0017).
+STALE_DAYS = 90
+_TIER_ORDER = {"danger": 4, "warning": 3, "caution": 2, "other_advisory": 1}
 
 TIER_LABEL = {
     "danger": "Danger",
@@ -210,3 +215,112 @@ def is_recent(status: dict[str, Any], run_date: dt.date) -> bool:
     if not posted:
         return False
     return (run_date - dt.date.fromisoformat(posted)).days <= RECENT_DAYS
+
+
+def newest_posted(water: dict[str, Any]) -> str | None:
+    """The newest date any of a water's spots had an advisory posted, with
+    no all-clear since. It can be newer than the headline's date, which
+    belongs to the highest level (decision 0017)."""
+    dates = [
+        str(site["status"]["posted"])
+        for site in water.get("sites", [])
+        if site["status"]["kind"] == "advisory" and site["status"]["posted"]
+    ]
+    return max(dates, default=water["status"].get("posted"))
+
+
+def is_recent_water(water: dict[str, Any], run_date: dt.date) -> bool:
+    """Any advisory at the water posted within ``RECENT_DAYS``, whatever its
+    level, so a new lower posting is not hidden behind an older higher one."""
+    return is_recent({"posted": newest_posted(water)}, run_date)
+
+
+def newer_posting(water: dict[str, Any]) -> str | None:
+    """The sentence for a newer posting at a lower level than the headline,
+    or None when the headline's posting is the newest. Website only."""
+    status = water["status"]
+    if status["kind"] != "advisory":
+        return None
+    newest = newest_posted(water)
+    if not newest or newest == status.get("posted"):
+        return None
+    at = [
+        site["status"]
+        for site in water["sites"]
+        if site["status"]["kind"] == "advisory" and site["status"]["posted"] == newest
+    ]
+    top = max(at, key=lambda st: _TIER_ORDER.get(st.get("tier") or "", 0))
+    spots = "1 reported spot" if len(at) == 1 else f"{len(at)} reported spots"
+    return (
+        f"The newest advisory posting here is lower: {level_name(top)}, "
+        f"posted {date_label(newest)} at {spots}. No all-clear recorded."
+    )
+
+
+def older_higher(water: dict[str, Any]) -> str | None:
+    """The sentence for an advisory at a higher level than the headline's,
+    posted before the 12-month headline window and never lifted, or None.
+    It stays on file and in view (0002); it no longer leads (0017).
+    Website only."""
+    status = water["status"]
+    if status["kind"] != "advisory":
+        return None
+    rank = _TIER_ORDER.get(status.get("tier") or "", 0)
+    higher = [
+        site["status"]
+        for site in water["sites"]
+        if site["status"]["kind"] == "advisory"
+        and site["status"]["posted"]
+        and _TIER_ORDER.get(site["status"].get("tier") or "", 0) > rank
+    ]
+    if not higher:
+        return None
+    top_rank = max(_TIER_ORDER.get(st.get("tier") or "", 0) for st in higher)
+    at_top = [
+        st for st in higher if _TIER_ORDER.get(st.get("tier") or "", 0) == top_rank
+    ]
+    latest = max(str(st["posted"]) for st in at_top)
+    spots = "1 reported spot" if len(at_top) == 1 else f"{len(at_top)} reported spots"
+    return (
+        f"An older, higher advisory is also on file: {level_name(at_top[0])}, "
+        f"last posted {date_label(latest)} at {spots}. No all-clear recorded."
+    )
+
+
+def _age(days: int) -> str:
+    if days >= 730:
+        return f"more than {days // 365} years"
+    if days >= 365:
+        return "more than a year"
+    return f"{days // 30} months"
+
+
+def age_note(water: dict[str, Any], file_date: str | None) -> str | None:
+    """How old the headline's posting is, when it is older than
+    ``STALE_DAYS`` before the state's file date, and the date of the state's
+    newest record of any kind for the water when that is newer. Silence
+    still ends nothing (0002): this says how old the record is, never that
+    the advisory has ended. Website only."""
+    status = water["status"]
+    if status["kind"] != "advisory" or not file_date or not status.get("posted"):
+        return None
+    posted = dt.date.fromisoformat(status["posted"])
+    filed = dt.date.fromisoformat(file_date)
+    days = (filed - posted).days
+    if days <= STALE_DAYS:
+        return None
+    line = (
+        f"That level was last posted {date_label(posted)}, {_age(days)} before "
+        f"the state's data dated {date_label(filed)}, and the state has not "
+        "recorded an end to it."
+    )
+    dates = [
+        r["date"] for r in water.get("records", []) if not r.get("removed_from_source")
+    ]
+    newest = max(dates, default=None)
+    if newest and newest > status["posted"]:
+        line += (
+            f" The state's newest record of any kind for {water['name']} is from "
+            f"{date_label(newest)}."
+        )
+    return line

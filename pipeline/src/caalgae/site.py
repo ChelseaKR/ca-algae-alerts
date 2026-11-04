@@ -193,6 +193,8 @@ def _env() -> jinja2.Environment:
         headline=wording.headline,
         caveat=wording.caveat,
         level_name=wording.level_name,
+        newer_posting=wording.newer_posting,
+        older_higher=wording.older_higher,
         dog_answer=wording.dog_answer,
         guidance=wording.LEVEL_GUIDANCE,
         guidance_for=wording.guidance_for,
@@ -205,7 +207,8 @@ def _env() -> jinja2.Environment:
 
 def _advisory_sort(water: dict[str, Any]) -> tuple[str, int, str]:
     s = water["status"]
-    return (s["posted"] or "", TIER_RANK.get(s["tier"] or "", 0), water["name"])
+    newest = wording.newest_posted(water) or ""
+    return (newest, TIER_RANK.get(s["tier"] or "", 0), water["name"])
 
 
 def months_before(day: dt.date, months: int) -> dt.date:
@@ -422,7 +425,7 @@ class SiteBuilder:
 
     def home(self) -> None:
         open_ = self.open_advisories()
-        recent = [w for w in open_ if wording.is_recent(w["status"], self.run_date)]
+        recent = [w for w in open_ if wording.is_recent_water(w, self.run_date)]
         self._write(
             "",
             "index.html.jinja",
@@ -543,6 +546,15 @@ class SiteBuilder:
             satellite_source=satellite_source,
             county=county,
             summary=wording.summary(water["name"], county, water["status"], file_date),
+            status_notes=[
+                note
+                for note in (
+                    wording.newer_posting(water),
+                    wording.older_higher(water),
+                    wording.age_note(water, file_date),
+                )
+                if note
+            ],
             sites=sites,
             county_links=[(c, slugify(c)) for c in water["counties"]],
             same_name_nearby=[

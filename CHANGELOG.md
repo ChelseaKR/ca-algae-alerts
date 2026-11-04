@@ -24,6 +24,20 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- A water's headline now leads with the highest advisory level posted in
+  the 12 months before the state's file date, dated by that posting. If
+  nothing was posted in those 12 months, it leads with the newest posting.
+  Before, a water could read "Danger advisory, last posted Sep 24, 2026" when
+  the Danger came from an older report and Sep 24's posting was a Caution
+  (Lake Elsinore; 81 waters on 2026-11-03). Lake Elsinore now reads "Caution
+  advisory, last posted Sep 24, 2026". Older, higher advisories with no
+  all-clear, and newer, lower postings, are named on the next line. Reports
+  the state filed at the same coordinates are now one reported spot, so a
+  later "None" there ends an older advisory at that spot. An advisory last
+  posted more than 90 days before the state's file says how old it is and
+  when the state last wrote anything for that water. Nothing is ever ended
+  by silence (docs/DECISIONS.md 0017).
+
 - Every water page now opens with one dated sentence: the state's data date,
   the water and its county, and the status headline, so the page answers "is
   there an algae advisory at this lake?" in its first line. A water outside
