@@ -34,6 +34,10 @@ STALE_AFTER_DAYS = 7
 # Missouri after a passing failure: shown with its read date for this many
 # days after the last good read, then hidden (docs/DECISIONS.md 0019).
 MO_STALE_AFTER_DAYS = 2
+# California's quarantine may grow by at most this many rows in one run
+# (DECISIONS 0027). It held at exactly 249 for 15 runs; a date-format change
+# would quarantine every new posting without any other check noticing.
+MAX_QUARANTINE_GROWTH = 25
 
 
 class RunRefused(RuntimeError):
@@ -66,6 +70,16 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         type=Path,
         default=None,
         help="a New York cache directory other than the pinned one (tests, previews)",
+    )
+    p.add_argument(
+        "--accept-ca-edits",
+        action="store_true",
+        help=(
+            "accept a California file that withdraws current advisories, more "
+            f"than {hist.MAX_REMOVED_RECORDS} records, or grows the quarantine by "
+            f"more than {MAX_QUARANTINE_GROWTH} rows; only after reading the "
+            "file (docs/DECISIONS.md 0027)"
+        ),
     )
     return p.parse_args(argv)
 
@@ -108,6 +122,14 @@ def _california(
             f"the state's newest file is {age} days old ({source.file_name}); the site says so"
         )
     normalized = normalize.normalize_csv(download.body, source.file_date)
+    _check_quarantine(history, normalized, accept=args.accept_ca_edits)
+    unread = Counter(r.level for r in normalized.records if r.is_unrecognized)
+    if unread:
+        _warn(
+            f"{sum(unread.values())} California record(s) carry a level this "
+            f"pipeline does not recognize ({', '.join(sorted(unread))}); their "
+            "spots read as undetermined until the level is mapped"
+        )
     file_info = {
         "source": CA_SWRCB_FHAB.id,
         "url": source.url,
@@ -119,13 +141,35 @@ def _california(
         "quarantined_by_reason": dict(sorted(normalized.quarantine.items())),
     }
     merged = hist.merge(
-        history, normalized.records, run_date=run_date, file_info=file_info
+        history,
+        normalized.records,
+        run_date=run_date,
+        file_info=file_info,
+        max_removed=None if args.accept_ca_edits else hist.MAX_REMOVED_RECORDS,
+        protect_advisories=not args.accept_ca_edits,
     )
     print(
         f"caalgae: {source.file_name}: {normalized.rows_read} rows, "
         f"{len(normalized.records)} records"
     )
     return merged, normalized.quarantine, download
+
+
+def _check_quarantine(
+    history: hist.History, normalized: normalize.Normalized, *, accept: bool
+) -> None:
+    """Refuse a California file whose quarantine jumped (DECISIONS 0027)."""
+    last = history.last_file(CA_SWRCB_FHAB.id)
+    if last is None or accept:
+        return
+    before = int(last.get("quarantined", 0))
+    now = sum(normalized.quarantine.values())
+    if now - before > MAX_QUARANTINE_GROWTH:
+        raise RunRefused(
+            f"the state's file quarantines {now} rows, up from {before} last run; "
+            "a jump that size looks like a changed format, so nothing is published "
+            "until the file is checked"
+        )
 
 
 def _missouri_recent(history: hist.History, run_date: dt.date) -> bool:
