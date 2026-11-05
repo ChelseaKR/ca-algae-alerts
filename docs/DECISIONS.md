@@ -488,3 +488,35 @@ A status that is not an advisory must keep the not-a-finding sentence in its
 description. A negative control changes a title's date and puts a safety
 claim in a description, and checks that both are reported. To undo, call
 `water_title` without the status.
+
+**County pages and the advisory list (2026-11-04).** Search Console, 2026-10-06
+to 2026-11-02: the 33 county pages had 83 impressions and 3 clicks (3.6%) at
+an average position of 6.2, against 4.5% for water pages. The advisory list
+had 38 impressions and no clicks at 7.1. All of that predates the water
+titles above, which went live on 2026-11-04. County titles still read
+"<county> County lake toxic algae advisories | Lake Notice", the same for a
+county with 25 waters under an advisory and one with none.
+
+- **A county with an advisory says how many.** "Riverside County lake algae
+  advisories: 25 of 40 waters". The count is the county index's "Latest
+  record is an advisory" column. The description and the page's first line
+  open with the same sentence, dated by the state's file: "25 of the 40
+  waters in Riverside County have an advisory as their latest state record,
+  in the state's data dated Nov 3, 2026." As in the water titles above, a
+  counted title leaves out the site name, which `og:site_name` still carries.
+- **A county with none keeps the plain title and description.** "0 of 2
+  waters" in a title, with no room for the not-a-finding sentence, would read
+  as an all-clear (0002). Two counties are like this on the 2026-11-03 file
+  (Glenn, San Benito).
+- **The advisory list's description counts each state it lists.** It listed 47
+  Missouri waters while its description said California only. It now reads
+  "479 California and 47 Missouri lakes and rivers whose latest state record
+  is a toxic algae advisory, with its level and date." Its title is
+  unchanged. Whether the title should name Missouri is the owner's call, with
+  the home page title (2026-10-23 audit, finding 9).
+
+A test checks every built county page against the snapshot: the count in
+the title, the description and the first line, the file date, the copy
+guard, and no count at all for a county with none. A negative control writes
+a wrong count into one title and "0 of 2 waters" into another, and checks
+that both are reported. To undo, have `county_title` return the plain title.

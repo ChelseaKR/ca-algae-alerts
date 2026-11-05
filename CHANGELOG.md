@@ -24,6 +24,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- County page titles say how many of the county's waters have an advisory as
+  their latest state record ("Riverside County lake algae advisories: 25 of
+  40 waters"), and the description and first line open with the same count,
+  dated by the state's file. A county with none keeps the plain title. The
+  advisory list's description now counts the California and Missouri waters
+  it lists (docs/DECISIONS.md 0018).
 - The iPhone app now shows the same lines under a water's headline as the
   website (docs/DECISIONS.md 0017): "An older, higher advisory is also on
   file", "The newest advisory posting here is lower", and the age sentence
