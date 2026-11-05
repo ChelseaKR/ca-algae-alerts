@@ -24,6 +24,19 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- The iPhone app now shows the same lines under a water's headline as the
+  website (docs/DECISIONS.md 0017): "An older, higher advisory is also on
+  file", "The newest advisory posting here is lower", and the age sentence
+  for an advisory last posted more than 90 days before the state's file.
+  The advisory lists carry the first two, and order and file waters under
+  "Posted in the last 30 days" by the newest posting at any level. The
+  snapshot that ships in the app is rebuilt from the state's file dated
+  2026-11-03. The copy it replaced, from Oct 9, still read "Danger advisory,
+  last posted Sep 24, 2026" for Lake Elsinore; it now reads "Caution
+  advisory, last posted Sep 24, 2026" with its older Danger named on the next
+  line. The app's tests check its sentences against the website's for Lake
+  Elsinore's real records, from a fixture the pipeline tests rebuild and
+  compare.
 - A water page with an advisory now has a search title that leads with the
   level and date from its headline, for example "Castaic Lake algae: Danger
   advisory, last posted Nov 3, 2026". Before, every title read "<water> toxic

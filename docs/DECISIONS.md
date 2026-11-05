@@ -409,10 +409,39 @@ A Danger posted within the 12 months still leads over a newer Caution
 (tested). On the 2026-11-03 file this changes 60 of 479 headlines from the
 previous build of this decision. All 60 now lead with a lower, more recent
 level, and each names the older, higher one.
-The app needs no change. It reads the same fields, and its headline and its
-"newest posting first" order use the headline posting's own level and date.
-The app does not show the older, higher line. Each spot's own status is
-listed on its lake screen.
+The app reads the same fields, so its headline is the pipeline's.
+
+**App parity (2026-11-04).** The app did not show the lines under the
+headline. Its lists ordered and filed waters by the headline's date, and its
+bundled snapshot, from the state's file dated 2026-10-09, still led Lake
+Elsinore with "Danger advisory, last posted Sep 24, 2026". Now:
+
+- The lake screen shows the website's notes in the website's order: the
+  newer, lower posting, the older, higher advisory, and the age sentence,
+  counted to the file date of the water's own state. With more than one spot
+  under an advisory, it also explains how the headline is chosen. List rows
+  carry the first two notes, as the website's advisory lists do.
+- "Newest posting first" and "Posted in the last 30 days" use the newest
+  posting at any level, as the website does.
+- The sentences live in `AdvisoryNotes.swift` and mirror `wording.py`. The
+  app cannot run the pipeline, so `pipeline/tests/test_ios_parity_fixture.py`
+  builds `elsinore-parity.json` from the same Lake Elsinore records as
+  `test_spots_and_age.py`: six cases, each with the pipeline's snapshot and
+  the website's sentences. `AdvisoryParityTests` decodes each snapshot with
+  the app's strict decoder and compares the app's sentences word for word.
+  The pipeline test fails when the committed fixture is stale. Negative
+  controls lower the old Dangers and move the file date across the 90-day
+  line, and check that the lines change.
+- The bundled snapshot is rebuilt from the state's file dated 2026-11-03,
+  with `ios/scripts/sync-bundled-snapshot.sh`. On it, 120 of the waters in
+  both copies have a different headline. Of 526 waters with an advisory, 60
+  name an older, higher advisory, 2 a newer, lower posting, and 403 carry
+  the age sentence.
+- Alerts are unchanged. They still fire when the headline's kind or level
+  changes. A higher advisory that leaves the 12-month window can lower a
+  favorite's headline level, and the app then says "now a caution advisory".
+  The wording says what the headline now shows. It does not say the higher
+  advisory ended.
 
 ## 0018 — Search titles lead with the advisory and its date; descriptions carry the state's file date and the not-a-finding sentence (2026-11-03)
 
