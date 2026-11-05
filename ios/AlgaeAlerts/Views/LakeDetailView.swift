@@ -51,6 +51,11 @@ struct LakeDetailView: View {
             }
 
             Section {
+                Text(StatusWording.humanAdvice)
+                Text(StatusWording.notMedicalAdvice).font(.footnote).foregroundStyle(Theme.secondaryText)
+            } header: { SectionTitle("After contact with the water") }
+
+            Section {
                 Text(StatusWording.dogAnswer(name: water.name, status: water.status))
                 DisclosureGroup("Why dogs are more exposed") {
                     Text(StatusWording.dogAdvice).font(.callout)

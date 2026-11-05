@@ -21,6 +21,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
   sends nothing. A failed or refused announcement logs a notice and never
   fails the deploy. The key file at the site root is public by design
   (docs/DECISIONS.md 0015).
+- What a person should do after contact with water that may have toxic algae
+  (shower or rinse off with tap water; call a doctor or Poison Control at
+  1-800-222-1222 if sick), paraphrased from the CDC and the California Water
+  Boards' advisory signs, on every lake page, the dogs page, About and the
+  app's lake screen.
+- A "not medical advice" line in every page's footer, on About and in the app.
 
 ### Changed
 

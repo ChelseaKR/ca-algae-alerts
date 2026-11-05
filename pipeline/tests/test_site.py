@@ -192,6 +192,56 @@ def test_lake_pages_speak_to_everyone_and_label_the_dog_section(
     )
 
 
+# -- what a person should do after contact ---------------------------------
+
+
+def test_human_exposure_and_medical_lines_say_what_the_sources_say() -> None:
+    # Pinned to the CDC and California Water Boards wording they paraphrase:
+    # rinse off with tap water, and a doctor or Poison Control if sick.
+    assert "rinse off with tap water right away" in wording.HUMAN_ADVICE
+    poison = "call a doctor or Poison Control at 1-800-222-1222"
+    assert poison in wording.HUMAN_ADVICE
+    assert wording.NOT_MEDICAL_ADVICE.startswith(site.SITE_NAME + " ")
+    assert "It is not medical advice" in wording.NOT_MEDICAL_ADVICE
+    assert "Poison Control at 1-800-222-1222" in wording.NOT_MEDICAL_ADVICE
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_every_page_says_it_is_not_medical_advice(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    root: Path = request.getfixturevalue(which)
+    built = pages(root)
+    assert built
+    missing = [
+        str(p.relative_to(root))
+        for p in built
+        if wording.NOT_MEDICAL_ADVICE not in text_of(p)
+    ]
+    assert missing == []
+
+
+def test_people_get_after_contact_steps_where_dogs_do(traps_site: Path) -> None:
+    water_pages = sorted((traps_site / "water").glob("*/index.html"))
+    assert water_pages
+    for page in water_pages:
+        assert 'id="after-contact"' in page.read_text(encoding="utf-8"), page
+        assert wording.HUMAN_ADVICE in text_of(page), page
+    for path in ("dogs/index.html", "about/index.html"):
+        assert wording.HUMAN_ADVICE in text_of(traps_site / path), path
+
+
+def test_after_contact_check_is_not_vacuous(traps_site: Path) -> None:
+    # Negative control: a page without the line fails the same check.
+    page = traps_site / "water" / "ca-alameda-lake-alpha" / "index.html"
+    stripped = page.read_text(encoding="utf-8").replace(
+        html.escape(wording.HUMAN_ADVICE, quote=False), ""
+    )
+    assert stripped != page.read_text(encoding="utf-8")  # the sabotage applied
+    stripped_text = html.unescape(re.sub(r"\s+", " ", _TAG.sub(" ", stripped)))
+    assert wording.HUMAN_ADVICE not in stripped_text
+
+
 # -- the copy guard -------------------------------------------------------
 
 _SPLIT = re.compile(r"(?<=[.!?])\s+")
@@ -278,7 +328,12 @@ def test_wording_module_never_says_safe_affirmatively() -> None:
             wording.summary("X", None, s, None),
         ):
             assert affirmative_safety_claims(line) == [], line
-    for line in [*wording.LEVEL_GUIDANCE.values(), wording.DOG_ADVICE]:
+    for line in [
+        *wording.LEVEL_GUIDANCE.values(),
+        wording.DOG_ADVICE,
+        wording.HUMAN_ADVICE,
+        wording.NOT_MEDICAL_ADVICE,
+    ]:
         assert affirmative_safety_claims(line) == [], line
 
 
