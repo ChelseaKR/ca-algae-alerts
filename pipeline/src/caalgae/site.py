@@ -463,6 +463,137 @@ def same_name_nearby(waters: list[dict[str, Any]]) -> dict[str, list[dict[str, A
     }
 
 
+# Winter records (DECISIONS 0028). "Winter" is November through February
+# (wording.WINTER_MONTHS). A winter is named by its two years: the 2025-26
+# winter runs from 2025-11-01 up to 2026-03-01. Records withdrawn from the
+# state's file stay in the history table but are not counted here.
+_MONTH_KEYS = {11: "november", 12: "december", 1: "january", 2: "february"}
+
+
+def winter_of(day: dt.date) -> int | None:
+    """The year a winter starts in, for a day inside one; else None."""
+    if day.month in (11, 12):
+        return day.year
+    if day.month in (1, 2):
+        return day.year - 1
+    return None
+
+
+def winter_label(start_year: int) -> str:
+    return f"November {start_year} through February {start_year + 1}"
+
+
+def last_whole_winter(run_date: dt.date) -> int:
+    """The start year of the most recent winter that ended on or before
+    ``run_date`` (a winter ends on March 1)."""
+    return run_date.year - 1 if run_date.month >= 3 else run_date.year - 2
+
+
+def _counted(water: dict[str, Any]) -> list[dict[str, Any]]:
+    return [r for r in water["records"] if not r.get("removed_from_source")]
+
+
+def state_months(
+    waters: Iterable[dict[str, Any]], *, advisories_only: bool
+) -> dict[str, Any] | None:
+    """Records per calendar month across ``waters`` (one state's), all years
+    together: the four winter months by name, the peak month and its count,
+    and how many of the 12 months have any. None when there is no record."""
+    counts: Counter[int] = Counter()
+    for water in waters:
+        for r in _counted(water):
+            if advisories_only and r["tier"] not in TIER_RANK:
+                continue
+            counts[dt.date.fromisoformat(r["date"]).month] += 1
+    if not counts:
+        return None
+    peak = max(range(1, 13), key=lambda m: (counts[m], -m))
+    return {
+        **{key: counts[m] for m, key in _MONTH_KEYS.items()},
+        "peak": counts[peak],
+        "peak_month": calendar.month_name[peak],
+        "months_with": sum(1 for m in range(1, 13) if counts[m]),
+    }
+
+
+def winter_record(
+    water: dict[str, Any], run_date: dt.date, months: dict[str, Any] | None
+) -> dict[str, Any] | None:
+    """What a water's "Winter records" section says, from its own records.
+
+    ``kind`` is one of:
+
+    - ``advisories``: the state posted advisory records here in winter. The
+      count, the latest winter posting (its level and date together, 0017),
+      last whole winter's count, and one row per winter that has any.
+    - ``no_advisory_level``: winter records, none at an advisory level.
+    - ``absent``: no record in any winter since the water's records begin,
+      and they begin by the start of the last whole winter, so that is a fact
+      about a covered record. ``state_months`` carries the state's own counts
+      for the not-a-finding sentence.
+    - ``uncovered``: the records begin after that, so they cannot say.
+
+    None for a water with no counted record, or ``absent`` without the
+    state's month counts (nothing is put in their place)."""
+    records = _counted(water)
+    if not records:
+        return None
+    first = min(r["date"] for r in records)
+    winter = [r for r in records if winter_of(dt.date.fromisoformat(r["date"])) is not None]
+    advisories = [r for r in winter if r["tier"] in TIER_RANK]
+    if advisories:
+        def key(r: dict[str, Any]) -> tuple[str, int]:
+            return (r["date"], TIER_RANK[r["tier"]])
+
+        latest = max(advisories, key=key)
+        by_winter: dict[int, list[dict[str, Any]]] = defaultdict(list)
+        for r in advisories:
+            year = winter_of(dt.date.fromisoformat(r["date"]))
+            if year is not None:
+                by_winter[year].append(r)
+        rows = []
+        for year in sorted(by_winter, reverse=True):
+            group = by_winter[year]
+            top = max(group, key=lambda r: (TIER_RANK[r["tier"]], r["date"]))
+            rows.append(
+                {
+                    "label": winter_label(year),
+                    "count": len(group),
+                    "highest": wording.level_name(top),
+                    "last_date": max(r["date"] for r in group),
+                }
+            )
+        last_year = last_whole_winter(run_date)
+        last = by_winter.get(last_year)
+        return {
+            "kind": "advisories",
+            "count": len(advisories),
+            "latest": {
+                "date": latest["date"],
+                "tier": latest["tier"],
+                "level": latest["level"],
+            },
+            "last_winter": (
+                {
+                    "label": winter_label(last_year),
+                    "count": len(last),
+                    "last_date": max(r["date"] for r in last),
+                }
+                if last
+                else None
+            ),
+            "winters": rows,
+        }
+    if winter:
+        return {"kind": "no_advisory_level", "any_count": len(winter)}
+    covered = first <= f"{last_whole_winter(run_date)}-11-01"
+    if not covered:
+        return {"kind": "uncovered", "first": first}
+    if months is None:
+        return None
+    return {"kind": "absent", "first": first, "state_months": months}
+
+
 def newest(days: Iterable[dt.date | None]) -> dt.date | None:
     present = [d for d in days if d is not None]
     return max(present) if present else None
@@ -528,6 +659,18 @@ class SiteBuilder:
             if day is not None and day <= self.run_date:
                 self.water_dates[water["id"]] = day
         self.site_date = newest(self.water_dates.values())
+        # The state's records per calendar month (DECISIONS 0028): all
+        # records for a water page's not-a-finding sentence, advisory
+        # records for /dogs/.
+        self.state_months = {
+            state: state_months(
+                (w for w in self.waters if w["state"] == state), advisories_only=False
+            )
+            for state in STATE_NAMES
+        }
+        self.ca_advisory_months = state_months(
+            (w for w in self.waters if w["state"] == "CA"), advisories_only=True
+        )
 
     # -- helpers --------------------------------------------------------
 
@@ -682,6 +825,13 @@ class SiteBuilder:
         indexable = is_indexable(water, self.run_date, INDEX_WINDOW_MONTHS)
         file_date = self._file_date(water["state"])
         satellite_source = self.sources.get("epa-cyan")
+        # Winter records only on indexed pages (0016's five-or-more-records
+        # pages and the 24-month window), DECISIONS 0028.
+        winter = (
+            winter_record(water, self.run_date, self.state_months.get(water["state"]))
+            if indexable
+            else None
+        )
         self._write(
             rel,
             "water.html.jinja",
@@ -718,6 +868,11 @@ class SiteBuilder:
                 if note
             ],
             sites=sites,
+            winter=winter,
+            winter_heading=wording.WINTER_HEADING.format(name=water["name"]),
+            winter_lines=wording.winter_lines(water["name"], winter) if winter else [],
+            winter_caption=wording.WINTER_TABLE_CAPTION.format(name=water["name"]),
+            dogs_winter=wording.dogs_winter_line(winter, self.run_date),
             county_links=[(c, slugify(c)) for c in water["counties"]],
             same_name_nearby=[
                 {
@@ -855,6 +1010,7 @@ class SiteBuilder:
                 # support and terms have no content date in the repo, so no lastmod.
                 lastmod=self.site_date if rel == "dogs/" else None,
                 counties_known=len(CA_COUNTIES),
+                winter_line=wording.dogs_page_winter(self.ca_advisory_months),
                 tiers=["caution", "warning", "danger", "other_advisory"],
             )
         self._write("404.html", "404.html.jinja", title=f"Page not found | {SITE_NAME}",

@@ -7,6 +7,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- Winter records on each indexed water page (DECISIONS 0028): the state's
+  advisory records posted there in November through February, dated, by
+  winter; a water with none gets the not-a-finding sentence with the
+  state's own month counts, never a level or "no advisory". The dogs
+  section adds a winter line from November through February, and /dogs/
+  gains an "In winter" item. Spanish strings added as drafts. Ships
+  2026-12-01, after the ~11-25 dated-titles read.
 - Spanish groundwork, switched off (DECISIONS 0025): a Spanish catalog with a
   status per string, a review gate in `make verify`, a rendered-page check
   for English left on /es/ pages, and a levels page in English (/levels/) and

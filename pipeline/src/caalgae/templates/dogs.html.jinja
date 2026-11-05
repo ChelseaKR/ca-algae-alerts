@@ -28,6 +28,9 @@
 <ul>
   <li><strong>"Last posted &hellip;, no all-clear recorded"</strong> means the state's latest record for that spot is an advisory. It stays that way until the state records an end, even if the advisory is old.</li>
   <li><strong>"The state's latest record &hellip; recommends no advisory"</strong> is an explicit record from that date. It is not an all-clear for today: blooms can form within days.</li>
+  {% if winter_line %}
+  <li><strong>In winter</strong>, {{ winter_line }}</li>
+  {% endif %}
   <li><strong>A lake with no page here</strong> may still have an advisory. This site lists only waters in the state's data, and most lakes are never tested, so a missing page tells you nothing about the water. Check the state's map and posted signs.</li>
 </ul>
 

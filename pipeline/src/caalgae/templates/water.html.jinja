@@ -25,6 +25,9 @@
 
 <h2 id="dogs">Dogs at {{ water.name }}</h2>
 <p>{{ dog_answer(water.name, water.status) }}</p>
+{% if dogs_winter %}
+<p>{% if winter.kind == "advisories" %}<a href="#winter">{{ dogs_winter }}</a>{% else %}{{ dogs_winter }}{% endif %}</p>
+{% endif %}
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>
 
 {% include "_gear.html.jinja" %}
@@ -68,6 +71,29 @@
   {% endfor %}
   </tbody>
 </table>
+
+{# Winter records (DECISIONS 0028): indexed pages only. A quiet winter is
+   not an all-clear: a water with no winter record gets the not-a-finding
+   sentence with the state's own month counts, never a level or a zero. #}
+{% if winter %}
+<section class="winter-records" aria-labelledby="winter">
+<h2 id="winter">{{ winter_heading }}</h2>
+{% for line in winter_lines %}
+<p>{{ line }}</p>
+{% endfor %}
+{% if winter.kind == "advisories" %}
+<table>
+  <caption class="visually-hidden">{{ winter_caption }}</caption>
+  <thead><tr><th scope="col">Winter</th><th scope="col">Advisory records</th><th scope="col">Highest level</th><th scope="col">Latest posting</th></tr></thead>
+  <tbody>
+  {% for row in winter.winters %}
+    <tr><td>{{ row.label }}</td><td>{{ row.count }}</td><td>{{ row.highest }}</td><td>{{ row.last_date|date }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+</section>
+{% endif %}
 
 <h2 id="source">Source</h2>
 <p>{{ water_source.attribution }} <a href="{{ water_source.dataset_url }}">The state's data</a>. {{ water_source.lift_explanation }}</p>

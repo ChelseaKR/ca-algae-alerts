@@ -83,7 +83,7 @@ def test_sign_wording_is_left_as_marked_placeholders() -> None:
 
 def test_turning_spanish_on_today_fails_on_every_draft_and_placeholder() -> None:
     problems = i18n.check_catalog(i18n.catalog(), enabled=True)
-    assert sum("safety string is still a draft" in p for p in problems) == 22
+    assert sum("safety string is still a draft" in p for p in problems) == 33
     assert sum("has not been pasted in" in p for p in problems) == 4
 
 

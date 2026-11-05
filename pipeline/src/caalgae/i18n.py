@@ -162,6 +162,26 @@ EN: dict[str, str] = {
         'water." "Call your doctor or veterinarian if you or your pet get sick '
         'after contacting or ingesting algae."'
     ),
+    # winter records on a water page and /dogs/ (DECISIONS 0028)
+    "winter.heading": wording.WINTER_HEADING,
+    "winter.total": wording.WINTER_TOTAL,
+    "winter.latest": wording.WINTER_LATEST,
+    "winter.last": wording.WINTER_LAST,
+    "winter.ends": wording.WINTER_ENDS,
+    "winter.no_level": wording.WINTER_NO_LEVEL,
+    "winter.absent": wording.WINTER_ABSENT,
+    "winter.uncovered": wording.WINTER_UNCOVERED,
+    "winter.table_caption": wording.WINTER_TABLE_CAPTION,
+    "winter.advisory_one": wording.WINTER_ADVISORY_ONE,
+    "winter.advisory_many": wording.WINTER_ADVISORY_MANY,
+    "winter.record_one": wording.WINTER_RECORD_ONE,
+    "winter.record_many": wording.WINTER_RECORD_MANY,
+    "winter.dogs_posted": wording.DOGS_WINTER_POSTED,
+    "winter.dogs_no_level": wording.DOGS_WINTER_NO_LEVEL,
+    "winter.dogs_absent": wording.DOGS_WINTER_ABSENT,
+    "winter.dogs_page": wording.DOGS_PAGE_WINTER,
+    "winter.dogs_page_every_month": wording.DOGS_PAGE_EVERY_MONTH,
+    "winter.dogs_page_some_months": wording.DOGS_PAGE_SOME_MONTHS,
 }
 
 SIGN_URLS = {tier: SIGN_URL for tier in SIGNED_TIERS} | {"algal_mat": MAT_SIGN_URL}

@@ -206,5 +206,73 @@
     "safety": true,
     "paste_from": "https://mywaterquality.ca.gov/habs/docs/toxic-algal-mat-signs.pdf",
     "note": "Placeholder. Chelsea pastes the sign's Spanish text from a browser (the host admits only Googlebot), then sets status state with url, read_on and sha256 (cd pipeline && uv run python -m caalgae.i18n --hash KEY)."
+  },
+  "winter.heading": {
+    "status": "draft"
+  },
+  "winter.total": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.latest": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.last": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.ends": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.no_level": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.absent": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.uncovered": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.table_caption": {
+    "status": "draft"
+  },
+  "winter.advisory_one": {
+    "status": "draft"
+  },
+  "winter.advisory_many": {
+    "status": "draft"
+  },
+  "winter.record_one": {
+    "status": "draft"
+  },
+  "winter.record_many": {
+    "status": "draft"
+  },
+  "winter.dogs_posted": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.dogs_no_level": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.dogs_absent": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.dogs_page": {
+    "status": "draft",
+    "safety": true
+  },
+  "winter.dogs_page_every_month": {
+    "status": "draft"
+  },
+  "winter.dogs_page_some_months": {
+    "status": "draft"
   }
 }
