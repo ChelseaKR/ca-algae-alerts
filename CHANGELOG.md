@@ -7,6 +7,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A short or reshaped California file can no longer flip a live advisory to
+  "recommends no advisory". A run that would withdraw more than 25 records,
+  withdraw any report's current advisory, or grow the quarantine by more than
+  25 rows is refused, and yesterday's site stays up. The publish workflow's
+  `accept_ca_edits` input lets a checked file through. A level the pipeline
+  does not recognize now reads as undetermined, quoting the state's words,
+  instead of letting an older "None" show through (docs/DECISIONS.md 0025).
 - A plain-language terms of use page at /terms/, linked from every page's
   footer next to privacy and listed in the sitemap. It names who runs the
   site, says in bold that the site is not a safety determination, tells

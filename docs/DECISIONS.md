@@ -578,3 +578,42 @@ malformed answer stopped the whole run, California included. Now:
 
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
+
+## 0025 — A short or reshaped California file cannot flip a live advisory (2026-11-05)
+
+The source-outage audit of 2026-11-05 cut the newest 5% of advisory rows
+from the real history. The old guard, which refused only above 5% withdrawn
+(713 of 14,270 records), let it through, and 10 waters flipped from a current
+advisory to "The state's latest record ... recommends no advisory"; 37 more
+went to undetermined. The next good file would bring the advisories back and
+the app would alert again. In 15 runs the state withdrew 0 records. Now:
+
+- **At most 25 withdrawn records per California run** (`MAX_REMOVED_RECORDS`),
+  whatever the fraction. The 5% limit stays, for every source.
+- **No withdrawal of a report's current advisory** (the report's latest
+  deciding record, when that record is an advisory). Withdrawing it would let
+  an older record speak for the spot, so the run is refused.
+- **The quarantine may grow by at most 25 rows per run** (`cli.MAX_QUARANTINE_GROWTH`).
+  It held at exactly 249 for 15 runs; a date-format change would quarantine
+  every new posting silently.
+- **A refused run publishes nothing**, so yesterday's site stays live and the
+  publish-failure issue opens. After reading the state's file, the owner can
+  let it through with the publish workflow's `accept_ca_edits` input
+  (`caalgae --accept-ca-edits`).
+- **A level this pipeline does not recognize decides its spot as undetermined.**
+  A blank level still decides nothing. A non-blank level with no mapping (a
+  new spelling such as "Danger - Closure") used to decide nothing too, so an
+  older "None" showed through it. Now the spot, and the water unless another
+  spot has an advisory, reads "The state's latest record says “Danger -
+  Closure”, a level this site does not recognize, so it cannot say what
+  applies. Check the official map." A later "None" still ends it. The run
+  warns with the levels it could not read. The same rule covers a Missouri
+  status code outside the known list. Today's data has no such level (all
+  57 California `unknown` records and all 80 Missouri ones are blank), so
+  nothing on the site changes.
+
+Tests: `pipeline/tests/test_ca_short_file.py`, run on the committed
+history.json. Negative controls: the real file passes unchanged; the 4% cut
+passes the old guard alone (the sabotage applies) and is refused by the new
+one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
+withdrawn; a blank level after "None" still reads as lifted.

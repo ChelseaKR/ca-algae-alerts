@@ -21,6 +21,7 @@ notthr     Below threshold     decides nothing
 notver     Not verified        decides nothing
 report     Report              decides nothing
 (blank)    blank               decides nothing
+(other)    the code itself     undetermined (decision 0025)
 =========  ==================  ==================================
 
 The end of an advisory is the department's dissipation date (``DissDat``),
@@ -118,7 +119,10 @@ def _record(feature: dict[str, Any], file_date: dt.date) -> Record | str:
     elif code == "dissap" and dissipated is not None:
         tier, date, end = "no_advisory", dissipated, None
     else:
-        tier, date, end = ("not_classified" if code else "unknown"), observed, None
+        # A code the department has not used before is unrecognized, not
+        # "decides nothing": it reads as undetermined (DECISIONS 0025).
+        tier = "not_classified" if code in LABELS else "unknown"
+        date, end = observed, None
         if code == "dissap":
             detail = (detail + " Marked dissipated; no date recorded.").strip()
     return Record(

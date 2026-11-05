@@ -21,7 +21,7 @@ code disagree.
 | `notthr` | Below threshold (notthr) | decides nothing | `not_classified` |
 | `notver` | Not verified (notver) | decides nothing | `not_classified` |
 | `report` | Report (report) | decides nothing | `not_classified` |
-| any other code | the code as the state wrote it | decides nothing | `not_classified` |
+| any other code | the code as the state wrote it | undetermined: the lake reads as a level this site does not recognize, never as an older end (DECISIONS 0025) | `unknown` |
 | blank | (none) | decides nothing | `unknown` |
 
 "Decides nothing" means the record can neither raise an advisory nor end one;
