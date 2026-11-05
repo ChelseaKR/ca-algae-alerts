@@ -31,6 +31,9 @@ from caalgae.sources import CA_SWRCB_FHAB, EPA_CYAN, MO_DNR_HAB
 DEFAULT_HISTORY = Path(__file__).resolve().parents[2] / "data" / "history.json"
 DEFAULT_CYAN = Path(__file__).resolve().parents[2] / "data" / "cyan.json"
 STALE_AFTER_DAYS = 7
+# Missouri after a passing failure: shown with its read date for this many
+# days after the last good read, then hidden (docs/DECISIONS.md 0019).
+MO_STALE_AFTER_DAYS = 2
 
 
 class RunRefused(RuntimeError):
@@ -125,25 +128,55 @@ def _california(
     return merged, normalized.quarantine, download
 
 
+def _missouri_recent(history: hist.History, run_date: dt.date) -> bool:
+    """Whether Missouri's last good read is recent enough to show, dated."""
+    last = history.last_file(MO_DNR_HAB.id)
+    if last is None:
+        return False
+    fetched = dt.date.fromisoformat(str(last["fetched_at"])[:10])
+    return (run_date - fetched).days <= MO_STALE_AFTER_DAYS
+
+
 def _missouri(
     args: argparse.Namespace, history: hist.History, run_date: dt.date, now: dt.datetime
-) -> tuple[hist.History, Counter[str]]:
-    """The second state. A failure here warns and keeps Missouri's records
-    as they were; it never stops California (docs/DECISIONS.md 0010)."""
+) -> tuple[hist.History, Counter[str], bool]:
+    """The second state. A failure here never stops California
+    (docs/DECISIONS.md 0010), and it fails closed (0019): the third value
+    says whether Missouri is shown at all.
+
+    - A good read: shown.
+    - The layer gone or changed (``missouri.LayerUnavailable``): hidden at
+      once. Its history is kept for when a good read returns.
+    - A passing failure (network, server error, robots.txt unreadable):
+      shown, with its read date, only while the last good read is at most
+      ``MO_STALE_AFTER_DAYS`` old; hidden after that.
+    """
     if not MO_DNR_HAB.enabled:
-        return history, Counter()
-    if args.mo_fixture is not None:
-        body = args.mo_fixture.read_bytes()
-    elif args.fixture_page is not None:
-        return history, Counter()  # an offline run without a Missouri fixture
-    else:
-        try:
+        return history, Counter(), False
+    try:
+        if args.mo_fixture is not None:
+            body = args.mo_fixture.read_bytes()
+        elif args.fixture_page is not None:
+            # An offline run without a Missouri fixture reads nothing.
+            return history, Counter(), _missouri_recent(history, run_date)
+        else:
             with fetch.make_client() as client:
                 body = missouri.fetch_cases(client)
-        except fetch.FetchError as error:
-            _warn(f"Missouri not refreshed: {error}")
-            return history, Counter()
-    normalized = missouri.normalize(body, run_date)
+        normalized = missouri.normalize(body, run_date)
+    except missouri.LayerUnavailable as error:
+        _warn(f"Missouri hidden: the layer is gone or changed: {error}")
+        return history, Counter(), False
+    except (fetch.FetchError, httpx.HTTPError) as error:
+        shown = _missouri_recent(history, run_date)
+        _warn(
+            f"Missouri not refreshed: {error}"
+            + (
+                ""
+                if shown
+                else f"; hidden, last good read over {MO_STALE_AFTER_DAYS} days old"
+            )
+        )
+        return history, Counter(), shown
     file_info = {
         "source": MO_DNR_HAB.id,
         "url": MO_DNR_HAB.dataset_url,
@@ -160,8 +193,10 @@ def _missouri(
     print(
         f"caalgae: Missouri: {normalized.rows_read} cases, {len(normalized.records)} records"
     )
-    return merged, Counter(
-        {f"Missouri: {k}": v for k, v in normalized.quarantine.items()}
+    return (
+        merged,
+        Counter({f"Missouri: {k}": v for k, v in normalized.quarantine.items()}),
+        True,
     )
 
 
@@ -192,9 +227,10 @@ def _cyan(
 
 
 def _new_york(args: argparse.Namespace) -> newyork.History | None:
-    """The New York history section, history only (docs/DECISIONS.md 0019).
-    Built from the cache in the repository, never fetched by this run. A
-    missing or altered cache warns and builds the site without it."""
+    """The New York history section, history only (docs/DECISIONS.md 0020).
+    Built from the cache in the repository, never fetched by this run. When
+    the section is on, a missing, altered or malformed cache refuses the
+    run, so /state/ny/ pages never vanish from a green publish."""
     wanted = args.ny_history == "on" or (
         args.ny_history == "config" and site.NY_HISTORY_ENABLED
     )
@@ -205,8 +241,7 @@ def _new_york(args: argparse.Namespace) -> newyork.History | None:
             return newyork.load(args.ny_cache, pinned=None)
         return newyork.load()
     except newyork.NYDataError as error:
-        _warn(f"New York history not built: {error}")
-        return None
+        raise RunRefused(f"New York history is on but not built: {error}") from error
 
 
 def run(args: argparse.Namespace) -> int:
@@ -215,10 +250,13 @@ def run(args: argparse.Namespace) -> int:
         if args.run_today
         else dt.datetime.now(dt.UTC).date()
     )
+    # Read first, so a bad New York cache refuses the run before anything
+    # is written.
+    ny_history = _new_york(args) if args.site_out is not None else None
     history = hist.load(args.history)
     merged, quarantine, download = _california(args, history, run_date)
     now = download.fetched_at
-    merged, mo_quarantine = _missouri(args, merged, run_date, now)
+    merged, mo_quarantine, mo_shown = _missouri(args, merged, run_date, now)
     cyan_cache = _cyan(args, merged, run_date, now)
     snap = snapshot.build(
         merged,
@@ -226,6 +264,7 @@ def run(args: argparse.Namespace) -> int:
         generated_at=now,
         quarantine=quarantine + mo_quarantine,
         cyan_cache=cyan_cache,
+        hidden_sources=frozenset() if mo_shown else frozenset({MO_DNR_HAB.id}),
     )
     snapshot.validate(snap)
     if args.snapshot_out is not None:
@@ -237,7 +276,7 @@ def run(args: argparse.Namespace) -> int:
             base_url=args.base_url,
             support_email=args.support_email,
             app_store_url=args.app_store_url,
-            ny_history=_new_york(args),
+            ny_history=ny_history,
         )
     hist.save(merged, args.history)
     for reason, count in sorted((quarantine + mo_quarantine).items()):

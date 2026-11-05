@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 from paths import PAGE, SAMPLE, TRAPS
 
-from caalgae import cli, site, wording
+from caalgae import cli, site, water_names, wording
 
 _TAG = re.compile(r"<[^>]+>")
 _SCRIPT = re.compile(r"<script\b.*?</script>", re.S)
@@ -195,6 +195,56 @@ def test_lake_pages_speak_to_everyone_and_label_the_dog_section(
     )
 
 
+# -- what a person should do after contact ---------------------------------
+
+
+def test_human_exposure_and_medical_lines_say_what_the_sources_say() -> None:
+    # Pinned to the CDC and California Water Boards wording they paraphrase:
+    # rinse off with tap water, and a doctor or Poison Control if sick.
+    assert "rinse off with tap water right away" in wording.HUMAN_ADVICE
+    poison = "call a doctor or Poison Control at 1-800-222-1222"
+    assert poison in wording.HUMAN_ADVICE
+    assert wording.NOT_MEDICAL_ADVICE.startswith(site.SITE_NAME + " ")
+    assert "It is not medical advice" in wording.NOT_MEDICAL_ADVICE
+    assert "Poison Control at 1-800-222-1222" in wording.NOT_MEDICAL_ADVICE
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_every_page_says_it_is_not_medical_advice(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    root: Path = request.getfixturevalue(which)
+    built = pages(root)
+    assert built
+    missing = [
+        str(p.relative_to(root))
+        for p in built
+        if wording.NOT_MEDICAL_ADVICE not in text_of(p)
+    ]
+    assert missing == []
+
+
+def test_people_get_after_contact_steps_where_dogs_do(traps_site: Path) -> None:
+    water_pages = sorted((traps_site / "water").glob("*/index.html"))
+    assert water_pages
+    for page in water_pages:
+        assert 'id="after-contact"' in page.read_text(encoding="utf-8"), page
+        assert wording.HUMAN_ADVICE in text_of(page), page
+    for path in ("dogs/index.html", "about/index.html"):
+        assert wording.HUMAN_ADVICE in text_of(traps_site / path), path
+
+
+def test_after_contact_check_is_not_vacuous(traps_site: Path) -> None:
+    # Negative control: a page without the line fails the same check.
+    page = traps_site / "water" / "ca-alameda-lake-alpha" / "index.html"
+    stripped = page.read_text(encoding="utf-8").replace(
+        html.escape(wording.HUMAN_ADVICE, quote=False), ""
+    )
+    assert stripped != page.read_text(encoding="utf-8")  # the sabotage applied
+    stripped_text = html.unescape(re.sub(r"\s+", " ", _TAG.sub(" ", stripped)))
+    assert wording.HUMAN_ADVICE not in stripped_text
+
+
 # -- the copy guard -------------------------------------------------------
 
 _SPLIT = re.compile(r"(?<=[.!?])\s+")
@@ -281,7 +331,12 @@ def test_wording_module_never_says_safe_affirmatively() -> None:
             wording.summary("X", None, s, None),
         ):
             assert affirmative_safety_claims(line) == [], line
-    for line in [*wording.LEVEL_GUIDANCE.values(), wording.DOG_ADVICE]:
+    for line in [
+        *wording.LEVEL_GUIDANCE.values(),
+        wording.DOG_ADVICE,
+        wording.HUMAN_ADVICE,
+        wording.NOT_MEDICAL_ADVICE,
+    ]:
         assert affirmative_safety_claims(line) == [], line
 
 
@@ -815,7 +870,9 @@ def test_water_page_links_matching_names_nearby_with_their_own_status(
     page = text_of(out / "water" / original["id"] / "index.html")
     assert "Matching names nearby" in page
     assert "may be the same water" in page
-    assert twin["name"] in page
+    # The twin is listed by its display name, never the state's "... ca".
+    assert water_names.display_name(twin["id"], twin["name"], "CA") in page
+    assert twin["name"] not in page
     assert wording.headline(twin["status"]) in page
     raw = (out / "water" / original["id"] / "index.html").read_text()
     assert f'href="../../water/{twin["id"]}/"' in raw
@@ -826,3 +883,158 @@ def test_water_page_links_matching_names_nearby_with_their_own_status(
     assert "Matching names nearby" not in text_of(
         out / "water" / lone["id"] / "index.html"
     )
+
+
+_COUNT = re.compile(r"(\d+) of (?:the )?(\d+) waters?\b")
+
+
+def expected_county_counts(snap: dict[str, Any]) -> dict[str, tuple[int, int]]:
+    """Per county, from the snapshot: waters with an advisory, all waters."""
+    expected: dict[str, tuple[int, int]] = {}
+    for w in snap["waterbodies"]:
+        for county in w["counties"]:
+            adv, total = expected.get(county, (0, 0))
+            expected[county] = (adv + (w["status"]["kind"] == "advisory"), total + 1)
+    return expected
+
+
+def _says_count(text: str, adv: int, total: int) -> bool:
+    if total == 1:
+        return "The one water in" in text and "has an advisory as its" in text
+    found = _COUNT.search(text)
+    return found is not None and found.groups() == (str(adv), str(total))
+
+
+def _one_county_problems(
+    page: Path, county: str, adv: int, total: int, file_label: str
+) -> list[str]:
+    raw = page.read_text(encoding="utf-8")
+    title, description = _TITLE.search(raw), _DESCRIPTION.search(raw)
+    assert title and description
+    t, d = html.unescape(title.group(1)), html.unescape(description.group(1))
+    lede = lede_of(page)
+    texts = {"title": t, "description": d, "lede": lede}
+    problems = [
+        f"{county}: {s}" for text in texts.values()
+        for s in affirmative_safety_claims(text)
+    ]  # fmt: skip
+    if adv == 0:
+        return problems + [
+            f"{county}: {where} states a count with none"
+            for where, text in texts.items() if _COUNT.search(text)
+        ]  # fmt: skip
+    found = _COUNT.search(t)
+    if not found or found.groups() != (str(adv), str(total)):
+        problems.append(f"{county}: title count is not {adv} of {total}")
+    problems += [
+        f"{county}: {where} count is not {adv} of {total}"
+        for where in ("lede", "description")
+        if not _says_count(texts[where], adv, total)
+    ]
+    if file_label not in d:
+        problems.append(f"{county}: description lacks the state's file date")
+    return problems
+
+
+def county_snippet_problems(root: Path) -> list[str]:
+    """County pages whose title, description or first line disagree with the
+    snapshot about how many waters have an advisory as their latest record,
+    or that state a count for a county with none (DECISIONS 0002: a bare
+    "0 of 2" would read as an all-clear)."""
+    snap = snapshot_of(root)
+    file_date = next(
+        f["file_date"] for f in snap["source_files"] if f["source"] == "ca-swrcb-fhab"
+    )
+    problems = []
+    for county, (adv, total) in sorted(expected_county_counts(snap).items()):
+        page = root / "county" / site.slugify(county) / "index.html"
+        problems += _one_county_problems(
+            page, county, adv, total, wording.date_label(file_date)
+        )
+    return problems
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_county_snippets_count_what_the_snapshot_holds(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    root: Path = request.getfixturevalue(which)
+    assert county_snippet_problems(root) == []
+
+
+def test_county_fixtures_cover_both_sides(traps_site: Path) -> None:
+    kinds: dict[str, set[bool]] = {}
+    for w in snapshot_of(traps_site)["waterbodies"]:
+        for county in w["counties"]:
+            kinds.setdefault(county, set()).add(w["status"]["kind"] == "advisory")
+    assert any(True in k for k in kinds.values())
+    assert any(k == {False} for k in kinds.values())
+
+
+def test_county_snippet_check_catches_a_wrong_count(tmp_path: Path) -> None:
+    # Negative control: each sabotage must apply and must be reported.
+    root = build(tmp_path)
+    snap = snapshot_of(root)
+    counted = {c for w in snap["waterbodies"] if w["status"]["kind"] == "advisory"
+               for c in w["counties"]}  # fmt: skip
+    every = {c for w in snap["waterbodies"] for c in w["counties"]}
+    with_one, without = sorted(counted)[0], sorted(every - counted)[0]
+    page = root / "county" / site.slugify(with_one) / "index.html"
+    raw = page.read_text(encoding="utf-8")
+    changed = _TITLE.sub(
+        lambda m: _COUNT.sub("99 of 99 waters", m.group(0)), raw, count=1
+    )
+    assert changed != raw
+    page.write_text(changed, encoding="utf-8")
+    page = root / "county" / site.slugify(without) / "index.html"
+    raw = page.read_text(encoding="utf-8")
+    changed = _TITLE.sub(f"<title>{without} County algae: 0 of 2 waters</title>", raw)
+    assert changed != raw
+    page.write_text(changed, encoding="utf-8")
+    problems = county_snippet_problems(root)
+    assert f"{with_one}: title count is not" in " ".join(problems)
+    assert f"{without}: title states a count with none" in problems
+
+
+def test_county_title_and_description_fit_and_never_count_zero() -> None:
+    long = "Extraordinarily Long Named Imaginary"
+    for county, adv, total in [("Riverside", 25, 40), ("San Luis Obispo", 9, 12),
+                               ("Amador", 1, 1), (long, 3, 120), ("Glenn", 0, 2)]:  # fmt: skip
+        title = site.county_title(county, adv, total)
+        line = site.county_description(county, adv, total, "2026-11-03")
+        assert len(title) <= site.TITLE_MAX, title
+        assert len(line) <= site.DESCRIPTION_MAX, line
+    assert site.county_title("Riverside", 25, 40) == (
+        "Riverside County lake algae advisories: 25 of 40 waters"
+    )
+    assert site.county_title("Amador", 1, 1).endswith("1 of 1 water")
+    assert site.county_title("Glenn", 0, 2) == (
+        "Glenn County lake toxic algae advisories | Lake Notice"
+    )
+    assert site.county_count_line("Glenn", 0, 2, "2026-11-03") == ""
+    assert "0 of" not in site.county_description("Glenn", 0, 2, "2026-11-03")
+    assert "dated" not in site.county_count_line("Riverside", 25, 40, None)
+    assert site.county_count_line("Colusa", 1, 3, None) == (
+        "1 of the 3 waters in Colusa County has an advisory as its latest state record."
+    )
+
+
+def test_advisory_list_description_counts_each_state_it_lists(
+    traps_site: Path, tmp_path: Path
+) -> None:
+    raw = (traps_site / "advisories" / "index.html").read_text(encoding="utf-8")
+    description = _DESCRIPTION.search(raw)
+    assert description
+    d = html.unescape(description.group(1))
+    links = re.findall(r'href="\.\./water/([a-z]{2})-', raw)
+    for state, name in site.STATE_NAMES.items():
+        n = links.count(state.lower())
+        if n:
+            assert f"{n} {name}" in d, (state, d)
+        else:
+            assert name not in d.split(" lakes")[0], (state, d)
+    assert site.advisories_description([]).startswith("Lakes and rivers")
+    many = [{"state": "CA"}] * 479 + [{"state": "MO"}] * 47
+    line = site.advisories_description(many)
+    assert line.startswith("479 California and 47 Missouri lakes and rivers")
+    assert len(line) <= site.DESCRIPTION_MAX

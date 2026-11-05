@@ -21,7 +21,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
   sends nothing. A failed or refused announcement logs a notice and never
   fails the deploy. The key file at the site root is public by design
   (docs/DECISIONS.md 0015).
-- New York bloom history (docs/DECISIONS.md 0019), **off by default**
+- What a person should do after contact with water that may have toxic algae
+  (shower or rinse off with tap water; call a doctor or Poison Control at
+  1-800-222-1222 if sick), paraphrased from the CDC and the California Water
+  Boards' advisory signs, on every lake page, the dogs page, About and the
+  app's lake screen.
+- A "not medical advice" line in every page's footer, on About and in the app.
+- New York bloom history (docs/DECISIONS.md 0020), **off by default**
   (`site.NY_HISTORY_ENABLED`). When on: a `/state/ny/` page and one page per
   named water from New York DEC's yearly summary of confirmed blooms, 2019 to
   2025 (477 waters), as history only, never an advisory, a status or an end,
@@ -29,11 +35,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
   bloom years or 5 or more reports may be indexed (284), and while
   `NY_INDEX_LIMIT` is 50 only the 50 with the most reports. Built from a
   pinned cache in `pipeline/data/ny/`; `python -m caalgae.newyork` refreshes
-  it about once a year.
+  it about once a year. While the section is on, a missing or altered cache
+  fails the run instead of publishing without New York.
 
 ### Changed
 
-- New York bloom history is on (docs/DECISIONS.md 0020): a `/state/ny/` page
+- New York bloom history is on (docs/DECISIONS.md 0021): a `/state/ny/` page
   and 477 water pages, with the New York page and the 50 waters with the most
   reports in the sitemap (546 URLs instead of 495) and the rest `noindex`.
   Water pages open with a line dated by DEC's yearly summary, and titles lead
@@ -42,6 +49,40 @@ Keep a Changelog, and versions follow Semantic Versioning.
   on every real page and splits sentences after a closing quotation mark.
   To undo, set `site.NY_HISTORY_ENABLED` to False.
 
+- Advisory guidance follows the state's posted signs more closely, on the
+  site and in the app alike. Every California level now says not to let pets
+  or other animals go into the water, not only not to drink it, and that
+  boiling or filtering does not make the water safe; Caution and Warning add
+  the state's fish-cleaning line and Danger its "do not eat fish or
+  shellfish." Toxic algal mat signs get the mat sign's own guidance for dogs
+  and children, and Missouri gets a summary of the DNR's own guidance. A new
+  test checks that the app's guidance strings match the site's word for word.
+- The home page, /dogs/ and /where-to-check/ no longer say a water that is
+  not listed has no advisory. They say the site lists only waters in the
+  state's data and a water not listed may still have one.
+- County and state lists put the newest records first within advisories and
+  non-advisories, say how old any record more than a year old is, and end
+  with a line that older records are not current conditions.
+
+- County page titles say how many of the county's waters have an advisory as
+  their latest state record ("Riverside County lake algae advisories: 25 of
+  40 waters"), and the description and first line open with the same count,
+  dated by the state's file. A county with none keeps the plain title. The
+  advisory list's description now counts the California and Missouri waters
+  it lists (docs/DECISIONS.md 0018).
+- The iPhone app now shows the same lines under a water's headline as the
+  website (docs/DECISIONS.md 0017): "An older, higher advisory is also on
+  file", "The newest advisory posting here is lower", and the age sentence
+  for an advisory last posted more than 90 days before the state's file.
+  The advisory lists carry the first two, and order and file waters under
+  "Posted in the last 30 days" by the newest posting at any level. The
+  snapshot that ships in the app is rebuilt from the state's file dated
+  2026-11-03. The copy it replaced, from Oct 9, still read "Danger advisory,
+  last posted Sep 24, 2026" for Lake Elsinore; it now reads "Caution
+  advisory, last posted Sep 24, 2026" with its older Danger named on the next
+  line. The app's tests check its sentences against the website's for Lake
+  Elsinore's real records, from a fixture the pipeline tests rebuild and
+  compare.
 - A water page with an advisory now has a search title that leads with the
   level and date from its headline, for example "Castaic Lake algae: Danger
   advisory, last posted Nov 3, 2026". Before, every title read "<water> toxic
@@ -81,6 +122,15 @@ Keep a Changelog, and versions follow Semantic Versioning.
   snapshot, for example Big Bear Lake, Lake Tulloch and Crowley Lake.
 - The advisories page title and description name "toxic algae" and the level
   and date that each row shows.
+- Missouri fails closed (DECISIONS 0019). If the department's layer is gone
+  or changed (HTTP 404 or 410, an error answer, missing fields, too few or no
+  usable rows), the run leaves Missouri off the site entirely and still
+  publishes California. After a passing failure, Missouri is shown with its
+  read date for at most 2 days after the last good read, then hidden. A
+  malformed Missouri answer no longer stops the whole run.
+- Missouri pages, the Missouri state page and About quote the Missouri
+  Department of Natural Resources' "general purposes only" map disclaimer
+  verbatim, with a link to it.
 - Each sitemap URL's `lastmod` is the newest record date the page shows, not
   the build date: a water's newest record, a county's or state's newest water,
   and the newest record overall for the home, advisories, county index and dogs
@@ -108,6 +158,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
   the PAGES_ENABLED variable is set.
 - Missouri stays in 1.0 pending the owner's confirmation of its status-code
   readings (docs/MISSOURI-READINGS.md).
+- Water pages show a cleaned display name and place instead of the state's
+  typed spelling: "Big Bear Lake", not "Big bear lake ca"; "Briars Pond",
+  not "Briars pond"; "Nevada", not "Nevada State", where a county would be.
+  The snapshot, the app and page addresses keep the source spelling
+  (docs/DECISIONS.md 0009, "Display names").
 
 ### Added
 

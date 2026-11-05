@@ -40,7 +40,7 @@ echo "== the checkers' own dependencies (SEC-12/13 applied to this toolchain)"
 
 echo "== build the site from the real-data sample fixture, the Missouri layer and the New York fixture"
 # The New York history section is on in production (site.NY_HISTORY_ENABLED,
-# docs/DECISIONS.md 0019 and 0020). It is built here from its real-row fixture
+# docs/DECISIONS.md 0020 and 0021). It is built here from its real-row fixture
 # so its pages get the same a11y gates as the rest.
 # Served under the same path prefix as production (the default base URL's
 # path), because 404.html links its stylesheet by that absolute path.

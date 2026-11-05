@@ -131,6 +131,38 @@ merge. Known limit: a lake typed under two county texts (Lake Tahoe under
 El Dorado and under Placer) becomes two pages. A curated alias table, as
 Trout Truck keeps, is the fix if the owner wants it.
 
+**Display names (2026-11-04).** The state's files type names by hand, and
+some reached page titles as typed: "Big bear lake ca", "Briars pond",
+"crystal pool", and "Lake Havasu (Arizona), Arizona State" where a county
+belongs. The site now shows a display name and place
+(`pipeline/src/caalgae/water_names.py`). The history, the snapshot, the
+app and every id keep the source's spelling, so this is display only and
+leaves identity as above.
+
+- A reviewed override table, keyed by water id and the exact source
+  spelling, for the three names no rule fixes safely. A retyped name drops
+  out of the table and gets the rules.
+- A trailing suffix naming the water's own state is dropped: " ca" after a
+  water word in California, ", MO" or ", Missouri" in Missouri. Missouri's
+  " CA" (a conservation area) and "Lake California" are kept.
+- Casing: a lowercase first letter is capitalized. A proper name whose
+  lowercase words are one run at its end, led or ended by a water word, is
+  capitalized ("Diamond valley lake" to "Diamond Valley Lake"). Names that
+  describe a water ("Unnamed pond", "Private pond"), names with a comma,
+  and small words ("of", "du") are left alone. No word is ever dropped:
+  "Fee fee creek" is Fee Fee Creek.
+- Place: "Nevada State" and "Arizona State" show as "Nevada" and "Arizona",
+  as a Missouri water shows "Missouri". Other county text that names no
+  California county shows nothing. A county is never guessed, and a place
+  the name already carries is not repeated.
+- Titles add a county only when the source spelling is shared, as before,
+  so a display name never adds or drops a county from a title.
+
+On the 2026-11-04 snapshot this changes 41 waters (37 names, 4 places) and
+the titles of 37 water pages, 12 of them indexable. NY names (staged
+branch) needed no fix. Undo: make `display_water` return the water
+unchanged.
+
 ## 0010 — The multi-state wave: Missouri and EPA CyAN (owner, 2026-10-12)
 
 The owner approved the state research lane's recommendations
@@ -409,10 +441,39 @@ A Danger posted within the 12 months still leads over a newer Caution
 (tested). On the 2026-11-03 file this changes 60 of 479 headlines from the
 previous build of this decision. All 60 now lead with a lower, more recent
 level, and each names the older, higher one.
-The app needs no change. It reads the same fields, and its headline and its
-"newest posting first" order use the headline posting's own level and date.
-The app does not show the older, higher line. Each spot's own status is
-listed on its lake screen.
+The app reads the same fields, so its headline is the pipeline's.
+
+**App parity (2026-11-04).** The app did not show the lines under the
+headline. Its lists ordered and filed waters by the headline's date, and its
+bundled snapshot, from the state's file dated 2026-10-09, still led Lake
+Elsinore with "Danger advisory, last posted Sep 24, 2026". Now:
+
+- The lake screen shows the website's notes in the website's order: the
+  newer, lower posting, the older, higher advisory, and the age sentence,
+  counted to the file date of the water's own state. With more than one spot
+  under an advisory, it also explains how the headline is chosen. List rows
+  carry the first two notes, as the website's advisory lists do.
+- "Newest posting first" and "Posted in the last 30 days" use the newest
+  posting at any level, as the website does.
+- The sentences live in `AdvisoryNotes.swift` and mirror `wording.py`. The
+  app cannot run the pipeline, so `pipeline/tests/test_ios_parity_fixture.py`
+  builds `elsinore-parity.json` from the same Lake Elsinore records as
+  `test_spots_and_age.py`: six cases, each with the pipeline's snapshot and
+  the website's sentences. `AdvisoryParityTests` decodes each snapshot with
+  the app's strict decoder and compares the app's sentences word for word.
+  The pipeline test fails when the committed fixture is stale. Negative
+  controls lower the old Dangers and move the file date across the 90-day
+  line, and check that the lines change.
+- The bundled snapshot is rebuilt from the state's file dated 2026-11-03,
+  with `ios/scripts/sync-bundled-snapshot.sh`. On it, 120 of the waters in
+  both copies have a different headline. Of 526 waters with an advisory, 60
+  name an older, higher advisory, 2 a newer, lower posting, and 403 carry
+  the age sentence.
+- Alerts are unchanged. They still fire when the headline's kind or level
+  changes. A higher advisory that leaves the 12-month window can lower a
+  favorite's headline level, and the app then says "now a caution advisory".
+  The wording says what the headline now shows. It does not say the higher
+  advisory ended.
 
 ## 0018 — Search titles lead with the advisory and its date; descriptions carry the state's file date and the not-a-finding sentence (2026-11-03)
 
@@ -459,7 +520,66 @@ A status that is not an advisory must keep the not-a-finding sentence in its
 description. A negative control changes a title's date and puts a safety
 claim in a description, and checks that both are reported. To undo, call
 `water_title` without the status.
-## 0019 — New York's yearly bloom summary, as history only, behind a switch (owner, 2026-11-02)
+
+**County pages and the advisory list (2026-11-04).** Search Console, 2026-10-06
+to 2026-11-02: the 33 county pages had 83 impressions and 3 clicks (3.6%) at
+an average position of 6.2, against 4.5% for water pages. The advisory list
+had 38 impressions and no clicks at 7.1. All of that predates the water
+titles above, which went live on 2026-11-04. County titles still read
+"<county> County lake toxic algae advisories | Lake Notice", the same for a
+county with 25 waters under an advisory and one with none.
+
+- **A county with an advisory says how many.** "Riverside County lake algae
+  advisories: 25 of 40 waters". The count is the county index's "Latest
+  record is an advisory" column. The description and the page's first line
+  open with the same sentence, dated by the state's file: "25 of the 40
+  waters in Riverside County have an advisory as their latest state record,
+  in the state's data dated Nov 3, 2026." As in the water titles above, a
+  counted title leaves out the site name, which `og:site_name` still carries.
+- **A county with none keeps the plain title and description.** "0 of 2
+  waters" in a title, with no room for the not-a-finding sentence, would read
+  as an all-clear (0002). Two counties are like this on the 2026-11-03 file
+  (Glenn, San Benito).
+- **The advisory list's description counts each state it lists.** It listed 47
+  Missouri waters while its description said California only. It now reads
+  "479 California and 47 Missouri lakes and rivers whose latest state record
+  is a toxic algae advisory, with its level and date." Its title is
+  unchanged. Whether the title should name Missouri is the owner's call, with
+  the home page title (2026-10-23 audit, finding 9).
+
+A test checks every built county page against the snapshot: the count in
+the title, the description and the first line, the file date, the copy
+guard, and no count at all for a county with none. A negative control writes
+a wrong count into one title and "0 of 2 waters" into another, and checks
+that both are reported. To undo, have `county_title` return the plain title.
+
+## 0019 — Missouri fails closed, and carries the department's own caveat (owner, 2026-10-30)
+
+The department's layer description says it plans to retire this service. Before this decision, a failed
+Missouri fetch kept the last records on the site with no limit, and a
+malformed answer stopped the whole run, California included. Now:
+
+- **Gone or changed: hidden at once.** HTTP 404 or 410, an ArcGIS error
+  answer, an answer that is not a JSON object, a missing expected field,
+  fewer than `MIN_ROWS` rows, or no case the pipeline can place raises
+  `missouri.LayerUnavailable`. The run leaves Missouri out of the snapshot
+  entirely: no Missouri waters, no /state/mo/, no Missouri source or file, no
+  footer link. California publishes as usual. Missouri's history is kept, so
+  a good read later brings it back.
+- **A passing failure** (network error, another HTTP status, robots.txt
+  unreadable) shows Missouri, with its read date, only while the last good
+  read is at most `MO_STALE_AFTER_DAYS` (2) days old, then hides it.
+- An absence is never shown as "no advisory": a hidden state has no pages.
+- Missouri pages, /state/mo/ and About quote the department's HAB Reports Map
+  disclaimer verbatim, with a link: "The data presented in the map should be
+  used for general purposes only. The exact location, extent and toxicity of
+  the reported bloom may not be accurate due to changing environmental
+  conditions." (`sources.MO_MAP_CAVEAT`, read 2026-10-30.)
+
+Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
+the negative control.
+
+## 0020 — New York's yearly bloom summary, as history only, behind a switch (owner, 2026-11-02)
 
 **The owner's decision, 2026-11-02:** add New York State DEC's yearly
 summary of confirmed harmful algal blooms from data.ny.gov, under the
@@ -601,9 +721,12 @@ allowed. `fetch.guard_url` refuses the four API prefixes above.
 - The daily publish **never fetches New York**. The site is built from the
   cache in `pipeline/data/ny/` (`95my-wijm.rows.json`, byte for byte as served,
   and `95my-wijm.meta.json`: URL, columns, DEC's update time, read time,
-  SHA-256). `newyork.PINNED_SHA256` pins the rows; a cache that does not match
-  its sidecar or the pin is refused, and the site is built without New York
-  with a warning (California and Missouri are never stopped by it).
+  SHA-256). `newyork.PINNED_SHA256` pins the rows. While the section is on,
+  a cache that is missing, malformed, or does not match its sidecar or the
+  pin **refuses the whole run**, before anything is written, so a refresh
+  that forgets the pin cannot drop every `/state/ny/` page from a green
+  publish (2026-11-05 branch review; it used to warn and build without New
+  York). While it is off, the cache is never read and never stops a run.
 - `uv run --frozen python -m caalgae.newyork` (from `pipeline/`) is the only
   thing that reads data.ny.gov: robots.txt first (a 403, 5xx, redirect or a
   disallow stops it), then at least 2 s, the metadata, at least 2 s (longer if
@@ -618,17 +741,17 @@ allowed. `fetch.guard_url` refuses the four API prefixes above.
   `make verify`; open a PR. No scheduled job does this: a yearly file deserves
   a person reading the diff.
 
-## 0020 — Turn New York's bloom history on, first stage: 50 indexable waters (prepared 2026-11-04)
+## 0021 — Turn New York's bloom history on, first stage: 50 indexable waters (prepared 2026-11-04)
 
 The owner approved New York's yearly summary under the OPEN-NY terms on
-2026-11-02 (0019), with the turn-on planned one to two weeks after
+2026-11-02 (0020), with the turn-on planned one to two weeks after
 2026-11-03. This change flips `site.NY_HISTORY_ENABLED` to True and keeps
 `NY_INDEX_LIMIT = 50`. Nothing else about the data changes.
 
 **Re-checked 2026-11-04, before the flip (0004, 0011):**
 
 - The terms are unchanged. The OPEN-NY Terms of Use dataset page still
-  links the same PDF. It is byte for byte the file 0019 read (SHA-256
+  links the same PDF. It is byte for byte the file 0020 read (SHA-256
   `9437c849705d58df008f01fc23f404444becce6b86676adc3974f9160a4cb650`), headed
   "LAST MODIFIED: March 8, 2013". It still says "The State grants you a
   non-exclusive, revocable license to use the Content", "So long as you are
@@ -644,7 +767,7 @@ The owner approved New York's yearly summary under the OPEN-NY terms on
   Department of Environmental Conservation". The live rows, read with the
   pinned query, are byte for byte the pinned file (SHA-256 `a9b3a0e8…3623`,
   1,371 rows, 2019 to 2025). So the 2026 season is not posted yet, as
-  expected (0019's refresh plan starts mid-January 2027).
+  expected (0020's refresh plan starts mid-January 2027).
 - `qtg2-hjth` (2012 to 2018) is reachable under the same robots.txt and
   terms. Its rows were last updated 2019-05-31, so it is a closed archive.
   It is **not used**. Its fields count weeks "on DEC notification list",
@@ -654,7 +777,7 @@ The owner approved New York's yearly summary under the OPEN-NY terms on
 
 **What the pages say, matched to 0016 to 0018 for this data type.** The
 New York pages have no status box, so 0017's 12-month headline and age
-line do not reach them (tested since 0019: no "no all-clear" copy). The
+line do not reach them (tested since 0020: no "no all-clear" copy). The
 other rules carry over in New York's own words:
 
 - **A dated first line (0016).** Every water page now opens "As of DEC's
@@ -690,7 +813,7 @@ announcement (0015) is the 51 new URLs. Every page gains the "New York
 history" nav link and the footer credit line. At the second stage
 (`NY_INDEX_LIMIT = None`) the sitemap would list 780 URLs: 284 New York
 waters plus the New York page. That stage waits for about three weeks of
-Search Console data on the first 50 (0019).
+Search Console data on the first 50 (0020).
 
 **Tests.** The default build now reads the pinned cache. Every one of the
 477 real pages must pass the copy guard on its title, description and body.

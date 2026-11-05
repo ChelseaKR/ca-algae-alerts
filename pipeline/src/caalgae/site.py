@@ -31,6 +31,7 @@ import jinja2
 from caalgae import indexnow, newyork, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
+from caalgae.water_names import display_water
 
 # The product name, the domain and the site's default base URL live here and
 # nowhere else in code; tests/test_naming.py checks every other place that
@@ -59,9 +60,9 @@ INDEX_WINDOW_MONTHS = 24
 # the 308 the window keeps. To undo: set it to a number no water reaches,
 # such as 100000.
 INDEX_MIN_RECORDS = 5
-# New York's yearly bloom history (docs/DECISIONS.md 0019): a separate section
+# New York's yearly bloom history (docs/DECISIONS.md 0020): a separate section
 # at /state/ny/, history only, built from the pinned cache in data/ny/. ON since
-# DECISIONS 0020, at the first stage of the rollout: NY_INDEX_LIMIT = 50, so
+# DECISIONS 0021, at the first stage of the rollout: NY_INDEX_LIMIT = 50, so
 # only the 50 waters with the deepest history may be indexed. After about three
 # weeks of Search Console, set the limit to None so every water over the
 # thin-page threshold may be. Pages under the threshold, or past the limit, are
@@ -141,6 +142,9 @@ def water_description(
     as the page's first line (0002), in every candidate: a search snippet is
     quoted on its own. The date of the state's file follows when it fits
     (0018); without one, nothing is put in its place."""
+    # A place the name already carries ("Lake Havasu (Arizona)") is not repeated.
+    if place and f"({place})" in name:
+        place = None
     lead = f"{name}, {place}: " if place else f"{name}: "
     answer = headline if advisory else f"{headline} {wording.NOT_A_FINDING}"
     dated = (
@@ -157,6 +161,113 @@ def water_description(
     ]
     return fit(
         [*(f"{lead}{answer}{extra}" for extra in extras), f"{name}: {answer}", answer],
+        DESCRIPTION_MAX,
+    )
+
+
+def _waters(count: int) -> str:
+    return f"{count} water" if count == 1 else f"{count} waters"
+
+
+def county_title(county: str, with_advisory: int, total: int) -> str:
+    """A county page title of at most TITLE_MAX characters.
+
+    A county where some water's latest record is an advisory says how many,
+    out of the waters on record, because a county search ("<county> county
+    lake algae") is asking whether anything is posted there. It is the same
+    count as the county index's "Latest record is an advisory" column and the
+    page's first line. A county with none keeps the plain title: "0 of 2
+    waters" in a title, without the not-a-finding sentence beside it, would
+    read as an all-clear (DECISIONS 0002)."""
+    tail = f" | {SITE_NAME}"
+    plain = [
+        f"{county} County lake toxic algae advisories{tail}",
+        f"{county} County algae advisories{tail}",
+    ]
+    if with_advisory > 0:
+        share = f"{with_advisory} of {_waters(total)}"
+        for candidate in (
+            f"{county} County lake algae advisories: {share}",
+            f"{county} County algae advisories: {share}",
+        ):
+            if len(candidate) <= TITLE_MAX:
+                return candidate
+    return fit(plain, TITLE_MAX)
+
+
+def county_count_line(
+    county: str, with_advisory: int, total: int, file_date: str | None
+) -> str:
+    """The county page's count sentence, which its description also leads
+    with. Nothing is said about a county with no advisory on record beyond
+    the table itself."""
+    if with_advisory <= 0:
+        return ""
+    lead = (
+        f"{with_advisory} of the {_waters(total)} in {county} County "
+        + (
+            "has an advisory as its"
+            if with_advisory == 1
+            else "have an advisory as their"
+        )
+        + " latest state record"
+        if total != 1
+        else f"The one water in {county} County has an advisory as its latest "
+        "state record"
+    )
+    when = (
+        f", in the state's data dated {wording.date_label(file_date)}"
+        if file_date
+        else ""
+    )
+    return f"{lead}{when}."
+
+
+def county_description(
+    county: str, with_advisory: int, total: int, file_date: str | None
+) -> str:
+    """A county page description of at most DESCRIPTION_MAX characters."""
+    plain = (
+        f"Toxic algae advisory status and history for {total} "
+        f"lakes and rivers in {county} County, California."
+    )
+    line = county_count_line(county, with_advisory, total, file_date)
+    if not line:
+        return plain
+    return fit(
+        [
+            f"{line} An advisory stays listed until the state records an end.",
+            line,
+            plain,
+        ],
+        DESCRIPTION_MAX,
+    )
+
+
+def advisories_description(waters: list[dict[str, Any]]) -> str:
+    """The advisory list's description: how many waters it lists, by state,
+    the same waters the page's table lists. Missouri waters are on the page,
+    so the description names them rather than calling the list California's."""
+    counts = Counter(w["state"] for w in waters)
+    parts = [
+        f"{counts[state]} {name}"
+        for state, name in STATE_NAMES.items()
+        if counts[state]
+    ]
+    if not parts:
+        return (
+            "Lakes and rivers whose latest state record is a toxic algae "
+            "advisory, with its level and date."
+        )
+    lead = " and ".join(parts)
+    return fit(
+        [
+            f"{lead} lakes and rivers whose latest state record is a toxic algae "
+            "advisory, with its level and date, including old ones with no "
+            "recorded end.",
+            f"{lead} lakes and rivers whose latest state record is a toxic algae "
+            "advisory, with its level and date.",
+        ],
         DESCRIPTION_MAX,
     )
 
@@ -246,11 +357,15 @@ def _env() -> jinja2.Environment:
         newer_posting=wording.newer_posting,
         older_higher=wording.older_higher,
         dog_answer=wording.dog_answer,
+        list_row=wording.list_row,
+        list_caveat=wording.LIST_CAVEAT,
         guidance=wording.LEVEL_GUIDANCE,
         guidance_for=wording.guidance_for,
         cells_label=wording.cells_label,
         satellite_explainer=wording.SATELLITE_EXPLAINER,
         dog_advice=wording.DOG_ADVICE,
+        human_advice=wording.HUMAN_ADVICE,
+        not_medical_advice=wording.NOT_MEDICAL_ADVICE,
     )
     return env
 
@@ -410,9 +525,11 @@ class SiteBuilder:
             "ny_history": ny_history is not None,
             "ny_attribution": newyork.ATTRIBUTION,
         }
-        self.waters = snap["waterbodies"]
+        self.waters = [display_water(w) for w in snap["waterbodies"]]
+        # Titles add the county when the source's name is shared (0009), so a
+        # display name (0009, "Display names") never adds or drops one.
         self._name_counts = Counter(
-            (w["state"], w["name"].casefold()) for w in self.waters
+            (w["state"], w["source_name"].casefold()) for w in self.waters
         )
         self._same_name_nearby = same_name_nearby(self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
@@ -510,17 +627,14 @@ class SiteBuilder:
 
     def advisories(self) -> None:
         crumbs = self._crumbs(("Every open advisory", self.base_url + "advisories/"))
+        waters = self.open_advisories()
         self._write(
             "advisories/",
             "advisories.html.jinja",
             title=f"All California toxic algae advisories on file | {SITE_NAME}",
-            description=(
-                "Every California lake and river whose latest state record is a "
-                "toxic algae advisory, with its level and date, including old "
-                "ones with no recorded end."
-            ),
+            description=advisories_description(waters),
             lastmod=self.site_date,
-            waters=self.open_advisories(),
+            waters=waters,
             breadcrumb=crumbs,
             structured_data={
                 "@context": "https://schema.org",
@@ -529,8 +643,9 @@ class SiteBuilder:
         )
 
     def _name_is_shared(self, water: dict[str, Any]) -> bool:
-        """True when another water in the same state has this name."""
-        return self._name_counts[(water["state"], water["name"].casefold())] > 1
+        """True when another water in the same state has this source name."""
+        key = (water["state"], water["source_name"].casefold())
+        return self._name_counts[key] > 1
 
     @staticmethod
     def _county_label(water: dict[str, Any]) -> str | None:
@@ -554,6 +669,17 @@ class SiteBuilder:
             )
         )
 
+    def _file_date(self, state: str) -> str | None:
+        """The date of the state's data file, or None when it has none."""
+        return next(
+            (
+                f.get("file_date")
+                for f in self.snap["source_files"]
+                if f["source"] == STATE_SOURCE[state]
+            ),
+            None,
+        )
+
     def water_page(self, water: dict[str, Any]) -> None:
         rel = f"water/{water['id']}/"
         trail = [(water["name"], self.base_url + rel)]
@@ -574,14 +700,7 @@ class SiteBuilder:
             }
         water_source = self.sources[STATE_SOURCE[water["state"]]]
         indexable = is_indexable(water, self.run_date, INDEX_WINDOW_MONTHS)
-        file_date = next(
-            (
-                f.get("file_date")
-                for f in self.snap["source_files"]
-                if f["source"] == STATE_SOURCE[water["state"]]
-            ),
-            None,
-        )
+        file_date = self._file_date(water["state"])
         satellite_source = self.sources.get("epa-cyan")
         self._write(
             rel,
@@ -667,28 +786,25 @@ class SiteBuilder:
                 **self._breadcrumb_data(crumbs),
             },
         )
+        # County pages are California's: Missouri's layer names no county.
+        ca_file_date = self._file_date("CA")
         for county, waters in self.by_county.items():
             rel = f"county/{slugify(county)}/"
             crumbs_c = [*crumbs, (f"{county} County", self.base_url + rel)]
-            ordered = sorted(
-                waters,
-                key=lambda w: (w["status"]["kind"] != "advisory", w["name"].casefold()),
-            )
+            ordered = sorted(waters, key=wording.list_sort_key)
+            with_advisory = sum(w["status"]["kind"] == "advisory" for w in waters)
             self._write(
                 rel,
                 "county.html.jinja",
-                title=fit(
-                    [
-                        f"{county} County lake toxic algae advisories | {SITE_NAME}",
-                        f"{county} County algae advisories | {SITE_NAME}",
-                    ],
-                    TITLE_MAX,
+                title=county_title(county, with_advisory, len(waters)),
+                description=county_description(
+                    county, with_advisory, len(waters), ca_file_date
                 ),
-                description=(
-                    f"Toxic algae advisory status and history for {len(waters)} "
-                    f"lakes and rivers in {county} County, California."
+                count_line=county_count_line(
+                    county, with_advisory, len(waters), ca_file_date
                 ),
                 county=county,
+                file_date=ca_file_date,
                 lastmod=self._newest_of(waters),
                 waters=ordered,
                 breadcrumb=crumbs_c,
@@ -705,10 +821,7 @@ class SiteBuilder:
                 continue
             rel = f"state/{state.lower()}/"
             crumbs = self._crumbs((name, self.base_url + rel))
-            ordered = sorted(
-                waters,
-                key=lambda w: (w["status"]["kind"] != "advisory", w["name"].casefold()),
-            )
+            ordered = sorted(waters, key=wording.list_sort_key)
             self._write(
                 rel,
                 "state.html.jinja",
@@ -718,6 +831,7 @@ class SiteBuilder:
                     f"lakes and rivers in {name}, from the state's own records."
                 ),
                 state=state,
+                file_date=self._file_date(state),
                 lastmod=self._newest_of(waters),
                 state_name=name,
                 waters=ordered,
@@ -794,7 +908,7 @@ class SiteBuilder:
         )
         self.lastmods[self.base_url + rel] = where_to_check.AS_OF.isoformat()
 
-    # -- New York: yearly bloom history, never a status (DECISIONS 0019) ------
+    # -- New York: yearly bloom history, never a status (DECISIONS 0020) ------
 
     @staticmethod
     def _ny_context(history: newyork.History) -> dict[str, Any]:

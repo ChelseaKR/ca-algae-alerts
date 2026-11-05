@@ -1,4 +1,4 @@
-"""New York's yearly harmful algal bloom summary: history only (DECISIONS 0019).
+"""New York's yearly harmful algal bloom summary: history only (DECISIONS 0020).
 
 What this data is, and what it never is:
 
@@ -80,7 +80,7 @@ ROWS_FILE = f"{DATASET_ID}.rows.json"
 META_FILE = f"{DATASET_ID}.meta.json"
 # SHA-256 of pipeline/data/ny/95my-wijm.rows.json, read 2026-11-02 (DEC's rows
 # last updated 2026-01-14, the 2025 season). Change it only in the commit
-# that refreshes the file, after reviewing the diff (docs/DECISIONS.md 0019).
+# that refreshes the file, after reviewing the diff (docs/DECISIONS.md 0020).
 PINNED_SHA256 = "a9b3a0e8709adf3c19e4e39c49a03c8a2cb9d6bc97b6ad6c6f65470a389a3623"
 
 # Thin-page rule (owner, 2026-11-02): a New York page may be indexed only when
@@ -385,6 +385,10 @@ def load(directory: Path = DATA_DIR, *, pinned: str | None = PINNED_SHA256) -> H
         meta = json.loads((directory / META_FILE).read_text(encoding="utf-8"))
     except (OSError, ValueError) as error:
         raise NYDataError(f"the New York cache cannot be read: {error}") from error
+    if not isinstance(meta, dict) or not all(
+        key in meta for key in ("sha256", "rows_updated_at", "fetched_at")
+    ):
+        raise NYDataError(f"{META_FILE} is missing its hash or dates")
     digest = sha256(body)
     if digest != meta.get("sha256"):
         raise NYDataError(f"{ROWS_FILE} does not match the hash in {META_FILE}")

@@ -215,7 +215,7 @@ def banned(raw: str) -> list[str]:
 def test_page_never_says_safe_or_endorsed(sample_site: Path) -> None:
     raw = (sample_site / REL).read_text(encoding="utf-8")
     assert banned(raw) == []
-    assert "free of algae" in text_of_main(raw)
+    assert "a water not listed may still have an advisory" in text_of_main(raw)
 
 
 def test_banned_phrase_check_catches_safe_and_endorsed(sample_site: Path) -> None:

@@ -1,4 +1,4 @@
-"""New York's yearly bloom history (docs/DECISIONS.md 0019): the pinned cache,
+"""New York's yearly bloom history (docs/DECISIONS.md 0020): the pinned cache,
 how rows become waters, the thin-page threshold and its negative control, the
 rollout switch, the copy rules (history only: never an advisory, a current
 status or an end) and the yearly refresh's manners toward data.ny.gov."""
@@ -298,7 +298,7 @@ def test_the_staged_limit_takes_the_deepest_histories_first() -> None:
     assert newyork.indexed_ids(waters, 0) == set()
 
 
-# -- the rollout switch: on, at the first stage (DECISIONS 0020) --------------------
+# -- the rollout switch: on, at the first stage (DECISIONS 0021) --------------------
 
 
 def test_the_section_is_on_at_the_first_stage() -> None:
@@ -351,13 +351,87 @@ def test_turned_on_from_the_command_line_with_a_cache(tmp_path: Path) -> None:
     assert "New York" not in json.dumps(snapshot)
 
 
-def test_a_bad_cache_warns_and_builds_the_rest(
+def refused(tmp_path: Path, *extra: str) -> None:
+    """Run the build expecting a refusal, and return its message. Nothing
+    is written: no site, no snapshot and no history."""
+    out = tmp_path / "site"
+    code = cli.main(
+        [
+            "--fixture-page", str(PAGE),
+            "--fixture-csv", str(SAMPLE),
+            "--mo-fixture", str(MO_POINTS),
+            "--run-today", "2026-10-12",
+            "--history", str(tmp_path / "history.json"),
+            "--site-out", str(out),
+            *extra,
+        ]
+    )  # fmt: skip
+    assert code == 2
+    assert not out.exists()
+    assert not (tmp_path / "history.json").exists()
+
+
+def altered_cache(tmp_path: Path) -> Path:
+    cache = tmp_path / "ny-cache"
+    shutil.copytree(NY_FIXTURE, cache)
+    return cache
+
+
+def test_a_missing_cache_refuses_the_run(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    out = build(tmp_path, "--ny-history", "on", "--ny-cache", str(tmp_path / "missing"))
+    refused(tmp_path, "--ny-history", "on", "--ny-cache", str(tmp_path / "missing"))
+    err = capsys.readouterr().err
+    assert "run refused -- nothing published" in err
+    assert "New York history is on but not built" in err
+
+
+def test_rows_that_do_not_match_their_hash_refuse_the_run(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    cache = altered_cache(tmp_path)
+    rows = cache / newyork.ROWS_FILE
+    rows.write_bytes(rows.read_bytes() + b"\n")
+    refused(tmp_path, "--ny-history", "on", "--ny-cache", str(cache))
+    assert "does not match the hash" in capsys.readouterr().err
+
+
+def test_a_sidecar_without_its_dates_refuses_the_run(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    cache = altered_cache(tmp_path)
+    meta_path = cache / newyork.META_FILE
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    del meta["fetched_at"]
+    meta_path.write_text(json.dumps(meta), encoding="utf-8")
+    refused(tmp_path, "--ny-history", "on", "--ny-cache", str(cache))
+    assert "missing its hash or dates" in capsys.readouterr().err
+
+
+def test_config_on_with_an_unpinned_cache_refuses_the_run(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Someone refreshes the New York rows and forgets PINNED_SHA256: the
+    publish run fails instead of dropping every /state/ny/ page."""
+    monkeypatch.setattr(site, "NY_HISTORY_ENABLED", True)
+    # load()'s default pin is bound when it is defined, so move it there.
+    monkeypatch.setitem(newyork.load.__kwdefaults__, "pinned", "0" * 64)
+    refused(tmp_path)
+    assert "is not the pinned file" in capsys.readouterr().err
+
+
+def test_off_never_reads_the_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The control for the refusals above: with the section off, the same
+    unpinned cache is never read and the build goes ahead without New York."""
+    monkeypatch.setattr(site, "NY_HISTORY_ENABLED", False)
+    monkeypatch.setitem(newyork.load.__kwdefaults__, "pinned", "0" * 64)
+    out = build(tmp_path)
     assert (out / "index.html").exists()
     assert not (out / "state" / "ny").exists()
-    assert "New York history not built" in capsys.readouterr().err
 
 
 @pytest.fixture(scope="module")
@@ -486,7 +560,7 @@ def head_lines(page: Path) -> tuple[str, str, str]:
 def copy_problems(
     name: str, title: str, description: str, lede: str, body: str
 ) -> list[str]:
-    """What DECISIONS 0020 holds every New York water page to, on real data.
+    """What DECISIONS 0021 holds every New York water page to, on real data.
     The water's own name is taken out first: Clear Lake and Lake Clear are
     names, not findings. Any other "clear" still counts."""
     problems = [
