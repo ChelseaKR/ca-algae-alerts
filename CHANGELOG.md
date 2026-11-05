@@ -103,6 +103,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
   the PAGES_ENABLED variable is set.
 - Missouri stays in 1.0 pending the owner's confirmation of its status-code
   readings (docs/MISSOURI-READINGS.md).
+- Water pages show a cleaned display name and place instead of the state's
+  typed spelling: "Big Bear Lake", not "Big bear lake ca"; "Briars Pond",
+  not "Briars pond"; "Nevada", not "Nevada State", where a county would be.
+  The snapshot, the app and page addresses keep the source spelling
+  (docs/DECISIONS.md 0009, "Display names").
 
 ### Added
 

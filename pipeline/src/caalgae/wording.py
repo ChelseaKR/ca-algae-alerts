@@ -157,7 +157,8 @@ def summary(
     missing date is left out, never filled in. A status that is not an
     advisory carries the not-safe sentence in the same paragraph. Website
     only: the app shows the status box, so StatusWording.swift has no copy."""
-    where = f"{name} ({place})" if place else name
+    # A place the name already carries ("Lake Havasu (Arizona)") is not repeated.
+    where = f"{name} ({place})" if place and f"({place})" not in name else name
     if file_date:
         line = (
             f"As of the state's data dated {date_label(file_date)}, "

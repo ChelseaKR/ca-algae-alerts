@@ -131,6 +131,38 @@ merge. Known limit: a lake typed under two county texts (Lake Tahoe under
 El Dorado and under Placer) becomes two pages. A curated alias table, as
 Trout Truck keeps, is the fix if the owner wants it.
 
+**Display names (2026-11-04).** The state's files type names by hand, and
+some reached page titles as typed: "Big bear lake ca", "Briars pond",
+"crystal pool", and "Lake Havasu (Arizona), Arizona State" where a county
+belongs. The site now shows a display name and place
+(`pipeline/src/caalgae/water_names.py`). The history, the snapshot, the
+app and every id keep the source's spelling, so this is display only and
+leaves identity as above.
+
+- A reviewed override table, keyed by water id and the exact source
+  spelling, for the three names no rule fixes safely. A retyped name drops
+  out of the table and gets the rules.
+- A trailing suffix naming the water's own state is dropped: " ca" after a
+  water word in California, ", MO" or ", Missouri" in Missouri. Missouri's
+  " CA" (a conservation area) and "Lake California" are kept.
+- Casing: a lowercase first letter is capitalized. A proper name whose
+  lowercase words are one run at its end, led or ended by a water word, is
+  capitalized ("Diamond valley lake" to "Diamond Valley Lake"). Names that
+  describe a water ("Unnamed pond", "Private pond"), names with a comma,
+  and small words ("of", "du") are left alone. No word is ever dropped:
+  "Fee fee creek" is Fee Fee Creek.
+- Place: "Nevada State" and "Arizona State" show as "Nevada" and "Arizona",
+  as a Missouri water shows "Missouri". Other county text that names no
+  California county shows nothing. A county is never guessed, and a place
+  the name already carries is not repeated.
+- Titles add a county only when the source spelling is shared, as before,
+  so a display name never adds or drops a county from a title.
+
+On the 2026-11-04 snapshot this changes 41 waters (37 names, 4 places) and
+the titles of 37 water pages, 12 of them indexable. NY names (staged
+branch) needed no fix. Undo: make `display_water` return the water
+unchanged.
+
 ## 0010 — The multi-state wave: Missouri and EPA CyAN (owner, 2026-10-12)
 
 The owner approved the state research lane's recommendations
