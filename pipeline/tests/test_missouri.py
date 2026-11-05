@@ -43,7 +43,10 @@ def test_only_non_personal_fields_are_requested() -> None:
         "DissDat",
         "WBType",
     }
-    for personal in ("LeadAG", "WBOwn", "WBOwno", "PubInfo", "HABDesc", "IConf"):
+    # PubInfo is the department's own public note, read since 0023.
+    assert missouri.OPTIONAL_FIELDS == ("PubInfo",)
+    assert "PubInfo" in missouri.QUERY_URL
+    for personal in ("LeadAG", "WBOwn", "WBOwno", "HABDesc", "IConf"):
         assert personal not in missouri.QUERY_URL
 
 

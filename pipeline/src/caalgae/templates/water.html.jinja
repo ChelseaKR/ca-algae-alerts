@@ -13,6 +13,14 @@
 
 <p id="after-contact"><strong>After contact with the water:</strong> {{ human_advice }}</p>
 
+{% if department_notes %}
+<h2 id="department">In the department's words</h2>
+<p>Quoted as the {{ water_source.agency }} published {{ "it" if department_notes|length == 1 else "them" }} on its <a href="{{ water_source.publisher_caveat_url }}">HAB reports map</a>. A note does not change the status above.</p>
+{% for note in department_notes %}
+<p class="department-note">Record dated {{ note.date|date }}, {{ note.level or "status blank" }}: &ldquo;{{ note.text }}&rdquo;</p>
+{% endfor %}
+{% endif %}
+
 {% if same_name_nearby %}
 <h2 id="same-name">Matching names nearby</h2>
 <p>The state's file also has {{ "this entry" if same_name_nearby|length == 1 else "these entries" }} with a name that matches {{ water.name }}, within {{ same_name_miles }} miles of it. {{ "It" if same_name_nearby|length == 1 else "They" }} may be the same water, listed under another county or spelling. Each entry has its own records:</p>

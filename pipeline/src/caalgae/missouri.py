@@ -3,8 +3,10 @@
 One ArcGIS MapServer layer, one request per run, explicit non-personal
 fields only: the case id, the water body's name and type, the observation
 date, the bloom status code, the case status and the dissipation date, plus
-the point. Fields naming agencies, owners, reporters or free text are never
-requested (docs/DECISIONS.md 0010).
+the point. Fields naming agencies, owners or reporters are never requested
+(docs/DECISIONS.md 0010). The one free-text field read is ``PubInfo``, the
+department's own public note on a case, shown verbatim, quoted and credited
+on the water's page (0023). It decides nothing.
 
 Each row is one case, carrying its current status rather than a history of
 updates. The department publishes no definitions of its status codes; the
@@ -40,7 +42,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 from collections import Counter
-from typing import Any
+from typing import Any, TypedDict
 from zoneinfo import ZoneInfo
 
 import httpx
@@ -58,10 +60,13 @@ FIELDS = (
     "DissDat",
     "WBType",
 )
+# Requested, but a layer without it still reads (0023): losing a note is not
+# the layer changing shape.
+OPTIONAL_FIELDS = ("PubInfo",)
 QUERY_URL = (
     MO_DNR_HAB.dataset_url
     + "/query?where=1%3D1&outFields="
-    + ",".join(FIELDS)
+    + ",".join(FIELDS + OPTIONAL_FIELDS)
     + "&returnGeometry=true&outSR=4326&orderByFields=objectid&f=json"
 )
 CENTRAL = ZoneInfo("America/Chicago")
@@ -77,6 +82,10 @@ ADVISORY_CODES = frozenset({"advise", "notice"})
 MIN_ROWS = 50  # 278 on 2026-10-12; far fewer is a truncated answer
 # HTTP answers that mean the layer itself is gone, not a passing outage.
 GONE_STATUSES = frozenset({404, 410})
+CLOSED_DETAIL = "Case closed."
+# The department's placeholder note; it says nothing about the case, so the
+# page does not quote it (0023). Compared casefolded, without a final period.
+NO_NOTE = "no additional information"
 
 
 class LayerUnavailable(fetch.FetchError):
@@ -113,6 +122,7 @@ def _record(feature: dict[str, Any], file_date: dt.date) -> Record | str:
     geometry = feature.get("geometry") or {}
     lat, lon = parse_coordinate_any(geometry.get("y"), geometry.get("x"), state="MO")
     detail = f"Case {case.lower()}." if case else ""
+    note = clean(a.get("PubInfo"))
     if code in ADVISORY_CODES:
         tier, date, end = "other_advisory", observed, dissipated
     elif code == "dissap" and dissipated is not None:
@@ -140,6 +150,7 @@ def _record(feature: dict[str, Any], file_date: dt.date) -> Record | str:
         detail=detail,
         stamp=None,
         end_kind="dissipated",
+        public_info=note,
     )
 
 
@@ -188,3 +199,61 @@ def fetch_cases(client: httpx.Client) -> bytes:
     if response.status_code != 200:
         raise fetch.FetchError(f"Missouri layer returned HTTP {response.status_code}")
     return response.content
+
+
+def _headline_cases(water: dict[str, Any]) -> list[dict[str, Any]]:
+    """The water's cases its headline comes from: an advisory, at the
+    headline's level, observed on the headline's date, with no end."""
+    status = water["status"]
+    if water["state"] != "MO" or status["kind"] != "advisory":
+        return []
+    return [
+        r
+        for r in water["records"]
+        if r["source"] == MO_DNR_HAB.id
+        and r["tier"] == "other_advisory"
+        and r["level"] == status["level"]
+        and r["date"] == status["posted"]
+        and r["end_date"] is None
+        and r["removed_from_source"] is None
+    ]
+
+
+def closed_note(water: dict[str, Any]) -> str | None:
+    """For the status box: the department closed the headline's case without
+    recording a dissipation date (batch LN-C). It ends nothing (0010)."""
+    cases = _headline_cases(water)
+    closed = sum(r["detail"].startswith(CLOSED_DETAIL) for r in cases)
+    if not closed:
+        return None
+    if len(cases) == 1:
+        return "The department marked this case closed without a dissipation date."
+    if closed == len(cases):
+        return (
+            f"The department marked these {closed} cases closed without a "
+            "dissipation date."
+        )
+    return (
+        f"The department marked {closed} of these {len(cases)} cases closed "
+        "without a dissipation date."
+    )
+
+
+class DepartmentNote(TypedDict):
+    date: str
+    level: str
+    text: str
+
+
+def department_notes(water: dict[str, Any]) -> list[DepartmentNote]:
+    """Each case's PubInfo, verbatim, newest case first (0023). Cases with
+    no note, or only the department's placeholder, are left out."""
+    if water["state"] != "MO":
+        return []
+    return [
+        {"date": r["date"], "level": r["level"], "text": r["public_info"]}
+        for r in water["records"]
+        if r.get("public_info")
+        and r["public_info"].rstrip(".").casefold() != NO_NOTE
+        and r["removed_from_source"] is None
+    ]

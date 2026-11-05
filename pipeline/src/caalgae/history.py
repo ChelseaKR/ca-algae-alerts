@@ -56,6 +56,8 @@ _RECORD_FIELDS = (
 _OPTIONAL_FIELDS = {
     "record_kind": "official_advisory",
     "end_kind": "no_advisory_record",
+    # Added 2026-11-05 (decision 0023); older histories have none.
+    "public_info": "",
 }
 
 

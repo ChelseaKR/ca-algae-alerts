@@ -30,6 +30,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Missouri water pages quote the Missouri Department of Natural Resources'
+  own public note on each case, word for word and credited, under "In the
+  department's words". When the department closed the headline's case
+  without a dissipation date, the status box now says so. A note never
+  changes a status (docs/DECISIONS.md 0023).
 - Advisory guidance follows the state's posted signs more closely, on the
   site and in the app alike. Every California level now says not to let pets
   or other animals go into the water, not only not to drink it, and that

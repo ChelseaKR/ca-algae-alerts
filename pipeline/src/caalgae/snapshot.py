@@ -83,6 +83,7 @@ def _record_json(entry: hist.HistoryEntry, spot: str) -> dict[str, Any]:
         "source": r.source,
         "record_kind": r.record_kind,
         "removed_from_source": entry.removed_from_source,
+        **({"public_info": r.public_info} if r.public_info else {}),
     }
 
 

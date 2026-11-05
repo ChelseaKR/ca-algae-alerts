@@ -28,7 +28,7 @@ from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import indexnow, where_to_check, wording
+from caalgae import indexnow, missouri, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
 from caalgae.water_names import display_water
@@ -711,12 +711,14 @@ class SiteBuilder:
             status_notes=[
                 note
                 for note in (
+                    missouri.closed_note(water),
                     wording.newer_posting(water),
                     wording.older_higher(water),
                     wording.age_note(water, file_date),
                 )
                 if note
             ],
+            department_notes=missouri.department_notes(water),
             sites=sites,
             county_links=[(c, slugify(c)) for c in water["counties"]],
             same_name_nearby=[

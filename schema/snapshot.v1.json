@@ -487,6 +487,11 @@
                 },
                 "record_kind": {
                   "const": "official_advisory"
+                },
+                "public_info": {
+                  "description": "The publisher's own public note on this record, verbatim (Missouri's PubInfo, DECISIONS 0023). Absent when there is none.",
+                  "type": "string",
+                  "minLength": 1
                 }
               }
             }

@@ -118,6 +118,9 @@ class Record:
     # What an explicit no-advisory record means at this source: the state's
     # "None" in California, a dissipated bloom in Missouri.
     end_kind: str = "no_advisory_record"
+    # The publisher's own public note on the record, verbatim (Missouri's
+    # PubInfo, decision 0023). Blank when there is none. It decides nothing.
+    public_info: str = ""
 
     @property
     def is_advisory(self) -> bool:

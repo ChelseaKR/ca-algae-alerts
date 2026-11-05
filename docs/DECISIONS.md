@@ -187,6 +187,7 @@ The model, per source (`sources.py`) and per record:
   and never end an advisory. The schema and the app's decoder refuse
   anything else.
 - Only explicit non-personal fields are requested from any source.
+  (Missouri's `PubInfo`, the department's public note, is read since 0023.)
 
 Missouri, build decisions an owner should confirm (NOTES.md):
 
@@ -578,3 +579,43 @@ malformed answer stopped the whole run, California included. Now:
 
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
+
+## 0023 — Missouri pages quote the department's own public note, and say when it closed a case (owner, 2026-11-05)
+
+Found in the 2026-11-05 quality audit: 42 of the 47 Missouri waters shown
+with an advisory are cases the department has marked Closed without a
+dissipation date, and the page said so only in the history table's Notes
+column. The layer's `PubInfo` field carries the department's own public
+advice ("People and pets should avoid contact with the water for at least
+14 days", Hagen Lake and Briars pond), and none of it reached the page.
+
+- **PubInfo is read** (owner, D7b). It is the department's public text,
+  not a reporter's, so 0010's "explicit non-personal fields only" is kept;
+  the agency, owner, reporter and description fields are still never
+  requested. It is requested as an optional field: a layer without it still
+  reads, since losing a note is not the layer changing shape (0019).
+- **It is shown verbatim, quoted and credited.** A Missouri water page with
+  a note gets "In the department's words": each case's note, newest first,
+  with its record date and level, inside quotation marks, and "Quoted as the
+  Missouri Department of Natural Resources published it on its HAB reports
+  map", linked. Only spacing at the ends is trimmed. Blank notes and the
+  department's placeholder "No additional information" are left out, so an
+  absence never reads as a note.
+- **A note decides nothing.** A note that says a bloom dissipated does not
+  end an advisory; only the dissipation date does (0010, 0002). The page
+  says "A note does not change the status above." Some notes say that what
+  was reported is "not harmful" or "harmless"; they are the department's
+  words about that report, in quotation marks, and the site still never
+  calls a water safe in its own words.
+- **The status box names a closed case** (batch LN-C). When the headline's
+  case is marked Closed with no dissipation date, the box says "The
+  department marked this case closed without a dissipation date." With
+  several cases on the headline's date it counts them. It ends nothing.
+- The snapshot's records carry `public_info` only when there is a note
+  (an optional schema field; the app's decoder ignores it for now).
+
+Measured on the department's layer read 2026-11-05 (283 cases): 103 of
+225 Missouri waters get a quoted note (115 notes), and 42 of 47 waters
+with an advisory get the closed-case line.
+
+Tests: `pipeline/tests/test_missouri_pubinfo.py`.
