@@ -123,6 +123,14 @@ class Record:
     def is_advisory(self) -> bool:
         return self.tier in ADVISORY_TIERS
 
+    @property
+    def is_unrecognized(self) -> bool:
+        """A level the state wrote that this pipeline has no reading for
+        (DECISIONS 0027). Unlike a blank, it may be a new advisory spelling,
+        so it decides its spot as "undetermined": an older "None" never
+        shows through it."""
+        return self.tier == "unknown" and bool(self.level)
+
     def sort_key(self) -> tuple[dt.date, dt.datetime, int]:
         return (self.date, self.stamp or dt.datetime.min, _int(self.id))
 
