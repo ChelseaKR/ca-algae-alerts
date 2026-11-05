@@ -66,7 +66,7 @@ def test_every_safety_string_on_main_is_still_a_draft() -> None:
     # on main may claim otherwise.
     cat = i18n.catalog()
     safety = {k: m for k, m in cat.status.items() if m.get("safety")}
-    assert len(safety) == 22
+    assert len(safety) == 33
     assert {m["status"] for m in safety.values()} == {"draft"}
     assert all(m["status"] in ("draft", "same") for m in cat.status.values())
 
@@ -261,10 +261,10 @@ def test_gate_passes_on_main_and_fails_when_switched_on(
 ) -> None:
     assert i18n.main([]) == 0
     out = capsys.readouterr().out
-    assert "58 Spanish strings (0 state, 0 reviewed, 1 same, 57 draft)" in out
-    assert "22 safety drafts; Spanish off; 0 problems" in out
+    assert "77 Spanish strings (0 state, 0 reviewed, 1 same, 76 draft)" in out
+    assert "33 safety drafts; Spanish off; 0 problems" in out
     assert i18n.main(["--enabled"]) == 1
-    assert "26 problems" in capsys.readouterr().out
+    assert "37 problems" in capsys.readouterr().out
 
 
 def test_gate_prints_a_hash(capsys: pytest.CaptureFixture[str]) -> None:
