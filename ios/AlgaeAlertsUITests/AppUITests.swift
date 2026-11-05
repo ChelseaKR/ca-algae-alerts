@@ -93,6 +93,8 @@ final class AccessibilityAuditUITests: XCTestCase {
         XCTAssertTrue(row.exists, "no row for Lake Temescal:\n\(app.debugDescription)")
         row.tap()
         XCTAssertTrue(app.buttons["favorite-button"].waitForExistence(timeout: 10), "the lake screen should open")
+        // Let the push finish; mid-animation the screen is dimmed.
+        Thread.sleep(forTimeInterval: 2)
         // The full name is in the content, not only in a title that can truncate.
         XCTAssertEqual(app.staticTexts["lake-name"].label, "Lake Temescal")
         XCTAssertTrue(app.staticTexts["lake-name"].isHittable, "the name should show at the top of the lake screen")
@@ -100,6 +102,7 @@ final class AccessibilityAuditUITests: XCTestCase {
         // At AX5 the history is several screens down; audit each screenful.
         for page in 1...(isAX5 ? 6 : 2) {
             app.collectionViews.firstMatch.swipeUp()
+            Thread.sleep(forTimeInterval: 1)
             try audit("Lake detail, scrolled \(page)", app: app, label: label, isAX5: isAX5)
         }
 
@@ -170,7 +173,8 @@ final class AccessibilityAuditUITests: XCTestCase {
         var topBar: CGRect?
         let navigationBar = app.navigationBars.firstMatch
         if navigationBar.exists {
-            topBar = CGRect(x: 0, y: 0, width: app.frame.width, height: navigationBar.frame.maxY + 16)
+            // Plus the scroll-edge fade iOS draws under the bar.
+            topBar = CGRect(x: 0, y: 0, width: app.frame.width, height: navigationBar.frame.maxY + 44)
         }
 
         var lines: [String] = []

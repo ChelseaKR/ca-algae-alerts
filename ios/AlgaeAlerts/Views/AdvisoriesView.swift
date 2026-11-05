@@ -54,6 +54,9 @@ struct AdvisoriesView: View {
                         ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
                     }
                     .pickerStyle(.inline)
+                    // The rows say what they are; a "Show" row above them
+                    // only takes a screenful of space. VoiceOver keeps it.
+                    .labelsHidden()
                 } else {
                     Picker("Show", selection: $scope) {
                         ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }

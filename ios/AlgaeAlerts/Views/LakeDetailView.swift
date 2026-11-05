@@ -4,7 +4,6 @@ import AlgaeCore
 struct LakeDetailView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(AppRouter.self) private var router
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     let id: Waterbody.ID
 
     var body: some View {
@@ -18,8 +17,9 @@ struct LakeDetailView: View {
     private func content(_ water: Waterbody) -> some View {
         List {
             Section {
-                // The name, in full: a large navigation title truncates a
-                // long name instead of wrapping it.
+                // The name, in full and wrapped: a large navigation title
+                // truncates a long name, so the bar shows it small and the
+                // content shows it large.
                 Text(water.name)
                     .font(.title2.bold())
                     .accessibilityAddTraits(.isHeader)
@@ -110,7 +110,7 @@ struct LakeDetailView: View {
             }
         }
         .navigationTitle(water.name)
-        .navigationBarTitleDisplayMode(dynamicTypeSize.isAccessibilitySize ? .inline : .large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
