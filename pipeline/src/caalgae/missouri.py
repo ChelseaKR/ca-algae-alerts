@@ -28,7 +28,7 @@ an explicit field. A case marked closed without one is not an end: it stays
 "last posted <date>, no all-clear recorded". A case with no observation
 date cannot be placed in time and is quarantined.
 
-Fail closed (docs/DECISIONS.md 0014). The department says it plans to retire
+Fail closed (docs/DECISIONS.md 0019). The department says it plans to retire
 this layer. An answer that shows the layer is gone or no longer has the
 shape read here (HTTP 404 or 410, an ArcGIS error, missing fields, too few
 rows, no usable case) raises ``LayerUnavailable``, and the run then leaves

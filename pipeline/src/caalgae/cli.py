@@ -32,7 +32,7 @@ DEFAULT_HISTORY = Path(__file__).resolve().parents[2] / "data" / "history.json"
 DEFAULT_CYAN = Path(__file__).resolve().parents[2] / "data" / "cyan.json"
 STALE_AFTER_DAYS = 7
 # Missouri after a passing failure: shown with its read date for this many
-# days after the last good read, then hidden (docs/DECISIONS.md 0014).
+# days after the last good read, then hidden (docs/DECISIONS.md 0019).
 MO_STALE_AFTER_DAYS = 2
 
 
@@ -129,7 +129,7 @@ def _missouri(
     args: argparse.Namespace, history: hist.History, run_date: dt.date, now: dt.datetime
 ) -> tuple[hist.History, Counter[str], bool]:
     """The second state. A failure here never stops California
-    (docs/DECISIONS.md 0010), and it fails closed (0014): the third value
+    (docs/DECISIONS.md 0010), and it fails closed (0019): the third value
     says whether Missouri is shown at all.
 
     - A good read: shown.

@@ -26,8 +26,9 @@ send Global Privacy Control or Do Not Track, the tag loads `gtag.js`, which
 measured 154,391 B over brotli on 2026-09-17 on Trout Truck. The gate run blocks Google
 Analytics, so CI never sends page views to the real property. The
 first-party budget is therefore what's left of the 204,800 B, rounded down
-with some headroom for `gtag.js` growing: 45,056 B. Today the site loads
-no script at all: the GA4 guard is added only when a measurement ID is set.
+with some headroom for `gtag.js` growing: 45,056 B. Since 2026-10-31 every
+page carries the inline GA4 guard (DECISIONS 0014); it is not a script file,
+so it does not count as script transfer, and the gate run blocks `gtag.js`.
 
 **The baseline's `js_kb_gzip` is 0.** The regression rule allows 10% worse
 than the baseline, and 10% of 0 is 0. So a pull request that adds any

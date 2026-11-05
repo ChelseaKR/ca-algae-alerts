@@ -1,4 +1,4 @@
-"""Missouri fails closed (docs/DECISIONS.md 0014): when the department's layer
+"""Missouri fails closed (docs/DECISIONS.md 0019): when the department's layer
 is gone, changed or empty, Missouri leaves the site instead of showing its
 last records as current. California is never held back by it. Also: the
 department's own "general purposes only" caveat, verbatim, beside its data."""

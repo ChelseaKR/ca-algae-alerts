@@ -81,19 +81,53 @@ def test_water_takes_any_open_advisory_and_the_highest_tier(
 ) -> None:
     lifted = st.site_status(_site(traps, "401"), RUN_DATE)
     open_ = st.site_status(_site(traps, "402"), RUN_DATE)
-    w = st.water_status([lifted, open_])
+    w = st.water_status([lifted, open_], RUN_DATE)
     assert w.kind == st.ADVISORY and w.tier == "other_advisory"
     assert w.sites_with_advisory == 1
     danger = dataclasses.replace(open_, tier="danger", posted=dt.date(2026, 1, 1))
-    top = st.water_status([open_, danger])
+    top = st.water_status([open_, danger], RUN_DATE)
     assert top.tier == "danger"
-    assert top.posted == dt.date(2026, 9, 25)  # newest posting across sites
+    # The date is the Danger's own, not the newer lower posting's (0017).
+    assert open_.posted == dt.date(2026, 9, 25)
+    assert top.posted == dt.date(2026, 1, 1)
+
+
+def test_water_headline_date_belongs_to_its_level() -> None:
+    """Lake Elsinore, 2026-11-03: a Danger last posted 2020-09-03 at one spot
+    and Cautions posted 2026-09-24 at others read "Danger, posted Sep 24,
+    2026". The headline's level and date must come from the same posting."""
+    old_danger = st.Status(
+        kind=st.ADVISORY,
+        tier="danger",
+        level="Danger",
+        posted=dt.date(2020, 9, 3),
+        sites_with_advisory=1,
+    )
+    new_caution = st.Status(
+        kind=st.ADVISORY,
+        tier="caution",
+        level="Caution",
+        posted=dt.date(2026, 9, 24),
+        sites_with_advisory=1,
+    )
+    newer_danger = dataclasses.replace(old_danger, posted=dt.date(2026, 3, 10))
+    w = st.water_status([new_caution, old_danger, newer_danger], dt.date(2026, 11, 3))
+    assert (w.tier, w.level, w.posted) == ("danger", "Danger", dt.date(2026, 3, 10))
+    assert w.sites_with_advisory == 3
+    # Negative control: the old rule (newest date across every site) gives
+    # the false pairing, so this test can fail.
+    mixed = max(s.posted for s in (new_caution, old_danger, newer_danger) if s.posted)
+    assert (w.tier, mixed) == ("danger", dt.date(2026, 9, 24))
+    assert w.posted != mixed
 
 
 def test_water_lifted_only_when_no_site_is_open(traps: normalize.Normalized) -> None:
-    w = st.water_status([st.site_status(_site(traps, "201"), RUN_DATE)])
+    w = st.water_status([st.site_status(_site(traps, "201"), RUN_DATE)], RUN_DATE)
     assert w.kind == st.NO_ADVISORY_RECORDED
-    assert st.water_status([st.Status(kind=st.UNDETERMINED)]).kind == st.UNDETERMINED
+    assert (
+        st.water_status([st.Status(kind=st.UNDETERMINED)], RUN_DATE).kind
+        == st.UNDETERMINED
+    )
 
 
 # --- negative controls -----------------------------------------------------
@@ -133,3 +167,48 @@ def test_negative_control_na_counted_as_deciding_would_be_caught(
     # With NA deciding, the Warning is no longer what the site reports, so
     # test_na_record_does_not_lift would go red.
     assert s.tier != "warning"
+
+
+# --- the 12-month headline rule (owner, 0017) ------------------------------
+
+
+def _adv(tier: str, day: str) -> st.Status:
+    return st.Status(
+        kind=st.ADVISORY,
+        tier=tier,
+        level=tier.capitalize(),
+        posted=dt.date.fromisoformat(day),
+        sites_with_advisory=1,
+    )
+
+
+def test_window_start_is_twelve_calendar_months_back() -> None:
+    assert st.window_start(dt.date(2026, 11, 3)) == dt.date(2025, 11, 3)
+    assert st.window_start(dt.date(2028, 2, 29)) == dt.date(2027, 2, 28)
+
+
+def test_highest_level_inside_the_window_leads() -> None:
+    w = st.water_status(
+        [_adv("caution", "2026-09-24"), _adv("warning", "2025-11-03")],
+        dt.date(2026, 11, 3),
+    )
+    assert (w.tier, w.posted) == ("warning", dt.date(2025, 11, 3))  # on the edge
+    w = st.water_status(
+        [_adv("caution", "2026-09-24"), _adv("warning", "2025-11-02")],
+        dt.date(2026, 11, 3),
+    )
+    assert (w.tier, w.posted) == ("caution", dt.date(2026, 9, 24))  # a day out
+
+
+def test_nothing_in_the_window_leads_with_the_newest_posting() -> None:
+    w = st.water_status(
+        [_adv("danger", "2017-07-28"), _adv("caution", "2021-06-30")],
+        dt.date(2026, 11, 3),
+    )
+    assert (w.tier, w.posted) == ("caution", dt.date(2021, 6, 30))
+    assert w.sites_with_advisory == 2
+    tie = st.water_status(
+        [_adv("caution", "2021-06-30"), _adv("danger", "2021-06-30")],
+        dt.date(2026, 11, 3),
+    )
+    assert tie.tier == "danger"
