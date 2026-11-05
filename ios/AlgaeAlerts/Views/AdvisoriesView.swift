@@ -6,6 +6,7 @@ import AlgaeCore
 struct AdvisoriesView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(AppRouter.self) private var router
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var query = ""
     @State private var scope: Scope = .advisories
     @State private var path: [Waterbody.ID] = []
@@ -22,10 +23,12 @@ struct AdvisoriesView: View {
                 if let snapshot = env.snapshot {
                     list(snapshot)
                 } else {
-                    ContentUnavailableView("No data yet", systemImage: "drop", description: Text("Pull to refresh to load the state's advisory records."))
+                    EmptyState(title: "No data yet", systemImage: "drop", message: "Pull to refresh to load the state's advisory records.")
                 }
             }
             .navigationTitle("Algae advisories")
+            // A large title at accessibility sizes reads "Algae advis...".
+            .navigationBarTitleDisplayMode(dynamicTypeSize.isAccessibilitySize ? .inline : .large)
             .navigationDestination(for: Waterbody.ID.self) { id in LakeDetailView(id: id) }
             .searchable(text: $query, prompt: "Lake, river or county")
             .refreshable { await env.refreshNow() }
@@ -43,10 +46,20 @@ struct AdvisoriesView: View {
         let matches = WaterSearch.filter(snapshot.waterbodies, query: query)
         List {
             Section {
-                Picker("Show", selection: $scope) {
-                    ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
+                // Segment text stays small at accessibility sizes and
+                // truncates when it can't fit; there the choice is a list of
+                // rows, which grow and wrap.
+                if dynamicTypeSize.isAccessibilitySize {
+                    Picker("Show", selection: $scope) {
+                        ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.inline)
+                } else {
+                    Picker("Show", selection: $scope) {
+                        ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
                 }
-                .pickerStyle(.segmented)
                 DataFreshnessView(snapshot: snapshot)
             }
             switch scope {

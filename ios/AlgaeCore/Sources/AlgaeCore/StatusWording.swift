@@ -50,6 +50,12 @@ public enum StatusWording {
         }
     }
 
+    /// `shortLine` for VoiceOver: the " · " separator becomes a comma, so it
+    /// isn't read aloud as "dot".
+    public static func spokenShortLine(_ status: Status) -> String {
+        shortLine(status).replacingOccurrences(of: " · ", with: ", ")
+    }
+
     public static func caveat(_ status: Status) -> String {
         if status.kind == .advisory {
             return "Reporting is voluntary, so the state may not have recorded an end even if conditions changed. Check posted signs and the official map."
