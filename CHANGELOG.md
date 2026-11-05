@@ -7,6 +7,10 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A water page that matches a Trout Truck water links that page, labeled as
+  Chelsea Kelly-Reif's other free site, with no planting data copied. 66
+  committed pairs in `pipeline/data/trout_truck_pairs.json`; a pair drops when
+  either page is gone. DECISIONS 0026.
 - A plain-language terms of use page at /terms/, linked from every page's
   footer next to privacy and listed in the sitemap. It names who runs the
   site, says in bold that the site is not a safety determination, tells

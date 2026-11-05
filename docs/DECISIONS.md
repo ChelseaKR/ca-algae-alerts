@@ -578,3 +578,43 @@ malformed answer stopped the whole run, California included. Now:
 
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
+
+## 0026 — A water page links the same water on Trout Truck, labeled as Chelsea's other site (owner, 2026-11-05)
+
+Chelsea approved the first cross-site link in
+`growth/cross-site-links-plan-2026-11-05.md`: a California water page links
+the same water's page on Trout Truck (trouttruck.com), her other free site.
+Anglers and families planning a trip to a planted lake check algae, and when
+the state last planted is their next question. Merge on or after 2026-11-26,
+after the dated-title read (0018), so these pages do not change mid-window.
+
+- **A committed list, checked in review.** The pairs live in
+  `pipeline/data/trout_truck_pairs.json`, matched once from both repos'
+  committed snapshots (Lake Notice 2026-11-04, Trout Truck @de884ae
+  2026-10-29): the same name key (`name_key`), a shared county, and points
+  within 6 miles (tier A) or no Trout Truck point (tier B). 66 Lake Notice
+  pages to 60 Trout Truck pages. There is no fuzzy match at build time. Thirteen
+  rows a person must look at (centers far apart, Lake Notice county differs,
+  Prosser Reservoir with no county) sit in `needs_review`, which the build
+  never reads; moving one into `pairs` turns it on.
+- **Dropped when either page is gone.** A pair renders only while its Lake
+  Notice id is in the snapshot and its Trout Truck path is in
+  `pipeline/data/trout_truck_pages.json`. Trout Truck commits no sitemap, so
+  that list is read from its committed app snapshot by
+  `scripts/trout_truck_pages.py` (read only). A malformed or doubled row stops
+  the build.
+- **Labeled plainly.** "Trout Truck, another free site by Chelsea Kelly-Reif,
+  who makes Lake Notice." Never worded as an independent recommendation.
+- **Nothing copied.** The section names the water and links the page. No
+  planting week, date, count or status from Trout Truck appears here: it
+  would go stale on Trout Truck's schedule, and a missing one could render as
+  a value. Stream pairs add that the algae records may be on another stretch.
+- **Only where there is a match.** One section after "Matching names nearby",
+  on paired water pages only. No footer, home, county or sitewide link.
+- **Plain links.** No affiliate tag, no tracking parameter, no
+  `rel="sponsored"` (nothing is paid). GA4's enhanced measurement (0014)
+  already counts the outbound click; no custom event is added. The Amazon tag
+  (0013) is unchanged.
+
+Tests: `pipeline/tests/test_trout_truck_links.py`, with a removed Trout Truck
+page as the negative control.
