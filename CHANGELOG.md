@@ -24,6 +24,21 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Advisory guidance follows the state's posted signs more closely, on the
+  site and in the app alike. Every California level now says not to let pets
+  or other animals go into the water, not only not to drink it, and that
+  boiling or filtering does not make the water safe; Caution and Warning add
+  the state's fish-cleaning line and Danger its "do not eat fish or
+  shellfish." Toxic algal mat signs get the mat sign's own guidance for dogs
+  and children, and Missouri gets a summary of the DNR's own guidance. A new
+  test checks that the app's guidance strings match the site's word for word.
+- The home page, /dogs/ and /where-to-check/ no longer say a water that is
+  not listed has no advisory. They say the site lists only waters in the
+  state's data and a water not listed may still have one.
+- County and state lists put the newest records first within advisories and
+  non-advisories, say how old any record more than a year old is, and end
+  with a line that older records are not current conditions.
+
 - County page titles say how many of the county's waters have an advisory as
   their latest state record ("Riverside County lake algae advisories: 25 of
   40 waters"), and the description and first line open with the same count,

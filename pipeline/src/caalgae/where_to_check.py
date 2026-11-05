@@ -183,9 +183,10 @@ SOURCES: tuple[Source, ...] = (
         does_not_cover=(
             "Lake Notice is not the source of any record and takes no water "
             "samples. It reads the state's file about once a day, so it can "
-            "trail the state by about a day. A water that is not listed has "
-            "no advisory on file, which is not the same as being free of "
-            "algae, because most waters are never tested. The website sends "
+            "trail the state by about a day. It lists only waters in the "
+            "state's data, and a water not listed may still have an advisory: "
+            "check the state's map and posted signs. Most waters are never "
+            "tested. The website sends "
             "no alerts. It is independent and is not affiliated with or "
             "reviewed by any agency."
         ),
