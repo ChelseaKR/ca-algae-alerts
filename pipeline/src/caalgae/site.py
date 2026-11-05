@@ -539,9 +539,12 @@ def winter_record(
     if not records:
         return None
     first = min(r["date"] for r in records)
-    winter = [r for r in records if winter_of(dt.date.fromisoformat(r["date"])) is not None]
+    winter = [
+        r for r in records if winter_of(dt.date.fromisoformat(r["date"])) is not None
+    ]
     advisories = [r for r in winter if r["tier"] in TIER_RANK]
     if advisories:
+
         def key(r: dict[str, Any]) -> tuple[str, int]:
             return (r["date"], TIER_RANK[r["tier"]])
 

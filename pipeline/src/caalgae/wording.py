@@ -638,7 +638,9 @@ def dogs_page_winter(months: dict[str, Any] | None) -> str | None:
     """The /dogs/ "In winter" sentence from the state's advisory counts per
     calendar month, or None when the file has no winter advisory at all
     (then the page claims nothing about winter)."""
-    if not months or not any(months[m] for m in ("november", "december", "january", "february")):
+    if not months or not any(
+        months[m] for m in ("november", "december", "january", "february")
+    ):
         return None
     span = (
         DOGS_PAGE_EVERY_MONTH

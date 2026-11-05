@@ -155,7 +155,11 @@ def test_castaic_counts_its_own_winter_advisories_by_winter() -> None:
     got = site_mod.winter_record(w, RUN, months_of(snap))
     assert got is not None and got["kind"] == "advisories"
     assert got["count"] == 4
-    assert got["latest"] == {"date": "2026-02-19", "tier": "caution", "level": "Caution"}
+    assert got["latest"] == {
+        "date": "2026-02-19",
+        "tier": "caution",
+        "level": "Caution",
+    }
     assert got["last_winter"] == {
         "label": "November 2025 through February 2026",
         "count": 3,
@@ -209,7 +213,9 @@ def test_negative_control_a_winter_none_is_not_counted_as_an_advisory() -> None:
     """Sabotage: the 2026-01-05 "None" made a Danger. The count and last
     winter must change, or the test above proves nothing."""
     sabotaged = [
-        dataclasses.replace(r, level="Danger", tier="danger", explicit_no_advisory=False)
+        dataclasses.replace(
+            r, level="Danger", tier="danger", explicit_no_advisory=False
+        )
         if r.id == "13297"
         else r
         for r in elsinore()
@@ -228,7 +234,9 @@ def test_withdrawn_records_are_not_counted() -> None:
     withdrawn = {
         **w,
         "records": [
-            {**r, "removed_from_source": "2026-03-01"} if r["date"] == "2024-12-02" else r
+            {**r, "removed_from_source": "2026-03-01"}
+            if r["date"] == "2024-12-02"
+            else r
             for r in w["records"]
         ],
     }
@@ -255,7 +263,12 @@ def test_state_months_come_from_the_file() -> None:
     assert adv["months_with"] == months["months_with"] - 1
     # Control: one more December record must move the count, so it is not
     # a number written into the code.
-    more = snap_of([*castaic(), rec("77", "Castaic Lake", "Los Angeles", "2023-12-01", "Caution", 9)])
+    more = snap_of(
+        [
+            *castaic(),
+            rec("77", "Castaic Lake", "Los Angeles", "2023-12-01", "Caution", 9),
+        ]
+    )
     again = months_of(more)
     assert again is not None and again["december"] == 3
 
@@ -350,7 +363,13 @@ def test_built_pages_show_each_waters_winter_record(tmp_path: Path) -> None:
     assert not LEVEL_WORDS.search(s), s
     assert "no advisory" not in s.casefold()
     assert not re.search(r"\b0\b", s), s
-    assert "<table" not in (tmp_path / "water" / summer_w["id"] / "index.html").read_text().split('class="winter-records"')[1].split("</section>")[0]
+    assert (
+        "<table"
+        not in (tmp_path / "water" / summer_w["id"] / "index.html")
+        .read_text()
+        .split('class="winter-records"')[1]
+        .split("</section>")[0]
+    )
 
     # Run date Nov 3 is in winter: each dogs section carries its winter line.
     assert wording.DOGS_WINTER_POSTED in dogs_section(tmp_path, castaic_w)
@@ -422,13 +441,21 @@ def test_the_dogs_page_says_nothing_of_winter_without_a_winter_advisory(
     assert "In winter" not in raw
     # Control: with Castaic's winter advisories the line is there.
     with_winter = tmp_path / "with"
-    site_mod.build_site(snap_of(summer_lake() + castaic()), with_winter, ga4_measurement_id="")
-    assert "In winter" in (with_winter / "dogs" / "index.html").read_text(encoding="utf-8")
+    site_mod.build_site(
+        snap_of(summer_lake() + castaic()), with_winter, ga4_measurement_id=""
+    )
+    assert "In winter" in (with_winter / "dogs" / "index.html").read_text(
+        encoding="utf-8"
+    )
 
 
-def test_history_only_elsinore_is_unchanged_by_the_section_order(tmp_path: Path) -> None:
+def test_history_only_elsinore_is_unchanged_by_the_section_order(
+    tmp_path: Path,
+) -> None:
     """The section follows "Advisory history" and precedes "Source"."""
     snap = snap_of(history_only())
     site_mod.build_site(snap, tmp_path, ga4_measurement_id="")
     raw = (tmp_path / "water" / snap["waterbodies"][0]["id"] / "index.html").read_text()
-    assert raw.index('id="history"') < raw.index('id="winter"') < raw.index('id="source"')
+    assert (
+        raw.index('id="history"') < raw.index('id="winter"') < raw.index('id="source"')
+    )
