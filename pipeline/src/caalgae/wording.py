@@ -33,28 +33,89 @@ TIER_LABEL = {
     "caution": "Caution",
 }
 
-# Who each level asks to take care, summarized from the posted-sign levels
-# of the California Voluntary Guidance. The sign at the water and the
-# state's own guidance govern; the about page says so.
+# Who each level asks to take care, paraphrased from the state's own
+# posted-sign wording. The sign at the water and the state's own guidance
+# govern; the about page says so. Sources, read 2026-11-05:
+#
+# California HAB program, "Posting Signs" (posted-sign levels of the
+# California Voluntary Guidance),
+# https://mywaterquality.ca.gov/habs/resources/signage.html
+#   CAUTION: "Do not let pets and other animals go into or drink the water,
+#     or eat scum on the shore." "Keep children away from algae in the water
+#     and on the shore." "Do not drink the water or use it for cooking."
+#     "For fish caught here, throw away guts and clean fillets with tap water
+#     or bottled water before cooking." "Do not eat shellfish from this water."
+#   WARNING: "No swimming." "Do not let pets and other animals go into or
+#     drink the water, or eat scum on the shore." "Stay away from scum, and
+#     cloudy or discolored water." "Do not use this water for drinking or
+#     cooking. Boiling or filtering will not make the water safe." (and the
+#     same fish and shellfish lines as CAUTION)
+#   DANGER: "Stay out of the water until further notice." "Do not let pets
+#     and other animals drink or go into the water, or go near the scum."
+#     "Do not eat fish or shellfish from this water." "Do not use this water
+#     for drinking or cooking. Boiling or filtering will not make the water
+#     safe."
+#
+# California HAB program, toxic algal mat signs,
+# https://mywaterquality.ca.gov/habs/docs/toxic-algal-mat-signs.pdf
+#   "Mats can be attached to the bottom, detached and floating, or washed up
+#   on shore." "Do NOT let children or adults touch, eat, or swallow any
+#   algal mats." "Do NOT let dogs eat algal mats or drink from the water."
+#   "Call your doctor or veterinarian if you or your pet get sick after
+#   contacting or ingesting algae."
+#
+# The drinking and cooking sentence is on every level, not only Warning and
+# Danger: no level of advisory makes the water fit to drink.
+WATER_USE = (
+    "Do not drink this water or cook with it; boiling or filtering does not "
+    "make it safe."
+)
+_FISH = (
+    "For fish caught here, throw away the guts and clean fillets with tap or "
+    "bottled water before cooking. Do not eat shellfish from this water."
+)
+
 LEVEL_GUIDANCE = {
     "caution": (
         "Algae that can make toxins may be present. Keep people, children "
-        "and pets away from algae and scum, and do not let pets drink the water."
+        "and pets away from algae and scum in the water and on the shore. Do "
+        "not let pets or other animals go into or drink the water, or eat "
+        f"scum on the shore. {WATER_USE} {_FISH}"
     ),
     "warning": (
         "Toxins may be at levels that can harm people and animals. Do not "
-        "swim or let children or pets in the water, and stay away from scum."
+        "swim or let children in the water, and stay away from scum and "
+        "cloudy or discolored water. Do not let pets or other animals go into "
+        f"or drink the water, or eat scum on the shore. {WATER_USE} {_FISH}"
     ),
     "danger": (
         "Toxins may be at levels that can seriously harm people and animals. "
-        "Stay out of the water and keep children and pets away from the "
-        "water and the shore."
+        "Stay out of the water and keep children away from the water and the "
+        "shore. Do not let pets or other animals go into or drink the water, "
+        f"or go near the scum. {WATER_USE} Do not eat fish or shellfish from "
+        "this water."
+    ),
+    "algal_mat": (
+        "Toxic algal mats may be present. Mats can be attached to the bottom, "
+        "floating, or washed up on shore. Do not let dogs eat algal mats or "
+        "drink from the water, and do not let children or adults touch, eat "
+        f"or swallow any algal mats. {WATER_USE} Call a doctor or "
+        "veterinarian if you or your pet get sick after contact with algae."
     ),
     "other_advisory": (
         "The state recorded an advisory of a type outside the Caution, "
-        "Warning and Danger levels. Read the sign posted at the water."
+        "Warning and Danger levels. Read the sign posted at the water. "
+        f"{WATER_USE}"
     ),
 }
+
+
+def is_algal_mat(level: str | None) -> bool:
+    """The state's two toxic algal mat signs ("Algal mat alert sign",
+    "Algal mat general awareness sign") share one tier with other
+    non-standard levels; their guidance comes from the mat signs."""
+    return "algal mat" in (level or "").casefold()
+
 
 # For a state whose advisory levels are not California's Caution, Warning
 # and Danger: no level-by-level summary is invented for them.
@@ -63,6 +124,27 @@ GENERIC_GUIDANCE = (
     "posted at the water, and keep people, children and pets out of discolored "
     "or scummy water."
 )
+
+# Missouri's advisories have no levels, so one summary of the Department of
+# Natural Resources' own guidance, read 2026-11-05:
+# https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs/animal-health
+#   "Do not let pets drink or play in the water or roll in or eat the algae,
+#   even if dried."
+# https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs/human-health
+#   "we recommend you do not eat fish from affected areas for two weeks after
+#   the bloom visually dissipates." "remove all fat, skin and organs before
+#   cooking" "Always cook fish thoroughly."
+# The department's pages do not mention boiling or filtering; the WATER_USE
+# sentence is California's wording and holds for the same toxins.
+STATE_GUIDANCE = {
+    "MO": (
+        f"{GENERIC_GUIDANCE} Do not let pets drink or play in the water or roll "
+        f"in or eat the algae, even if dried. {WATER_USE} The department advises "
+        "not eating fish from the area for two weeks after the bloom visually "
+        "dissipates; if you do, remove all fat, skin and organs and cook the "
+        "fish thoroughly."
+    ),
+}
 
 SATELLITE_EXPLAINER = (
     "This is a satellite estimate from the U.S. EPA's Cyanobacteria Assessment "
@@ -214,8 +296,10 @@ def guidance_for(water: dict[str, Any]) -> str | None:
     if not tier:
         return None
     if water["state"] == "CA":
+        if tier == "other_advisory" and is_algal_mat(water["status"].get("level")):
+            return LEVEL_GUIDANCE["algal_mat"]
         return LEVEL_GUIDANCE[tier]
-    return GENERIC_GUIDANCE
+    return STATE_GUIDANCE.get(water["state"], GENERIC_GUIDANCE)
 
 
 def cells_label(cells: int) -> str:
@@ -312,6 +396,57 @@ def _age(days: int) -> str:
     if days >= 365:
         return "more than a year"
     return f"{days // 30} months"
+
+
+# A list row older than this, against the state's file date, says how old
+# it is: county and state lists put years-old records beside current ones.
+LIST_STALE_DAYS = 365
+
+LIST_CAVEAT = (
+    "Older records are not current conditions. A record says what the state "
+    "knew on its date, not that a water is safe now: check posted signs and "
+    "the state's map before you go."
+)
+
+
+def row_date(water: dict[str, Any]) -> str | None:
+    """The date a list row's status rests on: the headline's posting or
+    lift date, or for a status with neither, the newest record on file."""
+    status = water["status"]
+    day = status.get("posted") if status["kind"] == "advisory" else None
+    day = day or status.get("lift_date")
+    if day:
+        return str(day)
+    dates = [
+        r["date"] for r in water.get("records", []) if not r.get("removed_from_source")
+    ]
+    return max(dates, default=None)
+
+
+def list_row(water: dict[str, Any], file_date: str | None) -> str:
+    """A county or state list row: the headline, the newest record's date
+    when the headline carries none, and how old the record is when it is
+    more than ``LIST_STALE_DAYS`` before the state's file date. Website only."""
+    line = headline(water["status"])
+    day = row_date(water)
+    if day and water["status"]["kind"] == "undetermined":
+        line += f" Newest record {date_label(day)}."
+    if day and file_date:
+        days = (dt.date.fromisoformat(file_date) - dt.date.fromisoformat(day)).days
+        if days > LIST_STALE_DAYS:
+            line += f" This record is {_age(days)} old."
+    return line
+
+
+def list_sort_key(water: dict[str, Any]) -> tuple[bool, int, str]:
+    """Advisories first, then newest first within each group, so current
+    records lead and years-old ones sink."""
+    status = water["status"]
+    day = (newest_posted(water) if status["kind"] == "advisory" else None) or row_date(
+        water
+    )
+    ordinal = dt.date.fromisoformat(day).toordinal() if day else 0
+    return (status["kind"] != "advisory", -ordinal, water["name"].casefold())
 
 
 def age_note(water: dict[str, Any], file_date: str | None) -> str | None:

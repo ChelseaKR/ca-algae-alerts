@@ -347,6 +347,8 @@ def _env() -> jinja2.Environment:
         newer_posting=wording.newer_posting,
         older_higher=wording.older_higher,
         dog_answer=wording.dog_answer,
+        list_row=wording.list_row,
+        list_caveat=wording.LIST_CAVEAT,
         guidance=wording.LEVEL_GUIDANCE,
         guidance_for=wording.guidance_for,
         cells_label=wording.cells_label,
@@ -767,10 +769,7 @@ class SiteBuilder:
         for county, waters in self.by_county.items():
             rel = f"county/{slugify(county)}/"
             crumbs_c = [*crumbs, (f"{county} County", self.base_url + rel)]
-            ordered = sorted(
-                waters,
-                key=lambda w: (w["status"]["kind"] != "advisory", w["name"].casefold()),
-            )
+            ordered = sorted(waters, key=wording.list_sort_key)
             with_advisory = sum(w["status"]["kind"] == "advisory" for w in waters)
             self._write(
                 rel,
@@ -783,6 +782,7 @@ class SiteBuilder:
                     county, with_advisory, len(waters), ca_file_date
                 ),
                 county=county,
+                file_date=ca_file_date,
                 lastmod=self._newest_of(waters),
                 waters=ordered,
                 breadcrumb=crumbs_c,
@@ -799,10 +799,7 @@ class SiteBuilder:
                 continue
             rel = f"state/{state.lower()}/"
             crumbs = self._crumbs((name, self.base_url + rel))
-            ordered = sorted(
-                waters,
-                key=lambda w: (w["status"]["kind"] != "advisory", w["name"].casefold()),
-            )
+            ordered = sorted(waters, key=wording.list_sort_key)
             self._write(
                 rel,
                 "state.html.jinja",
@@ -812,6 +809,7 @@ class SiteBuilder:
                     f"lakes and rivers in {name}, from the state's own records."
                 ),
                 state=state,
+                file_date=self._file_date(state),
                 lastmod=self._newest_of(waters),
                 state_name=name,
                 waters=ordered,

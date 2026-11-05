@@ -20,7 +20,7 @@ final class MultiStateTests: XCTestCase {
         XCTAssertTrue(StatusWording.headline(dissipated.status).hasPrefix("The state recorded the bloom as dissipated on "))
         XCTAssertEqual(dissipated.countyLabel, "Missouri")
         let advisory = try XCTUnwrap(s.waterbodies.first { $0.state == "MO" && $0.status.kind == .advisory })
-        XCTAssertEqual(StatusWording.guidance(for: advisory), StatusWording.genericGuidance)
+        XCTAssertEqual(StatusWording.guidance(for: advisory), StatusWording.stateGuidance["MO"])
         for w in s.waterbodies {
             XCTAssertEqual(affirmativeSafetyClaims(StatusWording.headline(w.status) + " " + StatusWording.dogAnswer(name: w.name, status: w.status)), [])
         }

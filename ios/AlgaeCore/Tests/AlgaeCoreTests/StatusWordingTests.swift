@@ -21,6 +21,18 @@ final class StatusWordingTests: XCTestCase {
         XCTAssertEqual(StatusWording.levelName(mat), "Algal mat alert sign")
     }
 
+    func testGuidanceKeepsPetsOutAndMatsGetTheirOwn() {
+        for tier in [AdvisoryTier.caution, .warning, .danger] {
+            XCTAssertTrue(StatusWording.guidance(tier).contains("go into or drink the water"), "\(tier)")
+            XCTAssertTrue(StatusWording.guidance(tier).contains("boiling or filtering does not make it safe"), "\(tier)")
+        }
+        XCTAssertTrue(StatusWording.isAlgalMat("Algal mat general awareness sign"))
+        XCTAssertFalse(StatusWording.isAlgalMat("General awareness"))
+        XCTAssertTrue(StatusWording.algalMatGuidance.contains("Do not let dogs eat algal mats or drink from the water"))
+        XCTAssertEqual(affirmativeSafetyClaims(StatusWording.algalMatGuidance), [])
+        XCTAssertEqual(affirmativeSafetyClaims(StatusWording.stateGuidance["MO"] ?? ""), [])
+    }
+
     func testNothingTheAppSaysClaimsSafety() throws {
         var lines: [String] = [StatusWording.dogAdvice, FreeTier.unlockSummary]
         for s in [advisory, lifted, ended, undetermined] {
