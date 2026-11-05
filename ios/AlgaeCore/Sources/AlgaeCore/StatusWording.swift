@@ -34,6 +34,9 @@ public enum StatusWording {
             }
             return "The state's latest record, from \(date), recommends no advisory."
         case .undetermined:
+            if let level = status.level, !level.isEmpty {
+                return "The state's latest record says \u{201C}\(level)\u{201D}, a level this site does not recognize, so it cannot say what applies. Check the official map."
+            }
             return "Reports on file, with no advisory level the state has classified."
         }
     }
@@ -66,6 +69,9 @@ public enum StatusWording {
             let what = status.liftKind == .dissipated ? "Dissipated" : (status.liftKind == .endDate ? "End date recorded" : "No advisory in latest record")
             return "\(what) · \(status.liftDate?.label ?? "date not recorded")"
         case .undetermined:
+            if let level = status.level, !level.isEmpty {
+                return "Unrecognized level \u{201C}\(level)\u{201D}"
+            }
             return "Reports on file, level not classified"
         }
     }
@@ -170,6 +176,9 @@ public enum StatusWording {
         case .noAdvisoryRecorded:
             return "\(headline(status)) For \(name), that is not the same as an all-clear for today. Look at the water before your dog goes in: keep it out of green, blue-green or scummy water and away from mats on the shore."
         case .undetermined:
+            if let level = status.level, !level.isEmpty {
+                return "\(headline(status)) Until it is read, keep your dog out of the water at \(name) and away from scum on the shore."
+            }
             return "The state has reports on file for \(name) but has not classified an advisory level, so the records cannot answer this. Keep your dog out of discolored or scummy water."
         }
     }
