@@ -23,7 +23,7 @@
   <a href="#affiliate">Gear links</a>.
 </p>
 {% endif %}
-<p class="muted">Last updated {{ "2026-10-30" if affiliate_enabled else "2026-10-12" }}. Covers this website and the {{ site_name }} iPhone app.</p>
+<p class="muted">Last updated {{ "2026-11-05" if affiliate_enabled else ("2026-10-31" if ga4_measurement_id else "2026-10-12") }}. Covers this website and the {{ site_name }} iPhone app.</p>
 
 <h2 id="site">The website</h2>
 {% if ga4_measurement_id %}
@@ -67,6 +67,8 @@
       policy</a>. Google also offers an
       <a href="https://tools.google.com/dlpage/gaoptout">opt-out browser
       add-on</a> for Google Analytics.</li>
+  <li>The advisory data file the iPhone app downloads
+      (<code>snapshot/v1.json</code>) is a plain file with no analytics.</li>
   <li>No account, no email address, no sign-up, anywhere on this site.</li>
   <li>The site is hosted on GitHub Pages. Like any web host, GitHub receives
       standard request information (IP address, the page requested, time,

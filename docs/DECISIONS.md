@@ -131,6 +131,38 @@ merge. Known limit: a lake typed under two county texts (Lake Tahoe under
 El Dorado and under Placer) becomes two pages. A curated alias table, as
 Trout Truck keeps, is the fix if the owner wants it.
 
+**Display names (2026-11-04).** The state's files type names by hand, and
+some reached page titles as typed: "Big bear lake ca", "Briars pond",
+"crystal pool", and "Lake Havasu (Arizona), Arizona State" where a county
+belongs. The site now shows a display name and place
+(`pipeline/src/caalgae/water_names.py`). The history, the snapshot, the
+app and every id keep the source's spelling, so this is display only and
+leaves identity as above.
+
+- A reviewed override table, keyed by water id and the exact source
+  spelling, for the three names no rule fixes safely. A retyped name drops
+  out of the table and gets the rules.
+- A trailing suffix naming the water's own state is dropped: " ca" after a
+  water word in California, ", MO" or ", Missouri" in Missouri. Missouri's
+  " CA" (a conservation area) and "Lake California" are kept.
+- Casing: a lowercase first letter is capitalized. A proper name whose
+  lowercase words are one run at its end, led or ended by a water word, is
+  capitalized ("Diamond valley lake" to "Diamond Valley Lake"). Names that
+  describe a water ("Unnamed pond", "Private pond"), names with a comma,
+  and small words ("of", "du") are left alone. No word is ever dropped:
+  "Fee fee creek" is Fee Fee Creek.
+- Place: "Nevada State" and "Arizona State" show as "Nevada" and "Arizona",
+  as a Missouri water shows "Missouri". Other county text that names no
+  California county shows nothing. A county is never guessed, and a place
+  the name already carries is not repeated.
+- Titles add a county only when the source spelling is shared, as before,
+  so a display name never adds or drops a county from a title.
+
+On the 2026-11-04 snapshot this changes 41 waters (37 names, 4 places) and
+the titles of 37 water pages, 12 of them indexable. NY names (staged
+branch) needed no fix. Undo: make `display_water` return the water
+unchanged.
+
 ## 0010 — The multi-state wave: Missouri and EPA CyAN (owner, 2026-10-12)
 
 The owner approved the state research lane's recommendations
@@ -275,8 +307,385 @@ the include in `water.html.jinja`).
 other apps. Nothing to do now; the snapshot URL above is already final for
 the first build.
 
+## 0014 — GA4 is on, with Lake Notice's own property (2026-10-31)
 
-## 0015 — Dog-gear links on the dogs page only, with the existing Associates id (owner, 2026-10-30)
+The owner's portfolio rule (GA4 on every public site, 2026-09-17) applies
+here, and the site has been live since 2026-10-22. Property 561648146
+("Lake Notice", account ChelseaKR) was created through the Admin API with the
+same settings as Trout Truck's: 14-month retention, Google signals off,
+enhanced measurement without site search, form interactions or page changes,
+and `purchase` as the only key event (the site sends no custom events yet).
+`GA4_MEASUREMENT_ID` is `G-75YLGQKDHG`, so 0007's tag and privacy text are
+now live. Nothing else in 0007 changes: the app collects nothing, and the tag
+never loads under Global Privacy Control, Do Not Track or the footer opt-out.
+Owner-only steps in the GA web interface, as for the other properties:
+accept the Data Processing Terms, turn data sharing off, and leave
+user-provided data collection off.
+
+## 0015 — Announce new and changed pages to IndexNow after each deploy (2026-11-03)
+
+ChatGPT search leans on Bing's index, and IndexNow is how a site tells Bing
+(and the other participating engines) that a page is new or changed instead
+of waiting for the next crawl. Trout Truck and Next Home Game have run this
+since 2026-10-23, and both get HTTP 200 from the endpoint on their daily runs;
+this is the same `indexnow.py`, renamed to this package.
+
+`publish.yml` picks the pages in the build job, before the deploy replaces the
+live site: a sitemap URL is announced when it is new or its `lastmod` differs
+from the live `sitemap.xml`. Because a page's `lastmod` is its newest record
+date, not the build date, an unchanged day announces nothing and sends no
+request. Only https URLs on lakenotice.com, only built pages without a robots
+noindex, at most 10,000 a request. A separate `indexnow` job submits the list
+only after `deploy` succeeded. If the live sitemap cannot be read, nothing is
+announced (unknown is not "everything changed"). The script exits 0 on any
+problem and prints a notice, so there is no `continue-on-error` (the
+standards ban it) and a refused ping never opens the publish-failure issue.
+
+The key file at the site root is public by design: the protocol checks
+ownership by fetching it. It lives in `templates/` and only a build for
+lakenotice.com carries it. To stop announcing, delete the `indexnow` job and
+the two IndexNow steps; nothing else depends on them.
+
+## 0016 — Open water pages with a dated answer; index waters with five or more records (2026-11-03)
+
+Measured on 2026-11-03: Trout Truck got 34 engaged ChatGPT visits from
+2026-10-20 to 2026-11-03, nearly all landing on a water page. Lake Notice got
+none, but its GA4 tag has only run since 2026-10-31 and the site went live
+2026-10-22. ChatGPT search leans on Bing, and IndexNow (0015) merged the same
+day. So most of the gap is age and Bing discovery, which no page change fixes.
+Two page changes still help:
+
+- **A dated answer first.** Every water page's first sentence now reads "As
+  of the state's data dated <file date>, the records for <water> (<county>)
+  show: <headline>". It is the status box's headline (0002 wording), with the
+  water, the county and the date of the state's file, so it stays true when a
+  search snippet or an assistant quotes it alone. A status that is not an
+  advisory adds "That is not a finding that the water is safe now." in the
+  same paragraph. Without a file date there is no "as of" clause. Trout
+  Truck's pages open the same way ("last scheduled the week of <date>, as of
+  the schedule check on <date>").
+- **Five records make a page indexable.** The 2026-10-23 staging keeps a water
+  page out of the index unless the state recorded an advisory in the last 24
+  months, because one- and two-record pages were 85 to 92% template. That
+  also hid waters people ask about (Lake Arrowhead, Shasta Lake, Lake Merced,
+  Lake Natoma, Trinity Lake, two Salton Sea entries), whose pages carry 8 to
+  89 records. A water is now also indexable with at least
+  `INDEX_MIN_RECORDS = 5` state records, whatever their age. On the
+  2026-11-03 snapshot that lists 118 more water pages (426 of 1,128 instead
+  of 308) and leaves every one- to four-record page out. **Owner to confirm**:
+  this widens the owner's 2026-10-23 staging rule. To undo, set the constant to a
+  number no water reaches.
+
+## 0017 — A spot is the state's coordinates; the headline leads with the highest level of the last 12 months, dated by its own posting; old advisories say their age (owner, 2026-11-03)
+
+Found 2026-11-03: Lake Notice showed "Danger advisory, last posted Sep 24,
+2026" for Lake Elsinore. Every record the state posted there that day was a
+Caution, at the five city monitoring spots. The Danger came from bloom reports
+filed between 2016 and 2022. The City of Lake Elsinore's Lake Watch page said
+"no advisory at this time" (its update dated Aug 25, 2026; its lab table,
+updated 9/17/26, shows microcystin at or below 0.33 ppb through 9/5/26). The
+state's file is newer than that page and still records Caution. Two defects,
+both fixed here:
+
+- **The headline mixed two records.** `water_status` took the highest level
+  from one spot and the newest date from any spot. 81 of 540 waters with an
+  advisory in the 2026-11-03 snapshot showed a level that was not posted on
+  the date shown. Now a headline's level and date always come from the same
+  posting. When another spot has a newer posting at a lower level, the water
+  page and the advisory lists add "The newest advisory posting here is
+  lower: <level>, posted <date> at <n> reported spots. No all-clear
+  recorded." The home page's "posted in the last 30 days" list and the
+  newest-first order use the newest posting at any level, so a new lower
+  posting is not hidden.
+- **A reported spot was a bloom report id.** The state files the same
+  monitoring spot under a new bloom report each season, with the same
+  coordinates to six decimals (Lake Elsinore's "In open water near TMDL
+  LE02" is report 3289 in 2022 and 3927 in 2023 to 2026). So a later "None"
+  at that spot never reached the older report's Danger. California reports
+  that share their latest coordinates are now one spot, named by the report
+  with the newest record. That makes the "None" an explicit record at the
+  same reported spot, which is what 0002 already requires. Measured on the
+  2026-11-03 file: 2,740 reports become 2,185 spots; 280 spots hold more than
+  one report, and where their landmarks differ they are spellings of one
+  station ("Oaks Arm (DWR site CL-4)" and "(CL-04)"). Spots with an advisory
+  fall from 1,322 to 1,088, and 15 waters move from an advisory to the
+  state's latest record recommending none. Nothing is matched by name or by
+  distance: two points a meter apart stay two spots, and a report without
+  coordinates is its own spot. Missouri is not matched (its readings are
+  owner-confirmed per case, 0013).
+
+The state's data has no other end signal. Checked on the 2026-11-03 files:
+`DisplayAdvisoryToMap` is "Yes" on all 14,519 rows; `Advisory_End_Date` is
+filled on 326; `Case_Status` and `Case_End_Date` mark a staff folder, which
+the data dictionary says "does not reflect the severity" and "can stay in
+open status for a lengthy period". So silence still ends nothing (0002).
+Instead, an advisory whose level was last posted more than `STALE_DAYS` (90)
+before the state's file date now says so on its page: "That level was last
+posted <date>, <age> before the state's data dated <date>, and the state has
+not recorded an end to it. The state's newest record of any kind for <water>
+is from <date>." On the 2026-11-03 file, under the headline rule below,
+that is 370 of 479 California waters with an advisory.
+
+**Which posting leads (owner, 2026-11-03).** The headline is the highest
+advisory level posted in the 12 months before the state's file date
+(`HEADLINE_WINDOW_MONTHS`, calendar months), at that level's own last posted
+date. If no spot had an advisory posted in those 12 months, the headline is
+the newest posting, with its own level, and the age sentence above. A
+higher advisory posted before the window, with no all-clear, is never
+dropped. It no longer leads, and the water page and the advisory lists name
+it: "An older, higher advisory is also on file: <level>, last posted <date>
+at <n> reported spots. No all-clear recorded." Lake Elsinore now leads with
+"Caution advisory, last posted Sep 24, 2026", the level the state posted at
+the five city spots that day. Its 2017 Danger reports are on the next line.
+A Danger posted within the 12 months still leads over a newer Caution
+(tested). On the 2026-11-03 file this changes 60 of 479 headlines from the
+previous build of this decision. All 60 now lead with a lower, more recent
+level, and each names the older, higher one.
+The app reads the same fields, so its headline is the pipeline's.
+
+**App parity (2026-11-04).** The app did not show the lines under the
+headline. Its lists ordered and filed waters by the headline's date, and its
+bundled snapshot, from the state's file dated 2026-10-09, still led Lake
+Elsinore with "Danger advisory, last posted Sep 24, 2026". Now:
+
+- The lake screen shows the website's notes in the website's order: the
+  newer, lower posting, the older, higher advisory, and the age sentence,
+  counted to the file date of the water's own state. With more than one spot
+  under an advisory, it also explains how the headline is chosen. List rows
+  carry the first two notes, as the website's advisory lists do.
+- "Newest posting first" and "Posted in the last 30 days" use the newest
+  posting at any level, as the website does.
+- The sentences live in `AdvisoryNotes.swift` and mirror `wording.py`. The
+  app cannot run the pipeline, so `pipeline/tests/test_ios_parity_fixture.py`
+  builds `elsinore-parity.json` from the same Lake Elsinore records as
+  `test_spots_and_age.py`: six cases, each with the pipeline's snapshot and
+  the website's sentences. `AdvisoryParityTests` decodes each snapshot with
+  the app's strict decoder and compares the app's sentences word for word.
+  The pipeline test fails when the committed fixture is stale. Negative
+  controls lower the old Dangers and move the file date across the 90-day
+  line, and check that the lines change.
+- The bundled snapshot is rebuilt from the state's file dated 2026-11-03,
+  with `ios/scripts/sync-bundled-snapshot.sh`. On it, 120 of the waters in
+  both copies have a different headline. Of 526 waters with an advisory, 60
+  name an older, higher advisory, 2 a newer, lower posting, and 403 carry
+  the age sentence.
+- Alerts are unchanged. They still fire when the headline's kind or level
+  changes. A higher advisory that leaves the 12-month window can lower a
+  favorite's headline level, and the app then says "now a caution advisory".
+  The wording says what the headline now shows. It does not say the higher
+  advisory ended.
+
+## 0018 — Search titles lead with the advisory and its date; descriptions carry the state's file date and the not-a-finding sentence (2026-11-03)
+
+Measured in Search Console on 2026-11-03 (all data, 2026-10-22 to
+2026-11-03): 666 impressions and 35 clicks (5.3%). Water pages had 559 of the
+impressions and 28 of the clicks, across 152 pages, mostly at positions 5
+to 9. Google showed only 13 queries; the rest are below its privacy
+threshold. Five of the 13 ask "is <water> safe to swim in", and most of the
+rest are "<water> algae". Every water title read "<water> toxic algae
+advisories | Lake Notice", which is the same for a Danger posted today and a
+Caution posted in 2019, so the result did not show the answer the searcher
+came for.
+
+- **An advisory's title leads with the water, the level and its date.**
+  "Castaic Lake algae: Danger advisory, last posted Nov 3, 2026". The level
+  and date are the headline's (0002 wording, 0017's headline posting), so a
+  title never says more than the status box. To fit the 60-character limit,
+  "toxic" goes first, then "last posted" ("Lake Berryessa algae: Caution
+  advisory, Aug 28, 2026"), then "algae". The date is never dropped. A name
+  too long for any of those keeps the plain title. On the 2026-11-03 snapshot,
+  312 of 352 indexable water pages with an advisory get a dated title. The
+  site name is left out of those titles to make room: `og:site_name` still
+  names it, and Google shows the site name above the title.
+- **Any other status keeps the plain title.** "The state's latest record
+  recommends no advisory" must be followed by the not-a-finding sentence
+  (0002), and a title has no room for both.
+- **Descriptions match the page's first line (0016).** After the status, a
+  description adds "From the state's data dated <file date>." when it fits
+  (341 of 427 indexable pages). A status that is not an advisory now carries
+  "That is not a finding that the water is safe now." in every candidate.
+  Before, it was missing from all 603 such descriptions (75 of them
+  indexable), because descriptions were built from the headline alone.
+- **No "safe" question in titles.** A title such as "Is Lake Berryessa safe
+  to swim?" would pass the copy guard, because the guard skips questions.
+  It is not used. A title is often quoted without the description (browser
+  tabs, shares, an assistant's citation), and on more than a thousand pages
+  it would make "safe" the word the site is known for in search. **Owner to
+  confirm** if the question form is wanted later. It would go in
+  `site.water_title`, with the not-a-finding sentence in the description.
+
+A test checks every built water page. Its title and description must pass
+the copy guard. Any date in the title must appear in the page's first line.
+A status that is not an advisory must keep the not-a-finding sentence in its
+description. A negative control changes a title's date and puts a safety
+claim in a description, and checks that both are reported. To undo, call
+`water_title` without the status.
+
+**County pages and the advisory list (2026-11-04).** Search Console, 2026-10-06
+to 2026-11-02: the 33 county pages had 83 impressions and 3 clicks (3.6%) at
+an average position of 6.2, against 4.5% for water pages. The advisory list
+had 38 impressions and no clicks at 7.1. All of that predates the water
+titles above, which went live on 2026-11-04. County titles still read
+"<county> County lake toxic algae advisories | Lake Notice", the same for a
+county with 25 waters under an advisory and one with none.
+
+- **A county with an advisory says how many.** "Riverside County lake algae
+  advisories: 25 of 40 waters". The count is the county index's "Latest
+  record is an advisory" column. The description and the page's first line
+  open with the same sentence, dated by the state's file: "25 of the 40
+  waters in Riverside County have an advisory as their latest state record,
+  in the state's data dated Nov 3, 2026." As in the water titles above, a
+  counted title leaves out the site name, which `og:site_name` still carries.
+- **A county with none keeps the plain title and description.** "0 of 2
+  waters" in a title, with no room for the not-a-finding sentence, would read
+  as an all-clear (0002). Two counties are like this on the 2026-11-03 file
+  (Glenn, San Benito).
+- **The advisory list's description counts each state it lists.** It listed 47
+  Missouri waters while its description said California only. It now reads
+  "479 California and 47 Missouri lakes and rivers whose latest state record
+  is a toxic algae advisory, with its level and date." Its title is
+  unchanged. Whether the title should name Missouri is the owner's call, with
+  the home page title (2026-10-23 audit, finding 9).
+
+A test checks every built county page against the snapshot: the count in
+the title, the description and the first line, the file date, the copy
+guard, and no count at all for a county with none. A negative control writes
+a wrong count into one title and "0 of 2 waters" into another, and checks
+that both are reported. To undo, have `county_title` return the plain title.
+
+## 0019 — Missouri fails closed, and carries the department's own caveat (owner, 2026-10-30)
+
+The department's layer description says it plans to retire this service. Before this decision, a failed
+Missouri fetch kept the last records on the site with no limit, and a
+malformed answer stopped the whole run, California included. Now:
+
+- **Gone or changed: hidden at once.** HTTP 404 or 410, an ArcGIS error
+  answer, an answer that is not a JSON object, a missing expected field,
+  fewer than `MIN_ROWS` rows, or no case the pipeline can place raises
+  `missouri.LayerUnavailable`. The run leaves Missouri out of the snapshot
+  entirely: no Missouri waters, no /state/mo/, no Missouri source or file, no
+  footer link. California publishes as usual. Missouri's history is kept, so
+  a good read later brings it back.
+- **A passing failure** (network error, another HTTP status, robots.txt
+  unreadable) shows Missouri, with its read date, only while the last good
+  read is at most `MO_STALE_AFTER_DAYS` (2) days old, then hides it.
+- An absence is never shown as "no advisory": a hidden state has no pages.
+- Missouri pages, /state/mo/ and About quote the department's HAB Reports Map
+  disclaimer verbatim, with a link: "The data presented in the map should be
+  used for general purposes only. The exact location, extent and toxicity of
+  the reported bloom may not be accurate due to changing environmental
+  conditions." (`sources.MO_MAP_CAVEAT`, read 2026-10-30.)
+
+Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
+the negative control.
+
+## 0025 — Spanish groundwork: a catalog with a status per string, a review gate, and the levels page, all switched off (2026-11-05)
+
+Plan: `_agent-tools/growth/spanish-pages-plan-tt-ln-2026-11-05.md`, its first
+PR. Nothing changes on the live site: `i18n.LEVELS_ENABLED` and
+`i18n.ES_ENABLED` are both False, so a build writes neither /levels/ nor
+/es/niveles/, and the sitemap is unchanged.
+
+- **One catalog, one status per string.** `pipeline/src/caalgae/locales/es.json`
+  holds the Spanish strings and `es.status.json` their status: `state` (the
+  state's own words, with URL, date read and a SHA-256 of the text),
+  `reviewed` (reviewer initials and date), `same` (correct Spanish is
+  identical to English) or `draft`. `safety: true` marks safety strings: the
+  level names, guidance and sign wording, after-contact and dog advice, the
+  not-a-finding sentence, the not-medical-advice line and the attribution
+  caveats. The English catalog (`i18n.EN`) reads `wording.py` and
+  `sources.py`, so English output is unchanged and the existing tests still
+  pin it.
+- **Always checked (`make i18n`, inside `make verify`).** Key and placeholder
+  parity; a Spanish string identical to English must be `same` or `draft`;
+  a stale `same` fails; a safety string cannot be `same`; a `state` string
+  must still hash to its quote; a `reviewed` string needs its sign-off; a
+  paste placeholder can only be `draft`. Ported from Family Greenhouse's
+  `check-i18n-catalogs.mjs` (`todo` and `intentionallyEqual`).
+- **Checked when Spanish is on, in `make i18n` and in the build itself.** No
+  safety string may be `draft`, no placeholder may remain, and the Spanish
+  copy guard applies: never "seguro" and its forms, "sin peligro", "apta
+  para nadar", "limpia" or "libre de toxinas"; "Peligro" only as the level's
+  label. A missing string raises during rendering; there is no English
+  fallback.
+- **Rendered-page check.** After the Spanish page is written, every /es/
+  page must have `lang="es"` (every other page `lang="en"`) and no run of
+  four or more English words, and English stopwords must be at most 3% of its
+  words. It reads visible text, the title, `alt`, `aria-label`, `title`
+  attributes, the description and script string literals. Proper nouns come
+  from the snapshot (waters, counties, spots, agencies, programs), never a
+  hand list. The English vocabulary is read from the English catalog only,
+  so English pasted into es.json cannot teach the check its own words.
+- **The state's Spanish sign wording is not in the repo yet.** The four
+  `level.*.sign` strings are marked placeholders (`⟦PEGAR…`). The host,
+  mywaterquality.ca.gov, admits only Googlebot, so no script fetched it.
+  **Owner:** open the sign PDFs in a browser, paste each level's Spanish text,
+  then set its status to `state` with `url`, `read_on` and `sha256` (`cd
+  pipeline && uv run python -m caalgae.i18n --hash KEY`). The Spanish level
+  names (Precaución, Advertencia, Peligro) are drafts too, seen only in a
+  search-index summary; they become `state` from the same paste.
+- **All Spanish safety strings are drafts.** No reviewer has signed off.
+  Turning Spanish on today fails with 26 problems (22 draft safety strings,
+  4 placeholders), by design.
+- **Known blocker before turn-on:** `_ga4.html.jinja`'s opt-out messages are
+  English, and GA4 is on in production, so the rendered-page check fails the
+  Spanish page until they come from the catalog. A test records it.
+- **No hreflang yet.** It waits until after the ~2026-11-25 read of the dated
+  titles (0018). The twins link to each other with a plain "En español" /
+  "In English" link only when both are built.
+- The levels pages use `_base_i18n.html.jinja`, a copy of `base.html.jinja`
+  with every string from the catalog. A test checks that the English header
+  and footer are byte-for-byte those of the dogs page, so the copy cannot
+  drift without failing.
+
+Four sabotages each turn the gate red, and each test checks the sabotage
+applied first: English in a safety key, one word changed in a state quote,
+an English sentence hard-coded in the Spanish template (the rendered bytes
+differ), and a safety claim ("segura") in a reviewed string. Tests:
+`pipeline/tests/test_i18n_catalog.py`, `pipeline/tests/test_es_pages.py`. To
+undo: delete `i18n.py`, `levels.py`, `locales/`, the two templates, the
+`i18n` make target and the one `levels.build` line in `site.py`.
+
+## 0027 — A short or reshaped California file cannot flip a live advisory (2026-11-05)
+
+The source-outage audit of 2026-11-05 cut the newest 5% of advisory rows
+from the real history. The old guard, which refused only above 5% withdrawn
+(713 of 14,270 records), let it through, and 10 waters flipped from a current
+advisory to "The state's latest record ... recommends no advisory"; 37 more
+went to undetermined. The next good file would bring the advisories back and
+the app would alert again. In 15 runs the state withdrew 0 records. Now:
+
+- **At most 25 withdrawn records per California run** (`MAX_REMOVED_RECORDS`),
+  whatever the fraction. The 5% limit stays, for every source.
+- **No withdrawal of a report's current advisory** (the report's latest
+  deciding record, when that record is an advisory). Withdrawing it would let
+  an older record speak for the spot, so the run is refused.
+- **The quarantine may grow by at most 25 rows per run** (`cli.MAX_QUARANTINE_GROWTH`).
+  It held at exactly 249 for 15 runs; a date-format change would quarantine
+  every new posting silently.
+- **A refused run publishes nothing**, so yesterday's site stays live and the
+  publish-failure issue opens. After reading the state's file, the owner can
+  let it through with the publish workflow's `accept_ca_edits` input
+  (`caalgae --accept-ca-edits`).
+- **A level this pipeline does not recognize decides its spot as undetermined.**
+  A blank level still decides nothing. A non-blank level with no mapping (a
+  new spelling such as "Danger - Closure") used to decide nothing too, so an
+  older "None" showed through it. Now the spot, and the water unless another
+  spot has an advisory, reads "The state's latest record says “Danger -
+  Closure”, a level this site does not recognize, so it cannot say what
+  applies. Check the official map." A later "None" still ends it. The run
+  warns with the levels it could not read. The same rule covers a Missouri
+  status code outside the known list. Today's data has no such level (all
+  57 California `unknown` records and all 80 Missouri ones are blank), so
+  nothing on the site changes.
+
+Tests: `pipeline/tests/test_ca_short_file.py`, run on the committed
+history.json. Negative controls: the real file passes unchanged; the 4% cut
+passes the old guard alone (the sabotage applies) and is refused by the new
+one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
+withdrawn; a blank level after "None" still reads as lifted.
+
+## 0029 — Dog-gear links on the dogs page only, with Lake Notice's own Associates id (owner, 2026-10-30; id 2026-11-05)
 
 The owner approved a small Amazon Associates section on the Dogs and algae
 page (`/dogs/`) and nowhere else. This narrows the affiliate part of 0013,
@@ -290,12 +699,10 @@ impressions within two days of shipping an identical affiliate block on about
   advisories, home and every other page carry no Amazon link.
   `tests/test_site_affiliate.py` checks this, with a negative control that a
   tagged link put into a lake page is caught.
-- **Tracking id.** `AMAZON_ASSOCIATE_TAG` defaults to the owner's existing id,
-  `trouttruck-20`, instead of waiting for a second id. Amazon's three
-  qualifying sales in 180 days count across the whole Associates account, so
-  sales here count toward Trout Truck's deadline (about 2027-04-17). Before
-  this ships, the owner adds lakenotice.com to that account's website list;
-  a Lake Notice id of its own is a one-line change to the constant.
+- **Tracking id.** `AMAZON_ASSOCIATE_TAG` is Lake Notice's own Associates
+  id, `lakenotice-20`, which the owner created on 2026-11-05. It is never
+  Trout Truck's `trouttruck-20`, as 0013 says. Before this ships, the owner
+  adds lakenotice.com to the Associates account's website list.
 - **Items.** Five generic Amazon searches, each tied to the page's own advice:
   a water bottle and a collapsible bowl (bring fresh drinking water so the dog
   does not drink from the lake), a long leash (keep the dog out of the water

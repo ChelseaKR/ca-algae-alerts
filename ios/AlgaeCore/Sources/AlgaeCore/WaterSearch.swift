@@ -11,12 +11,13 @@ public enum WaterSearch {
         }
     }
 
-    /// Waters whose latest record is an advisory, newest posting first,
-    /// then by level.
+    /// Waters whose latest record is an advisory, newest posting at any
+    /// level first (as the website orders them, decision 0017), then by
+    /// the headline's level.
     public static func advisories(_ waters: [Waterbody]) -> [Waterbody] {
         waters.filter { $0.status.kind == .advisory }.sorted { a, b in
-            let pa = a.status.posted ?? PlainDate(year: 0, month: 1, day: 1)
-            let pb = b.status.posted ?? PlainDate(year: 0, month: 1, day: 1)
+            let pa = newestPosted(a) ?? PlainDate(year: 0, month: 1, day: 1)
+            let pb = newestPosted(b) ?? PlainDate(year: 0, month: 1, day: 1)
             if pa != pb { return pa > pb }
             let ra = a.status.tier?.rank ?? 0, rb = b.status.tier?.rank ?? 0
             if ra != rb { return ra > rb }

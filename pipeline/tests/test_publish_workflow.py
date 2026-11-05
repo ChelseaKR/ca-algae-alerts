@@ -33,7 +33,7 @@ def problems(text: str) -> list[str]:
     found: list[str] = []
     if "schedule:" not in lines or CRON not in lines:
         found.append("the daily 14:41 UTC schedule line is missing")
-    if "workflow_dispatch: {}" not in lines:
+    if "workflow_dispatch: {}" not in lines and "workflow_dispatch:" not in lines:
         found.append("manual dispatch is missing")
     if SCHEDULE_GUARD not in lines:
         found.append("a scheduled run is not gated on PAGES_ENABLED")

@@ -4,7 +4,7 @@
 <p class="lede">
   {{ site_name }} republishes state harmful algal bloom advisory records,
   one page per water, with each water's full history: California's since
-  2016 and Missouri's since 2017. It adds nothing the states did not record.
+  2016{% if "MO" in states_present %} and Missouri's since 2017{% endif %}. It adds nothing the states did not record.
   Where EPA has a satellite estimate for a large lake, it is shown separately
   and labeled as one.
 </p>
@@ -16,6 +16,10 @@
   <li><strong>End dates are often blank.</strong> "Advisory 'End Date' can be blank for a long time." A blank end date is unknown, never "ended".</li>
   <li><strong>Timing.</strong> The pipeline reads the states' data once a day and the satellite estimates once a week. The state's own map is updated daily. Check the <a href="{{ source.official_map_url }}">official map</a> and posted signs before you go.</li>
 </ul>
+
+<h2 id="after-contact">After contact with the water</h2>
+<p>{{ human_advice }} For a dog, see <a href="{{ root }}dogs/">dogs and toxic algae</a>.</p>
+<p>{{ not_medical_advice }}</p>
 
 <p>Other pages cover things this one does not. <a href="{{ root }}where-to-check/">Where to check a California algae advisory</a> lists them, with the date we read each.</p>
 
@@ -47,6 +51,9 @@
   <p><strong>Disclaimer required by the State of {{ state_names.get(s.state, s.state) }}:</strong></p>
   <p>{{ s.required_disclaimer }}</p>
 </div>
+{% endif %}
+{% if s.publisher_caveat %}
+<p>The {{ s.agency }} says of its map: &ldquo;{{ s.publisher_caveat }}&rdquo; <a href="{{ s.publisher_caveat_url }}">Source</a>.</p>
 {% endif %}
 {% if s.revocable %}
 <p class="muted">The publisher's terms let it withdraw permission: &ldquo;{{ s.revocation_clause }}&rdquo; If it does, this site removes that state's data.</p>

@@ -23,7 +23,15 @@ name: publish
 on:
   schedule:
     - cron: "41 14 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      accept_ca_edits:
+        # Only after reading the state's file: lets through a California file
+        # that withdraws current advisories, more than 25 records, or grows
+        # the quarantine by more than 25 rows (docs/DECISIONS.md 0027).
+        description: "Accept the California file's withdrawals or quarantine jump (read the file first)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -76,11 +84,16 @@ jobs:
           SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
           SUPPORT_EMAIL: ${{ vars.SUPPORT_EMAIL }}
           APP_STORE_URL: ${{ vars.APP_STORE_URL }}
+          ACCEPT_CA_EDITS: ${{ inputs.accept_ca_edits == true }}
         run: |
+          set -euo pipefail
+          accept=""
+          if [ "$ACCEPT_CA_EDITS" = "true" ]; then accept="--accept-ca-edits"; fi
           uv run caalgae --site-out ../site \
             --base-url "$SITE_BASE_URL" \
             --support-email "$SUPPORT_EMAIL" \
-            --app-store-url "$APP_STORE_URL"
+            --app-store-url "$APP_STORE_URL" \
+            ${accept:+"$accept"}
 
       - name: commit updated history, if any
         env:
@@ -110,6 +123,34 @@ jobs:
           path: site
           retention-days: 7
 
+      - name: pick the pages to announce to IndexNow
+        # Runs BEFORE the deploy replaces the live site, because the previous
+        # deploy's sitemap.xml is what this build is compared with: a page is
+        # announced when it is new or its <lastmod> changed. Only https URLs on
+        # lakenotice.com, only built pages without a robots noindex, at most
+        # 10,000. Selection only: nothing is sent here. indexnow.py is stdlib
+        # only and exits 0 on any problem (a notice, never a failed run), so
+        # no continue-on-error, which the portfolio standards ban. No secret:
+        # the key is public by design (pipeline/src/caalgae/indexnow.py).
+        if: vars.PAGES_ENABLED == 'true' && vars.SITE_BASE_URL != ''
+        env:
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
+        run: |
+          set -euo pipefail
+          python3 pipeline/src/caalgae/indexnow.py select \
+            --site-dir site --base-url "${SITE_BASE_URL%/}" \
+            --kind sitemap --file sitemap.xml --missing-is-empty \
+            --out "$RUNNER_TEMP/indexnow-urls.json"
+
+      - name: keep the IndexNow list for the job after the deploy
+        if: vars.PAGES_ENABLED == 'true' && vars.SITE_BASE_URL != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: indexnow-urls
+          path: ${{ runner.temp }}/indexnow-urls.json
+          retention-days: 1
+          if-no-files-found: warn
+
       - name: upload the site as a Pages artifact
         if: vars.PAGES_ENABLED == 'true'
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
@@ -130,6 +171,35 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+
+  # Tell IndexNow which pages are new or changed, only after the deploy
+  # succeeded (a skipped or failed deploy skips this job). Never fails the
+  # run: indexnow.py exits 0 on any problem and prints a notice, and the
+  # sitemap still gets the pages crawled. Not part of alert-on-failure, so a
+  # refused ping never opens an issue. https://www.indexnow.org/documentation
+  indexnow:
+    needs: deploy
+    if: vars.SITE_BASE_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: fetch the list the build selected
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: indexnow-urls
+          path: ${{ runner.temp }}/indexnow
+
+      - name: announce the new and changed pages to IndexNow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 pipeline/src/caalgae/indexnow.py submit --list "$RUNNER_TEMP/indexnow/indexnow-urls.json"
 
   alert-on-failure:
     needs: [build, deploy]

@@ -1,0 +1,2206 @@
+{
+ "about": "Built by pipeline/tests/test_ios_parity_fixture.py from Lake Elsinore's records in the state's file dated 2026-11-03. Do not edit by hand.",
+ "cases": [
+  {
+   "expected": {
+    "age_note": null,
+    "headline": "Caution advisory, last posted Sep 24, 2026. No all-clear recorded.",
+    "is_recent_on": true,
+    "is_recent_on_run_date": false,
+    "newer_posting": null,
+    "newest_posted": "2026-09-24",
+    "older_higher": "An older, higher advisory is also on file: Danger advisory, last posted Sep 3, 2020 at 2 reported spots. No all-clear recorded.",
+    "recent_on": "2026-10-01",
+    "site_ids": [
+     "1524",
+     "2431",
+     "2635",
+     "3927",
+     "4056",
+     "4057",
+     "4058",
+     "4059",
+     "4105"
+    ],
+    "sites_with_advisory": 8
+   },
+   "name": "elsinore",
+   "snapshot": {
+    "generated_at": "2026-11-03T14:00:00Z",
+    "quarantine": {
+     "by_reason": {},
+     "total": 0
+    },
+    "run_date": "2026-11-03",
+    "schema_version": 1,
+    "source_file": {
+     "fetched_at": "2026-11-03T14:00:00Z",
+     "file_date": "2026-11-03",
+     "file_name": "hab-responses_2026-11-03.csv",
+     "newest_record_date": "2026-09-24",
+     "rows_read": 10,
+     "source": "ca-swrcb-fhab",
+     "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+    },
+    "source_files": [
+     {
+      "fetched_at": "2026-11-03T14:00:00Z",
+      "file_date": "2026-11-03",
+      "file_name": "hab-responses_2026-11-03.csv",
+      "newest_record_date": "2026-09-24",
+      "rows_read": 10,
+      "source": "ca-swrcb-fhab",
+      "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+     }
+    ],
+    "sources": [
+     {
+      "agency": "California State Water Resources Control Board",
+      "attribution": "Advisory data: California State Water Resources Control Board, Freshwater Harmful Algal Bloom Program, via data.ca.gov (public domain). Advisories are recommendations; reporting is voluntary and incomplete.",
+      "contact": "CyanoHAB.Reports@waterboards.ca.gov",
+      "dataset_url": "https://data.ca.gov/dataset/surface-water-freshwater-harmful-algal-blooms",
+      "id": "ca-swrcb-fhab",
+      "license": "Other (Public Domain)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the state records a later \"None\" (no advisory recommended) at the same spot, or an end date. A blank end date is unknown.",
+      "lift_semantics": "explicit_record",
+      "official_map_url": "https://mywaterquality.ca.gov/habs/",
+      "program": "Freshwater and Estuarine Harmful Algal Bloom (FHAB) Program",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "No Restrictions on Public Use",
+      "state": "CA"
+     },
+     {
+      "agency": "Missouri Department of Natural Resources",
+      "attribution": "Missouri data: Missouri Department of Natural Resources, Harmful Algal Bloom response map. Status codes are the department's; their plain-English labels here are this site's reading of the codes.",
+      "contact": "Missouri Department of Natural Resources",
+      "dataset_url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+      "id": "mo-dnr-hab",
+      "license": "State of Missouri Data Policy (https://mo.gov/data-policy)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the department records a dissipation date. A closed case without one is not read as an end.",
+      "lift_semantics": "explicit_field",
+      "official_map_url": "https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs",
+      "program": "Harmful Algal Bloom Response (public water bodies)",
+      "publisher_caveat": "The data presented in the map should be used for general purposes only. The exact location, extent and toxicity of the reported bloom may not be accurate due to changing environmental conditions.",
+      "publisher_caveat_url": "https://dnr.mo.gov/water/alerts-hazards/harmful-algal-bloom-hab-reports-map",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "The data made available here has been modified for use from its original source, which is the State of Missouri. THE STATE OF MISSOURI MAKES NO REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS, ACCURACY, TIMELINESS, OR CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. THE STATE OF MISSOURI EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. The data is subject to change as modifications and updates are complete. It is understood that the information contained in the Web feed is being used at one’s own risk.",
+      "revocable": true,
+      "revocation_clause": "The State of Missouri reserves the right to modify and/or discontinue providing any or all of the data feeds at any time and to require the termination of any and all displaying, distributing or otherwise using any or all of the data for any reason including, without limitation, your violation of any provision of these Terms of Use.",
+      "rights": "Use permitted with the required disclaimer; revocable by the State",
+      "state": "MO"
+     },
+     {
+      "agency": "U.S. Environmental Protection Agency",
+      "attribution": "Satellite estimates: U.S. EPA Cyanobacteria Assessment Network (CyAN), from Copernicus Sentinel-3 data. Provisional, research-level estimates; EPA does not endorse this site.",
+      "contact": "U.S. EPA Office of Research and Development",
+      "dataset_url": "https://www.epa.gov/water-research/cyanobacteria-assessment-network-cyan",
+      "id": "epa-cyan",
+      "license": "U.S. Government work (public domain under 17 U.S.C. § 105); no license is stated on the CyANWeb API",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "A satellite estimate is never an advisory and never ends one. It measures how much cyanobacteria there is, not toxins.",
+      "lift_semantics": "none_recorded",
+      "official_map_url": "https://qed.epa.gov/cyanweb/",
+      "program": "Cyanobacteria Assessment Network (CyAN), Sentinel-3 OLCI weekly composite",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "satellite_estimate",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "EPA calls CyANWeb experimental and provisional, a research-level tool",
+      "state": "US"
+     }
+    ],
+    "waterbodies": [
+     {
+      "center": {
+       "lat": 33.66581,
+       "lon": -117.3555
+      },
+      "counties": [
+       "Riverside"
+      ],
+      "county_text": "Riverside",
+      "id": "ca-riverside-lake-elsinore",
+      "name": "Lake Elsinore",
+      "records": [
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15344",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4105",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15343",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4058",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15342",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4056",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15341",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4059",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15340",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4057",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-01-05",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": true,
+        "id": "13297",
+        "level": "None",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "no_advisory"
+       },
+       {
+        "date": "2022-12-08",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "5550",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2021-07-19",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "701",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2635",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2020-09-03",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "714",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2431",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2017-07-28",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "159",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "1524",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       }
+      ],
+      "satellite": null,
+      "sites": [
+       {
+        "id": "4105",
+        "landmark": "Perret Park",
+        "lat": 33.641586,
+        "lon": -117.34358,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4058",
+        "landmark": "West Marina (city site)",
+        "lat": 33.666661,
+        "lon": -117.37807,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4056",
+        "landmark": "Elm Grove Beach (city site)",
+        "lat": 33.66581,
+        "lon": -117.33548,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4059",
+        "landmark": "mid-lake (city site)",
+        "lat": 33.66334,
+        "lon": -117.35421,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4057",
+        "landmark": "Launch Pointe Boat Ramp (city site)",
+        "lat": 33.67269,
+        "lon": -117.35977,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "3927",
+        "landmark": "In open water near TMDL LE02",
+        "lat": 33.662428,
+        "lon": -117.3555,
+        "status": {
+         "kind": "no_advisory_recorded",
+         "last_advisory": "2022-12-08",
+         "level": null,
+         "lift_date": "2026-01-05",
+         "lift_kind": "no_advisory_record",
+         "planned_end": null,
+         "posted": null,
+         "sites_with_advisory": 0,
+         "tier": null
+        }
+       },
+       {
+        "id": "2635",
+        "landmark": "Launch Point",
+        "lat": 33.671406,
+        "lon": -117.3705,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2021-07-19",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2021-07-19",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "2431",
+        "landmark": "Inlet Channel",
+        "lat": 33.656111,
+        "lon": -117.30444,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2020-09-03",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2020-09-03",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       },
+       {
+        "id": "1524",
+        "landmark": "Lake Elsinore",
+        "lat": 33.672408,
+        "lon": -117.36903,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2017-07-28",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2017-07-28",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       }
+      ],
+      "state": "CA",
+      "status": {
+       "kind": "advisory",
+       "last_advisory": "2026-09-24",
+       "level": "Caution",
+       "lift_date": null,
+       "lift_kind": null,
+       "planned_end": null,
+       "posted": "2026-09-24",
+       "sites_with_advisory": 8,
+       "tier": "caution"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "expected": {
+    "age_note": "That level was last posted Jul 19, 2021, more than 5 years before the state's data dated Nov 3, 2026, and the state has not recorded an end to it. The state's newest record of any kind for Lake Elsinore is from Jan 5, 2026.",
+    "headline": "Caution advisory, last posted Jul 19, 2021. No all-clear recorded.",
+    "is_recent_on": false,
+    "is_recent_on_run_date": false,
+    "newer_posting": null,
+    "newest_posted": "2021-07-19",
+    "older_higher": "An older, higher advisory is also on file: Danger advisory, last posted Sep 3, 2020 at 2 reported spots. No all-clear recorded.",
+    "recent_on": "2026-10-01",
+    "site_ids": [
+     "1524",
+     "2431",
+     "2635",
+     "3927"
+    ],
+    "sites_with_advisory": 3
+   },
+   "name": "history_only",
+   "snapshot": {
+    "generated_at": "2026-11-03T14:00:00Z",
+    "quarantine": {
+     "by_reason": {},
+     "total": 0
+    },
+    "run_date": "2026-11-03",
+    "schema_version": 1,
+    "source_file": {
+     "fetched_at": "2026-11-03T14:00:00Z",
+     "file_date": "2026-11-03",
+     "file_name": "hab-responses_2026-11-03.csv",
+     "newest_record_date": "2026-01-05",
+     "rows_read": 10,
+     "source": "ca-swrcb-fhab",
+     "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+    },
+    "source_files": [
+     {
+      "fetched_at": "2026-11-03T14:00:00Z",
+      "file_date": "2026-11-03",
+      "file_name": "hab-responses_2026-11-03.csv",
+      "newest_record_date": "2026-01-05",
+      "rows_read": 10,
+      "source": "ca-swrcb-fhab",
+      "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+     }
+    ],
+    "sources": [
+     {
+      "agency": "California State Water Resources Control Board",
+      "attribution": "Advisory data: California State Water Resources Control Board, Freshwater Harmful Algal Bloom Program, via data.ca.gov (public domain). Advisories are recommendations; reporting is voluntary and incomplete.",
+      "contact": "CyanoHAB.Reports@waterboards.ca.gov",
+      "dataset_url": "https://data.ca.gov/dataset/surface-water-freshwater-harmful-algal-blooms",
+      "id": "ca-swrcb-fhab",
+      "license": "Other (Public Domain)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the state records a later \"None\" (no advisory recommended) at the same spot, or an end date. A blank end date is unknown.",
+      "lift_semantics": "explicit_record",
+      "official_map_url": "https://mywaterquality.ca.gov/habs/",
+      "program": "Freshwater and Estuarine Harmful Algal Bloom (FHAB) Program",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "No Restrictions on Public Use",
+      "state": "CA"
+     },
+     {
+      "agency": "Missouri Department of Natural Resources",
+      "attribution": "Missouri data: Missouri Department of Natural Resources, Harmful Algal Bloom response map. Status codes are the department's; their plain-English labels here are this site's reading of the codes.",
+      "contact": "Missouri Department of Natural Resources",
+      "dataset_url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+      "id": "mo-dnr-hab",
+      "license": "State of Missouri Data Policy (https://mo.gov/data-policy)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the department records a dissipation date. A closed case without one is not read as an end.",
+      "lift_semantics": "explicit_field",
+      "official_map_url": "https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs",
+      "program": "Harmful Algal Bloom Response (public water bodies)",
+      "publisher_caveat": "The data presented in the map should be used for general purposes only. The exact location, extent and toxicity of the reported bloom may not be accurate due to changing environmental conditions.",
+      "publisher_caveat_url": "https://dnr.mo.gov/water/alerts-hazards/harmful-algal-bloom-hab-reports-map",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "The data made available here has been modified for use from its original source, which is the State of Missouri. THE STATE OF MISSOURI MAKES NO REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS, ACCURACY, TIMELINESS, OR CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. THE STATE OF MISSOURI EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. The data is subject to change as modifications and updates are complete. It is understood that the information contained in the Web feed is being used at one’s own risk.",
+      "revocable": true,
+      "revocation_clause": "The State of Missouri reserves the right to modify and/or discontinue providing any or all of the data feeds at any time and to require the termination of any and all displaying, distributing or otherwise using any or all of the data for any reason including, without limitation, your violation of any provision of these Terms of Use.",
+      "rights": "Use permitted with the required disclaimer; revocable by the State",
+      "state": "MO"
+     },
+     {
+      "agency": "U.S. Environmental Protection Agency",
+      "attribution": "Satellite estimates: U.S. EPA Cyanobacteria Assessment Network (CyAN), from Copernicus Sentinel-3 data. Provisional, research-level estimates; EPA does not endorse this site.",
+      "contact": "U.S. EPA Office of Research and Development",
+      "dataset_url": "https://www.epa.gov/water-research/cyanobacteria-assessment-network-cyan",
+      "id": "epa-cyan",
+      "license": "U.S. Government work (public domain under 17 U.S.C. § 105); no license is stated on the CyANWeb API",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "A satellite estimate is never an advisory and never ends one. It measures how much cyanobacteria there is, not toxins.",
+      "lift_semantics": "none_recorded",
+      "official_map_url": "https://qed.epa.gov/cyanweb/",
+      "program": "Cyanobacteria Assessment Network (CyAN), Sentinel-3 OLCI weekly composite",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "satellite_estimate",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "EPA calls CyANWeb experimental and provisional, a research-level tool",
+      "state": "US"
+     }
+    ],
+    "waterbodies": [
+     {
+      "center": {
+       "lat": 33.66692,
+       "lon": -117.36227
+      },
+      "counties": [
+       "Riverside"
+      ],
+      "county_text": "Riverside",
+      "id": "ca-riverside-lake-elsinore",
+      "name": "Lake Elsinore",
+      "records": [
+       {
+        "date": "2026-01-05",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": true,
+        "id": "13297",
+        "level": "None",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "no_advisory"
+       },
+       {
+        "date": "2022-12-08",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "5550",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2021-07-19",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "701",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2635",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2020-09-03",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "714",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2431",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2017-07-28",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "159",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "1524",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       }
+      ],
+      "satellite": null,
+      "sites": [
+       {
+        "id": "3927",
+        "landmark": "In open water near TMDL LE02",
+        "lat": 33.662428,
+        "lon": -117.3555,
+        "status": {
+         "kind": "no_advisory_recorded",
+         "last_advisory": "2022-12-08",
+         "level": null,
+         "lift_date": "2026-01-05",
+         "lift_kind": "no_advisory_record",
+         "planned_end": null,
+         "posted": null,
+         "sites_with_advisory": 0,
+         "tier": null
+        }
+       },
+       {
+        "id": "2635",
+        "landmark": "Launch Point",
+        "lat": 33.671406,
+        "lon": -117.3705,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2021-07-19",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2021-07-19",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "2431",
+        "landmark": "Inlet Channel",
+        "lat": 33.656111,
+        "lon": -117.30444,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2020-09-03",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2020-09-03",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       },
+       {
+        "id": "1524",
+        "landmark": "Lake Elsinore",
+        "lat": 33.672408,
+        "lon": -117.36903,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2017-07-28",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2017-07-28",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       }
+      ],
+      "state": "CA",
+      "status": {
+       "kind": "advisory",
+       "last_advisory": "2022-12-08",
+       "level": "Caution",
+       "lift_date": null,
+       "lift_kind": null,
+       "planned_end": null,
+       "posted": "2021-07-19",
+       "sites_with_advisory": 3,
+       "tier": "caution"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "expected": {
+    "age_note": null,
+    "headline": "Danger advisory, last posted Sep 24, 2026. No all-clear recorded.",
+    "is_recent_on": true,
+    "is_recent_on_run_date": false,
+    "newer_posting": null,
+    "newest_posted": "2026-09-24",
+    "older_higher": null,
+    "recent_on": "2026-10-01",
+    "site_ids": [
+     "1524",
+     "2431",
+     "2635",
+     "3927",
+     "4056",
+     "4057",
+     "4058",
+     "4059",
+     "4105"
+    ],
+    "sites_with_advisory": 8
+   },
+   "name": "fresh_danger",
+   "snapshot": {
+    "generated_at": "2026-11-03T14:00:00Z",
+    "quarantine": {
+     "by_reason": {},
+     "total": 0
+    },
+    "run_date": "2026-11-03",
+    "schema_version": 1,
+    "source_file": {
+     "fetched_at": "2026-11-03T14:00:00Z",
+     "file_date": "2026-11-03",
+     "file_name": "hab-responses_2026-11-03.csv",
+     "newest_record_date": "2026-09-24",
+     "rows_read": 10,
+     "source": "ca-swrcb-fhab",
+     "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+    },
+    "source_files": [
+     {
+      "fetched_at": "2026-11-03T14:00:00Z",
+      "file_date": "2026-11-03",
+      "file_name": "hab-responses_2026-11-03.csv",
+      "newest_record_date": "2026-09-24",
+      "rows_read": 10,
+      "source": "ca-swrcb-fhab",
+      "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+     }
+    ],
+    "sources": [
+     {
+      "agency": "California State Water Resources Control Board",
+      "attribution": "Advisory data: California State Water Resources Control Board, Freshwater Harmful Algal Bloom Program, via data.ca.gov (public domain). Advisories are recommendations; reporting is voluntary and incomplete.",
+      "contact": "CyanoHAB.Reports@waterboards.ca.gov",
+      "dataset_url": "https://data.ca.gov/dataset/surface-water-freshwater-harmful-algal-blooms",
+      "id": "ca-swrcb-fhab",
+      "license": "Other (Public Domain)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the state records a later \"None\" (no advisory recommended) at the same spot, or an end date. A blank end date is unknown.",
+      "lift_semantics": "explicit_record",
+      "official_map_url": "https://mywaterquality.ca.gov/habs/",
+      "program": "Freshwater and Estuarine Harmful Algal Bloom (FHAB) Program",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "No Restrictions on Public Use",
+      "state": "CA"
+     },
+     {
+      "agency": "Missouri Department of Natural Resources",
+      "attribution": "Missouri data: Missouri Department of Natural Resources, Harmful Algal Bloom response map. Status codes are the department's; their plain-English labels here are this site's reading of the codes.",
+      "contact": "Missouri Department of Natural Resources",
+      "dataset_url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+      "id": "mo-dnr-hab",
+      "license": "State of Missouri Data Policy (https://mo.gov/data-policy)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the department records a dissipation date. A closed case without one is not read as an end.",
+      "lift_semantics": "explicit_field",
+      "official_map_url": "https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs",
+      "program": "Harmful Algal Bloom Response (public water bodies)",
+      "publisher_caveat": "The data presented in the map should be used for general purposes only. The exact location, extent and toxicity of the reported bloom may not be accurate due to changing environmental conditions.",
+      "publisher_caveat_url": "https://dnr.mo.gov/water/alerts-hazards/harmful-algal-bloom-hab-reports-map",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "The data made available here has been modified for use from its original source, which is the State of Missouri. THE STATE OF MISSOURI MAKES NO REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS, ACCURACY, TIMELINESS, OR CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. THE STATE OF MISSOURI EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. The data is subject to change as modifications and updates are complete. It is understood that the information contained in the Web feed is being used at one’s own risk.",
+      "revocable": true,
+      "revocation_clause": "The State of Missouri reserves the right to modify and/or discontinue providing any or all of the data feeds at any time and to require the termination of any and all displaying, distributing or otherwise using any or all of the data for any reason including, without limitation, your violation of any provision of these Terms of Use.",
+      "rights": "Use permitted with the required disclaimer; revocable by the State",
+      "state": "MO"
+     },
+     {
+      "agency": "U.S. Environmental Protection Agency",
+      "attribution": "Satellite estimates: U.S. EPA Cyanobacteria Assessment Network (CyAN), from Copernicus Sentinel-3 data. Provisional, research-level estimates; EPA does not endorse this site.",
+      "contact": "U.S. EPA Office of Research and Development",
+      "dataset_url": "https://www.epa.gov/water-research/cyanobacteria-assessment-network-cyan",
+      "id": "epa-cyan",
+      "license": "U.S. Government work (public domain under 17 U.S.C. § 105); no license is stated on the CyANWeb API",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "A satellite estimate is never an advisory and never ends one. It measures how much cyanobacteria there is, not toxins.",
+      "lift_semantics": "none_recorded",
+      "official_map_url": "https://qed.epa.gov/cyanweb/",
+      "program": "Cyanobacteria Assessment Network (CyAN), Sentinel-3 OLCI weekly composite",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "satellite_estimate",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "EPA calls CyANWeb experimental and provisional, a research-level tool",
+      "state": "US"
+     }
+    ],
+    "waterbodies": [
+     {
+      "center": {
+       "lat": 33.66581,
+       "lon": -117.3555
+      },
+      "counties": [
+       "Riverside"
+      ],
+      "county_text": "Riverside",
+      "id": "ca-riverside-lake-elsinore",
+      "name": "Lake Elsinore",
+      "records": [
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15344",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4105",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15343",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4058",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15342",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4056",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15341",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4059",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15340",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4057",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-01-05",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": true,
+        "id": "13297",
+        "level": "None",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "no_advisory"
+       },
+       {
+        "date": "2022-12-08",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "5550",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2021-07-19",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "701",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2635",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2020-09-03",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "714",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2431",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2017-07-28",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "159",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "1524",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       }
+      ],
+      "satellite": null,
+      "sites": [
+       {
+        "id": "4105",
+        "landmark": "Perret Park",
+        "lat": 33.641586,
+        "lon": -117.34358,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       },
+       {
+        "id": "4058",
+        "landmark": "West Marina (city site)",
+        "lat": 33.666661,
+        "lon": -117.37807,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4056",
+        "landmark": "Elm Grove Beach (city site)",
+        "lat": 33.66581,
+        "lon": -117.33548,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4059",
+        "landmark": "mid-lake (city site)",
+        "lat": 33.66334,
+        "lon": -117.35421,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4057",
+        "landmark": "Launch Pointe Boat Ramp (city site)",
+        "lat": 33.67269,
+        "lon": -117.35977,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "3927",
+        "landmark": "In open water near TMDL LE02",
+        "lat": 33.662428,
+        "lon": -117.3555,
+        "status": {
+         "kind": "no_advisory_recorded",
+         "last_advisory": "2022-12-08",
+         "level": null,
+         "lift_date": "2026-01-05",
+         "lift_kind": "no_advisory_record",
+         "planned_end": null,
+         "posted": null,
+         "sites_with_advisory": 0,
+         "tier": null
+        }
+       },
+       {
+        "id": "2635",
+        "landmark": "Launch Point",
+        "lat": 33.671406,
+        "lon": -117.3705,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2021-07-19",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2021-07-19",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "2431",
+        "landmark": "Inlet Channel",
+        "lat": 33.656111,
+        "lon": -117.30444,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2020-09-03",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2020-09-03",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       },
+       {
+        "id": "1524",
+        "landmark": "Lake Elsinore",
+        "lat": 33.672408,
+        "lon": -117.36903,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2017-07-28",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2017-07-28",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       }
+      ],
+      "state": "CA",
+      "status": {
+       "kind": "advisory",
+       "last_advisory": "2026-09-24",
+       "level": "Danger",
+       "lift_date": null,
+       "lift_kind": null,
+       "planned_end": null,
+       "posted": "2026-09-24",
+       "sites_with_advisory": 8,
+       "tier": "danger"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "expected": {
+    "age_note": "That level was last posted Mar 10, 2026, 7 months before the state's data dated Nov 3, 2026, and the state has not recorded an end to it. The state's newest record of any kind for Lake Elsinore is from Sep 24, 2026.",
+    "headline": "Danger advisory, last posted Mar 10, 2026. No all-clear recorded.",
+    "is_recent_on": true,
+    "is_recent_on_run_date": false,
+    "newer_posting": "The newest advisory posting here is lower: Caution advisory, posted Sep 24, 2026 at 5 reported spots. No all-clear recorded.",
+    "newest_posted": "2026-09-24",
+    "older_higher": null,
+    "recent_on": "2026-10-01",
+    "site_ids": [
+     "1524",
+     "2431",
+     "2635",
+     "3927",
+     "4056",
+     "4057",
+     "4058",
+     "4059",
+     "4105"
+    ],
+    "sites_with_advisory": 8
+   },
+   "name": "newer_lower",
+   "snapshot": {
+    "generated_at": "2026-11-03T14:00:00Z",
+    "quarantine": {
+     "by_reason": {},
+     "total": 0
+    },
+    "run_date": "2026-11-03",
+    "schema_version": 1,
+    "source_file": {
+     "fetched_at": "2026-11-03T14:00:00Z",
+     "file_date": "2026-11-03",
+     "file_name": "hab-responses_2026-11-03.csv",
+     "newest_record_date": "2026-09-24",
+     "rows_read": 10,
+     "source": "ca-swrcb-fhab",
+     "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+    },
+    "source_files": [
+     {
+      "fetched_at": "2026-11-03T14:00:00Z",
+      "file_date": "2026-11-03",
+      "file_name": "hab-responses_2026-11-03.csv",
+      "newest_record_date": "2026-09-24",
+      "rows_read": 10,
+      "source": "ca-swrcb-fhab",
+      "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+     }
+    ],
+    "sources": [
+     {
+      "agency": "California State Water Resources Control Board",
+      "attribution": "Advisory data: California State Water Resources Control Board, Freshwater Harmful Algal Bloom Program, via data.ca.gov (public domain). Advisories are recommendations; reporting is voluntary and incomplete.",
+      "contact": "CyanoHAB.Reports@waterboards.ca.gov",
+      "dataset_url": "https://data.ca.gov/dataset/surface-water-freshwater-harmful-algal-blooms",
+      "id": "ca-swrcb-fhab",
+      "license": "Other (Public Domain)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the state records a later \"None\" (no advisory recommended) at the same spot, or an end date. A blank end date is unknown.",
+      "lift_semantics": "explicit_record",
+      "official_map_url": "https://mywaterquality.ca.gov/habs/",
+      "program": "Freshwater and Estuarine Harmful Algal Bloom (FHAB) Program",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "No Restrictions on Public Use",
+      "state": "CA"
+     },
+     {
+      "agency": "Missouri Department of Natural Resources",
+      "attribution": "Missouri data: Missouri Department of Natural Resources, Harmful Algal Bloom response map. Status codes are the department's; their plain-English labels here are this site's reading of the codes.",
+      "contact": "Missouri Department of Natural Resources",
+      "dataset_url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+      "id": "mo-dnr-hab",
+      "license": "State of Missouri Data Policy (https://mo.gov/data-policy)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the department records a dissipation date. A closed case without one is not read as an end.",
+      "lift_semantics": "explicit_field",
+      "official_map_url": "https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs",
+      "program": "Harmful Algal Bloom Response (public water bodies)",
+      "publisher_caveat": "The data presented in the map should be used for general purposes only. The exact location, extent and toxicity of the reported bloom may not be accurate due to changing environmental conditions.",
+      "publisher_caveat_url": "https://dnr.mo.gov/water/alerts-hazards/harmful-algal-bloom-hab-reports-map",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "The data made available here has been modified for use from its original source, which is the State of Missouri. THE STATE OF MISSOURI MAKES NO REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS, ACCURACY, TIMELINESS, OR CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. THE STATE OF MISSOURI EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. The data is subject to change as modifications and updates are complete. It is understood that the information contained in the Web feed is being used at one’s own risk.",
+      "revocable": true,
+      "revocation_clause": "The State of Missouri reserves the right to modify and/or discontinue providing any or all of the data feeds at any time and to require the termination of any and all displaying, distributing or otherwise using any or all of the data for any reason including, without limitation, your violation of any provision of these Terms of Use.",
+      "rights": "Use permitted with the required disclaimer; revocable by the State",
+      "state": "MO"
+     },
+     {
+      "agency": "U.S. Environmental Protection Agency",
+      "attribution": "Satellite estimates: U.S. EPA Cyanobacteria Assessment Network (CyAN), from Copernicus Sentinel-3 data. Provisional, research-level estimates; EPA does not endorse this site.",
+      "contact": "U.S. EPA Office of Research and Development",
+      "dataset_url": "https://www.epa.gov/water-research/cyanobacteria-assessment-network-cyan",
+      "id": "epa-cyan",
+      "license": "U.S. Government work (public domain under 17 U.S.C. § 105); no license is stated on the CyANWeb API",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "A satellite estimate is never an advisory and never ends one. It measures how much cyanobacteria there is, not toxins.",
+      "lift_semantics": "none_recorded",
+      "official_map_url": "https://qed.epa.gov/cyanweb/",
+      "program": "Cyanobacteria Assessment Network (CyAN), Sentinel-3 OLCI weekly composite",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "satellite_estimate",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "EPA calls CyANWeb experimental and provisional, a research-level tool",
+      "state": "US"
+     }
+    ],
+    "waterbodies": [
+     {
+      "center": {
+       "lat": 33.66581,
+       "lon": -117.3555
+      },
+      "counties": [
+       "Riverside"
+      ],
+      "county_text": "Riverside",
+      "id": "ca-riverside-lake-elsinore",
+      "name": "Lake Elsinore",
+      "records": [
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15344",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4105",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15343",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4058",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15342",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4056",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15341",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4059",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15340",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4057",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-03-10",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "714",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2431",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2026-01-05",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": true,
+        "id": "13297",
+        "level": "None",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "no_advisory"
+       },
+       {
+        "date": "2022-12-08",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "5550",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2021-07-19",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "701",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2635",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2017-07-28",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "159",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "1524",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       }
+      ],
+      "satellite": null,
+      "sites": [
+       {
+        "id": "4105",
+        "landmark": "Perret Park",
+        "lat": 33.641586,
+        "lon": -117.34358,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4058",
+        "landmark": "West Marina (city site)",
+        "lat": 33.666661,
+        "lon": -117.37807,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4056",
+        "landmark": "Elm Grove Beach (city site)",
+        "lat": 33.66581,
+        "lon": -117.33548,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4059",
+        "landmark": "mid-lake (city site)",
+        "lat": 33.66334,
+        "lon": -117.35421,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4057",
+        "landmark": "Launch Pointe Boat Ramp (city site)",
+        "lat": 33.67269,
+        "lon": -117.35977,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "2431",
+        "landmark": "Inlet Channel",
+        "lat": 33.656111,
+        "lon": -117.30444,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-03-10",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-03-10",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       },
+       {
+        "id": "3927",
+        "landmark": "In open water near TMDL LE02",
+        "lat": 33.662428,
+        "lon": -117.3555,
+        "status": {
+         "kind": "no_advisory_recorded",
+         "last_advisory": "2022-12-08",
+         "level": null,
+         "lift_date": "2026-01-05",
+         "lift_kind": "no_advisory_record",
+         "planned_end": null,
+         "posted": null,
+         "sites_with_advisory": 0,
+         "tier": null
+        }
+       },
+       {
+        "id": "2635",
+        "landmark": "Launch Point",
+        "lat": 33.671406,
+        "lon": -117.3705,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2021-07-19",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2021-07-19",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "1524",
+        "landmark": "Lake Elsinore",
+        "lat": 33.672408,
+        "lon": -117.36903,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2017-07-28",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2017-07-28",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       }
+      ],
+      "state": "CA",
+      "status": {
+       "kind": "advisory",
+       "last_advisory": "2026-09-24",
+       "level": "Danger",
+       "lift_date": null,
+       "lift_kind": null,
+       "planned_end": null,
+       "posted": "2026-03-10",
+       "sites_with_advisory": 8,
+       "tier": "danger"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "expected": {
+    "age_note": null,
+    "headline": "Caution advisory, last posted Sep 24, 2026. No all-clear recorded.",
+    "is_recent_on": true,
+    "is_recent_on_run_date": false,
+    "newer_posting": null,
+    "newest_posted": "2026-09-24",
+    "older_higher": "An older, higher advisory is also on file: Danger advisory, last posted Dec 8, 2022 at 3 reported spots. No all-clear recorded.",
+    "recent_on": "2026-10-01",
+    "site_ids": [
+     "1524",
+     "2431",
+     "2635",
+     "3289",
+     "3927",
+     "4056",
+     "4057",
+     "4058",
+     "4059",
+     "4105"
+    ],
+    "sites_with_advisory": 9
+   },
+   "name": "none_a_meter_away",
+   "snapshot": {
+    "generated_at": "2026-11-03T14:00:00Z",
+    "quarantine": {
+     "by_reason": {},
+     "total": 0
+    },
+    "run_date": "2026-11-03",
+    "schema_version": 1,
+    "source_file": {
+     "fetched_at": "2026-11-03T14:00:00Z",
+     "file_date": "2026-11-03",
+     "file_name": "hab-responses_2026-11-03.csv",
+     "newest_record_date": "2026-09-24",
+     "rows_read": 10,
+     "source": "ca-swrcb-fhab",
+     "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+    },
+    "source_files": [
+     {
+      "fetched_at": "2026-11-03T14:00:00Z",
+      "file_date": "2026-11-03",
+      "file_name": "hab-responses_2026-11-03.csv",
+      "newest_record_date": "2026-09-24",
+      "rows_read": 10,
+      "source": "ca-swrcb-fhab",
+      "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+     }
+    ],
+    "sources": [
+     {
+      "agency": "California State Water Resources Control Board",
+      "attribution": "Advisory data: California State Water Resources Control Board, Freshwater Harmful Algal Bloom Program, via data.ca.gov (public domain). Advisories are recommendations; reporting is voluntary and incomplete.",
+      "contact": "CyanoHAB.Reports@waterboards.ca.gov",
+      "dataset_url": "https://data.ca.gov/dataset/surface-water-freshwater-harmful-algal-blooms",
+      "id": "ca-swrcb-fhab",
+      "license": "Other (Public Domain)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the state records a later \"None\" (no advisory recommended) at the same spot, or an end date. A blank end date is unknown.",
+      "lift_semantics": "explicit_record",
+      "official_map_url": "https://mywaterquality.ca.gov/habs/",
+      "program": "Freshwater and Estuarine Harmful Algal Bloom (FHAB) Program",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "No Restrictions on Public Use",
+      "state": "CA"
+     },
+     {
+      "agency": "Missouri Department of Natural Resources",
+      "attribution": "Missouri data: Missouri Department of Natural Resources, Harmful Algal Bloom response map. Status codes are the department's; their plain-English labels here are this site's reading of the codes.",
+      "contact": "Missouri Department of Natural Resources",
+      "dataset_url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+      "id": "mo-dnr-hab",
+      "license": "State of Missouri Data Policy (https://mo.gov/data-policy)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the department records a dissipation date. A closed case without one is not read as an end.",
+      "lift_semantics": "explicit_field",
+      "official_map_url": "https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs",
+      "program": "Harmful Algal Bloom Response (public water bodies)",
+      "publisher_caveat": "The data presented in the map should be used for general purposes only. The exact location, extent and toxicity of the reported bloom may not be accurate due to changing environmental conditions.",
+      "publisher_caveat_url": "https://dnr.mo.gov/water/alerts-hazards/harmful-algal-bloom-hab-reports-map",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "The data made available here has been modified for use from its original source, which is the State of Missouri. THE STATE OF MISSOURI MAKES NO REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS, ACCURACY, TIMELINESS, OR CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. THE STATE OF MISSOURI EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. The data is subject to change as modifications and updates are complete. It is understood that the information contained in the Web feed is being used at one’s own risk.",
+      "revocable": true,
+      "revocation_clause": "The State of Missouri reserves the right to modify and/or discontinue providing any or all of the data feeds at any time and to require the termination of any and all displaying, distributing or otherwise using any or all of the data for any reason including, without limitation, your violation of any provision of these Terms of Use.",
+      "rights": "Use permitted with the required disclaimer; revocable by the State",
+      "state": "MO"
+     },
+     {
+      "agency": "U.S. Environmental Protection Agency",
+      "attribution": "Satellite estimates: U.S. EPA Cyanobacteria Assessment Network (CyAN), from Copernicus Sentinel-3 data. Provisional, research-level estimates; EPA does not endorse this site.",
+      "contact": "U.S. EPA Office of Research and Development",
+      "dataset_url": "https://www.epa.gov/water-research/cyanobacteria-assessment-network-cyan",
+      "id": "epa-cyan",
+      "license": "U.S. Government work (public domain under 17 U.S.C. § 105); no license is stated on the CyANWeb API",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "A satellite estimate is never an advisory and never ends one. It measures how much cyanobacteria there is, not toxins.",
+      "lift_semantics": "none_recorded",
+      "official_map_url": "https://qed.epa.gov/cyanweb/",
+      "program": "Cyanobacteria Assessment Network (CyAN), Sentinel-3 OLCI weekly composite",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "satellite_estimate",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "EPA calls CyANWeb experimental and provisional, a research-level tool",
+      "state": "US"
+     }
+    ],
+    "waterbodies": [
+     {
+      "center": {
+       "lat": 33.66457,
+       "lon": -117.3555
+      },
+      "counties": [
+       "Riverside"
+      ],
+      "county_text": "Riverside",
+      "id": "ca-riverside-lake-elsinore",
+      "name": "Lake Elsinore",
+      "records": [
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15344",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4105",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15343",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4058",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15342",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4056",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15341",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4059",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15340",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4057",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2026-01-05",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": true,
+        "id": "13297",
+        "level": "None",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3927",
+        "source": "ca-swrcb-fhab",
+        "tier": "no_advisory"
+       },
+       {
+        "date": "2022-12-08",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "5550",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "3289",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2021-07-19",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "701",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2635",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       },
+       {
+        "date": "2020-09-03",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "714",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "2431",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       },
+       {
+        "date": "2017-07-28",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "159",
+        "level": "Danger",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "1524",
+        "source": "ca-swrcb-fhab",
+        "tier": "danger"
+       }
+      ],
+      "satellite": null,
+      "sites": [
+       {
+        "id": "4105",
+        "landmark": "Perret Park",
+        "lat": 33.641586,
+        "lon": -117.34358,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4058",
+        "landmark": "West Marina (city site)",
+        "lat": 33.666661,
+        "lon": -117.37807,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4056",
+        "landmark": "Elm Grove Beach (city site)",
+        "lat": 33.66581,
+        "lon": -117.33548,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4059",
+        "landmark": "mid-lake (city site)",
+        "lat": 33.66334,
+        "lon": -117.35421,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "4057",
+        "landmark": "Launch Pointe Boat Ramp (city site)",
+        "lat": 33.67269,
+        "lon": -117.35977,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "3927",
+        "landmark": "In open water near TMDL LE02",
+        "lat": 33.662428999999996,
+        "lon": -117.3555,
+        "status": {
+         "kind": "no_advisory_recorded",
+         "last_advisory": null,
+         "level": null,
+         "lift_date": "2026-01-05",
+         "lift_kind": "no_advisory_record",
+         "planned_end": null,
+         "posted": null,
+         "sites_with_advisory": 0,
+         "tier": null
+        }
+       },
+       {
+        "id": "3289",
+        "landmark": "In open water near TMDL LE02",
+        "lat": 33.662428,
+        "lon": -117.3555,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2022-12-08",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2022-12-08",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       },
+       {
+        "id": "2635",
+        "landmark": "Launch Point",
+        "lat": 33.671406,
+        "lon": -117.3705,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2021-07-19",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2021-07-19",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       },
+       {
+        "id": "2431",
+        "landmark": "Inlet Channel",
+        "lat": 33.656111,
+        "lon": -117.30444,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2020-09-03",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2020-09-03",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       },
+       {
+        "id": "1524",
+        "landmark": "Lake Elsinore",
+        "lat": 33.672408,
+        "lon": -117.36903,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2017-07-28",
+         "level": "Danger",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2017-07-28",
+         "sites_with_advisory": 1,
+         "tier": "danger"
+        }
+       }
+      ],
+      "state": "CA",
+      "status": {
+       "kind": "advisory",
+       "last_advisory": "2026-09-24",
+       "level": "Caution",
+       "lift_date": null,
+       "lift_kind": null,
+       "planned_end": null,
+       "posted": "2026-09-24",
+       "sites_with_advisory": 9,
+       "tier": "caution"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "expected": {
+    "age_note": null,
+    "headline": "Caution advisory, last posted Sep 24, 2026. No all-clear recorded.",
+    "is_recent_on": true,
+    "is_recent_on_run_date": false,
+    "newer_posting": null,
+    "newest_posted": "2026-09-24",
+    "older_higher": null,
+    "recent_on": "2026-10-01",
+    "site_ids": [
+     "4105"
+    ],
+    "sites_with_advisory": 1
+   },
+   "name": "single_fresh",
+   "snapshot": {
+    "generated_at": "2026-11-03T14:00:00Z",
+    "quarantine": {
+     "by_reason": {},
+     "total": 0
+    },
+    "run_date": "2026-11-03",
+    "schema_version": 1,
+    "source_file": {
+     "fetched_at": "2026-11-03T14:00:00Z",
+     "file_date": "2026-11-03",
+     "file_name": "hab-responses_2026-11-03.csv",
+     "newest_record_date": "2026-09-24",
+     "rows_read": 10,
+     "source": "ca-swrcb-fhab",
+     "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+    },
+    "source_files": [
+     {
+      "fetched_at": "2026-11-03T14:00:00Z",
+      "file_date": "2026-11-03",
+      "file_name": "hab-responses_2026-11-03.csv",
+      "newest_record_date": "2026-09-24",
+      "rows_read": 10,
+      "source": "ca-swrcb-fhab",
+      "url": "https://publish.data.ca.gov/x/hab-responses_2026-11-03.csv"
+     }
+    ],
+    "sources": [
+     {
+      "agency": "California State Water Resources Control Board",
+      "attribution": "Advisory data: California State Water Resources Control Board, Freshwater Harmful Algal Bloom Program, via data.ca.gov (public domain). Advisories are recommendations; reporting is voluntary and incomplete.",
+      "contact": "CyanoHAB.Reports@waterboards.ca.gov",
+      "dataset_url": "https://data.ca.gov/dataset/surface-water-freshwater-harmful-algal-blooms",
+      "id": "ca-swrcb-fhab",
+      "license": "Other (Public Domain)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the state records a later \"None\" (no advisory recommended) at the same spot, or an end date. A blank end date is unknown.",
+      "lift_semantics": "explicit_record",
+      "official_map_url": "https://mywaterquality.ca.gov/habs/",
+      "program": "Freshwater and Estuarine Harmful Algal Bloom (FHAB) Program",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "No Restrictions on Public Use",
+      "state": "CA"
+     },
+     {
+      "agency": "Missouri Department of Natural Resources",
+      "attribution": "Missouri data: Missouri Department of Natural Resources, Harmful Algal Bloom response map. Status codes are the department's; their plain-English labels here are this site's reading of the codes.",
+      "contact": "Missouri Department of Natural Resources",
+      "dataset_url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+      "id": "mo-dnr-hab",
+      "license": "State of Missouri Data Policy (https://mo.gov/data-policy)",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "An advisory ends only when the department records a dissipation date. A closed case without one is not read as an end.",
+      "lift_semantics": "explicit_field",
+      "official_map_url": "https://dnr.mo.gov/water/hows-water/pollutants-sources/harmful-algal-blooms-habs",
+      "program": "Harmful Algal Bloom Response (public water bodies)",
+      "publisher_caveat": "The data presented in the map should be used for general purposes only. The exact location, extent and toxicity of the reported bloom may not be accurate due to changing environmental conditions.",
+      "publisher_caveat_url": "https://dnr.mo.gov/water/alerts-hazards/harmful-algal-bloom-hab-reports-map",
+      "record_kind": "official_advisory",
+      "required_disclaimer": "The data made available here has been modified for use from its original source, which is the State of Missouri. THE STATE OF MISSOURI MAKES NO REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS, ACCURACY, TIMELINESS, OR CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. THE STATE OF MISSOURI EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. The data is subject to change as modifications and updates are complete. It is understood that the information contained in the Web feed is being used at one’s own risk.",
+      "revocable": true,
+      "revocation_clause": "The State of Missouri reserves the right to modify and/or discontinue providing any or all of the data feeds at any time and to require the termination of any and all displaying, distributing or otherwise using any or all of the data for any reason including, without limitation, your violation of any provision of these Terms of Use.",
+      "rights": "Use permitted with the required disclaimer; revocable by the State",
+      "state": "MO"
+     },
+     {
+      "agency": "U.S. Environmental Protection Agency",
+      "attribution": "Satellite estimates: U.S. EPA Cyanobacteria Assessment Network (CyAN), from Copernicus Sentinel-3 data. Provisional, research-level estimates; EPA does not endorse this site.",
+      "contact": "U.S. EPA Office of Research and Development",
+      "dataset_url": "https://www.epa.gov/water-research/cyanobacteria-assessment-network-cyan",
+      "id": "epa-cyan",
+      "license": "U.S. Government work (public domain under 17 U.S.C. § 105); no license is stated on the CyANWeb API",
+      "license_read_on": "2026-10-12",
+      "lift_explanation": "A satellite estimate is never an advisory and never ends one. It measures how much cyanobacteria there is, not toxins.",
+      "lift_semantics": "none_recorded",
+      "official_map_url": "https://qed.epa.gov/cyanweb/",
+      "program": "Cyanobacteria Assessment Network (CyAN), Sentinel-3 OLCI weekly composite",
+      "publisher_caveat": "",
+      "publisher_caveat_url": "",
+      "record_kind": "satellite_estimate",
+      "required_disclaimer": "",
+      "revocable": false,
+      "revocation_clause": "",
+      "rights": "EPA calls CyANWeb experimental and provisional, a research-level tool",
+      "state": "US"
+     }
+    ],
+    "waterbodies": [
+     {
+      "center": {
+       "lat": 33.64159,
+       "lon": -117.34358
+      },
+      "counties": [
+       "Riverside"
+      ],
+      "county_text": "Riverside",
+      "id": "ca-riverside-lake-elsinore",
+      "name": "Lake Elsinore",
+      "records": [
+       {
+        "date": "2026-09-24",
+        "detail": "",
+        "end_date": null,
+        "explicit_no_advisory": false,
+        "id": "15344",
+        "level": "Caution",
+        "record_kind": "official_advisory",
+        "removed_from_source": null,
+        "site": "4105",
+        "source": "ca-swrcb-fhab",
+        "tier": "caution"
+       }
+      ],
+      "satellite": null,
+      "sites": [
+       {
+        "id": "4105",
+        "landmark": "Perret Park",
+        "lat": 33.641586,
+        "lon": -117.34358,
+        "status": {
+         "kind": "advisory",
+         "last_advisory": "2026-09-24",
+         "level": "Caution",
+         "lift_date": null,
+         "lift_kind": null,
+         "planned_end": null,
+         "posted": "2026-09-24",
+         "sites_with_advisory": 1,
+         "tier": "caution"
+        }
+       }
+      ],
+      "state": "CA",
+      "status": {
+       "kind": "advisory",
+       "last_advisory": "2026-09-24",
+       "level": "Caution",
+       "lift_date": null,
+       "lift_kind": null,
+       "planned_end": null,
+       "posted": "2026-09-24",
+       "sites_with_advisory": 1,
+       "tier": "caution"
+      }
+     }
+    ]
+   }
+  }
+ ],
+ "file_date": "2026-11-03"
+}

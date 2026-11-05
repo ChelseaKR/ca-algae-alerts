@@ -1,4 +1,4 @@
-"""The dog-gear affiliate block (docs/DECISIONS.md 0013, narrowed by 0015).
+"""The dog-gear affiliate block (docs/DECISIONS.md 0013, narrowed by 0029).
 
 Off while AMAZON_ASSOCIATE_TAG is empty: no block, no Amazon URL, no privacy
 paragraph. On, the Dogs and algae page, and no other page, carries three to
@@ -147,10 +147,11 @@ def off_problems(root: Path) -> list[str]:
 
 
 def test_the_constant_and_the_links_agree() -> None:
-    # Empty means no links; set, it is a US Associates id. The shipped default
-    # is the owner's existing id until Lake Notice has one of its own.
+    # Empty means no links; set, it is a US Associates id. The shipped id is
+    # Lake Notice's own, never Trout Truck's.
     tag = site.AMAZON_ASSOCIATE_TAG
-    assert tag == "trouttruck-20"
+    assert tag == "lakenotice-20"
+    assert tag != "trouttruck-20"
     assert (site.gear_links() == []) == (tag == "")
     assert tag.endswith("-20")
     assert 3 <= len(site.GEAR_CATEGORIES) <= 5

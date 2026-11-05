@@ -44,16 +44,15 @@ chooses that design, which would be its own change.
 
 ## After the site is live
 
-- GA4: create a property named Lake Notice, put its measurement id in
-  `GA4_MEASUREMENT_ID` in `site.py` (empty until then). The site sends no
+- GA4: done 2026-10-31 (property 561648146, `G-75YLGQKDHG`, DECISIONS
+  0014). The owner-only GA settings in DECISIONS 0014 remain. The site sends no
   custom events yet (no `app_store_click`, no `gear_click`): the affiliate
   links add no tracking (DECISIONS 0013), so there is nothing to mark as a
   key event until that is built.
-- Affiliate links: `AMAZON_ASSOCIATE_TAG` in `site.py` defaults to the existing
-  Associates id `trouttruck-20`, so lakenotice.com must be on that account's
-  website list before the links ship. They appear on the dogs page only. To
-  use a Lake Notice id instead, create it and change that one constant; `""`
-  removes the block and the privacy paragraph. DECISIONS 0013 and 0015.
+- Affiliate links: `AMAZON_ASSOCIATE_TAG` in `site.py` is Lake Notice's own
+  Associates id, `lakenotice-20` (created 2026-11-05), never Trout Truck's
+  `trouttruck-20`. They appear on the dogs page only. `""` removes the block
+  and the privacy paragraph. DECISIONS 0013 and 0029.
 
 ## iOS identifiers to decide when the App Store record is created
 

@@ -23,6 +23,9 @@ struct LakeDetailView: View {
                     } icon: {
                         Image(systemName: Theme.symbol(for: water.status)).foregroundStyle(Theme.tint(for: water.status))
                     }
+                    ForEach(StatusWording.statusNotes(water, fileDate: env.snapshot?.fileDate(for: water)), id: \.self) { note in
+                        Text(note)
+                    }
                     if water.status.kind == .noAdvisoryRecorded, let last = water.status.lastAdvisory {
                         Text("Last advisory on file: \(last.label).")
                     }
@@ -31,6 +34,7 @@ struct LakeDetailView: View {
                     }
                     if water.status.sitesWithAdvisory > 1 {
                         Text("\(water.status.sitesWithAdvisory) reported spots here have an advisory with no all-clear recorded.")
+                        Text(StatusWording.headlineRule).font(.footnote).foregroundStyle(Theme.secondaryText)
                     }
                     Text(StatusWording.caveat(water.status)).font(.footnote).foregroundStyle(Theme.secondaryText)
                 }
@@ -45,6 +49,11 @@ struct LakeDetailView: View {
                     Text(guidance)
                 } header: { SectionTitle("What this level asks") }
             }
+
+            Section {
+                Text(StatusWording.humanAdvice)
+                Text(StatusWording.notMedicalAdvice).font(.footnote).foregroundStyle(Theme.secondaryText)
+            } header: { SectionTitle("After contact with the water") }
 
             Section {
                 Text(StatusWording.dogAnswer(name: water.name, status: water.status))

@@ -69,11 +69,11 @@ def status_json(status: st.Status) -> dict[str, Any]:
     }
 
 
-def _record_json(entry: hist.HistoryEntry) -> dict[str, Any]:
+def _record_json(entry: hist.HistoryEntry, spot: str) -> dict[str, Any]:
     r = entry.record
     return {
         "id": r.id,
-        "site": r.site_id,
+        "site": spot,
         "date": r.date.isoformat(),
         "level": r.level,
         "tier": r.tier,
@@ -105,6 +105,45 @@ def _site_json(
     )
 
 
+# Sources whose reports are matched to a spot by the state's coordinates
+# (decision 0017). California files the same monitoring spot under a new
+# bloom report each season, with the same coordinates to six decimals
+# (measured 2026-11-03: 280 such spots; where landmarks differ they are
+# spellings of one station, "Oaks Arm (DWR site CL-4)" and "(CL-04)").
+# Missouri's readings are owner-confirmed per case (0013), so it is not
+# matched.
+SPOT_BY_COORDINATES = frozenset({CA_SWRCB_FHAB.id})
+
+
+def spot_ids(group: Iterable[hist.HistoryEntry]) -> dict[str, str]:
+    """Each bloom report's spot, as a report id.
+
+    Reports of a coordinate-matched source that share their latest
+    coordinates are one spot, named by the report with the newest record, so
+    a later "None" at those coordinates is an explicit record at the same
+    spot (0002) and ends an older advisory there. A report without
+    coordinates, or from another source, is its own spot. Nothing is matched
+    by name or by distance: two points a meter apart stay two spots.
+    """
+    entries = sorted(group, key=lambda e: e.record.sort_key())
+    coords: dict[str, tuple[float, float]] = {}
+    newest: dict[str, tuple[dt.date, dt.datetime, int]] = {}
+    for entry in entries:
+        r = entry.record
+        newest[r.site_id] = r.sort_key()
+        if r.source in SPOT_BY_COORDINATES and r.lat is not None and r.lon is not None:
+            coords[r.site_id] = (r.lat, r.lon)
+    at: dict[tuple[float, float], list[str]] = defaultdict(list)
+    for report, point in coords.items():
+        at[point].append(report)
+    spot = {report: report for report in newest}
+    for reports in at.values():
+        name = max(reports, key=lambda rep: newest[rep])
+        for report in reports:
+            spot[report] = name
+    return spot
+
+
 def _center(sites: list[dict[str, Any]]) -> dict[str, float] | None:
     points = [(s["lat"], s["lon"]) for s in sites if s["lat"] is not None]
     if not points:
@@ -116,8 +155,14 @@ def _center(sites: list[dict[str, Any]]) -> dict[str, float] | None:
 
 
 def build_waterbodies(
-    entries: Iterable[hist.HistoryEntry], run_date: dt.date
+    entries: Iterable[hist.HistoryEntry],
+    run_date: dt.date,
+    file_dates: dict[str, dt.date] | None = None,
 ) -> list[dict[str, Any]]:
+    """``file_dates`` is each source's file date, the day a water's
+    12-month headline window is measured back from (decision 0017); a
+    source without one is measured from ``run_date``."""
+    dates = file_dates or {}
     by_water: dict[str, list[hist.HistoryEntry]] = defaultdict(list)
     for entry in entries:
         by_water[entry.record.water_key].append(entry)
@@ -126,9 +171,10 @@ def build_waterbodies(
         first = group[0].record
         names = Counter(e.record.water_name for e in group)
         name = _display_name(names)
+        spot = spot_ids(group)
         by_site: dict[str, list[hist.HistoryEntry]] = defaultdict(list)
         for entry in group:
-            by_site[entry.record.site_id].append(entry)
+            by_site[spot[entry.record.site_id]].append(entry)
         sites, statuses = [], []
         # Newest activity first, so a lake's page leads with what changed last.
         newest = {
@@ -148,9 +194,11 @@ def build_waterbodies(
                 "county_text": first.county_text,
                 "counties": counties_of(first.county_text),
                 "center": _center(sites),
-                "status": status_json(st.water_status(statuses)),
+                "status": status_json(
+                    st.water_status(statuses, dates.get(first.source, run_date))
+                ),
                 "sites": sites,
-                "records": [_record_json(e) for e in records],
+                "records": [_record_json(e, spot[e.record.site_id]) for e in records],
             }
         )
     _assert_unique_ids(out)
@@ -192,18 +240,29 @@ def build(
     generated_at: dt.datetime,
     quarantine: Counter[str],
     cyan_cache: dict[str, Any] | None = None,
+    hidden_sources: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """The snapshot. Each waterbody's ``satellite`` block comes from the
-    EPA CyAN cache (``cyan.py``) and never touches its status."""
+    EPA CyAN cache (``cyan.py``) and never touches its status.
+
+    A source in ``hidden_sources`` is left out entirely: its waters, its
+    file and its entry in ``sources`` (docs/DECISIONS.md 0019). Its history
+    is untouched."""
+    if CA_SWRCB_FHAB.id in hidden_sources:
+        raise SnapshotError("California cannot be hidden; a run without it is refused")
+    shown = [s for s in enabled_sources() if s.id not in hidden_sources]
     primary = _file_json(history, CA_SWRCB_FHAB.id)
     if primary is None:
         raise SnapshotError("no California source file on record")
-    files = [
-        f
-        for f in (_file_json(history, s.id) for s in enabled_sources())
-        if f is not None
-    ]
-    waters = build_waterbodies(history.entries.values(), run_date)
+    files = [f for f in (_file_json(history, s.id) for s in shown) if f is not None]
+    file_dates = {
+        s.id: day for s in shown if (day := history.last_file_date(s.id)) is not None
+    }
+    waters = build_waterbodies(
+        (e for e in history.entries.values() if e.record.source not in hidden_sources),
+        run_date,
+        file_dates,
+    )
     satellite = cyan.blocks(cyan_cache, waters) if cyan_cache else {}
     for water in waters:
         water["satellite"] = satellite.get(water["id"])
@@ -211,7 +270,7 @@ def build(
         "schema_version": SCHEMA_VERSION,
         "generated_at": generated_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "run_date": run_date.isoformat(),
-        "sources": [s.as_json() for s in enabled_sources()],
+        "sources": [s.as_json() for s in shown],
         "source_file": primary,
         "source_files": files,
         "quarantine": {

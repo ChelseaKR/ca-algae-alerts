@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import plistlib
+import re
 import shutil
 from html.parser import HTMLParser
 from pathlib import Path
@@ -152,7 +153,18 @@ def test_built_site_carries_the_name_and_not_the_old_one(tmp_path: Path) -> None
         meta = _Meta()
         meta.feed(text)
         assert meta.og_site_name == site.SITE_NAME, page
-        if page.name != "404.html":
+        # A water page whose title carries its advisory and date gives the
+        # room to the date (DECISIONS 0018); og:site_name, checked above,
+        # still names the site.
+        dated = page.parent.parent.name == "water" and re.search(
+            r"[A-Z][a-z]{2} \d{1,2}, \d{4}$", meta.title.strip()
+        )
+        # A county title that counts its waters under an advisory gives the
+        # room to the count the same way (0018, 2026-11-04 addendum).
+        counted = page.parent.parent.name == "county" and re.search(
+            r"\d+ of \d+ waters?$", meta.title.strip()
+        )
+        if page.name != "404.html" and not dated and not counted:
             assert meta.title.strip().endswith(site.SITE_NAME), (page, meta.title)
     home = _Meta()
     home.feed((out / "index.html").read_text(encoding="utf-8"))
