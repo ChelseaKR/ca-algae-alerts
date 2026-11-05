@@ -19,8 +19,9 @@
 {% endmacro %}
 
 {% macro advisory_table(waters, root, caption) %}
+<div class="table-scroll" role="region" aria-labelledby="advisories-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">{{ caption }}</caption>
+  <caption id="advisories-table-caption" class="visually-hidden">{{ caption }}</caption>
   <thead><tr><th scope="col">Water</th><th scope="col">State</th><th scope="col">County</th><th scope="col">Level</th><th scope="col">Last posted</th></tr></thead>
   <tbody>
   {% for w in waters %}
@@ -34,6 +35,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 <p class="muted">Where a water has more than one reported spot with an advisory, the level shown is the highest posted in the 12 months before the state's data, or the newest posting if none was.</p>
 {% endmacro %}
 
@@ -45,8 +47,9 @@
 <p><strong>Week ending {{ r.week_end|date }}: {{ cells_label(r.cells_per_ml) }} of cyanobacteria near the center of {{ sat.cyan_name }}.</strong></p>
 <p class="muted">A satellite estimate from EPA CyAN for a {{ sat.area_km2 }} km&sup2; lake. It does not measure toxins and does not change the advisory status.</p>
 {% if sat.readings|length > 1 %}
+<div class="table-scroll" role="region" aria-labelledby="satellite-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">Recent weekly satellite estimates for {{ sat.cyan_name }}, newest first</caption>
+  <caption id="satellite-table-caption" class="visually-hidden">Recent weekly satellite estimates for {{ sat.cyan_name }}, newest first</caption>
   <thead><tr><th scope="col">Week ending</th><th scope="col">Estimate</th></tr></thead>
   <tbody>
   {% for r in sat.readings %}
@@ -54,6 +57,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 {% endif %}
 {% else %}
 <p><strong>No satellite reading on file for {{ sat.cyan_name }} in recent weeks.</strong> Clouds, ice, or a lake shape the satellite's estimate near its center misses can cause this. It is a gap in the data, not a reading.</p>

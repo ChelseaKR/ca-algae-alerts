@@ -56,7 +56,8 @@ body {
 
 a { color: var(--link); text-underline-offset: 0.15em; }
 a:visited { color: var(--link-visited); }
-a:focus-visible, button:focus-visible, input:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible,
+.table-scroll:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
@@ -130,6 +131,18 @@ thead th {
 }
 tbody tr:nth-child(even) { background: var(--row-alt); }
 
+/* Every table sits in a named scroll region. A wide history table scrolls
+   inside it on a phone, never the page (SC 1.4.10). The region takes focus,
+   so a keyboard can scroll a table with no links in it (SC 2.1.1), and the
+   table keeps its own display, so its row and column semantics survive
+   (SC 1.3.1). position: relative holds the hidden caption inside the box. */
+.table-scroll {
+  position: relative;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.table-scroll > table { margin: 0; }
+
 dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; }
 dt { font-weight: 600; }
 dd { margin: 0; }
@@ -186,10 +199,19 @@ ul.water-index li { break-inside: avoid; }
 .status-advisory { border-left-color: var(--advisory-border); background: var(--advisory-bg); }
 .status p { margin: 0.4rem 0; }
 .status-line { font-size: 1.05rem; }
+/* Danger and Warning ask more of people than Caution, so their box is
+   drawn heavier and their level line heavier still. Caution keeps the
+   lighter box. This only repeats the level the words already give. The
+   border is 4.98:1 on the box and 5.43:1 on the page in light mode, 7.28:1
+   and 8.34:1 in dark (SC 1.4.11 asks 3:1). */
+.status.tier-danger, .status.tier-warning {
+  border: 2px solid var(--advisory-border);
+  border-left-width: 10px;
+}
+.status.tier-danger .status-line strong,
+.status.tier-warning .status-line strong { font-weight: 800; }
 
 @media (max-width: 40rem) {
-  /* Wide history tables scroll inside themselves, never the page. */
-  table { display: block; overflow-x: auto; }
   /* A term and its definition stack, so a long question never pushes the
      page wider than the screen (SC 1.4.10). */
   dl { grid-template-columns: 1fr; }

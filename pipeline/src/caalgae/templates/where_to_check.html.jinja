@@ -14,8 +14,9 @@
 </p>
 
 <h2 id="table">Sources</h2>
+<div class="table-scroll" role="region" aria-labelledby="sources-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">Where to check an algae advisory in California: each source, the date we read it, what it covers and what it does not</caption>
+  <caption id="sources-table-caption" class="visually-hidden">Where to check an algae advisory in California: each source, the date we read it, what it covers and what it does not</caption>
   <thead><tr><th scope="col">Source</th><th scope="col">Read on</th><th scope="col">What it covers</th><th scope="col">What it does not cover</th></tr></thead>
   <tbody>
   {% for s in sources %}
@@ -31,6 +32,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 
 <h2 id="counties">Counties</h2>
 <p>

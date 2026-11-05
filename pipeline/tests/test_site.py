@@ -1035,3 +1035,81 @@ def test_advisory_list_description_counts_each_state_it_lists(
     line = site.advisories_description(many)
     assert line.startswith("479 California and 47 Missouri lakes and rivers")
     assert len(line) <= site.DESCRIPTION_MAX
+
+
+_WRAPPED_TABLE = re.compile(
+    r'<div class="table-scroll" role="region" aria-labelledby="([\w-]+)"'
+    r' tabindex="0">\s*<table>\s*<caption id="([\w-]+)"'
+)
+
+
+def table_region_problems(page: str) -> list[str]:
+    """Every table sits in a focusable region named by its own caption, so a
+    keyboard can scroll it on a phone and a screen reader hears its name."""
+    problems: list[str] = []
+    tables = page.count("<table")
+    wrapped = _WRAPPED_TABLE.findall(page)
+    if len(wrapped) != tables:
+        problems.append(f"{tables} tables, {len(wrapped)} in a named region")
+    for label, caption in wrapped:
+        if label != caption:
+            problems.append(f"region {label} names caption {caption}")
+        if page.count(f'id="{caption}"') != 1:
+            problems.append(f"id {caption} is not unique")
+    return problems
+
+
+def test_every_table_is_a_named_focusable_scroll_region(
+    sample_site: Path, traps_site: Path
+) -> None:
+    seen = 0
+    for root in (sample_site, traps_site):
+        for page in pages(root):
+            text = page.read_text()
+            seen += text.count("<table")
+            assert table_region_problems(text) == [], page
+    assert seen > 0
+
+
+def test_table_region_guard_catches_each_sabotage() -> None:
+    good = (
+        '<div class="table-scroll" role="region" aria-labelledby="a-caption"'
+        ' tabindex="0">\n<table>\n  <caption id="a-caption">A</caption></table>'
+    )
+    assert table_region_problems(good) == []
+    assert table_region_problems("<table><caption>A</caption></table>")
+    assert table_region_problems(good.replace('tabindex="0"', ""))
+    assert table_region_problems(
+        good.replace('aria-labelledby="a-', 'aria-labelledby="b-')
+    )
+    assert table_region_problems(good + good)
+
+
+def test_tables_keep_table_display_and_the_region_shows_focus() -> None:
+    css = (Path(site.__file__).parent / "templates" / "style.css").read_text()
+    assert not re.search(r"(?m)^\s*table\s*\{[^}]*display:\s*block", css)
+    assert ".table-scroll:focus-visible" in css
+    assert re.search(
+        r"\.table-scroll \{[^}]*position: relative;[^}]*overflow-x: auto;", css
+    )
+
+
+def test_danger_and_warning_are_drawn_heavier_than_caution(
+    sample_site: Path, traps_site: Path
+) -> None:
+    css = (Path(site.__file__).parent / "templates" / "style.css").read_text()
+    heavy = css.split(".status.tier-danger, .status.tier-warning {")[1].split("}")[0]
+    assert "border: 2px solid var(--advisory-border);" in heavy
+    assert "border-left-width: 10px;" in heavy
+    assert ".status.tier-warning .status-line strong { font-weight: 800; }" in css
+    assert "tier-caution" not in css
+    tiers = set()
+    for root in (sample_site, traps_site):
+        for page in pages(root):
+            tiers.update(
+                re.findall(
+                    r'class="status status-advisory tier-(\w+)"', page.read_text()
+                )
+            )
+    # The class the rule keys on is on real pages, and Caution is too.
+    assert {"warning", "caution"} <= tiers

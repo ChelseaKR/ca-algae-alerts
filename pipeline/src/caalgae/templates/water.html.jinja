@@ -35,8 +35,9 @@
 
 <h2 id="sites">Reported spots</h2>
 <p>The state records each report at a spot, such as a beach or a boat ramp. Each spot's latest deciding record:</p>
+<div class="table-scroll" role="region" aria-labelledby="spots-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">Each reported spot at {{ water.name }} and its latest status</caption>
+  <caption id="spots-table-caption" class="visually-hidden">Each reported spot at {{ water.name }} and its latest status</caption>
   <thead><tr><th scope="col">Spot</th><th scope="col">Status</th></tr></thead>
   <tbody>
   {% for site in water.sites %}
@@ -47,6 +48,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 
 <h2 id="history">Advisory history</h2>
 {% if water.state == "CA" %}
@@ -54,8 +56,9 @@
 {% else %}
 <p>Every case the state has published for {{ water.name }}, newest first. Each case carries its current status code; the label beside it is this site's reading of the code.</p>
 {% endif %}
+<div class="table-scroll" role="region" aria-labelledby="history-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">Advisory records for {{ water.name }}, newest first</caption>
+  <caption id="history-table-caption" class="visually-hidden">Advisory records for {{ water.name }}, newest first</caption>
   <thead><tr><th scope="col">Date</th><th scope="col">Spot</th><th scope="col">State's level</th><th scope="col">Notes</th></tr></thead>
   <tbody>
   {% for r in water.records %}
@@ -68,6 +71,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 
 <h2 id="source">Source</h2>
 <p>{{ water_source.attribution }} <a href="{{ water_source.dataset_url }}">The state's data</a>. {{ water_source.lift_explanation }}</p>

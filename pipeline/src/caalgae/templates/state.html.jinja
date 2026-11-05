@@ -5,8 +5,9 @@
 <p class="lede">{{ waters|length }} waters appear in the records of the {{ state_source.agency }}. Waters whose latest record is an advisory come first, newest first.</p>
 {% if state == "CA" %}<p><a href="{{ root }}county/">Browse California by county</a>.</p>{% endif %}
 <p class="muted">{{ state_source.lift_explanation }}</p>
+<div class="table-scroll" role="region" aria-labelledby="state-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">Waters in {{ state_name }} and what the state's latest record says</caption>
+  <caption id="state-table-caption" class="visually-hidden">Waters in {{ state_name }} and what the state's latest record says</caption>
   <thead><tr><th scope="col">Water</th><th scope="col">Latest record</th></tr></thead>
   <tbody>
   {% for w in waters %}
@@ -14,6 +15,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 <p class="muted">{{ list_caveat }}</p>
 <p>{{ state_source.attribution }}</p>
 {{ required_disclaimer(state_source) }}
