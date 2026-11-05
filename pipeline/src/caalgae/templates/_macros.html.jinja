@@ -70,4 +70,7 @@
   <p>{{ source.required_disclaimer }}</p>
 </div>
 {% endif %}
+{% if source.publisher_caveat %}
+<p class="publisher-caveat">The {{ source.agency }} says of its map: &ldquo;{{ source.publisher_caveat }}&rdquo; <a href="{{ source.publisher_caveat_url }}">Source</a>.</p>
+{% endif %}
 {% endmacro %}

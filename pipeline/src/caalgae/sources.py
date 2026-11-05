@@ -61,6 +61,10 @@ class Source:
     # The publisher may withdraw permission; see docs/LICENSES-AND-ATTRIBUTION.md.
     revocable: bool = False
     revocation_clause: str = ""
+    # The publisher's own caveat on how to use its data, verbatim, with the
+    # page it comes from. Shown beside the data when non-empty.
+    publisher_caveat: str = ""
+    publisher_caveat_url: str = ""
     # A switch per source, so a revoked or changed source is turned off in
     # one place without touching its history.
     enabled: bool = True
@@ -118,6 +122,17 @@ MO_REVOCATION_CLAUSE = (
     "violation of any provision of these Terms of Use."
 )
 
+# Verbatim from the department's HAB Reports Map page, read 2026-10-30
+# ("Disclaimer"; the paragraph's first two sentences).
+MO_MAP_CAVEAT_URL = (
+    "https://dnr.mo.gov/water/alerts-hazards/harmful-algal-bloom-hab-reports-map"
+)
+MO_MAP_CAVEAT = (
+    "The data presented in the map should be used for general purposes only. "
+    "The exact location, extent and toxicity of the reported bloom may not be "
+    "accurate due to changing environmental conditions."
+)
+
 MO_DNR_HAB = Source(
     id="mo-dnr-hab",
     state="MO",
@@ -146,6 +161,8 @@ MO_DNR_HAB = Source(
     required_disclaimer=MO_REQUIRED_DISCLAIMER,
     revocable=True,
     revocation_clause=MO_REVOCATION_CLAUSE,
+    publisher_caveat=MO_MAP_CAVEAT,
+    publisher_caveat_url=MO_MAP_CAVEAT_URL,
 )
 
 EPA_CYAN = Source(

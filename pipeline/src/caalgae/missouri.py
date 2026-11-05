@@ -27,6 +27,12 @@ The end of an advisory is the department's dissipation date (``DissDat``),
 an explicit field. A case marked closed without one is not an end: it stays
 "last posted <date>, no all-clear recorded". A case with no observation
 date cannot be placed in time and is quarantined.
+
+Fail closed (docs/DECISIONS.md 0019). The department says it plans to retire
+this layer. An answer that shows the layer is gone or no longer has the
+shape read here (HTTP 404 or 410, an ArcGIS error, missing fields, too few
+rows, no usable case) raises ``LayerUnavailable``, and the run then leaves
+Missouri off the site rather than showing its last records as current.
 """
 
 from __future__ import annotations
@@ -69,6 +75,13 @@ LABELS = {
 }
 ADVISORY_CODES = frozenset({"advise", "notice"})
 MIN_ROWS = 50  # 278 on 2026-10-12; far fewer is a truncated answer
+# HTTP answers that mean the layer itself is gone, not a passing outage.
+GONE_STATUSES = frozenset({404, 410})
+
+
+class LayerUnavailable(fetch.FetchError):
+    """The layer is gone or its answer no longer has the expected shape.
+    Unlike a passing network failure, this hides Missouri at once."""
 
 
 def _date(ms: object) -> dt.date | None:
@@ -131,14 +144,29 @@ def _record(feature: dict[str, Any], file_date: dt.date) -> Record | str:
 
 
 def normalize(body: bytes, run_date: dt.date) -> Normalized:
-    data = json.loads(body)
+    try:
+        data = json.loads(body)
+    except ValueError as error:
+        raise LayerUnavailable(f"Missouri layer answer is not JSON: {error}") from error
+    if not isinstance(data, dict):
+        raise LayerUnavailable("Missouri layer answer is not a JSON object")
     if "error" in data:
-        raise fetch.FetchError(f"Missouri layer answered an error: {data['error']}")
+        raise LayerUnavailable(f"Missouri layer answered an error: {data['error']}")
     if data.get("exceededTransferLimit"):
-        raise fetch.FetchError("Missouri layer has more rows than one answer carries")
+        raise LayerUnavailable("Missouri layer has more rows than one answer carries")
     features = data.get("features")
     if not isinstance(features, list) or len(features) < MIN_ROWS:
-        raise fetch.FetchError(f"Missouri layer returned {len(features or [])} rows")
+        count = len(features) if isinstance(features, list) else 0
+        raise LayerUnavailable(f"Missouri layer returned {count} rows")
+    fields = data.get("fields")
+    names = (
+        {f.get("name") for f in fields if isinstance(f, dict)}
+        if isinstance(fields, list)
+        else set()
+    )
+    missing = [f for f in FIELDS if f not in names]
+    if missing:
+        raise LayerUnavailable(f"Missouri layer no longer has the fields {missing}")
     records: list[Record] = []
     quarantine: Counter[str] = Counter()
     for feature in features:
@@ -147,12 +175,16 @@ def normalize(body: bytes, run_date: dt.date) -> Normalized:
             quarantine[result] += 1
         else:
             records.append(result)
+    if not records:
+        raise LayerUnavailable("Missouri layer has no case this pipeline can place")
     return Normalized(records=records, quarantine=quarantine, rows_read=len(features))
 
 
 def fetch_cases(client: httpx.Client) -> bytes:
     fetch.robots_allows(client, QUERY_URL)
     response = client.get(QUERY_URL)
+    if response.status_code in GONE_STATUSES:
+        raise LayerUnavailable(f"Missouri layer returned HTTP {response.status_code}")
     if response.status_code != 200:
         raise fetch.FetchError(f"Missouri layer returned HTTP {response.status_code}")
     return response.content
