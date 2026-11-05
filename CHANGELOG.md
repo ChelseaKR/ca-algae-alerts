@@ -7,6 +7,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- Spanish groundwork, switched off (DECISIONS 0025): a Spanish catalog with a
+  status per string, a review gate in `make verify`, a rendered-page check
+  for English left on /es/ pages, and a levels page in English (/levels/) and
+  Spanish (/es/niveles/). Neither page is built while `LEVELS_ENABLED` and
+  `ES_ENABLED` are off, and every Spanish safety string is still a draft.
 - When a state's data stops (Missouri's layer gone, changed, partial,
   frozen in season for 30 days, or dropped by the department's own viewer),
   its pages stay up with a dated "data unavailable since <date>" notice, no

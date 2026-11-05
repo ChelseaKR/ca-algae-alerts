@@ -1,0 +1,210 @@
+{
+  "chrome.skip": {
+    "status": "draft"
+  },
+  "chrome.tagline": {
+    "status": "draft"
+  },
+  "chrome.other_language": {
+    "status": "draft"
+  },
+  "nav.label": {
+    "status": "draft"
+  },
+  "nav.breadcrumb": {
+    "status": "draft"
+  },
+  "nav.home": {
+    "status": "draft"
+  },
+  "nav.latest": {
+    "status": "draft"
+  },
+  "nav.advisories": {
+    "status": "draft"
+  },
+  "nav.county": {
+    "status": "draft"
+  },
+  "nav.missouri": {
+    "status": "draft"
+  },
+  "nav.dogs": {
+    "status": "draft"
+  },
+  "nav.about": {
+    "status": "draft"
+  },
+  "state.CA": {
+    "status": "same"
+  },
+  "state.MO": {
+    "status": "draft"
+  },
+  "footer.attribution.ca-swrcb-fhab": {
+    "status": "draft",
+    "safety": true
+  },
+  "footer.attribution.mo-dnr-hab": {
+    "status": "draft"
+  },
+  "footer.attribution.epa-cyan": {
+    "status": "draft",
+    "safety": true
+  },
+  "footer.not_medical_advice": {
+    "status": "draft",
+    "safety": true
+  },
+  "footer.independent": {
+    "status": "draft"
+  },
+  "footer.disclaimer_link": {
+    "status": "draft"
+  },
+  "footer.file": {
+    "status": "draft"
+  },
+  "footer.dataset": {
+    "status": "draft"
+  },
+  "footer.about": {
+    "status": "draft"
+  },
+  "footer.privacy": {
+    "status": "draft"
+  },
+  "footer.terms": {
+    "status": "draft"
+  },
+  "footer.support": {
+    "status": "draft"
+  },
+  "footer.analytics_opt_out": {
+    "status": "draft"
+  },
+  "levels.title": {
+    "status": "draft"
+  },
+  "levels.description": {
+    "status": "draft"
+  },
+  "levels.h1": {
+    "status": "draft"
+  },
+  "levels.lede": {
+    "status": "draft",
+    "safety": true
+  },
+  "levels.sign_heading": {
+    "status": "draft"
+  },
+  "levels.summary_heading": {
+    "status": "draft"
+  },
+  "levels.sign_source": {
+    "status": "draft"
+  },
+  "levels.contact_heading": {
+    "status": "draft"
+  },
+  "levels.human_advice": {
+    "status": "draft",
+    "safety": true
+  },
+  "levels.dogs_heading": {
+    "status": "draft"
+  },
+  "levels.dog_advice": {
+    "status": "draft",
+    "safety": true
+  },
+  "levels.end_heading": {
+    "status": "draft"
+  },
+  "levels.end": {
+    "status": "draft",
+    "safety": true
+  },
+  "levels.not_a_finding": {
+    "status": "draft",
+    "safety": true
+  },
+  "levels.links_advisories": {
+    "status": "draft"
+  },
+  "levels.links_county": {
+    "status": "draft"
+  },
+  "levels.links_dogs": {
+    "status": "draft"
+  },
+  "level.danger.name": {
+    "status": "draft",
+    "safety": true,
+    "note": "Unverified: seen only in a search-index summary of a Lahontan Water Board document. Replace with the sign's own word, then mark state."
+  },
+  "level.warning.name": {
+    "status": "draft",
+    "safety": true,
+    "note": "Unverified: seen only in a search-index summary of a Lahontan Water Board document. Replace with the sign's own word, then mark state."
+  },
+  "level.caution.name": {
+    "status": "draft",
+    "safety": true,
+    "note": "Unverified: seen only in a search-index summary of a Lahontan Water Board document. Replace with the sign's own word, then mark state."
+  },
+  "level.algal_mat.name": {
+    "status": "draft",
+    "safety": true,
+    "note": "Unverified: seen only in a search-index summary of a Lahontan Water Board document. Replace with the sign's own word, then mark state."
+  },
+  "level.other_advisory.name": {
+    "status": "draft",
+    "safety": true
+  },
+  "level.caution.guidance": {
+    "status": "draft",
+    "safety": true
+  },
+  "level.warning.guidance": {
+    "status": "draft",
+    "safety": true
+  },
+  "level.danger.guidance": {
+    "status": "draft",
+    "safety": true
+  },
+  "level.algal_mat.guidance": {
+    "status": "draft",
+    "safety": true
+  },
+  "level.other_advisory.guidance": {
+    "status": "draft",
+    "safety": true
+  },
+  "level.caution.sign": {
+    "status": "draft",
+    "safety": true,
+    "paste_from": "https://mywaterquality.ca.gov/habs/resources/docs/planktonic_hab_advisory_signs_all_versions.pdf",
+    "note": "Placeholder. Chelsea pastes the sign's Spanish text from a browser (the host admits only Googlebot), then sets status state with url, read_on and sha256 (cd pipeline && uv run python -m caalgae.i18n --hash KEY)."
+  },
+  "level.warning.sign": {
+    "status": "draft",
+    "safety": true,
+    "paste_from": "https://mywaterquality.ca.gov/habs/resources/docs/planktonic_hab_advisory_signs_all_versions.pdf",
+    "note": "Placeholder. Chelsea pastes the sign's Spanish text from a browser (the host admits only Googlebot), then sets status state with url, read_on and sha256 (cd pipeline && uv run python -m caalgae.i18n --hash KEY)."
+  },
+  "level.danger.sign": {
+    "status": "draft",
+    "safety": true,
+    "paste_from": "https://mywaterquality.ca.gov/habs/resources/docs/planktonic_hab_advisory_signs_all_versions.pdf",
+    "note": "Placeholder. Chelsea pastes the sign's Spanish text from a browser (the host admits only Googlebot), then sets status state with url, read_on and sha256 (cd pipeline && uv run python -m caalgae.i18n --hash KEY)."
+  },
+  "level.algal_mat.sign": {
+    "status": "draft",
+    "safety": true,
+    "paste_from": "https://mywaterquality.ca.gov/habs/docs/toxic-algal-mat-signs.pdf",
+    "note": "Placeholder. Chelsea pastes the sign's Spanish text from a browser (the host admits only Googlebot), then sets status state with url, read_on and sha256 (cd pipeline && uv run python -m caalgae.i18n --hash KEY)."
+  }
+}
