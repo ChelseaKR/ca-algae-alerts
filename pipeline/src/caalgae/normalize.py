@@ -126,7 +126,7 @@ class Record:
     @property
     def is_unrecognized(self) -> bool:
         """A level the state wrote that this pipeline has no reading for
-        (DECISIONS 0025). Unlike a blank, it may be a new advisory spelling,
+        (DECISIONS 0027). Unlike a blank, it may be a new advisory spelling,
         so it decides its spot as "undetermined": an older "None" never
         shows through it."""
         return self.tier == "unknown" and bool(self.level)

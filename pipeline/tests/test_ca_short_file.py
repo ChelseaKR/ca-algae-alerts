@@ -1,5 +1,5 @@
 """A short or reshaped California file must not flip live advisories
-(docs/DECISIONS.md 0025).
+(docs/DECISIONS.md 0027).
 
 The source-outage audit of 2026-11-05 dropped the newest 5% of advisory rows
 from the real history and watched 10 waters flip from a current advisory to

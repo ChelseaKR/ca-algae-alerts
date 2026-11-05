@@ -16,7 +16,7 @@ kinds of record decide anything:
 can neither raise nor end an advisory. A non-blank level this pipeline has
 no reading for (a new spelling, say "Danger - Closure") is different: it
 decides its spot as undetermined, carrying the state's words, so an older
-"None" never shows through it (decision 0025). The latest deciding record wins.
+"None" never shows through it (decision 0027). The latest deciding record wins.
 An advisory record that carries an end date on or before the run date is
 also an explicit end (``lift_kind = "end_date"``); a blank end date is
 unknown and changes nothing.
@@ -76,7 +76,7 @@ def site_status(records: Iterable[Record], run_date: dt.date) -> Status:
         return Status(kind=UNDETERMINED, last_advisory=last_advisory)
     latest = deciding[-1]
     if latest.is_unrecognized:
-        # A level this pipeline cannot read (DECISIONS 0025): undetermined,
+        # A level this pipeline cannot read (DECISIONS 0027): undetermined,
         # with the state's words kept so the page can quote them.
         return Status(
             kind=UNDETERMINED, level=latest.level, last_advisory=last_advisory
@@ -157,7 +157,7 @@ def water_status(site_statuses: Iterable[Status], as_of: dt.date) -> Status:
         )
     # A spot whose latest record has a level this pipeline cannot read
     # outranks another spot's "None": the water reads as undetermined, never
-    # as "recommends no advisory" (DECISIONS 0025).
+    # as "recommends no advisory" (DECISIONS 0027).
     unrecognized = sorted(
         s.level for s in statuses if s.kind == UNDETERMINED and s.level
     )

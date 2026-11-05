@@ -35,7 +35,7 @@ STALE_AFTER_DAYS = 7
 # days after the last good read, then hidden (docs/DECISIONS.md 0019).
 MO_STALE_AFTER_DAYS = 2
 # California's quarantine may grow by at most this many rows in one run
-# (DECISIONS 0025). It held at exactly 249 for 15 runs; a date-format change
+# (DECISIONS 0027). It held at exactly 249 for 15 runs; a date-format change
 # would quarantine every new posting without any other check noticing.
 MAX_QUARANTINE_GROWTH = 25
 
@@ -66,7 +66,7 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
             "accept a California file that withdraws current advisories, more "
             f"than {hist.MAX_REMOVED_RECORDS} records, or grows the quarantine by "
             f"more than {MAX_QUARANTINE_GROWTH} rows; only after reading the "
-            "file (docs/DECISIONS.md 0025)"
+            "file (docs/DECISIONS.md 0027)"
         ),
     )
     return p.parse_args(argv)
@@ -146,7 +146,7 @@ def _california(
 def _check_quarantine(
     history: hist.History, normalized: normalize.Normalized, *, accept: bool
 ) -> None:
-    """Refuse a California file whose quarantine jumped (DECISIONS 0025)."""
+    """Refuse a California file whose quarantine jumped (DECISIONS 0027)."""
     last = history.last_file(CA_SWRCB_FHAB.id)
     if last is None or accept:
         return

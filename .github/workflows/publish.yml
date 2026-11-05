@@ -28,7 +28,7 @@ on:
       accept_ca_edits:
         # Only after reading the state's file: lets through a California file
         # that withdraws current advisories, more than 25 records, or grows
-        # the quarantine by more than 25 rows (docs/DECISIONS.md 0025).
+        # the quarantine by more than 25 rows (docs/DECISIONS.md 0027).
         description: "Accept the California file's withdrawals or quarantine jump (read the file first)"
         type: boolean
         default: false

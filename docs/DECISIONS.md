@@ -579,7 +579,74 @@ malformed answer stopped the whole run, California included. Now:
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
 
-## 0025 — A short or reshaped California file cannot flip a live advisory (2026-11-05)
+## 0025 — Spanish groundwork: a catalog with a status per string, a review gate, and the levels page, all switched off (2026-11-05)
+
+Plan: `_agent-tools/growth/spanish-pages-plan-tt-ln-2026-11-05.md`, its first
+PR. Nothing changes on the live site: `i18n.LEVELS_ENABLED` and
+`i18n.ES_ENABLED` are both False, so a build writes neither /levels/ nor
+/es/niveles/, and the sitemap is unchanged.
+
+- **One catalog, one status per string.** `pipeline/src/caalgae/locales/es.json`
+  holds the Spanish strings and `es.status.json` their status: `state` (the
+  state's own words, with URL, date read and a SHA-256 of the text),
+  `reviewed` (reviewer initials and date), `same` (correct Spanish is
+  identical to English) or `draft`. `safety: true` marks safety strings: the
+  level names, guidance and sign wording, after-contact and dog advice, the
+  not-a-finding sentence, the not-medical-advice line and the attribution
+  caveats. The English catalog (`i18n.EN`) reads `wording.py` and
+  `sources.py`, so English output is unchanged and the existing tests still
+  pin it.
+- **Always checked (`make i18n`, inside `make verify`).** Key and placeholder
+  parity; a Spanish string identical to English must be `same` or `draft`;
+  a stale `same` fails; a safety string cannot be `same`; a `state` string
+  must still hash to its quote; a `reviewed` string needs its sign-off; a
+  paste placeholder can only be `draft`. Ported from Family Greenhouse's
+  `check-i18n-catalogs.mjs` (`todo` and `intentionallyEqual`).
+- **Checked when Spanish is on, in `make i18n` and in the build itself.** No
+  safety string may be `draft`, no placeholder may remain, and the Spanish
+  copy guard applies: never "seguro" and its forms, "sin peligro", "apta
+  para nadar", "limpia" or "libre de toxinas"; "Peligro" only as the level's
+  label. A missing string raises during rendering; there is no English
+  fallback.
+- **Rendered-page check.** After the Spanish page is written, every /es/
+  page must have `lang="es"` (every other page `lang="en"`) and no run of
+  four or more English words, and English stopwords must be at most 3% of its
+  words. It reads visible text, the title, `alt`, `aria-label`, `title`
+  attributes, the description and script string literals. Proper nouns come
+  from the snapshot (waters, counties, spots, agencies, programs), never a
+  hand list. The English vocabulary is read from the English catalog only,
+  so English pasted into es.json cannot teach the check its own words.
+- **The state's Spanish sign wording is not in the repo yet.** The four
+  `level.*.sign` strings are marked placeholders (`⟦PEGAR…`). The host,
+  mywaterquality.ca.gov, admits only Googlebot, so no script fetched it.
+  **Owner:** open the sign PDFs in a browser, paste each level's Spanish text,
+  then set its status to `state` with `url`, `read_on` and `sha256` (`cd
+  pipeline && uv run python -m caalgae.i18n --hash KEY`). The Spanish level
+  names (Precaución, Advertencia, Peligro) are drafts too, seen only in a
+  search-index summary; they become `state` from the same paste.
+- **All Spanish safety strings are drafts.** No reviewer has signed off.
+  Turning Spanish on today fails with 26 problems (22 draft safety strings,
+  4 placeholders), by design.
+- **Known blocker before turn-on:** `_ga4.html.jinja`'s opt-out messages are
+  English, and GA4 is on in production, so the rendered-page check fails the
+  Spanish page until they come from the catalog. A test records it.
+- **No hreflang yet.** It waits until after the ~2026-11-25 read of the dated
+  titles (0018). The twins link to each other with a plain "En español" /
+  "In English" link only when both are built.
+- The levels pages use `_base_i18n.html.jinja`, a copy of `base.html.jinja`
+  with every string from the catalog. A test checks that the English header
+  and footer are byte-for-byte those of the dogs page, so the copy cannot
+  drift without failing.
+
+Four sabotages each turn the gate red, and each test checks the sabotage
+applied first: English in a safety key, one word changed in a state quote,
+an English sentence hard-coded in the Spanish template (the rendered bytes
+differ), and a safety claim ("segura") in a reviewed string. Tests:
+`pipeline/tests/test_i18n_catalog.py`, `pipeline/tests/test_es_pages.py`. To
+undo: delete `i18n.py`, `levels.py`, `locales/`, the two templates, the
+`i18n` make target and the one `levels.build` line in `site.py`.
+
+## 0027 — A short or reshaped California file cannot flip a live advisory (2026-11-05)
 
 The source-outage audit of 2026-11-05 cut the newest 5% of advisory rows
 from the real history. The old guard, which refused only above 5% withdrawn

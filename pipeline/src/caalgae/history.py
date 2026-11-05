@@ -15,7 +15,7 @@ A failed or refused run never reaches this module, so a bad fetch cannot
 mark the whole file as removed (decision 0005 in Trout Truck's terms: a
 failed fetch is never a "nothing happened" fact). A run that would mark
 more than ``MAX_REMOVED_FRACTION`` of the active records removed is refused
-as a truncated file. California is held tighter (decision 0025): at most
+as a truncated file. California is held tighter (decision 0027): at most
 ``MAX_REMOVED_RECORDS`` withdrawals, and none of a report's current advisory.
 """
 
@@ -31,7 +31,7 @@ from caalgae.normalize import Record
 
 HISTORY_VERSION = 1
 MAX_REMOVED_FRACTION = 0.05
-# California's stricter limits (DECISIONS 0025). 5% of 14,270 active records
+# California's stricter limits (DECISIONS 0027). 5% of 14,270 active records
 # is 713, enough for a short file to flip live advisories to an older "None";
 # in 15 runs the state withdrew 0 records. A run over either limit is
 # refused unless the owner passes ``accept_edits`` after reading the file.
@@ -201,7 +201,7 @@ def merge(
     records, whatever the fraction. ``protect_advisories`` refuses a file
     that would withdraw any report's current advisory: the record that,
     gone, would let an older "None" or nothing at all speak for that spot
-    (DECISIONS 0025).
+    (DECISIONS 0027).
     """
     today = run_date.isoformat()
     source = file_info["source"]
