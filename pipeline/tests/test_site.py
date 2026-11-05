@@ -30,6 +30,9 @@ def build(tmp_path: Path, csv: Path = TRAPS, *extra: str) -> Path:
                 "--run-today", "2026-10-12",
                 "--history", str(tmp_path / "history.json"),
                 "--site-out", str(out),
+                # These tests read California and Missouri pages against the
+                # snapshot; New York pages are tested in test_newyork.py.
+                "--ny-history", "off",
                 *extra,
             ]
         )

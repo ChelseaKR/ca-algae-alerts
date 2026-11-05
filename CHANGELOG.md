@@ -33,6 +33,15 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- New York bloom history is on (docs/DECISIONS.md 0020): a `/state/ny/` page
+  and 477 water pages, with the New York page and the 50 waters with the most
+  reports in the sitemap (546 URLs instead of 495) and the rest `noindex`.
+  Water pages open with a line dated by DEC's yearly summary, and titles lead
+  with the bloom years ("Seneca Lake, NY: confirmed blooms in 7 years, 2019 to
+  2025"), never with advisory or status words. The New York copy test now runs
+  on every real page and splits sentences after a closing quotation mark.
+  To undo, set `site.NY_HISTORY_ENABLED` to False.
+
 - A water page with an advisory now has a search title that leads with the
   level and date from its headline, for example "Castaic Lake algae: Danger
   advisory, last posted Nov 3, 2026". Before, every title read "<water> toxic

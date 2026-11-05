@@ -617,3 +617,97 @@ allowed. `fetch.guard_url` refuses the four API prefixes above.
   `tests/test_newyork.py` and this entry's numbers in the same commit; run
   `make verify`; open a PR. No scheduled job does this: a yearly file deserves
   a person reading the diff.
+
+## 0020 — Turn New York's bloom history on, first stage: 50 indexable waters (prepared 2026-11-04)
+
+The owner approved New York's yearly summary under the OPEN-NY terms on
+2026-11-02 (0019), with the turn-on planned one to two weeks after
+2026-11-03. This change flips `site.NY_HISTORY_ENABLED` to True and keeps
+`NY_INDEX_LIMIT = 50`. Nothing else about the data changes.
+
+**Re-checked 2026-11-04, before the flip (0004, 0011):**
+
+- The terms are unchanged. The OPEN-NY Terms of Use dataset page still
+  links the same PDF. It is byte for byte the file 0019 read (SHA-256
+  `9437c849705d58df008f01fc23f404444becce6b86676adc3974f9160a4cb650`), headed
+  "LAST MODIFIED: March 8, 2013". It still says "The State grants you a
+  non-exclusive, revocable license to use the Content", "So long as you are
+  not doing anything malicious with NYS data, you may use it as you wish,
+  subject to no other requirements", and "You agree to defend, indemnify and
+  hold harmless the State". The revocation and indemnity clauses the owner
+  accepted are the same text.
+- `https://data.ny.gov/robots.txt` answered 200 with the same rules as on
+  2026-11-02 (`User-agent: *`, `Crawl-delay: 1`, and nothing that covers
+  `/api/views/` or `/resource/`).
+- `95my-wijm` metadata: rows updated 2026-01-14T17:36:47Z, the same as the
+  pin; "Posting Frequency: Annually"; `license` null; attribution "NYS
+  Department of Environmental Conservation". The live rows, read with the
+  pinned query, are byte for byte the pinned file (SHA-256 `a9b3a0e8…3623`,
+  1,371 rows, 2019 to 2025). So the 2026 season is not posted yet, as
+  expected (0019's refresh plan starts mid-January 2027).
+- `qtg2-hjth` (2012 to 2018) is reachable under the same robots.txt and
+  terms. Its rows were last updated 2019-05-31, so it is a closed archive.
+  It is **not used**. Its fields count weeks "on DEC notification list",
+  which is closer to an advisory than 95my-wijm's report counts, and its
+  bloom types include S (suspicious). Adding it would need its own owner
+  decision on that wording.
+
+**What the pages say, matched to 0016 to 0018 for this data type.** The
+New York pages have no status box, so 0017's 12-month headline and age
+line do not reach them (tested since 0019: no "no all-clear" copy). The
+other rules carry over in New York's own words:
+
+- **A dated first line (0016).** Every water page now opens "As of DEC's
+  yearly summary dated Jan 14, 2026, the records for <water> (<counties>,
+  New York) show a confirmed harmful algal bloom in <n> years (<first> to
+  <last>), with <n> reports in all. That is history, not an advisory or a
+  current status." The date is DEC's own "rows updated" time, which plays
+  the role of the state's file date. The New York page opens the same way.
+- **Titles lead with what the summary records, and its years (0018).**
+  "Seneca Lake, NY: confirmed blooms in 7 years, 2019 to 2025". Shorter
+  forms first add "algae" when it fits ("Adirondack Lake, NY algae: a
+  confirmed bloom in 2025") or drop "confirmed" ("Allegheny Reservoir, NY:
+  blooms in 3 years, 2020 to 2025"). A form such as "confirmed blooms 2020
+  to 2025" is not used, because it reads as a bloom every year. The years
+  in a title always appear in the first sentence. A title never says
+  advisory, status, current, ended, lifted, clear or safe. On the pinned
+  file: 453 of 477 titles carry their years, 23 names are too long and keep
+  the plain "… NY bloom history | Lake Notice" title, and one name (50
+  characters) is the whole title rather than being cut.
+- **Descriptions carry the file date.** "Seneca Lake, NY: DEC's summary
+  dated Jan 14, 2026 lists confirmed algal blooms in 7 years (2019 to
+  2025), 732 reports. History, not a current status." 444 of 477 fit the
+  dated form.
+
+**Index effect, measured by building from the 2026-11-04 snapshot.** With
+the switch off the sitemap lists 495 URLs. On, at the first stage, it lists
+546: the New York page and the 50 waters with the most reports. Of those
+50 titles, 47 carry their years. All 477 water pages are built; 427 are
+`noindex,follow` with no canonical: 193 are under the thin-page threshold
+and 234 are past the staged limit. No existing URL leaves the
+sitemap and no existing lastmod changes, so the first deploy's IndexNow
+announcement (0015) is the 51 new URLs. Every page gains the "New York
+history" nav link and the footer credit line. At the second stage
+(`NY_INDEX_LIMIT = None`) the sitemap would list 780 URLs: 284 New York
+waters plus the New York page. That stage waits for about three weeks of
+Search Console data on the first 50 (0019).
+
+**Tests.** The default build now reads the pinned cache. Every one of the
+477 real pages must pass the copy guard on its title, description and body.
+The water's own name is left out of that check, because Clear Lake, Lake
+Clear and Follensby Clear Pond are names, not findings. Each page must also
+open with the dated line and repeat its title's years in the first
+sentence. A negative control sabotages a real page five ways (a "clear"
+finding after the name is removed, an "ended" in the description, a wrong
+year in the title, an undated first line, no history sentence) and checks
+each is reported. That control found a gap: the guard did not split a
+sentence after a closing quotation mark, so a claim after a quote passed
+because the quote contained "not". The guard now splits there. A second
+control checks that the switched-off build's "no New York anywhere" test
+finds New York in a default build. The California and Missouri page tests
+(`test_site.py`, `test_lastmod_breadcrumb.py`) build with `--ny-history
+off`, because they check pages against the snapshot alone.
+
+**To undo:** set `NY_HISTORY_ENABLED = False`. One change removes every New
+York page, link, sitemap URL and credit line (tested). If DEC or the State
+sends a notice under the revocation clause, do that first.

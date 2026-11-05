@@ -159,6 +159,16 @@ def test_built_site_carries_the_name_and_not_the_old_one(tmp_path: Path) -> None
         dated = page.parent.parent.name == "water" and re.search(
             r"[A-Z][a-z]{2} \d{1,2}, \d{4}$", meta.title.strip()
         )
+        # A New York water title that carries its bloom years does the same
+        # (DECISIONS 0020).
+        # A name too long to fit beside the site name is the whole title.
+        dated = dated or (
+            page.parent.parent.name == "ny"
+            and (
+                re.search(r", NY(?: algae)?: .* \d{4}$", meta.title.strip())
+                or len(f"{meta.title.strip()} | {site.SITE_NAME}") > site.TITLE_MAX
+            )
+        )
         if page.name != "404.html" and not dated:
             assert meta.title.strip().endswith(site.SITE_NAME), (page, meta.title)
     home = _Meta()
