@@ -8,12 +8,16 @@ final class StatusWordingTests: XCTestCase {
     let lifted = Status(kind: .noAdvisoryRecorded, liftKind: .noAdvisoryRecord, liftDate: PlainDate(year: 2026, month: 9, day: 1))
     let ended = Status(kind: .noAdvisoryRecorded, liftKind: .endDate, liftDate: PlainDate(year: 2025, month: 9, day: 30))
     let undetermined = Status(kind: .undetermined)
+    let unrecognized = Status(kind: .undetermined, level: "Danger - Closure")
 
     func testHeadlinesMatchTheWebsite() {
         XCTAssertEqual(StatusWording.headline(advisory), "Caution advisory, last posted Sep 20, 2026. No all-clear recorded.")
         XCTAssertEqual(StatusWording.headline(lifted), "The state's latest record, from Sep 1, 2026, recommends no advisory.")
         XCTAssertEqual(StatusWording.headline(ended), "The state recorded an end date of Sep 30, 2025.")
         XCTAssertEqual(StatusWording.headline(undetermined), "Reports on file, with no advisory level the state has classified.")
+        XCTAssertEqual(StatusWording.headline(unrecognized), "The state's latest record says \u{201C}Danger - Closure\u{201D}, a level this site does not recognize, so it cannot say what applies. Check the official map.")
+        XCTAssertEqual(StatusWording.dogAnswer(name: "X", status: unrecognized), "The state's latest record says \u{201C}Danger - Closure\u{201D}, a level this site does not recognize, so it cannot say what applies. Check the official map. Until it is read, keep your dog out of the water at X and away from scum on the shore.")
+        XCTAssertFalse(StatusWording.shortLine(unrecognized).contains("No advisory"))
     }
 
     func testOtherAdvisoryUsesTheStatesOwnWords() {
@@ -35,7 +39,7 @@ final class StatusWordingTests: XCTestCase {
 
     func testNothingTheAppSaysClaimsSafety() throws {
         var lines: [String] = [StatusWording.dogAdvice, StatusWording.humanAdvice, StatusWording.notMedicalAdvice, FreeTier.unlockSummary]
-        for s in [advisory, lifted, ended, undetermined] {
+        for s in [advisory, lifted, ended, undetermined, unrecognized] {
             lines += [StatusWording.headline(s), StatusWording.shortLine(s), StatusWording.caveat(s), StatusWording.dogAnswer(name: "X", status: s)]
         }
         lines += AdvisoryTier.allCases.map(StatusWording.guidance)

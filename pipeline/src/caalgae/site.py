@@ -28,7 +28,7 @@ from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import indexnow, newyork, where_to_check, wording
+from caalgae import i18n, indexnow, levels, newyork, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
 from caalgae.water_names import display_water
@@ -1081,6 +1081,8 @@ class SiteBuilder:
         self.static_pages()
         self.where_to_check_page()
         self.ny_pages()
+        # /levels/ and /es/niveles/, both off on main (DECISIONS 0025).
+        levels.build(self, levels=i18n.LEVELS_ENABLED, es=i18n.ES_ENABLED)
         self.extras()
 
 

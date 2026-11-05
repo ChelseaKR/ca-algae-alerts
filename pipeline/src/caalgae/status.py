@@ -13,7 +13,10 @@ kinds of record decide anything:
   dissipated case with its date; ``lift_kind`` names which.
 
 "NA - refer to Report Details" and a blank level decide nothing, so they
-can neither raise nor end an advisory. The latest deciding record wins.
+can neither raise nor end an advisory. A non-blank level this pipeline has
+no reading for (a new spelling, say "Danger - Closure") is different: it
+decides its spot as undetermined, carrying the state's words, so an older
+"None" never shows through it (decision 0027). The latest deciding record wins.
 An advisory record that carries an end date on or before the run date is
 also an explicit end (``lift_kind = "end_date"``); a blank end date is
 unknown and changes nothing.
@@ -61,7 +64,7 @@ class Status:
 
 
 def _deciding(record: Record) -> bool:
-    return record.is_advisory or record.explicit_no_advisory
+    return record.is_advisory or record.explicit_no_advisory or record.is_unrecognized
 
 
 def site_status(records: Iterable[Record], run_date: dt.date) -> Status:
@@ -72,6 +75,12 @@ def site_status(records: Iterable[Record], run_date: dt.date) -> Status:
     if not deciding:
         return Status(kind=UNDETERMINED, last_advisory=last_advisory)
     latest = deciding[-1]
+    if latest.is_unrecognized:
+        # A level this pipeline cannot read (DECISIONS 0027): undetermined,
+        # with the state's words kept so the page can quote them.
+        return Status(
+            kind=UNDETERMINED, level=latest.level, last_advisory=last_advisory
+        )
     if latest.explicit_no_advisory:
         return Status(
             kind=NO_ADVISORY_RECORDED,
@@ -145,6 +154,16 @@ def water_status(site_statuses: Iterable[Status], as_of: dt.date) -> Status:
             planned_end=top.planned_end,
             last_advisory=last_advisory,
             sites_with_advisory=len(advisories),
+        )
+    # A spot whose latest record has a level this pipeline cannot read
+    # outranks another spot's "None": the water reads as undetermined, never
+    # as "recommends no advisory" (DECISIONS 0027).
+    unrecognized = sorted(
+        s.level for s in statuses if s.kind == UNDETERMINED and s.level
+    )
+    if unrecognized:
+        return Status(
+            kind=UNDETERMINED, level=unrecognized[0], last_advisory=last_advisory
         )
     lifted = [s for s in statuses if s.kind == NO_ADVISORY_RECORDED]
     if lifted:

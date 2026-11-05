@@ -227,6 +227,12 @@ def headline(status: dict[str, Any]) -> str:
             "The state's latest record, from "
             f"{date_label(status['lift_date'])}, recommends no advisory."
         )
+    if status.get("level"):
+        return (
+            f"The state's latest record says \u201c{status['level']}\u201d, a level "
+            "this site does not recognize, so it cannot say what applies. Check "
+            "the official map."
+        )
     return "Reports on file, with no advisory level the state has classified."
 
 
@@ -303,6 +309,11 @@ def dog_answer(name: str, status: dict[str, Any]) -> str:
             "all-clear for today. Look at the water "
             "before your dog goes in: keep it out of green, blue-green or "
             "scummy water and away from mats on the shore."
+        )
+    if status.get("level"):
+        return (
+            f"{headline(status)} Until it is read, keep your dog out of the "
+            f"water at {name} and away from scum on the shore."
         )
     return (
         f"The state has reports on file for {name} but has not classified an "
