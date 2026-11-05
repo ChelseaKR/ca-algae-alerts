@@ -7,6 +7,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- Spanish groundwork, switched off (DECISIONS 0025): a Spanish catalog with a
+  status per string, a review gate in `make verify`, a rendered-page check
+  for English left on /es/ pages, and a levels page in English (/levels/) and
+  Spanish (/es/niveles/). Neither page is built while `LEVELS_ENABLED` and
+  `ES_ENABLED` are off, and every Spanish safety string is still a draft.
 - A plain-language terms of use page at /terms/, linked from every page's
   footer next to privacy and listed in the sitemap. It names who runs the
   site, says in bold that the site is not a safety determination, tells

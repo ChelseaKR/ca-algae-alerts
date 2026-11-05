@@ -1,0 +1,34 @@
+{#
+  /levels/ and /es/niveles/ from one template (DECISIONS 0025). Every string
+  comes from the catalog through t(); a missing one fails the build.
+#}
+{% extends "_base_i18n.html.jinja" %}
+{% block content %}
+<h1>{{ t("levels.h1") }}</h1>
+<p class="lede">{{ t("levels.lede") }}</p>
+
+{% for tier in tiers %}
+<section id="{{ tier }}">
+  <h2>{{ t("level." ~ tier ~ ".name") }}</h2>
+  {% if tier in signs %}
+  <h3>{{ t("levels.sign_heading") }}</h3>
+  {% if signs[tier].read_on %}
+  <p class="muted">{{ t("levels.sign_source", date=local_date(signs[tier].read_on)) }} <a href="{{ signs[tier].url }}">{{ signs[tier].url }}</a></p>
+  {% endif %}
+  <blockquote lang="{{ lang }}">{{ t("level." ~ tier ~ ".sign") }}</blockquote>
+  {% endif %}
+  <h3>{{ t("levels.summary_heading") }}</h3>
+  <p>{{ t("level." ~ tier ~ ".guidance") }}</p>
+</section>
+{% endfor %}
+
+<h2 id="contact">{{ t("levels.contact_heading") }}</h2>
+<p>{{ t("levels.human_advice") }}</p>
+<h3>{{ t("levels.dogs_heading") }}</h3>
+<p>{{ t("levels.dog_advice") }}</p>
+
+<h2 id="end">{{ t("levels.end_heading") }}</h2>
+<p>{{ t("levels.end") }} {{ t("levels.not_a_finding") }}</p>
+
+<p><a href="{{ root }}advisories/">{{ t("levels.links_advisories") }}</a> &middot; <a href="{{ root }}county/">{{ t("levels.links_county") }}</a> &middot; <a href="{{ root }}dogs/">{{ t("levels.links_dogs") }}</a></p>
+{% endblock %}
