@@ -364,6 +364,8 @@ def _env() -> jinja2.Environment:
         cells_label=wording.cells_label,
         satellite_explainer=wording.SATELLITE_EXPLAINER,
         dog_advice=wording.DOG_ADVICE,
+        human_advice=wording.HUMAN_ADVICE,
+        not_medical_advice=wording.NOT_MEDICAL_ADVICE,
     )
     return env
 

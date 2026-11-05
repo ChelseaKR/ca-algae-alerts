@@ -21,6 +21,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
   sends nothing. A failed or refused announcement logs a notice and never
   fails the deploy. The key file at the site root is public by design
   (docs/DECISIONS.md 0015).
+- What a person should do after contact with water that may have toxic algae
+  (shower or rinse off with tap water; call a doctor or Poison Control at
+  1-800-222-1222 if sick), paraphrased from the CDC and the California Water
+  Boards' advisory signs, on every lake page, the dogs page, About and the
+  app's lake screen.
+- A "not medical advice" line in every page's footer, on About and in the app.
 - New York bloom history (docs/DECISIONS.md 0020), **off by default**
   (`site.NY_HISTORY_ENABLED`). When on: a `/state/ny/` page and one page per
   named water from New York DEC's yearly summary of confirmed blooms, 2019 to
@@ -106,6 +112,15 @@ Keep a Changelog, and versions follow Semantic Versioning.
   snapshot, for example Big Bear Lake, Lake Tulloch and Crowley Lake.
 - The advisories page title and description name "toxic algae" and the level
   and date that each row shows.
+- Missouri fails closed (DECISIONS 0019). If the department's layer is gone
+  or changed (HTTP 404 or 410, an error answer, missing fields, too few or no
+  usable rows), the run leaves Missouri off the site entirely and still
+  publishes California. After a passing failure, Missouri is shown with its
+  read date for at most 2 days after the last good read, then hidden. A
+  malformed Missouri answer no longer stops the whole run.
+- Missouri pages, the Missouri state page and About quote the Missouri
+  Department of Natural Resources' "general purposes only" map disclaimer
+  verbatim, with a link to it.
 - Each sitemap URL's `lastmod` is the newest record date the page shows, not
   the build date: a water's newest record, a county's or state's newest water,
   and the newest record overall for the home, advisories, county index and dogs

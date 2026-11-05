@@ -34,7 +34,7 @@ final class StatusWordingTests: XCTestCase {
     }
 
     func testNothingTheAppSaysClaimsSafety() throws {
-        var lines: [String] = [StatusWording.dogAdvice, FreeTier.unlockSummary]
+        var lines: [String] = [StatusWording.dogAdvice, StatusWording.humanAdvice, StatusWording.notMedicalAdvice, FreeTier.unlockSummary]
         for s in [advisory, lifted, ended, undetermined] {
             lines += [StatusWording.headline(s), StatusWording.shortLine(s), StatusWording.caveat(s), StatusWording.dogAnswer(name: "X", status: s)]
         }
@@ -44,6 +44,11 @@ final class StatusWordingTests: XCTestCase {
             lines += [StatusWording.headline(w.status), StatusWording.dogAnswer(name: w.name, status: w.status)]
         }
         for line in lines { XCTAssertEqual(affirmativeSafetyClaims(line), [], line) }
+    }
+
+    func testHumanAndMedicalLinesMatchTheWebsite() {
+        XCTAssertEqual(StatusWording.humanAdvice, "If you or a child go in water that may have toxic algae, shower or rinse off with tap water right away. If anyone gets sick afterward, call a doctor or Poison Control at 1-800-222-1222.")
+        XCTAssertEqual(StatusWording.notMedicalAdvice, "Lake Notice republishes state records for information only. It is not medical advice, and records can be late or wrong. In an emergency, call 911. For a possible poisoning, call Poison Control at 1-800-222-1222.")
     }
 
     func testGuardIsNotVacuous() {

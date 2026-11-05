@@ -130,6 +130,13 @@ public enum StatusWording {
 
     public static let dogAdvice = "Dogs are more exposed than people: they swim through scum, drink the water and lick algae off their fur. Where an advisory is on file, keep your dog out of the water and away from scum on the shore. If your dog does go in, rinse it with clean water and do not let it lick its coat. Call a veterinarian at once if your dog vomits, drools, stumbles or has a seizure after being near the water."
 
+    /// What a person should do after contact, paraphrased from the CDC and the
+    /// California Water Boards' advisory signs. Mirrors `HUMAN_ADVICE`.
+    public static let humanAdvice = "If you or a child go in water that may have toxic algae, shower or rinse off with tap water right away. If anyone gets sick afterward, call a doctor or Poison Control at 1-800-222-1222."
+
+    /// Mirrors `NOT_MEDICAL_ADVICE`.
+    public static let notMedicalAdvice = "Lake Notice republishes state records for information only. It is not medical advice, and records can be late or wrong. In an emergency, call 911. For a possible poisoning, call Poison Control at 1-800-222-1222."
+
     public static func dogAnswer(name: String, status: Status) -> String {
         switch status.kind {
         case .advisory:

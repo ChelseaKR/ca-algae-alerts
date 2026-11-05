@@ -553,6 +553,32 @@ guard, and no count at all for a county with none. A negative control writes
 a wrong count into one title and "0 of 2 waters" into another, and checks
 that both are reported. To undo, have `county_title` return the plain title.
 
+## 0019 — Missouri fails closed, and carries the department's own caveat (owner, 2026-10-30)
+
+The department's layer description says it plans to retire this service. Before this decision, a failed
+Missouri fetch kept the last records on the site with no limit, and a
+malformed answer stopped the whole run, California included. Now:
+
+- **Gone or changed: hidden at once.** HTTP 404 or 410, an ArcGIS error
+  answer, an answer that is not a JSON object, a missing expected field,
+  fewer than `MIN_ROWS` rows, or no case the pipeline can place raises
+  `missouri.LayerUnavailable`. The run leaves Missouri out of the snapshot
+  entirely: no Missouri waters, no /state/mo/, no Missouri source or file, no
+  footer link. California publishes as usual. Missouri's history is kept, so
+  a good read later brings it back.
+- **A passing failure** (network error, another HTTP status, robots.txt
+  unreadable) shows Missouri, with its read date, only while the last good
+  read is at most `MO_STALE_AFTER_DAYS` (2) days old, then hides it.
+- An absence is never shown as "no advisory": a hidden state has no pages.
+- Missouri pages, /state/mo/ and About quote the department's HAB Reports Map
+  disclaimer verbatim, with a link: "The data presented in the map should be
+  used for general purposes only. The exact location, extent and toxicity of
+  the reported bloom may not be accurate due to changing environmental
+  conditions." (`sources.MO_MAP_CAVEAT`, read 2026-10-30.)
+
+Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
+the negative control.
+
 ## 0020 — New York's yearly bloom summary, as history only, behind a switch (owner, 2026-11-02)
 
 **The owner's decision, 2026-11-02:** add New York State DEC's yearly
