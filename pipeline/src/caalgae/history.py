@@ -15,7 +15,8 @@ A failed or refused run never reaches this module, so a bad fetch cannot
 mark the whole file as removed (decision 0005 in Trout Truck's terms: a
 failed fetch is never a "nothing happened" fact). A run that would mark
 more than ``MAX_REMOVED_FRACTION`` of the active records removed is refused
-as a truncated file.
+as a truncated file. California is held tighter (decision 0027): at most
+``MAX_REMOVED_RECORDS`` withdrawals, and none of a report's current advisory.
 """
 
 from __future__ import annotations
@@ -30,6 +31,11 @@ from caalgae.normalize import Record
 
 HISTORY_VERSION = 1
 MAX_REMOVED_FRACTION = 0.05
+# California's stricter limits (DECISIONS 0027). 5% of 14,270 active records
+# is 713, enough for a short file to flip live advisories to an older "None";
+# in 15 runs the state withdrew 0 records. A run over either limit is
+# refused unless the owner passes ``accept_edits`` after reading the file.
+MAX_REMOVED_RECORDS = 25
 
 
 class HistoryError(RuntimeError):
@@ -158,18 +164,44 @@ def save(history: History, path: Path) -> None:
     path.write_text(text + "\n", encoding="utf-8")
 
 
+def _current_advisories(entries: dict[str, HistoryEntry], source: str) -> set[str]:
+    """The ids of each report's latest deciding record, where that record is
+    an advisory: the records whose withdrawal would change a status shown
+    as an advisory today."""
+    by_site: dict[str, list[Record]] = {}
+    for entry in entries.values():
+        r = entry.record
+        deciding = r.is_advisory or r.explicit_no_advisory or r.is_unrecognized
+        if entry.active and r.source == source and deciding:
+            by_site.setdefault(r.site_id, []).append(r)
+    out: set[str] = set()
+    for site in by_site.values():
+        latest = max(site, key=Record.sort_key)
+        if latest.is_advisory:
+            out.add(latest.id)
+    return out
+
+
 def merge(
     history: History,
     records: list[Record],
     *,
     run_date: dt.date,
     file_info: dict[str, Any],
+    max_removed: int | None = None,
+    protect_advisories: bool = False,
 ) -> History:
     """A new History with this file's records merged in.
 
     Only records of this file's source are compared, so one source's file
     can never withdraw another source's records. Record ids are prefixed by
     source where they could collide (Missouri's are ``mo-<objectid>``).
+
+    ``max_removed`` refuses a file that would withdraw more than that many
+    records, whatever the fraction. ``protect_advisories`` refuses a file
+    that would withdraw any report's current advisory: the record that,
+    gone, would let an older "None" or nothing at all speak for that spot
+    (DECISIONS 0027).
     """
     today = run_date.isoformat()
     source = file_info["source"]
@@ -189,6 +221,22 @@ def merge(
             f"{len(previously_active)} records on file; that looks like a "
             "truncated file, not the state's edits"
         )
+    if max_removed is not None and len(newly_removed) > max_removed:
+        raise HistoryError(
+            f"this file would withdraw {len(newly_removed)} records, more than "
+            f"the {max_removed} allowed in one run; that looks like a truncated "
+            "file, not the state's edits"
+        )
+    if protect_advisories and newly_removed:
+        live = _current_advisories(entries, source)
+        lost = sorted(rid for rid in newly_removed if rid in live)
+        if lost:
+            raise HistoryError(
+                f"this file would withdraw {len(lost)} current advisor"
+                f"{'y' if len(lost) == 1 else 'ies'} (records {', '.join(lost[:10])}); "
+                "the page would fall back to an older record, so the run is "
+                "refused until the file is checked"
+            )
     for record_id, record in current.items():
         old = entries.get(record_id)
         if old is None:
