@@ -1,4 +1,4 @@
-"""Decision 0021: a California report whose landmark is the same as
+"""Decision 0022: a California report whose landmark is the same as
 another's, once a trailing "(CODE)", case and spacing are set aside, and
 whose latest coordinates are within 25 m of the other's, is the same spot.
 

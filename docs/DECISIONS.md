@@ -411,7 +411,7 @@ both fixed here:
   fall from 1,322 to 1,088, and 15 waters move from an advisory to the
   state's latest record recommending none. Nothing is matched by name or by
   distance: two points a meter apart stay two spots, and a report without
-  coordinates is its own spot. (Superseded in part by 0021, which also
+  coordinates is its own spot. (Superseded in part by 0022, which also
   matches the same landmark within 25 m.) Missouri is not matched (its readings are
   owner-confirmed per case, 0013).
 
@@ -580,7 +580,7 @@ malformed answer stopped the whole run, California included. Now:
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
 
-## 0021 — The same landmark within 25 m is the same spot (owner, 2026-11-05)
+## 0022 — The same landmark within 25 m is the same spot (owner, 2026-11-05)
 
 This supersedes 0017's "nothing is matched by name or by distance" for
 California. Found in the 2026-11-05 quality audit: the state adds a station

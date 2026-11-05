@@ -143,7 +143,7 @@ def test_a_none_at_the_same_coordinates_under_a_new_report_ends_the_old_one() ->
 def test_negative_control_a_meter_apart_under_another_name_is_another_spot() -> None:
     """Move the None one millionth of a degree and give it another landmark.
     It is no longer the same reported spot, so the 2022 Danger stands: a
-    different name is never matched by distance (0021), and the test above
+    different name is never matched by distance (0022), and the test above
     fails if the matching is switched off."""
     moved = [
         dataclasses.replace(r, lat=TMDL[0] + 0.000001, landmark="Mid-lake buoy")

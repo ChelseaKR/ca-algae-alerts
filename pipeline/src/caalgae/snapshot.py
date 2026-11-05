@@ -115,7 +115,7 @@ def _site_json(
 # matched.
 SPOT_BY_COORDINATES = frozenset({CA_SWRCB_FHAB.id})
 
-# Decision 0021 (owner, 2026-11-05): a report of a matched source whose
+# Decision 0022 (owner, 2026-11-05): a report of a matched source whose
 # landmark is the same as another's, once a trailing "(CODE)", case and
 # spacing are set aside, and whose latest coordinates are within this many
 # meters of the other's, is the same spot. The state adds a station code to
@@ -190,7 +190,7 @@ def spot_ids(group: Iterable[hist.HistoryEntry]) -> dict[str, str]:
     Reports of a coordinate-matched source are one spot when they share
     their latest coordinates (0017), or when their latest landmarks have the
     same ``landmark_key`` and their latest coordinates are within
-    ``SAME_NAME_METERS`` (0021). Each link meets one of those two tests, so
+    ``SAME_NAME_METERS`` (0022). Each link meets one of those two tests, so
     a chain of same-name links can span more than 25 m. The spot is named by
     the report with the newest record, so a later "None" there is an
     explicit record at the same spot (0002) and ends an older advisory

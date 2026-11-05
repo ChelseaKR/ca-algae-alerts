@@ -53,7 +53,7 @@ def _newer_lower() -> list[Record]:
 
 
 def _none_a_meter_away() -> list[Record]:
-    # Another landmark too, so it stays another spot under 0021.
+    # Another landmark too, so it stays another spot under 0022.
     return [
         dataclasses.replace(r, lat=TMDL[0] + 0.000001, landmark="Mid-lake buoy")
         if r.id == "13297"
