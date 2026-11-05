@@ -71,6 +71,10 @@ struct LakeRow: View {
             }
             Text(water.countyLabel).font(.subheadline).foregroundStyle(Theme.secondaryText)
             StatusLine(status: water.status)
+            // The same notes the website's advisory lists carry (0017).
+            ForEach([StatusWording.newerPosting(water), StatusWording.olderHigher(water)].compactMap { $0 }, id: \.self) { note in
+                Text(note).font(.footnote).foregroundStyle(Theme.secondaryText)
+            }
         }
         .padding(.vertical, 2)
         .accessibilityElement(children: .combine)

@@ -52,8 +52,8 @@ struct AdvisoriesView: View {
             switch scope {
             case .advisories:
                 let advisories = WaterSearch.advisories(matches)
-                let recent = advisories.filter { WaterSearch.isRecent($0.status, today: env.today) }
-                let older = advisories.filter { !WaterSearch.isRecent($0.status, today: env.today) }
+                let recent = advisories.filter { WaterSearch.isRecent($0, today: env.today) }
+                let older = advisories.filter { !WaterSearch.isRecent($0, today: env.today) }
                 Section {
                     if recent.isEmpty { Text("None posted in the last 30 days.").foregroundStyle(Theme.secondaryText) }
                     ForEach(recent) { row($0) }
