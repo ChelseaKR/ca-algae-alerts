@@ -2,10 +2,10 @@
 {% from "_macros.html.jinja" import status_box, satellite_box, required_disclaimer %}
 {% block content %}
 <h1>{{ water.name }}: toxic algae advisories</h1>
-<p class="lede">{{ water.name }}, {{ county }}.{% for name, slug in county_links %} See all <a href="{{ root }}county/{{ slug }}/">{{ name }} County waters</a>.{% endfor %}</p>
+<p class="lede">{{ summary }}{% for name, slug in county_links %} See all <a href="{{ root }}county/{{ slug }}/">{{ name }} County waters</a>.{% endfor %}</p>
 
 <h2 id="status">What the state's records say</h2>
-{{ status_box(water.status) }}
+{{ status_box(water.status, status_notes) }}
 {% if guidance_for(water) %}
 <p><strong>What this level asks:</strong> {{ guidance_for(water) }}</p>
 {% endif %}

@@ -20,7 +20,7 @@ _LD = re.compile(r'<script type="application/ld\+json">(.*?)</script>', re.S)
 _NAV = re.compile(r'<nav aria-label="Breadcrumb".*?</nav>', re.S)
 _LINK = re.compile(r'<a href="([^"]*)"[^>]*>(.*?)</a>', re.S)
 _ENTRY = re.compile(r"<url><loc>([^<]+)</loc>(?:<lastmod>([^<]+)</lastmod>)?</url>")
-_STATIC = ("about/", "privacy/", "support/")
+_STATIC = ("about/", "privacy/", "support/", "terms/")
 
 
 def found(match: re.Match[str] | None) -> re.Match[str]:

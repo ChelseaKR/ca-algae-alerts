@@ -1,14 +1,15 @@
 {% extends "base.html.jinja" %}
 {% block content %}
 <h1>{{ county }} County: lake and river algae advisories</h1>
-<p class="lede">{{ waters|length }} waters in {{ county }} County appear in the state's harmful algal bloom records. Waters whose latest record is an advisory come first.</p>
+<p class="lede">{{ waters|length }} waters in {{ county }} County appear in the state's harmful algal bloom records.{% if count_line %} {{ count_line }} An advisory stays listed until the state records an end.{% endif %} Waters whose latest record is an advisory come first, newest first.</p>
 <table>
   <caption class="visually-hidden">Waters in {{ county }} County and what the state's latest record says</caption>
   <thead><tr><th scope="col">Water</th><th scope="col">Latest record</th></tr></thead>
   <tbody>
   {% for w in waters %}
-    <tr><td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td><td>{{ headline(w.status) }}</td></tr>
+    <tr><td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td><td>{{ list_row(w, file_date) }}</td></tr>
   {% endfor %}
   </tbody>
 </table>
+<p class="muted">{{ list_caveat }}</p>
 {% endblock %}

@@ -69,7 +69,7 @@
     {% endif %}
     <p>{{ site_name }} is independent and is not affiliated with or endorsed by any state or federal agency.{% for s in all_sources if s.required_disclaimer %} <a href="{{ root }}about/#{{ s.id }}">{{ state_names.get(s.state, s.state) }} data disclaimer</a>.{% endfor %}</p>
     <p>California data file {{ source_file.file_name }}, read {{ source_file.fetched_at[:10]|date }}. Official map: <a href="{{ source.official_map_url }}">{{ source.official_map_url }}</a></p>
-    <p><a href="{{ source.dataset_url }}">Dataset on data.ca.gov</a> &middot; <a href="{{ root }}about/">about the data</a> &middot; <a href="{{ root }}privacy/">privacy</a> &middot; <a href="{{ root }}support/">support</a></p>
+    <p><a href="{{ source.dataset_url }}">Dataset on data.ca.gov</a> &middot; <a href="{{ root }}about/">about the data</a> &middot; <a href="{{ root }}privacy/">privacy</a> &middot; <a href="{{ root }}terms/">terms</a> &middot; <a href="{{ root }}support/">support</a></p>
     {% if ga4_measurement_id %}
     <p id="analytics-choice" hidden><button type="button" id="analytics-opt-out" class="link-button" hidden>Opt out of analytics</button> <span id="analytics-status" role="status"></span></p>
     {% endif %}

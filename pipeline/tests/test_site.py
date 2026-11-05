@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 from paths import PAGE, SAMPLE, TRAPS
 
-from caalgae import cli, site, wording
+from caalgae import cli, site, water_names, wording
 
 _TAG = re.compile(r"<[^>]+>")
 _SCRIPT = re.compile(r"<script\b.*?</script>", re.S)
@@ -132,6 +132,50 @@ def test_lift_reads_as_the_states_record_with_its_date(traps_site: Path) -> None
     assert "Last advisory on file: Jul 1, 2026." in text
 
 
+def lede_of(page: Path) -> str:
+    match = re.search(r'<p class="lede">(.*?)</p>', page.read_text(), re.S)
+    assert match
+    return html.unescape(re.sub(r"\s+", " ", _TAG.sub(" ", match.group(1)))).strip()
+
+
+def test_water_page_opens_with_a_dated_answer(traps_site: Path) -> None:
+    # The first sentence after the h1 names the water, its county, the date
+    # of the state's file and the status, so it reads correctly when quoted
+    # on its own. It is the status box's headline, never a new claim.
+    water = traps_site / "water"
+    assert lede_of(water / "ca-alameda-lake-alpha" / "index.html").startswith(
+        "As of the state's data dated Oct 9, 2026, the records for Lake Alpha "
+        "(Alameda County) show: Caution advisory, last posted Sep 20, 2026. "
+        "No all-clear recorded."
+    )
+    beta = lede_of(water / "ca-lake-beta-reservoir" / "index.html")
+    assert (
+        "show: The state's latest record, from Sep 1, 2026, recommends no "
+        "advisory. That is not a finding that the water is safe now." in beta
+    )
+    theta = lede_of(water / "ca-marin-theta-lake" / "index.html")
+    assert "no advisory level the state has classified" in theta
+    assert "not a finding that the water is safe now" in theta
+
+
+def test_summary_leaves_out_a_missing_date_and_never_says_safe() -> None:
+    advisory = {"kind": "advisory", "tier": "danger", "posted": "2026-10-16"}
+    line = wording.summary("Lake X", "Alameda County", advisory, None)
+    assert line == (
+        "The state's records for Lake X (Alameda County) show: Danger advisory, "
+        "last posted Oct 16, 2026. No all-clear recorded."
+    )
+    assert "As of" not in line and "safe" not in line
+    none = {"kind": "no_advisory_recorded", "lift_kind": "no_advisory_record",
+            "lift_date": "2026-09-01"}  # fmt: skip
+    line = wording.summary("Lake X", None, none, "2026-10-30")
+    assert line.startswith(
+        "As of the state's data dated Oct 30, 2026, the records for Lake X show:"
+    )
+    assert affirmative_safety_claims(line) == []
+    assert line.endswith("That is not a finding that the water is safe now.")
+
+
 def test_undetermined_is_not_presented_as_clear(traps_site: Path) -> None:
     text = text_of(traps_site / "water" / "ca-marin-theta-lake" / "index.html")
     assert "no advisory level the state has classified" in text
@@ -230,6 +274,8 @@ def test_wording_module_never_says_safe_affirmatively() -> None:
             wording.headline(s),
             wording.caveat(s),
             wording.dog_answer("X", s),
+            wording.summary("X", "Y County", s, "2026-09-01"),
+            wording.summary("X", None, s, None),
         ):
             assert affirmative_safety_claims(line) == [], line
     for line in [*wording.LEVEL_GUIDANCE.values(), wording.DOG_ADVICE]:
@@ -450,6 +496,35 @@ def test_months_before_clamps_the_day() -> None:
     )
 
 
+def test_enough_records_make_a_stale_water_indexable() -> None:
+    old = {"status": {"last_advisory": "2019-07-15"}}
+    run = dt.date(2026, 11, 3)
+    assert not site.is_indexable({**old, "records": [{}] * 4}, run, 24, 5)
+    assert site.is_indexable({**old, "records": [{}] * 5}, run, 24, 5)
+    # A water with no advisory ever is indexable on its records alone.
+    never = {"status": {"last_advisory": None}, "records": [{}] * 5}
+    assert site.is_indexable(never, run, 24, 5)
+    assert not site.is_indexable({**never, "records": [{}] * 4}, run, 24, 5)
+    # The default floor is the module constant, read at call time.
+    assert site.INDEX_MIN_RECORDS == 5
+    assert not site.is_indexable({**old, "records": [{}] * 4}, run, 24)
+
+
+def test_record_floor_reaches_the_sitemap_and_robots(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # The fixtures' stale waters have one record each; a floor of 1 must list
+    # them all, and the sitemap and robots tags must still agree.
+    root = build(tmp_path)
+    _, before = staging_problems_inputs(root)
+    assert "ca-nevada-state-zeta-lake" in before
+    monkeypatch.setattr(site, "INDEX_MIN_RECORDS", 1)
+    root = build(tmp_path / "floor")
+    keep, out = staging_problems_inputs(root)
+    assert "ca-nevada-state-zeta-lake" in keep and out == []
+    assert staging_problems(root) == []
+
+
 def test_other_pages_stay_indexable(traps_site: Path) -> None:
     for rel in ["index.html", "advisories/index.html", "dogs/index.html",
                 "county/index.html", "county/alameda/index.html"]:  # fmt: skip
@@ -562,6 +637,119 @@ def test_water_title_and_description_fit_for_any_name() -> None:
     assert site.water_title("Clear Lake", None).startswith("Clear Lake toxic algae")
 
 
+_TITLE_DATE = re.compile(r"[A-Z][a-z]{2} \d{1,2}, \d{4}")
+
+
+def snippet_problems(root: Path) -> list[str]:
+    """Water pages whose search title or description says more than the page
+    (DECISIONS 0002 and 0018): a sentence that claims safety, a title date
+    the page's first line does not carry, or a status that is not an
+    advisory without its not-a-finding sentence."""
+    problems = []
+    for page in sorted((root / "water").glob("*/index.html")):
+        rel = str(page.relative_to(root))
+        raw = page.read_text(encoding="utf-8")
+        title, description = _TITLE.search(raw), _DESCRIPTION.search(raw)
+        assert title and description
+        t, d = html.unescape(title.group(1)), html.unescape(description.group(1))
+        lede = lede_of(page)
+        for text in (t, d):
+            problems += [f"{rel}: {s}" for s in affirmative_safety_claims(text)]
+        for day in _TITLE_DATE.findall(t):
+            if day not in lede:
+                problems.append(f"{rel}: title date {day} is not in the first line")
+        if wording.NOT_A_FINDING in lede and wording.NOT_A_FINDING not in d:
+            problems.append(f"{rel}: description drops the not-a-finding sentence")
+    return problems
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_search_snippets_say_only_what_the_page_says(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    assert snippet_problems(request.getfixturevalue(which)) == []
+
+
+def test_advisory_titles_lead_with_the_level_and_its_date(traps_site: Path) -> None:
+    water = traps_site / "water"
+
+    def title(wid: str) -> str:
+        found = _TITLE.search((water / wid / "index.html").read_text())
+        assert found
+        return html.unescape(found.group(1))
+
+    assert title("ca-alameda-lake-alpha") == (
+        "Lake Alpha algae: Caution advisory, last posted Sep 20, 2026"
+    )
+    assert title("ca-nevada-state-zeta-lake").endswith("Jul 15, 2019")
+    # No status in the title unless it is an advisory: "recommends no
+    # advisory" needs its not-a-finding sentence, which a title cannot hold.
+    assert title("ca-lake-beta-reservoir").endswith("algae advisories | Lake Notice")
+    assert title("ca-marin-theta-lake").endswith("algae advisories | Lake Notice")
+    beta = _DESCRIPTION.search(
+        (water / "ca-lake-beta-reservoir" / "index.html").read_text()
+    )
+    assert beta and wording.NOT_A_FINDING in html.unescape(beta.group(1))
+    alpha = _DESCRIPTION.search(
+        (water / "ca-alameda-lake-alpha" / "index.html").read_text()
+    )
+    assert alpha and html.unescape(alpha.group(1)).startswith(
+        "Lake Alpha, Alameda County: Caution advisory, last posted Sep 20, 2026. "
+        "No all-clear recorded. From the state's data dated Oct 9, 2026."
+    )
+
+
+def test_title_status_drops_last_posted_before_the_date() -> None:
+    danger = {"kind": "advisory", "tier": "danger", "posted": "2026-10-19"}
+    nov = {**danger, "posted": "2026-11-03"}
+    assert site.water_title("Castaic Lake", None, nov) == (
+        "Castaic Lake algae: Danger advisory, last posted Nov 3, 2026"
+    )
+    assert site.water_title("Castaic Lake", None, danger) == (
+        "Castaic Lake algae: Danger advisory, Oct 19, 2026"
+    )
+    assert site.water_title("San Luis Reservoir", None, danger) == (
+        "San Luis Reservoir algae: Danger advisory, Oct 19, 2026"
+    )
+    long_name = "Pierce City City Park Recreational Pond"
+    assert site.water_title(long_name, None, danger) == f"{long_name} | Lake Notice"
+    none = {"kind": "no_advisory_recorded", "lift_kind": "no_advisory_record",
+            "lift_date": "2026-09-01"}  # fmt: skip
+    assert wording.title_status(none) is None
+    assert site.water_title("Mission Bay", None, none) == (
+        "Mission Bay toxic algae advisories | Lake Notice"
+    )
+    line = site.water_description("Mission Bay", "San Diego County",
+                                  wording.headline(none), "2026-11-03",
+                                  advisory=False)  # fmt: skip
+    assert line.endswith(wording.NOT_A_FINDING)
+    assert len(line) <= site.DESCRIPTION_MAX
+
+
+def test_snippet_check_catches_a_title_or_description_that_says_more(
+    tmp_path: Path,
+) -> None:
+    # Negative control: each sabotage must be applied and must be reported.
+    root = build(tmp_path)
+    alpha = root / "water" / "ca-alameda-lake-alpha" / "index.html"
+    beta = root / "water" / "ca-lake-beta-reservoir" / "index.html"
+    raw = alpha.read_text(encoding="utf-8")
+    changed = raw.replace(
+        "last posted Sep 20, 2026</title>", "last posted Oct 1, 2026</title>"
+    )
+    assert changed != raw
+    alpha.write_text(changed, encoding="utf-8")
+    raw = beta.read_text(encoding="utf-8")
+    changed = re.sub(r'(<meta name="description" content=")[^"]*"',
+                     r'\1Beta Reservoir is safe to swim."', raw, count=1)  # fmt: skip
+    assert changed != raw
+    beta.write_text(changed, encoding="utf-8")
+    problems = snippet_problems(root)
+    assert any("title date Oct 1, 2026" in p for p in problems)
+    assert any("safe to swim" in p for p in problems)
+    assert any("drops the not-a-finding sentence" in p for p in problems)
+
+
 def test_water_pages_that_share_a_name_get_different_titles() -> None:
     def w(i: str, county: str) -> dict[str, Any]:
         return {"state": "CA", "name": "Bear Creek", "id": i, "counties": [county]}
@@ -624,7 +812,9 @@ def test_water_page_links_matching_names_nearby_with_their_own_status(
     page = text_of(out / "water" / original["id"] / "index.html")
     assert "Matching names nearby" in page
     assert "may be the same water" in page
-    assert twin["name"] in page
+    # The twin is listed by its display name, never the state's "... ca".
+    assert water_names.display_name(twin["id"], twin["name"], "CA") in page
+    assert twin["name"] not in page
     assert wording.headline(twin["status"]) in page
     raw = (out / "water" / original["id"] / "index.html").read_text()
     assert f'href="../../water/{twin["id"]}/"' in raw
@@ -635,3 +825,158 @@ def test_water_page_links_matching_names_nearby_with_their_own_status(
     assert "Matching names nearby" not in text_of(
         out / "water" / lone["id"] / "index.html"
     )
+
+
+_COUNT = re.compile(r"(\d+) of (?:the )?(\d+) waters?\b")
+
+
+def expected_county_counts(snap: dict[str, Any]) -> dict[str, tuple[int, int]]:
+    """Per county, from the snapshot: waters with an advisory, all waters."""
+    expected: dict[str, tuple[int, int]] = {}
+    for w in snap["waterbodies"]:
+        for county in w["counties"]:
+            adv, total = expected.get(county, (0, 0))
+            expected[county] = (adv + (w["status"]["kind"] == "advisory"), total + 1)
+    return expected
+
+
+def _says_count(text: str, adv: int, total: int) -> bool:
+    if total == 1:
+        return "The one water in" in text and "has an advisory as its" in text
+    found = _COUNT.search(text)
+    return found is not None and found.groups() == (str(adv), str(total))
+
+
+def _one_county_problems(
+    page: Path, county: str, adv: int, total: int, file_label: str
+) -> list[str]:
+    raw = page.read_text(encoding="utf-8")
+    title, description = _TITLE.search(raw), _DESCRIPTION.search(raw)
+    assert title and description
+    t, d = html.unescape(title.group(1)), html.unescape(description.group(1))
+    lede = lede_of(page)
+    texts = {"title": t, "description": d, "lede": lede}
+    problems = [
+        f"{county}: {s}" for text in texts.values()
+        for s in affirmative_safety_claims(text)
+    ]  # fmt: skip
+    if adv == 0:
+        return problems + [
+            f"{county}: {where} states a count with none"
+            for where, text in texts.items() if _COUNT.search(text)
+        ]  # fmt: skip
+    found = _COUNT.search(t)
+    if not found or found.groups() != (str(adv), str(total)):
+        problems.append(f"{county}: title count is not {adv} of {total}")
+    problems += [
+        f"{county}: {where} count is not {adv} of {total}"
+        for where in ("lede", "description")
+        if not _says_count(texts[where], adv, total)
+    ]
+    if file_label not in d:
+        problems.append(f"{county}: description lacks the state's file date")
+    return problems
+
+
+def county_snippet_problems(root: Path) -> list[str]:
+    """County pages whose title, description or first line disagree with the
+    snapshot about how many waters have an advisory as their latest record,
+    or that state a count for a county with none (DECISIONS 0002: a bare
+    "0 of 2" would read as an all-clear)."""
+    snap = snapshot_of(root)
+    file_date = next(
+        f["file_date"] for f in snap["source_files"] if f["source"] == "ca-swrcb-fhab"
+    )
+    problems = []
+    for county, (adv, total) in sorted(expected_county_counts(snap).items()):
+        page = root / "county" / site.slugify(county) / "index.html"
+        problems += _one_county_problems(
+            page, county, adv, total, wording.date_label(file_date)
+        )
+    return problems
+
+
+@pytest.mark.parametrize("which", ["traps_site", "sample_site"])
+def test_county_snippets_count_what_the_snapshot_holds(
+    which: str, request: pytest.FixtureRequest
+) -> None:
+    root: Path = request.getfixturevalue(which)
+    assert county_snippet_problems(root) == []
+
+
+def test_county_fixtures_cover_both_sides(traps_site: Path) -> None:
+    kinds: dict[str, set[bool]] = {}
+    for w in snapshot_of(traps_site)["waterbodies"]:
+        for county in w["counties"]:
+            kinds.setdefault(county, set()).add(w["status"]["kind"] == "advisory")
+    assert any(True in k for k in kinds.values())
+    assert any(k == {False} for k in kinds.values())
+
+
+def test_county_snippet_check_catches_a_wrong_count(tmp_path: Path) -> None:
+    # Negative control: each sabotage must apply and must be reported.
+    root = build(tmp_path)
+    snap = snapshot_of(root)
+    counted = {c for w in snap["waterbodies"] if w["status"]["kind"] == "advisory"
+               for c in w["counties"]}  # fmt: skip
+    every = {c for w in snap["waterbodies"] for c in w["counties"]}
+    with_one, without = sorted(counted)[0], sorted(every - counted)[0]
+    page = root / "county" / site.slugify(with_one) / "index.html"
+    raw = page.read_text(encoding="utf-8")
+    changed = _TITLE.sub(
+        lambda m: _COUNT.sub("99 of 99 waters", m.group(0)), raw, count=1
+    )
+    assert changed != raw
+    page.write_text(changed, encoding="utf-8")
+    page = root / "county" / site.slugify(without) / "index.html"
+    raw = page.read_text(encoding="utf-8")
+    changed = _TITLE.sub(f"<title>{without} County algae: 0 of 2 waters</title>", raw)
+    assert changed != raw
+    page.write_text(changed, encoding="utf-8")
+    problems = county_snippet_problems(root)
+    assert f"{with_one}: title count is not" in " ".join(problems)
+    assert f"{without}: title states a count with none" in problems
+
+
+def test_county_title_and_description_fit_and_never_count_zero() -> None:
+    long = "Extraordinarily Long Named Imaginary"
+    for county, adv, total in [("Riverside", 25, 40), ("San Luis Obispo", 9, 12),
+                               ("Amador", 1, 1), (long, 3, 120), ("Glenn", 0, 2)]:  # fmt: skip
+        title = site.county_title(county, adv, total)
+        line = site.county_description(county, adv, total, "2026-11-03")
+        assert len(title) <= site.TITLE_MAX, title
+        assert len(line) <= site.DESCRIPTION_MAX, line
+    assert site.county_title("Riverside", 25, 40) == (
+        "Riverside County lake algae advisories: 25 of 40 waters"
+    )
+    assert site.county_title("Amador", 1, 1).endswith("1 of 1 water")
+    assert site.county_title("Glenn", 0, 2) == (
+        "Glenn County lake toxic algae advisories | Lake Notice"
+    )
+    assert site.county_count_line("Glenn", 0, 2, "2026-11-03") == ""
+    assert "0 of" not in site.county_description("Glenn", 0, 2, "2026-11-03")
+    assert "dated" not in site.county_count_line("Riverside", 25, 40, None)
+    assert site.county_count_line("Colusa", 1, 3, None) == (
+        "1 of the 3 waters in Colusa County has an advisory as its latest state record."
+    )
+
+
+def test_advisory_list_description_counts_each_state_it_lists(
+    traps_site: Path, tmp_path: Path
+) -> None:
+    raw = (traps_site / "advisories" / "index.html").read_text(encoding="utf-8")
+    description = _DESCRIPTION.search(raw)
+    assert description
+    d = html.unescape(description.group(1))
+    links = re.findall(r'href="\.\./water/([a-z]{2})-', raw)
+    for state, name in site.STATE_NAMES.items():
+        n = links.count(state.lower())
+        if n:
+            assert f"{n} {name}" in d, (state, d)
+        else:
+            assert name not in d.split(" lakes")[0], (state, d)
+    assert site.advisories_description([]).startswith("Lakes and rivers")
+    many = [{"state": "CA"}] * 479 + [{"state": "MO"}] * 47
+    line = site.advisories_description(many)
+    assert line.startswith("479 California and 47 Missouri lakes and rivers")
+    assert len(line) <= site.DESCRIPTION_MAX

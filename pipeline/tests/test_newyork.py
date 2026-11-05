@@ -1,4 +1,4 @@
-"""New York's yearly bloom history (docs/DECISIONS.md 0016): the pinned cache,
+"""New York's yearly bloom history (docs/DECISIONS.md 0020): the pinned cache,
 how rows become waters, the thin-page threshold and its negative control, the
 rollout switch, the copy rules (history only: never an advisory, a current
 status or an end) and the yearly refresh's manners toward data.ny.gov."""

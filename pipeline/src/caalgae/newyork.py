@@ -1,4 +1,4 @@
-"""New York's yearly harmful algal bloom summary: history only (DECISIONS 0016).
+"""New York's yearly harmful algal bloom summary: history only (DECISIONS 0020).
 
 What this data is, and what it never is:
 
@@ -80,7 +80,7 @@ ROWS_FILE = f"{DATASET_ID}.rows.json"
 META_FILE = f"{DATASET_ID}.meta.json"
 # SHA-256 of pipeline/data/ny/95my-wijm.rows.json, read 2026-11-02 (DEC's rows
 # last updated 2026-01-14, the 2025 season). Change it only in the commit
-# that refreshes the file, after reviewing the diff (docs/DECISIONS.md 0016).
+# that refreshes the file, after reviewing the diff (docs/DECISIONS.md 0020).
 PINNED_SHA256 = "a9b3a0e8709adf3c19e4e39c49a03c8a2cb9d6bc97b6ad6c6f65470a389a3623"
 
 # Thin-page rule (owner, 2026-11-02): a New York page may be indexed only when

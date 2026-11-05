@@ -192,7 +192,7 @@ def _cyan(
 
 
 def _new_york(args: argparse.Namespace) -> newyork.History | None:
-    """The New York history section, history only (docs/DECISIONS.md 0016).
+    """The New York history section, history only (docs/DECISIONS.md 0020).
     Built from the cache in the repository, never fetched by this run. A
     missing or altered cache warns and builds the site without it."""
     wanted = args.ny_history == "on" or (

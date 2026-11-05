@@ -9,8 +9,10 @@
 </p>
 <p class="muted">
   {% for f in source_files %}{% if f.source == "ca-swrcb-fhab" %}California: the state's file dated {{ f.file_date|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% elif f.source == "mo-dnr-hab" %} Missouri: read {{ f.fetched_at[:10]|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% endif %}{% endfor %}
-  An advisory stays listed until the state records an end. A water that is
-  not listed has no advisory on file, which is not the same as being free of algae.
+  An advisory stays listed until the state records an end. The list below
+  shows only advisories posted in the last {{ recent_days }} days. This site
+  lists only waters in the state's data, and a water not listed may still
+  have an advisory: check the state's map and posted signs.
 </p>
 
 <h2>Advisories posted in the last {{ recent_days }} days</h2>
