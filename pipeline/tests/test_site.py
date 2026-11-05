@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 from paths import PAGE, SAMPLE, TRAPS
 
-from caalgae import cli, site, wording
+from caalgae import cli, site, water_names, wording
 
 _TAG = re.compile(r"<[^>]+>")
 _SCRIPT = re.compile(r"<script\b.*?</script>", re.S)
@@ -812,7 +812,9 @@ def test_water_page_links_matching_names_nearby_with_their_own_status(
     page = text_of(out / "water" / original["id"] / "index.html")
     assert "Matching names nearby" in page
     assert "may be the same water" in page
-    assert twin["name"] in page
+    # The twin is listed by its display name, never the state's "... ca".
+    assert water_names.display_name(twin["id"], twin["name"], "CA") in page
+    assert twin["name"] not in page
     assert wording.headline(twin["status"]) in page
     raw = (out / "water" / original["id"] / "index.html").read_text()
     assert f'href="../../water/{twin["id"]}/"' in raw

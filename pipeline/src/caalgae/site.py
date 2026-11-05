@@ -31,6 +31,7 @@ import jinja2
 from caalgae import indexnow, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
+from caalgae.water_names import display_water
 
 # The product name, the domain and the site's default base URL live here and
 # nowhere else in code; tests/test_naming.py checks every other place that
@@ -131,6 +132,9 @@ def water_description(
     as the page's first line (0002), in every candidate: a search snippet is
     quoted on its own. The date of the state's file follows when it fits
     (0018); without one, nothing is put in its place."""
+    # A place the name already carries ("Lake Havasu (Arizona)") is not repeated.
+    if place and f"({place})" in name:
+        place = None
     lead = f"{name}, {place}: " if place else f"{name}: "
     answer = headline if advisory else f"{headline} {wording.NOT_A_FINDING}"
     dated = (
@@ -390,9 +394,11 @@ class SiteBuilder:
             "run_date": self.run_date,
             "quarantine": snap["quarantine"],
         }
-        self.waters = snap["waterbodies"]
+        self.waters = [display_water(w) for w in snap["waterbodies"]]
+        # Titles add the county when the source's name is shared (0009), so a
+        # display name (0009, "Display names") never adds or drops one.
         self._name_counts = Counter(
-            (w["state"], w["name"].casefold()) for w in self.waters
+            (w["state"], w["source_name"].casefold()) for w in self.waters
         )
         self._same_name_nearby = same_name_nearby(self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
@@ -509,8 +515,9 @@ class SiteBuilder:
         )
 
     def _name_is_shared(self, water: dict[str, Any]) -> bool:
-        """True when another water in the same state has this name."""
-        return self._name_counts[(water["state"], water["name"].casefold())] > 1
+        """True when another water in the same state has this source name."""
+        key = (water["state"], water["source_name"].casefold())
+        return self._name_counts[key] > 1
 
     @staticmethod
     def _county_label(water: dict[str, Any]) -> str | None:
