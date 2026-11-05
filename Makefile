@@ -15,9 +15,9 @@ UV_RUN := uv run --frozen
 SEMGREP_VERSION := 1.166.0
 TMP := $(shell mktemp -d 2>/dev/null || mktemp -d -t caalgae)
 
-.PHONY: verify sync format lint typecheck test smoke build audit sast secrets hygiene
+.PHONY: verify sync format lint typecheck test i18n smoke build audit sast secrets hygiene
 
-verify: sync format lint typecheck test smoke build audit sast secrets hygiene
+verify: sync format lint typecheck test i18n smoke build audit sast secrets hygiene
 
 sync:
 	cd $(PIPELINE) && uv lock --check
@@ -39,6 +39,11 @@ typecheck:
 test:
 	cd $(PIPELINE) && $(UV_RUN) pytest --cov=src --cov-branch --cov-report=term
 
+# The Spanish catalog gate (DECISIONS 0025). Catalog shape, parity and
+# state-quote hashes always; the review checks once i18n.ES_ENABLED is on.
+i18n:
+	cd $(PIPELINE) && $(UV_RUN) python -m caalgae.i18n
+
 # Offline end to end: fixture page + trap CSV -> history -> snapshot -> site,
 # no network, nothing written inside the checkout.
 smoke:
@@ -58,7 +63,7 @@ smoke:
 # CQ-10: the wheel builds, and the schema and templates ship inside it.
 build:
 	cd $(PIPELINE) && uv build --wheel --out-dir $(TMP)/dist
-	cd $(PIPELINE) && $(UV_RUN) python -c "import sys, zipfile, glob; n = zipfile.ZipFile(glob.glob(sys.argv[1] + '/*.whl')[0]).namelist(); sys.exit(0 if {'caalgae/snapshot.v1.json', 'caalgae/templates/base.html.jinja'} <= set(n) else 'wheel is missing the schema or templates')" $(TMP)/dist
+	cd $(PIPELINE) && $(UV_RUN) python -c "import sys, zipfile, glob; n = zipfile.ZipFile(glob.glob(sys.argv[1] + '/*.whl')[0]).namelist(); sys.exit(0 if {'caalgae/snapshot.v1.json', 'caalgae/templates/base.html.jinja', 'caalgae/locales/es.json', 'caalgae/locales/es.status.json'} <= set(n) else 'wheel is missing the schema, templates or locales')" $(TMP)/dist
 
 audit:
 	cd $(PIPELINE) && uv export --frozen --no-emit-project --format requirements-txt --quiet --output-file $(TMP)/audit/requirements.txt

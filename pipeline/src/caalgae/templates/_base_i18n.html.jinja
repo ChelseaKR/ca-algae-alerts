@@ -1,0 +1,83 @@
+{#
+  The layout for pages built in more than one language (DECISIONS 0025):
+  base.html.jinja with every string from the catalog through t(), and the
+  page's own lang. English values match base.html.jinja. No hreflang yet:
+  it waits until after the ~2026-11-25 read of the dated titles.
+#}
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% if ga4_measurement_id %}
+{% include "_ga4.html.jinja" +%}
+{% endif %}
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+{% if noindex %}
+<meta name="robots" content="{{ robots }}">
+{% endif %}
+{% if canonical_url %}
+<link rel="canonical" href="{{ canonical_url }}">
+<meta property="og:url" content="{{ canonical_url }}">
+{% endif %}
+<link rel="stylesheet" href="{{ root }}assets/style.css">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ description }}">
+<meta property="og:site_name" content="{{ site_name }}">
+<meta name="twitter:card" content="summary">
+{% if structured_data %}
+<script type="application/ld+json">{{ structured_data|tojson }}</script>
+{% endif %}
+</head>
+<body>
+<a class="skip-link" href="#main">{{ t("chrome.skip") }}</a>
+<header class="site-header">
+  <div class="wrap">
+    <p class="site-name"><a href="{{ root }}">{{ site_name }}</a> <span class="site-tagline">{{ t("chrome.tagline") }}</span></p>
+    <nav aria-label="{{ t('nav.label') }}">
+      <a href="{{ root }}">{{ t("nav.latest") }}</a>
+      <a href="{{ root }}advisories/">{{ t("nav.advisories") }}</a>
+      <a href="{{ root }}county/">{{ t("nav.county") }}</a>
+      {% if "MO" in states_present %}<a href="{{ root }}state/mo/">{{ t("nav.missouri") }}</a>{% endif %}
+      <a href="{{ root }}dogs/">{{ t("nav.dogs") }}</a>
+      <a href="{{ root }}about/">{{ t("nav.about") }}</a>
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap">
+{% if breadcrumb %}
+<nav aria-label="{{ t('nav.breadcrumb') }}" class="breadcrumb">
+  <ol>
+    {% for name, url in breadcrumb %}
+    {% if loop.last %}
+    <li><a href="{{ url }}" aria-current="page">{{ name }}</a></li>
+    {% else %}
+    <li><a href="{{ url }}">{{ name }}</a></li>
+    {% endif %}
+    {% endfor %}
+  </ol>
+</nav>
+{% endif %}
+{% if other_language_url %}
+<p class="other-language"><a href="{{ other_language_url }}" lang="{{ other_lang }}">{{ t("chrome.other_language") }}</a></p>
+{% endif %}
+{% block content %}{% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    {% for s in all_sources %}
+    <p>{{ t("footer.attribution." ~ s.id) }}</p>
+    {% endfor %}
+    <p id="not-medical-advice">{{ t("footer.not_medical_advice") }}</p>
+    <p>{{ t("footer.independent", site_name=site_name) }}{% for s in all_sources if s.required_disclaimer %} <a href="{{ root }}about/#{{ s.id }}">{{ t("footer.disclaimer_link", state=t("state." ~ s.state)) }}</a>.{% endfor %}</p>
+    <p>{{ t("footer.file", file_name=source_file.file_name, date=local_date(source_file.fetched_at[:10])) }} <a href="{{ source.official_map_url }}">{{ source.official_map_url }}</a></p>
+    <p><a href="{{ source.dataset_url }}">{{ t("footer.dataset") }}</a> &middot; <a href="{{ root }}about/">{{ t("footer.about") }}</a> &middot; <a href="{{ root }}privacy/">{{ t("footer.privacy") }}</a> &middot; <a href="{{ root }}terms/">{{ t("footer.terms") }}</a> &middot; <a href="{{ root }}support/">{{ t("footer.support") }}</a></p>
+    {% if ga4_measurement_id %}
+    <p id="analytics-choice" hidden><button type="button" id="analytics-opt-out" class="link-button" hidden>{{ t("footer.analytics_opt_out") }}</button> <span id="analytics-status" role="status"></span></p>
+    {% endif %}
+  </div>
+</footer>
+</body>
+</html>
