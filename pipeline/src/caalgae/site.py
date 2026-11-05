@@ -30,7 +30,7 @@ import jinja2
 
 from caalgae import indexnow, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
-from caalgae.snapshot import slugify
+from caalgae.snapshot import UNAVAILABLE_INDEX_DAYS, slugify
 from caalgae.water_names import display_water
 
 # The product name, the domain and the site's default base URL live here and
@@ -116,6 +116,41 @@ def water_title(
             if len(candidate) <= TITLE_MAX:
                 return candidate
     return fit(plain, TITLE_MAX)
+
+
+def unavailable_title(name: str, state_name: str, since: str) -> str:
+    """The title of a water page while its state's data is unavailable
+    (DECISIONS 0024): the gap and its date, never a status."""
+    when = wording.date_label(since)
+    tail = f": unavailable since {when}"
+    room = TITLE_MAX - len(tail)
+    short = name if len(name) <= room else fit([name], room)
+    return fit(
+        [
+            f"{name} algae: {state_name} data unavailable since {when}",
+            f"{name}: {state_name} data unavailable since {when}",
+            f"{name}: data unavailable since {when}",
+            f"{name}: no current data since {when}",
+            # A name too long for any of these is cut; the date never is.
+            f"{short}{tail}",
+        ],
+        TITLE_MAX,
+    )
+
+
+def unavailable_description(
+    name: str, state_name: str, since: str, scope: str = "its"
+) -> str:
+    when = wording.date_label(since)
+    return fit(
+        [
+            f"{name}: {state_name}'s algae data has been unavailable since {when}, "
+            f"so {scope} current status is unknown. Check the state's map before you go.",
+            f"{name}: {state_name}'s algae data has been unavailable since {when}.",
+            f"{state_name} algae data unavailable since {when}.",
+        ],
+        DESCRIPTION_MAX,
+    )
 
 
 def water_description(
@@ -355,6 +390,10 @@ def _env() -> jinja2.Environment:
         satellite_explainer=wording.SATELLITE_EXPLAINER,
         dog_advice=wording.DOG_ADVICE,
         human_advice=wording.HUMAN_ADVICE,
+        unavailable_status=wording.unavailable_status,
+        unavailable_history_heading=wording.unavailable_history_heading,
+        unavailable_dog_answer=wording.unavailable_dog_answer,
+        row_date=wording.row_date,
         not_medical_advice=wording.NOT_MEDICAL_ADVICE,
     )
     return env
@@ -487,6 +526,12 @@ class SiteBuilder:
         self.urls: list[str] = []
         self.lastmods: dict[str, str] = {}
         self.sources = {s["id"]: s for s in snap["sources"]}
+        # States in their "data unavailable" mode (DECISIONS 0024), by code.
+        self.unavailable: dict[str, dict[str, Any]] = {
+            m["state"]: m
+            for m in snap.get("state_status", [])
+            if m["mode"] == "unavailable"
+        }
         source = self.sources["ca-swrcb-fhab"]
         self.common: dict[str, Any] = {
             "site_name": SITE_NAME,
@@ -504,6 +549,7 @@ class SiteBuilder:
             "state_names": STATE_NAMES,
             "run_date": self.run_date,
             "quarantine": snap["quarantine"],
+            "unavailable": self.unavailable,
         }
         self.waters = [display_water(w) for w in snap["waterbodies"]]
         # Titles add the county when the source's name is shared (0009), so a
@@ -576,8 +622,26 @@ class SiteBuilder:
 
     # -- pages ----------------------------------------------------------
 
+    def _indexable_unavailable(self, state: str) -> bool:
+        """An unavailable state's pages stay indexed for
+        ``UNAVAILABLE_INDEX_DAYS`` after ``since``, then carry noindex."""
+        since = dt.date.fromisoformat(self.unavailable[state]["since"])
+        return (self.run_date - since).days < UNAVAILABLE_INDEX_DAYS
+
+    def _headline(self, water: dict[str, Any]) -> str:
+        if water["state"] in self.unavailable:
+            return wording.unavailable_status(
+                STATE_NAMES[water["state"]], self.unavailable[water["state"]]["since"]
+            )
+        return wording.headline(water["status"])
+
     def open_advisories(self) -> list[dict[str, Any]]:
-        open_ = [w for w in self.waters if w["status"]["kind"] == "advisory"]
+        # An unavailable state's last records are not current advisories.
+        open_ = [
+            w
+            for w in self.waters
+            if w["status"]["kind"] == "advisory" and w["state"] not in self.unavailable
+        ]
         return sorted(open_, key=_advisory_sort, reverse=True)
 
     def home(self) -> None:
@@ -682,21 +746,39 @@ class SiteBuilder:
         indexable = is_indexable(water, self.run_date, INDEX_WINDOW_MONTHS)
         file_date = self._file_date(water["state"])
         satellite_source = self.sources.get("epa-cyan")
-        self._write(
-            rel,
-            "water.html.jinja",
-            title=water_title(
+        outage = self.unavailable.get(water["state"])
+        state_name = STATE_NAMES[water["state"]]
+        if outage:
+            title = unavailable_title(water["name"], state_name, outage["since"])
+            description = unavailable_description(
+                water["name"], state_name, outage["since"]
+            )
+            indexable = indexable and self._indexable_unavailable(water["state"])
+        else:
+            title = water_title(
                 water["name"],
                 self._county_label(water) if self._name_is_shared(water) else None,
                 water["status"],
-            ),
-            description=water_description(
+            )
+            description = water_description(
                 water["name"],
                 None if county == "County not recorded" else county,
                 wording.headline(water["status"]),
                 file_date,
                 advisory=water["status"]["kind"] == "advisory",
-            ),
+            )
+        self._write(
+            rel,
+            "water.html.jinja",
+            title=title,
+            description=description,
+            outage=outage,
+            outage_banner=wording.unavailable_banner(
+                state_name, outage["since"], outage["last_read"]
+            )
+            if outage
+            else "",
+            state_name=state_name,
             noindex=not indexable,
             robots="noindex,follow",
             lastmod=self.water_dates.get(water["id"]),
@@ -724,7 +806,7 @@ class SiteBuilder:
                     "id": other["id"],
                     "name": other["name"],
                     "place": self._place(other),
-                    "headline": wording.headline(other["status"]),
+                    "headline": self._headline(other),
                 }
                 for other in self._same_name_nearby.get(water["id"], [])
             ],
@@ -802,14 +884,41 @@ class SiteBuilder:
             rel = f"state/{state.lower()}/"
             crumbs = self._crumbs((name, self.base_url + rel))
             ordered = sorted(waters, key=wording.list_sort_key)
+            outage = self.unavailable.get(state)
+            if outage:
+                when = wording.date_label(outage["since"])
+                title = fit(
+                    [
+                        f"{name} lake algae: data unavailable since {when}",
+                        f"{name} algae data unavailable since {when}",
+                    ],
+                    TITLE_MAX,
+                )
+                description = unavailable_description(
+                    f"{name} lakes", name, outage["since"], scope="their"
+                )
+            else:
+                title = f"{name} lake algae advisories | {SITE_NAME}"
+                description = (
+                    f"Toxic algae advisory status and history for {len(waters)} "
+                    f"lakes and rivers in {name}, from the state's own records."
+                )
             self._write(
                 rel,
                 "state.html.jinja",
-                title=f"{name} lake algae advisories | {SITE_NAME}",
-                description=(
-                    f"Toxic algae advisory status and history for {len(waters)} "
-                    f"lakes and rivers in {name}, from the state's own records."
-                ),
+                title=title,
+                description=description,
+                outage=outage,
+                outage_banner=wording.unavailable_banner(
+                    name,
+                    outage["since"],
+                    outage["last_read"],
+                    what="the current status of any of its waters",
+                )
+                if outage
+                else "",
+                noindex=bool(outage) and not self._indexable_unavailable(state),
+                robots="noindex,follow",
                 state=state,
                 file_date=self._file_date(state),
                 lastmod=self._newest_of(waters),

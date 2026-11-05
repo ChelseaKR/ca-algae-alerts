@@ -34,7 +34,10 @@ public enum SnapshotDecoder {
             }
             for site in water.sites { try check(site.status, at: "\(water.id)/\(site.id)") }
         }
-        return snapshot
+        for entry in snapshot.stateStatus ?? [] where entry.mode == .unavailable && entry.since == nil {
+            throw SnapshotDecodingError.invariant("\(entry.state): an unavailable state needs its since date")
+        }
+        return snapshot.maskingUnavailable()
     }
 
     static func check(_ status: Status, at place: String) throws {

@@ -33,7 +33,7 @@ def problems(text: str) -> list[str]:
     found: list[str] = []
     if "schedule:" not in lines or CRON not in lines:
         found.append("the daily 14:41 UTC schedule line is missing")
-    if "workflow_dispatch: {}" not in lines:
+    if "workflow_dispatch: {}" not in lines and "workflow_dispatch:" not in lines:
         found.append("manual dispatch is missing")
     if SCHEDULE_GUARD not in lines:
         found.append("a scheduled run is not gated on PAGES_ENABLED")
@@ -94,3 +94,38 @@ def test_workflow_that_sets_the_variable_is_caught() -> None:
     after = before + "      PAGES_ENABLED: true\n"
     assert after != before  # the sabotage applied
     assert any("sets the Pages variable" in p for p in problems(after))
+
+
+GUARD = "uv run python -m caalgae.publish_guard --site-dir ../site \\"
+
+
+def guard_problems(text: str) -> list[str]:
+    """The publish guard (DECISIONS 0024) runs before anything is committed
+    or uploaded, and its override reaches it."""
+    lines = code_lines(text)
+    found: list[str] = []
+    if GUARD not in lines:
+        return ["the publish guard step is missing"]
+    at = lines.index(GUARD)
+    for later in (
+        "- name: commit updated history, if any",
+        "uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1",
+    ):
+        if later not in lines or lines.index(later) < at:
+            found.append(f"the guard does not run before {later!r}")
+    if "ALLOW_PAGE_DROP: ${{ inputs.allow_page_drop }}" not in lines:
+        found.append("the allow_page_drop override does not reach the guard")
+    return found
+
+
+def test_the_publish_guard_runs_before_commit_and_upload() -> None:
+    assert guard_problems(WORKFLOW.read_text(encoding="utf-8")) == []
+
+
+def test_a_guard_moved_after_the_upload_is_caught() -> None:
+    before = WORKFLOW.read_text(encoding="utf-8")
+    after = before.replace(GUARD, "true")
+    assert after != before  # the sabotage applied
+    assert guard_problems(after) == ["the publish guard step is missing"]
+    moved = before.replace(GUARD, "true") + "\n" + GUARD + "\n"
+    assert any("does not run before" in p for p in guard_problems(moved))

@@ -2,6 +2,17 @@
 {% from "_macros.html.jinja" import status_box, satellite_box, required_disclaimer %}
 {% block content %}
 <h1>{{ water.name }}: toxic algae advisories</h1>
+{% if outage %}
+<div class="notice-unavailable" role="note">
+  <p><strong>{{ outage_banner }}</strong> Check the <a href="{{ outage.map_url }}">{{ state_name }} state map</a> before you go.</p>
+</div>
+
+<h2 id="status">What the state's records say</h2>
+<div class="status status-unavailable">
+  <p class="status-line"><strong>{{ unavailable_status(state_name, outage.since) }}</strong></p>
+  <p class="muted">The records on this page are history, not a current status. Check the state's map and any signs posted at the water.</p>
+</div>
+{% else %}
 <p class="lede">{{ summary }}{% for name, slug in county_links %} See all <a href="{{ root }}county/{{ slug }}/">{{ name }} County waters</a>.{% endfor %}</p>
 
 <h2 id="status">What the state's records say</h2>
@@ -10,6 +21,7 @@
 <p><strong>What this level asks:</strong> {{ guidance_for(water) }}</p>
 {% endif %}
 <p>Before you go, check the <a href="{{ water_source.official_map_url }}">state's official algae page</a> and any signs posted at the water.{% if app_store_url %} The <a href="{{ app_store_url }}">iPhone app</a> can alert you when {{ water.name }} gets a new advisory.{% endif %}</p>
+{% endif %}
 
 <p id="after-contact"><strong>After contact with the water:</strong> {{ human_advice }}</p>
 
@@ -24,7 +36,7 @@
 {% endif %}
 
 <h2 id="dogs">Dogs at {{ water.name }}</h2>
-<p>{{ dog_answer(water.name, water.status) }}</p>
+<p>{{ unavailable_dog_answer(water.name, state_name) if outage else dog_answer(water.name, water.status) }}</p>
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>
 
 {% include "_gear.html.jinja" %}
@@ -42,13 +54,13 @@
   {% for site in water.sites %}
     <tr>
       <td>{{ site.landmark or "Spot not described" }}</td>
-      <td>{{ headline(site.status) }}</td>
+      <td>{{ "No current status" if outage else headline(site.status) }}</td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
 
-<h2 id="history">Advisory history</h2>
+<h2 id="history">{{ unavailable_history_heading(outage.since) if outage else "Advisory history" }}</h2>
 {% if water.state == "CA" %}
 <p>Every advisory record the state has published for {{ water.name }}, newest first. "None" is the state's record that no advisory was recommended on that date. "NA" records do not change a status.</p>
 {% else %}

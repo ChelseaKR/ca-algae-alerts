@@ -14,6 +14,7 @@ Offline runs (tests, ``make smoke``, screenshots) pass ``--fixture-page`` and
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import datetime as dt
 import os
 import sys
@@ -53,6 +54,7 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     p.add_argument("--support-email", default="")
     p.add_argument("--app-store-url", default="")
     p.add_argument("--mo-fixture", type=Path, default=None)
+    p.add_argument("--mo-viewer-fixture", type=Path, default=None)
     p.add_argument("--cyan-cache", type=Path, default=None)
     p.add_argument("--cyan-refresh", choices=("auto", "never", "force"), default="auto")
     return p.parse_args(argv)
@@ -116,55 +118,75 @@ def _california(
     return merged, normalized.quarantine, download
 
 
+def _missouri_last_read(history: hist.History) -> dt.date | None:
+    last = history.last_file(MO_DNR_HAB.id)
+    return dt.date.fromisoformat(str(last["fetched_at"])[:10]) if last else None
+
+
 def _missouri_recent(history: hist.History, run_date: dt.date) -> bool:
     """Whether Missouri's last good read is recent enough to show, dated."""
-    last = history.last_file(MO_DNR_HAB.id)
-    if last is None:
-        return False
-    fetched = dt.date.fromisoformat(str(last["fetched_at"])[:10])
-    return (run_date - fetched).days <= MO_STALE_AFTER_DAYS
+    last = _missouri_last_read(history)
+    return last is not None and (run_date - last).days <= MO_STALE_AFTER_DAYS
 
 
-def _missouri(
-    args: argparse.Namespace, history: hist.History, run_date: dt.date, now: dt.datetime
-) -> tuple[hist.History, Counter[str], bool]:
-    """The second state. A failure here never stops California
-    (docs/DECISIONS.md 0010), and it fails closed (0019): the third value
-    says whether Missouri is shown at all.
+def _unavailable(
+    history: hist.History, run_date: dt.date, reason: str
+) -> tuple[hist.History, snapshot.SourceMode]:
+    """Missouri in its "data unavailable" mode (DECISIONS 0024). The first
+    run that finds it so sets ``since``; later runs keep that date and
+    update the reason. Its pages stay up; the snapshot says why."""
+    previous = history.outages.get(MO_DNR_HAB.id)
+    since = previous["since"] if previous else run_date.isoformat()
+    outages = {**history.outages, MO_DNR_HAB.id: {"since": since, "reason": reason}}
+    if previous is None:
+        _warn(f"Missouri data unavailable from {since}: {reason}")
+    else:
+        _warn(f"Missouri data still unavailable (since {since}): {reason}")
+    last = _missouri_last_read(history)
+    return dataclasses.replace(history, outages=outages), snapshot.SourceMode(
+        source=MO_DNR_HAB.id,
+        mode=snapshot.UNAVAILABLE,
+        since=dt.date.fromisoformat(since),
+        reason=reason,
+        last_read=last,
+    )
 
-    - A good read: shown.
-    - The layer gone or changed (``missouri.LayerUnavailable``): hidden at
-      once. Its history is kept for when a good read returns.
-    - A passing failure (network, server error, robots.txt unreadable):
-      shown, with its read date, only while the last good read is at most
-      ``MO_STALE_AFTER_DAYS`` old; hidden after that.
-    """
-    if not MO_DNR_HAB.enabled:
-        return history, Counter(), False
-    try:
-        if args.mo_fixture is not None:
-            body = args.mo_fixture.read_bytes()
-        elif args.fixture_page is not None:
-            # An offline run without a Missouri fixture reads nothing.
-            return history, Counter(), _missouri_recent(history, run_date)
-        else:
-            with fetch.make_client() as client:
-                body = missouri.fetch_cases(client)
-        normalized = missouri.normalize(body, run_date)
-    except missouri.LayerUnavailable as error:
-        _warn(f"Missouri hidden: the layer is gone or changed: {error}")
-        return history, Counter(), False
-    except (fetch.FetchError, httpx.HTTPError) as error:
-        shown = _missouri_recent(history, run_date)
-        _warn(
-            f"Missouri not refreshed: {error}"
-            + (
-                ""
-                if shown
-                else f"; hidden, last good read over {MO_STALE_AFTER_DAYS} days old"
-            )
-        )
-        return history, Counter(), shown
+
+def _missouri_read(args: argparse.Namespace) -> tuple[bytes, bytes | None]:
+    """The layer's answer and, when read, the department's viewer
+    definition. A failed viewer read is never a reason to hide anything."""
+    if args.mo_fixture is not None:
+        viewer = args.mo_viewer_fixture.read_bytes() if args.mo_viewer_fixture else None
+        return args.mo_fixture.read_bytes(), viewer
+    if args.fixture_page is not None:
+        # An offline run without a Missouri fixture reads nothing.
+        raise fetch.FetchError("offline run: Missouri not read")
+    with fetch.make_client() as client:
+        body = missouri.fetch_cases(client)
+        try:
+            return body, missouri.fetch_viewer(client)
+        except (fetch.FetchError, httpx.HTTPError) as error:
+            _warn(f"Missouri viewer not checked: {error}")
+            return body, None
+
+
+def _missouri_merge(
+    history: hist.History,
+    body: bytes,
+    viewer: bytes | None,
+    run_date: dt.date,
+    now: dt.datetime,
+) -> tuple[hist.History, normalize.Normalized]:
+    """A good read merged into history, or ``missouri.LayerUnavailable``."""
+    normalized = missouri.normalize(body, run_date)
+    missouri.check_fresh(normalized.records, run_date)
+    if viewer is not None:
+        try:
+            missouri.check_viewer(viewer)
+        except missouri.LayerUnavailable:
+            raise
+        except fetch.FetchError as error:  # an unreadable viewer proves no move
+            _warn(f"Missouri viewer not checked: {error}")
     file_info = {
         "source": MO_DNR_HAB.id,
         "url": MO_DNR_HAB.dataset_url,
@@ -175,16 +197,89 @@ def _missouri(
         "quarantined": sum(normalized.quarantine.values()),
         "quarantined_by_reason": dict(sorted(normalized.quarantine.items())),
     }
-    merged = hist.merge(
-        history, normalized.records, run_date=run_date, file_info=file_info
+    try:
+        merged = hist.merge(
+            history, normalized.records, run_date=run_date, file_info=file_info
+        )
+    except hist.HistoryError as error:
+        # A partial answer must not stop California (source-outage audit,
+        # 2026-11-05, finding 8).
+        raise missouri.LayerUnavailable(str(error), kind="partial") from error
+    if MO_DNR_HAB.id in merged.outages:
+        print(
+            "caalgae: Missouri data available again; outage since "
+            f"{merged.outages[MO_DNR_HAB.id]['since']} cleared"
+        )
+        merged = dataclasses.replace(
+            merged,
+            outages={k: v for k, v in merged.outages.items() if k != MO_DNR_HAB.id},
+        )
+    return merged, normalized
+
+
+def _missouri_passing_failure(
+    history: hist.History, run_date: dt.date, error: Exception
+) -> tuple[hist.History, snapshot.SourceMode | None]:
+    last = _missouri_last_read(history)
+    if last is None:
+        _warn(f"Missouri not shown: never read: {error}")
+        return history, None
+    ongoing = history.outages.get(MO_DNR_HAB.id)
+    if ongoing is not None:
+        # A passing failure during an outage never brings old data back.
+        return _unavailable(history, run_date, ongoing["reason"])
+    if _missouri_recent(history, run_date):
+        _warn(f"Missouri not refreshed: {error}")
+        return history, snapshot.SourceMode(
+            source=MO_DNR_HAB.id, mode=snapshot.STALE_DATED, last_read=last
+        )
+    return _unavailable(
+        history, run_date, f"not refreshed since {last.isoformat()}: {error}"
     )
+
+
+def _missouri(
+    args: argparse.Namespace, history: hist.History, run_date: dt.date, now: dt.datetime
+) -> tuple[hist.History, Counter[str], snapshot.SourceMode | None]:
+    """The second state. A failure here never stops California
+    (docs/DECISIONS.md 0010). The third value is Missouri's mode, or None
+    when it is not shown at all.
+
+    - Switched off (``MO_DNR_HAB.enabled = False``, the State's revocation):
+      not shown; no Missouri page is built (0019).
+    - A good read: ``live``.
+    - A passing failure (network, server error, robots.txt unreadable):
+      ``stale_dated``, with its read date, while the last good read is at
+      most ``MO_STALE_AFTER_DAYS`` old; ``unavailable`` after that.
+    - The layer gone, changed, frozen or superseded
+      (``missouri.LayerUnavailable``), or an answer that would damage
+      history: ``unavailable`` at once (0024). Its history is kept for when
+      a good read returns, and a good read clears the outage.
+    """
+    if not MO_DNR_HAB.enabled:
+        return history, Counter(), None
+    try:
+        body, viewer = _missouri_read(args)
+        merged, normalized = _missouri_merge(history, body, viewer, run_date, now)
+    except missouri.LayerUnavailable as error:
+        if _missouri_last_read(history) is None:
+            # Nothing was ever read, so there is no page to keep up.
+            _warn(f"Missouri data unavailable and never read: {error}")
+            return history, Counter(), None
+        merged, mode = _unavailable(history, run_date, f"{error.kind}: {error}")
+        return merged, Counter(), mode
+    except (fetch.FetchError, httpx.HTTPError) as error:
+        merged, maybe = _missouri_passing_failure(history, run_date, error)
+        return merged, Counter(), maybe
     print(
         f"caalgae: Missouri: {normalized.rows_read} cases, {len(normalized.records)} records"
     )
     return (
         merged,
         Counter({f"Missouri: {k}": v for k, v in normalized.quarantine.items()}),
-        True,
+        snapshot.SourceMode(
+            source=MO_DNR_HAB.id, mode=snapshot.LIVE, last_read=now.date()
+        ),
     )
 
 
@@ -223,7 +318,7 @@ def run(args: argparse.Namespace) -> int:
     history = hist.load(args.history)
     merged, quarantine, download = _california(args, history, run_date)
     now = download.fetched_at
-    merged, mo_quarantine, mo_shown = _missouri(args, merged, run_date, now)
+    merged, mo_quarantine, mo_mode = _missouri(args, merged, run_date, now)
     cyan_cache = _cyan(args, merged, run_date, now)
     snap = snapshot.build(
         merged,
@@ -231,7 +326,8 @@ def run(args: argparse.Namespace) -> int:
         generated_at=now,
         quarantine=quarantine + mo_quarantine,
         cyan_cache=cyan_cache,
-        hidden_sources=frozenset() if mo_shown else frozenset({MO_DNR_HAB.id}),
+        hidden_sources=frozenset() if mo_mode else frozenset({MO_DNR_HAB.id}),
+        modes=[mo_mode] if mo_mode else [],
     )
     snapshot.validate(snap)
     if args.snapshot_out is not None:

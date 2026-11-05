@@ -5,6 +5,7 @@ written. The app and the site are both built from this one object.
 
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 import json
 import re
@@ -22,9 +23,37 @@ from caalgae import cyan
 from caalgae import history as hist
 from caalgae import status as st
 from caalgae.normalize import counties_of
-from caalgae.sources import CA_SWRCB_FHAB, enabled_sources
+from caalgae.sources import CA_SWRCB_FHAB, SOURCES, enabled_sources
 
 SCHEMA_VERSION = 1
+
+# A state's data mode (DECISIONS 0024), carried in ``state_status``.
+LIVE = "live"
+STALE_DATED = "stale_dated"
+UNAVAILABLE = "unavailable"
+# An unavailable state's pages stay indexed this many days after ``since``,
+# then carry noindex (still built, still 200).
+UNAVAILABLE_INDEX_DAYS = 30
+
+
+@dataclasses.dataclass(frozen=True)
+class SourceMode:
+    """How current one state's data is this run.
+
+    - ``live``: read this run.
+    - ``stale_dated``: a passing failure; shown with its read date.
+    - ``unavailable``: the source is gone, changed, frozen or superseded, or
+      a passing failure outlasted ``MO_STALE_AFTER_DAYS``. Its pages stay up
+      with a dated notice, no status headline and the history labeled as
+      records read before ``last_read``; the app shows no status for it and
+      sends no alert.
+    """
+
+    source: str
+    mode: str
+    last_read: dt.date | None = None
+    since: dt.date | None = None
+    reason: str | None = None
 
 
 class SnapshotError(RuntimeError):
@@ -233,6 +262,23 @@ def _file_json(history: hist.History, source: str) -> dict[str, Any] | None:
     }
 
 
+def _mode_json(mode: SourceMode, history: hist.History) -> dict[str, Any]:
+    source = SOURCES[mode.source]
+    last_read = mode.last_read
+    if last_read is None and (last := history.last_file(source.id)) is not None:
+        last_read = dt.date.fromisoformat(str(last["fetched_at"])[:10])
+    unavailable = mode.mode == UNAVAILABLE
+    return {
+        "state": source.state,
+        "source": source.id,
+        "mode": mode.mode,
+        "last_read": _iso(last_read),
+        "since": _iso(mode.since) if unavailable else None,
+        "reason": mode.reason if unavailable else None,
+        "map_url": source.current_map_url,
+    }
+
+
 def build(
     history: hist.History,
     *,
@@ -241,6 +287,7 @@ def build(
     quarantine: Counter[str],
     cyan_cache: dict[str, Any] | None = None,
     hidden_sources: frozenset[str] = frozenset(),
+    modes: Iterable[SourceMode] = (),
 ) -> dict[str, Any]:
     """The snapshot. Each waterbody's ``satellite`` block comes from the
     EPA CyAN cache (``cyan.py``) and never touches its status.
@@ -263,6 +310,12 @@ def build(
         run_date,
         file_dates,
     )
+    by_source = {m.source: m for m in modes}
+    state_status = [
+        _mode_json(by_source.get(s.id) or SourceMode(source=s.id, mode=LIVE), history)
+        for s in shown
+        if s.record_kind == "official_advisory"
+    ]
     satellite = cyan.blocks(cyan_cache, waters) if cyan_cache else {}
     for water in waters:
         water["satellite"] = satellite.get(water["id"])
@@ -273,6 +326,7 @@ def build(
         "sources": [s.as_json() for s in shown],
         "source_file": primary,
         "source_files": files,
+        "state_status": state_status,
         "quarantine": {
             "total": sum(quarantine.values()),
             "by_reason": dict(sorted(quarantine.items())),
