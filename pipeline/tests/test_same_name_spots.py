@@ -212,3 +212,93 @@ def test_other_sources_are_not_matched_by_name() -> None:
             for r in (a, b)
         ]
     ) == {"3818": "3818", "4788": "4788"}
+
+
+@pytest.mark.parametrize(
+    ("landmark", "code"),
+    [
+        ("Nuwuvi Park (714NVWVVI-01)", "714nvwvvi-01"),
+        ("Oaks Arm (DWR site  CL-4)", "dwr site cl-4"),
+        ("Skiers Island", None),
+        ("(MP)", "mp"),
+    ],
+)
+def test_landmark_code_is_the_trailing_parenthetical(
+    landmark: str, code: str | None
+) -> None:
+    assert snapshot.landmark_code(landmark) == code
+
+
+# Lake Havasu's two Nuwuvi Park stations, at the state's shared point. The
+# levels and the moves below are constructed: on the 2026-11-03 file the two
+# stations share coordinates, so they are one spot by 0017 already. The
+# tests ask what happens if the state moves one of them a few meters.
+NUWUVI = (34.49911, -114.39853)
+NORTH_20_M = 0.00018  # degrees of latitude, about 20 m
+
+
+def nuwuvi(station: str, rid: str, report: str, day: str, level: str, north: float,
+           landmark: str | None = None) -> Record:  # fmt: skip
+    return rec(HAVASU, rid, report, day, level, NUWUVI[0] + north, NUWUVI[1],
+               landmark or f"Nuwuvi Park (714NVWVVI-{station})")  # fmt: skip
+
+
+def test_negative_control_two_station_codes_nearby_stay_two_spots() -> None:
+    """A Danger at -01 and a later None at -02, 20 m away. The names match
+    once the codes are dropped, but the codes differ, so the None is at
+    another station and the Danger stands (a false all-clear otherwise)."""
+    records = [
+        nuwuvi("01", "1", "4846", "2026-05-18", "Danger", 0.0),
+        nuwuvi("02", "2", "4847", "2026-06-29", "None", NORTH_20_M),
+    ]
+    a, b = records
+    assert snapshot.meters_apart((a.lat, a.lon), (b.lat, b.lon)) < 25  # it applies
+    w = water(records)
+    sites = {s["id"]: s for s in w["sites"]}
+    assert set(sites) == {"4846", "4847"}
+    assert sites["4846"]["status"]["kind"] == "advisory"
+    assert w["status"]["kind"] == "advisory"
+
+
+def test_the_same_station_code_nearby_is_still_one_spot() -> None:
+    """The control for the test above: give -02 the code -01 and the two
+    reports join, so the None ends the Danger. Only the code differs."""
+    records = [
+        nuwuvi("01", "1", "4846", "2026-05-18", "Danger", 0.0),
+        nuwuvi("01", "2", "4847", "2026-06-29", "None", NORTH_20_M),
+    ]
+    w = water(records)
+    assert [s["id"] for s in w["sites"]] == ["4847"]
+    assert w["status"]["kind"] == "no_advisory_recorded"
+
+
+def test_an_uncoded_name_between_two_codes_joins_only_the_nearer() -> None:
+    """A plain "Nuwuvi Park", 7 m from -01 and 13 m from -02, matches both
+    by name. It joins -01, its nearest, and -02 stays its own spot, so -02's
+    None cannot end the Caution at -01 through it."""
+    records = [
+        nuwuvi("01", "1", "4846", "2025-06-05", "Danger", 0.0),
+        nuwuvi("", "2", "5000", "2026-01-22", "Caution", 0.000063,
+               landmark="Nuwuvi Park"),
+        nuwuvi("02", "3", "4847", "2026-06-29", "None", NORTH_20_M),
+    ]  # fmt: skip
+    w = water(records)
+    spot = {r["id"]: r["site"] for r in w["records"]}
+    assert spot["1"] == spot["2"] == "5000"
+    assert spot["3"] == "4847"
+    sites = {s["id"]: s for s in w["sites"]}
+    assert sites["5000"]["status"]["kind"] == "advisory"
+    assert w["status"]["kind"] == "advisory"
+
+
+def test_shared_coordinates_still_join_two_codes() -> None:
+    """0017 is unchanged: "Oaks Arm (DWR site CL-4)" and "(CL-04)" at the
+    same point are one spot, whatever their codes."""
+    records = [
+        nuwuvi("01", "1", "4846", "2026-05-18", "Danger", 0.0,
+               landmark="Oaks Arm (DWR site CL-4)"),
+        nuwuvi("02", "2", "4847", "2026-06-29", "None", 0.0,
+               landmark="Oaks Arm (DWR site CL-04)"),
+    ]  # fmt: skip
+    w = water(records)
+    assert [s["id"] for s in w["sites"]] == ["4847"]

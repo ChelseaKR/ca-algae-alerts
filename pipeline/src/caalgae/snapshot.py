@@ -123,15 +123,27 @@ SPOT_BY_COORDINATES = frozenset({CA_SWRCB_FHAB.id})
 # Island (714SKIERS)", about 2 m apart at Lake Havasu).
 SAME_NAME_METERS = 25.0
 
-_TRAILING_CODE = re.compile(r"\s*\([^()]*\)\s*$")
+_TRAILING_CODE = re.compile(r"\s*\(([^()]*)\)\s*$")
 _EARTH_RADIUS_M = 6_371_008.8
+
+
+def _squash(text: str) -> str:
+    return " ".join(text.split()).casefold()
 
 
 def landmark_key(landmark: str) -> str:
     """A landmark without one trailing parenthetical, casefolded, with its
     spacing collapsed. An empty key never matches anything."""
-    bare = _TRAILING_CODE.sub("", landmark)
-    return " ".join(bare.split()).casefold()
+    return _squash(_TRAILING_CODE.sub("", landmark))
+
+
+def landmark_code(landmark: str) -> str | None:
+    """The landmark's trailing parenthetical (its station code), casefolded,
+    with its spacing collapsed, or None when it has none. Two coded
+    landmarks are the same spot by name only when their codes are equal:
+    "Nuwuvi Park (714NVWVVI-01)" and "(714NVWVVI-02)" are two stations."""
+    match = _TRAILING_CODE.search(landmark)
+    return _squash(match.group(1)) if match else None
 
 
 def meters_apart(a: tuple[float, float], b: tuple[float, float]) -> float:
@@ -159,6 +171,13 @@ class _Spots:
     def join(self, a: str, b: str) -> None:
         self.parent[self.root(a)] = self.root(b)
 
+    def codes(self, report: str, code: dict[str, str | None]) -> set[str]:
+        """The station codes on the spot ``report`` is now part of."""
+        root = self.root(report)
+        return {
+            c for rep in self.parent if (c := code.get(rep)) and self.root(rep) == root
+        }
+
     def groups(self) -> list[list[str]]:
         members: dict[str, list[str]] = defaultdict(list)
         for report in self.parent:
@@ -176,12 +195,27 @@ def _join_near(
     spots: _Spots,
     buckets: Iterable[list[str]],
     coords: dict[str, tuple[float, float]],
+    code: dict[str, str | None],
 ) -> None:
+    """Join same-name reports within ``SAME_NAME_METERS``, nearest pair
+    first. A join that would put two different station codes on one spot is
+    refused, including through an uncoded report between them, so an
+    uncoded report joins its nearest coded one."""
+    pairs: list[tuple[float, str, str]] = []
     for reports in buckets:
         for i, a in enumerate(reports):
             for b in reports[i + 1 :]:
-                if meters_apart(coords[a], coords[b]) <= SAME_NAME_METERS:
-                    spots.join(a, b)
+                apart = meters_apart(coords[a], coords[b])
+                if apart <= SAME_NAME_METERS:
+                    first, second = sorted((a, b))
+                    pairs.append((apart, first, second))
+    for _, a, b in sorted(pairs):
+        if spots.root(a) == spots.root(b):
+            continue
+        codes_a, codes_b = spots.codes(a, code), spots.codes(b, code)
+        if codes_a and codes_b and not codes_a & codes_b:
+            continue
+        spots.join(a, b)
 
 
 def spot_ids(group: Iterable[hist.HistoryEntry]) -> dict[str, str]:
@@ -190,7 +224,8 @@ def spot_ids(group: Iterable[hist.HistoryEntry]) -> dict[str, str]:
     Reports of a coordinate-matched source are one spot when they share
     their latest coordinates (0017), or when their latest landmarks have the
     same ``landmark_key`` and their latest coordinates are within
-    ``SAME_NAME_METERS`` (0022). Each link meets one of those two tests, so
+    ``SAME_NAME_METERS`` (0022), unless that would put two different
+    station codes (``landmark_code``) on one spot. Each link meets one of those two tests, so
     a chain of same-name links can span more than 25 m. The spot is named by
     the report with the newest record, so a later "None" there is an
     explicit record at the same spot (0002) and ends an older advisory
@@ -200,6 +235,7 @@ def spot_ids(group: Iterable[hist.HistoryEntry]) -> dict[str, str]:
     entries = sorted(group, key=lambda e: e.record.sort_key())
     coords: dict[str, tuple[float, float]] = {}
     names: dict[str, str] = {}
+    code: dict[str, str | None] = {}
     newest: dict[str, tuple[dt.date, dt.datetime, int]] = {}
     for entry in entries:
         r = entry.record
@@ -207,6 +243,7 @@ def spot_ids(group: Iterable[hist.HistoryEntry]) -> dict[str, str]:
         if r.source in SPOT_BY_COORDINATES and r.lat is not None and r.lon is not None:
             coords[r.site_id] = (r.lat, r.lon)
             names[r.site_id] = landmark_key(r.landmark)
+            code[r.site_id] = landmark_code(r.landmark)
     at: dict[tuple[float, float], list[str]] = defaultdict(list)
     named: dict[str, list[str]] = defaultdict(list)
     for report, point in coords.items():
@@ -215,7 +252,7 @@ def spot_ids(group: Iterable[hist.HistoryEntry]) -> dict[str, str]:
             named[names[report]].append(report)
     spots = _Spots(newest)
     _join_all(spots, at.values())
-    _join_near(spots, named.values(), coords)
+    _join_near(spots, named.values(), coords, code)
     spot: dict[str, str] = {}
     for reports in spots.groups():
         name = max(reports, key=lambda rep: newest[rep])

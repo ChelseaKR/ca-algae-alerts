@@ -597,6 +597,18 @@ landed on a new spot and the older advisory stayed open. At Lake Havasu,
   reports too (0017). Each link meets one of the two tests, so a chain of
   same-name links can span more than 25 m (Four Island Lake's "Bear Valley
   Springs" reports span 34 m).
+- Two different station codes are never joined by name. When both
+  landmarks carry a trailing parenthetical, they match only if the codes are
+  the same after case and spacing are set aside (`snapshot.landmark_code`),
+  so Lake Havasu's "Nuwuvi Park (714NVWVVI-01)" and "(714NVWVVI-02)" stay
+  two stations if the state ever moves one of them. An uncoded landmark
+  still matches a coded one, nearest pair first, and a link that would put
+  two different codes on one spot is refused, so a "None" at one station
+  can never end an advisory at the other through an uncoded report between
+  them. Shared coordinates still join any codes (0017's "CL-4" and
+  "CL-04"). Added after the 2026-11-05 branch review; on the 2026-11-03
+  file it changes no spot, because the two Nuwuvi Park stations share
+  coordinates today.
 - Different names are never matched by distance alone. McLeod Lake's
   "Morelli Park Boat Launch" (Danger, 2020) stays apart from "Morelli Park
   (MP)" (None, 2026), about 4 m away. A landmark that is only a code, such as
@@ -620,4 +632,5 @@ wording in batch LN-B.
 
 Tests: `pipeline/tests/test_same_name_spots.py`, with the audit's Lake
 Havasu, Antelope Creek and Four Island Lake records, and McLeod Lake and a
-33 m move as negative controls.
+33 m move as negative controls, plus two Nuwuvi Park station codes 20 m
+apart, an uncoded report between them, and the same-code control.
