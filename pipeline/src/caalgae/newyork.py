@@ -385,6 +385,10 @@ def load(directory: Path = DATA_DIR, *, pinned: str | None = PINNED_SHA256) -> H
         meta = json.loads((directory / META_FILE).read_text(encoding="utf-8"))
     except (OSError, ValueError) as error:
         raise NYDataError(f"the New York cache cannot be read: {error}") from error
+    if not isinstance(meta, dict) or not all(
+        key in meta for key in ("sha256", "rows_updated_at", "fetched_at")
+    ):
+        raise NYDataError(f"{META_FILE} is missing its hash or dates")
     digest = sha256(body)
     if digest != meta.get("sha256"):
         raise NYDataError(f"{ROWS_FILE} does not match the hash in {META_FILE}")

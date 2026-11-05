@@ -35,7 +35,8 @@ Keep a Changelog, and versions follow Semantic Versioning.
   bloom years or 5 or more reports may be indexed (284), and while
   `NY_INDEX_LIMIT` is 50 only the 50 with the most reports. Built from a
   pinned cache in `pipeline/data/ny/`; `python -m caalgae.newyork` refreshes
-  it about once a year.
+  it about once a year. While the section is on, a missing or altered cache
+  fails the run instead of publishing without New York.
 
 ### Changed
 

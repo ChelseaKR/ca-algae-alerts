@@ -228,8 +228,9 @@ def _cyan(
 
 def _new_york(args: argparse.Namespace) -> newyork.History | None:
     """The New York history section, history only (docs/DECISIONS.md 0020).
-    Built from the cache in the repository, never fetched by this run. A
-    missing or altered cache warns and builds the site without it."""
+    Built from the cache in the repository, never fetched by this run. When
+    the section is on, a missing, altered or malformed cache refuses the
+    run, so /state/ny/ pages never vanish from a green publish."""
     wanted = args.ny_history == "on" or (
         args.ny_history == "config" and site.NY_HISTORY_ENABLED
     )
@@ -240,8 +241,7 @@ def _new_york(args: argparse.Namespace) -> newyork.History | None:
             return newyork.load(args.ny_cache, pinned=None)
         return newyork.load()
     except newyork.NYDataError as error:
-        _warn(f"New York history not built: {error}")
-        return None
+        raise RunRefused(f"New York history is on but not built: {error}") from error
 
 
 def run(args: argparse.Namespace) -> int:
@@ -250,6 +250,9 @@ def run(args: argparse.Namespace) -> int:
         if args.run_today
         else dt.datetime.now(dt.UTC).date()
     )
+    # Read first, so a bad New York cache refuses the run before anything
+    # is written.
+    ny_history = _new_york(args) if args.site_out is not None else None
     history = hist.load(args.history)
     merged, quarantine, download = _california(args, history, run_date)
     now = download.fetched_at
@@ -273,7 +276,7 @@ def run(args: argparse.Namespace) -> int:
             base_url=args.base_url,
             support_email=args.support_email,
             app_store_url=args.app_store_url,
-            ny_history=_new_york(args),
+            ny_history=ny_history,
         )
     hist.save(merged, args.history)
     for reason, count in sorted((quarantine + mo_quarantine).items()):

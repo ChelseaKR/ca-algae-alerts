@@ -721,9 +721,12 @@ allowed. `fetch.guard_url` refuses the four API prefixes above.
 - The daily publish **never fetches New York**. The site is built from the
   cache in `pipeline/data/ny/` (`95my-wijm.rows.json`, byte for byte as served,
   and `95my-wijm.meta.json`: URL, columns, DEC's update time, read time,
-  SHA-256). `newyork.PINNED_SHA256` pins the rows; a cache that does not match
-  its sidecar or the pin is refused, and the site is built without New York
-  with a warning (California and Missouri are never stopped by it).
+  SHA-256). `newyork.PINNED_SHA256` pins the rows. While the section is on,
+  a cache that is missing, malformed, or does not match its sidecar or the
+  pin **refuses the whole run**, before anything is written, so a refresh
+  that forgets the pin cannot drop every `/state/ny/` page from a green
+  publish (2026-11-05 branch review; it used to warn and build without New
+  York). While it is off, the cache is never read and never stops a run.
 - `uv run --frozen python -m caalgae.newyork` (from `pipeline/`) is the only
   thing that reads data.ny.gov: robots.txt first (a 403, 5xx, redirect or a
   disallow stops it), then at least 2 s, the metadata, at least 2 s (longer if
