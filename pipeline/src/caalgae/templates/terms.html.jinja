@@ -1,0 +1,98 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<h1>Terms of use</h1>
+<p class="lede">
+  These terms cover the {{ site_name }} website. By using the site you accept
+  them. They are short on purpose. If anything here is unclear, email
+  <a href="mailto:chelsea@chelseakr.com">chelsea@chelseakr.com</a>.
+</p>
+<p class="muted">Last updated 2026-11-03.</p>
+
+<h2 id="who">Who runs this site</h2>
+<p>
+  {{ site_name }} is run by one person, Chelsea Kelly-Reif, in California.
+  You can reach me at
+  <a href="mailto:chelsea@chelseakr.com">chelsea@chelseakr.com</a>.
+</p>
+
+<h2 id="what">What this site is, and is not</h2>
+<p>
+  The site republishes the harmful algal bloom advisory records that state
+  agencies publish, and, for some large lakes, satellite estimates from the
+  US Environmental Protection Agency, labeled as estimates. The
+  <a href="{{ root }}about/#sources">about page</a> names every source. It is
+  not a government site, and it is not affiliated with or endorsed by any
+  state or federal agency.
+</p>
+<p>
+  <strong>This site is not a safety determination.</strong> It never tells you
+  whether water is fit for swimming, wading, fishing, drinking or letting a
+  dog in. No advisory on a page does not mean a water is free of toxic algae:
+  most waters are never tested. Always follow posted signs at the water and
+  the instructions of the agency that manages it, and check the official map
+  before you go. If you think a person or an animal has been exposed, contact
+  a doctor or a veterinarian. Nothing here is medical or veterinary advice.
+</p>
+
+<h2 id="data">The data can be wrong or late</h2>
+<p>
+  The records come from the agencies, and they can be incomplete, wrong or
+  out of date. Conditions at a water can change within hours, long before
+  any record does. This site reads the agencies' data on a schedule, so it
+  can be behind them, and the copying can add errors of its own.
+</p>
+
+<h2 id="warranty">No warranty</h2>
+<p>
+  The site is provided &ldquo;as is&rdquo; and &ldquo;as available,&rdquo;
+  without any warranty, express or implied, including any warranty of
+  accuracy, completeness or fitness for a particular purpose. It may be
+  unavailable, slow or wrong at any time.
+</p>
+
+<h2 id="liability">Limit of liability</h2>
+<p>
+  To the fullest extent the law allows, I am not liable for any loss, injury
+  or damage that comes from using or relying on this site, including any
+  indirect or consequential loss. Where the law does not allow that, my total
+  liability is limited to US$50.
+</p>
+
+{% if affiliate_enabled %}
+<h2 id="affiliate">Affiliate links</h2>
+<p>
+  Some lake pages carry links that search Amazon for dog gear.
+  {{ amazon_disclosure }} The links cost you
+  nothing extra, and no product changes what is in the water. The
+  <a href="{{ root }}privacy/#affiliate">privacy policy</a> describes them.
+</p>
+{% endif %}
+
+<h2 id="trademarks">Names and trademarks</h2>
+<p>
+  Agency names{% if affiliate_enabled %}, Amazon{% endif %} and Apple are the
+  names and trademarks of their owners. They appear here only to say where
+  data comes from or where a link goes. Their owners do not sponsor or endorse this site.
+</p>
+
+<h2 id="use">Using the site</h2>
+<p>
+  You are welcome to read the site, link to it and share it. Please do not
+  use it in a way that harms it or other people, such as automated requests
+  heavy enough to slow it down. The data comes with its sources' own terms
+  and disclaimers, quoted on the <a href="{{ root }}about/#sources">about
+  page</a>.
+</p>
+
+<h2 id="changes">Changes to these terms</h2>
+<p>
+  I may update these terms. When I do, the date at the top of this page
+  changes. If you keep using the site after that, the new version applies.
+</p>
+
+<h2 id="law">Governing law</h2>
+<p>
+  These terms are governed by the laws of the State of California, USA. If
+  something goes wrong, please email me first, and I will try to fix it.
+</p>
+{% endblock %}
