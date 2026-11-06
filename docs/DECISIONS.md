@@ -741,6 +741,37 @@ passes the old guard alone (the sabotage applies) and is refused by the new
 one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
 withdrawn; a blank level after "None" still reads as lifted.
 
+## 0029 — Dog-gear links on the dogs page only, with Lake Notice's own Associates id (owner, 2026-10-30; id 2026-11-05)
+
+The owner approved a small Amazon Associates section on the Dogs and algae
+page (`/dogs/`) and nowhere else. This narrows the affiliate part of 0013,
+which put the gear block on every lake page (off until a tag was set). The
+block comes off lake pages because Trout Truck lost most of its search
+impressions within two days of shipping an identical affiliate block on about
+1,900 pages.
+
+- **Placement.** Only `dogs.html.jinja` includes `_gear.html.jinja`, and
+  `site.py` passes gear links to the dogs page alone. Lake, county, state,
+  advisories, home and every other page carry no Amazon link.
+  `tests/test_site_affiliate.py` checks this, with a negative control that a
+  tagged link put into a lake page is caught.
+- **Tracking id.** `AMAZON_ASSOCIATE_TAG` is Lake Notice's own Associates
+  id, `lakenotice-20`, which the owner created on 2026-11-05. It is never
+  Trout Truck's `trouttruck-20`, as 0013 says. Before this ships, the owner
+  adds lakenotice.com to the Associates account's website list.
+- **Items.** Five generic Amazon searches, each tied to the page's own advice:
+  a water bottle and a collapsible bowl (bring fresh drinking water so the dog
+  does not drink from the lake), a long leash (keep the dog out of the water
+  and away from scum), a rinse bottle and a towel (rinse the dog with fresh
+  water if it goes in, and do not let it lick its coat). No life jacket: it
+  ties to no algae advice. Search links, not products, so nothing goes stale.
+- **Unchanged from 0013.** Plain links with `rel="sponsored nofollow noopener"`,
+  no Amazon script, image or price, Amazon's sentence and the "Affiliate links"
+  label before the links, the non-endorsement sentence naming both agencies, a
+  privacy-page section, no click tracking, never in the iOS app, never a home
+  toxin test kit, and the block's own text says no gear changes what is in the
+  water. Removal is one edit: set the tag to `""`.
+
 ## 0030 — The app reads as Lake Notice's own, and a new state or a changed CyAN answer never stops updates (2026-11-05)
 
 The launch review of 2026-11-05 (§5) found that the app shared a reviewer's
@@ -796,3 +827,36 @@ PR #32, which rewrites that block; Missouri's data-unavailable mode and its
 `HistoryError` catch are PR #31 (DECISIONS 0024); the icon, screenshots, the
 name check, the subtitle and category picks, the Missouri readings and the
 level summaries are the owner's.
+
+## 0032 — The home and /advisories/ titles name Missouri while its data is live (owner, 2026-11-05)
+
+The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
+/advisories/ the site's top page by impressions (45, 0 clicks, position about
+7) and the home page fourth (29, 0 clicks). Both titles said "California"
+while /advisories/ listed 47 Missouri waters. The owner chose option C1:
+name Missouri in both now. They are not water pages, so the dated-title read
+of water pages (~2026-11-25) is not disturbed.
+
+- **States come from the build's data, never a constant.** The home page
+  names every state in `STATE_NAMES` with waters in the snapshot and its
+  source listed (`SiteBuilder.live_states`, the same test `state_pages`
+  uses). /advisories/ names the states its own table lists, the states its
+  description already counts. A Missouri source that is dropped or empty
+  drops the word, and a Missouri with no open advisory is not named on
+  /advisories/.
+- **California alone keeps the launch titles byte for byte**: "California
+  lake toxic algae advisories by date | Lake Notice" and "All California
+  toxic algae advisories on file | Lake Notice".
+- **With Missouri**: "California and Missouri toxic algae advisories by date"
+  and "All California and Missouri toxic algae advisories on file". Neither
+  fits 60 characters with "| Lake Notice", so the site name is left out, as
+  0018 does for dated water titles; `og:site_name` still names the site.
+- **The home description names the same states.** "Since 2016" is
+  California's span, so with another state it says "history" with no year.
+- **Not changed**: every water, county and state page title and
+  description. New York (#17, #34) is not in `STATE_NAMES`, so turning it on
+  does not change these titles; adding it there would.
+
+Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
+and the California-and-Missouri fixture build.
+

@@ -8,6 +8,8 @@ from pathlib import Path
 import pytest
 from test_site import affirmative_safety_claims, build, pages, text_of
 
+from caalgae import site
+
 
 @pytest.fixture(scope="module")
 def site_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
@@ -25,8 +27,13 @@ def test_terms_page_names_the_operator_and_says_it_is_not_a_determination(
     assert "can be wrong or late" in text
     assert "laws of the State of California" in text
     assert affirmative_safety_claims(text) == []
-    # No affiliate section while the Associates tag is empty (DECISIONS 0013).
-    assert "Amazon" not in text
+    # The affiliate section follows the Associates tag (DECISIONS 0013, 0029):
+    # none while it is empty, the dogs-page-only disclosure once it is set.
+    if site.AMAZON_ASSOCIATE_TAG:
+        assert "As an Amazon Associate I earn from qualifying purchases." in text
+        assert "Dogs and algae page, and no other page" in text
+    else:
+        assert "Amazon" not in text
 
 
 def test_every_footer_links_the_terms_page(site_dir: Path) -> None:
