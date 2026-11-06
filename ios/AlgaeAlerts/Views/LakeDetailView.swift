@@ -16,6 +16,17 @@ struct LakeDetailView: View {
 
     private func content(_ water: Waterbody) -> some View {
         List {
+            if let outage = water.status.unavailable {
+                // The state's data is unavailable (DECISIONS 0024): the
+                // notice leads, and nothing below claims a current status.
+                Section {
+                    Text(StatusWording.unavailableBanner(outage)).font(.headline)
+                    if let map = URL(string: outage.mapUrl) {
+                        Link("\(outage.stateName) state map", destination: map)
+                    }
+                }
+                .accessibilityIdentifier("state-unavailable")
+            }
             Section {
                 // The name, in full and wrapped: a large navigation title
                 // truncates a long name, so the bar shows it small and the
@@ -92,7 +103,7 @@ struct LakeDetailView: View {
                     RecordRow(record: record, spot: water.site(id: record.site)?.landmark ?? "")
                 }
             } header: {
-                SectionTitle("History")
+                SectionTitle(water.status.unavailable.map(StatusWording.unavailableHistoryHeading) ?? "History")
             } footer: {
                 Text("\"None\" is the state's record that no advisory was recommended that day. \"NA\" records change nothing.").foregroundStyle(Theme.label)
             }

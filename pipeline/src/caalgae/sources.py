@@ -68,11 +68,19 @@ class Source:
     # A switch per source, so a revoked or changed source is turned off in
     # one place without touching its history.
     enabled: bool = True
+    # The agency's own map of current reports, linked when this source's data
+    # is unavailable (DECISIONS 0024). Empty: ``official_map_url``.
+    reports_map_url: str = ""
 
     def as_json(self) -> dict[str, object]:
         out = dataclasses.asdict(self)
         out.pop("enabled")
+        out.pop("reports_map_url")
         return out
+
+    @property
+    def current_map_url(self) -> str:
+        return self.reports_map_url or self.official_map_url
 
 
 CA_SWRCB_FHAB = Source(
@@ -163,6 +171,7 @@ MO_DNR_HAB = Source(
     revocation_clause=MO_REVOCATION_CLAUSE,
     publisher_caveat=MO_MAP_CAVEAT,
     publisher_caveat_url=MO_MAP_CAVEAT_URL,
+    reports_map_url=MO_MAP_CAVEAT_URL,
 )
 
 EPA_CYAN = Source(

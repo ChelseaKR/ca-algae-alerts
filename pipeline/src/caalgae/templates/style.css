@@ -186,6 +186,12 @@ ul.water-index li { break-inside: avoid; }
 .status-advisory { border-left-color: var(--advisory-border); background: var(--advisory-bg); }
 .status p { margin: 0.4rem 0; }
 .status-line { font-size: 1.05rem; }
+/* A state whose data is unavailable (DECISIONS 0024): the words carry it. */
+.notice-unavailable {
+  border: 2px solid var(--border);
+  padding: 0.25rem 1rem;
+  margin: 1rem 0;
+}
 
 @media (max-width: 40rem) {
   /* Wide history tables scroll inside themselves, never the page. */

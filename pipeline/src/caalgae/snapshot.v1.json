@@ -574,6 +574,85 @@
       "items": {
         "$ref": "#/$defs/sourceFile"
       }
+    },
+    "state_status": {
+      "description": "How current each state's official data is this run (DECISIONS 0024). live: read this run. stale_dated: a passing failure, shown with its read date. unavailable: the source is gone, changed, frozen or superseded; its waters' records are the last ones read before last_read, they say nothing current, the app shows no status and sends no alert for them, and map_url is the agency's own map. An absent entry means live.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "state",
+          "source",
+          "mode",
+          "last_read",
+          "since",
+          "reason",
+          "map_url"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "source": {
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "live",
+              "stale_dated",
+              "unavailable"
+            ]
+          },
+          "last_read": {
+            "$ref": "#/$defs/dateOrNull"
+          },
+          "since": {
+            "$ref": "#/$defs/dateOrNull"
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "map_url": {
+            "type": "string"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "const": "unavailable"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "since": {
+                  "$ref": "#/$defs/date"
+                },
+                "reason": {
+                  "type": "string"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "since": {
+                  "const": null
+                },
+                "reason": {
+                  "const": null
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }

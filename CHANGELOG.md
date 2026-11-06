@@ -24,6 +24,16 @@ Keep a Changelog, and versions follow Semantic Versioning.
   `accept_ca_edits` input lets a checked file through. A level the pipeline
   does not recognize now reads as undetermined, quoting the state's words,
   instead of letting an older "None" show through (docs/DECISIONS.md 0027).
+- When a state's data stops (Missouri's layer gone, changed, partial,
+  frozen in season for 30 days, or dropped by the department's own viewer),
+  its pages stay up with a dated "data unavailable since <date>" notice, no
+  status headline, the history labeled "Records read before <date>", and a
+  link to the department's map. They stay indexed for 30 days, then carry
+  noindex. The app shows the same notice and sends no alert for that state.
+  A new publish guard fails the deploy, keeping yesterday's site, when a
+  state's sitemap URLs vanish or drop by more than 20% without the state
+  being switched off or named in the `allow_page_drop` input
+  (docs/DECISIONS.md 0024).
 - A plain-language terms of use page at /terms/, linked from every page's
   footer next to privacy and listed in the sitemap. It names who runs the
   site, says in bold that the site is not a safety determination, tells
