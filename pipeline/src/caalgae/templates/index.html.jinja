@@ -34,5 +34,6 @@
 <ul>
   <li><a href="{{ root }}county/">California, by county</a> (records since 2016)</li>
   {% if "MO" in states_present %}<li><a href="{{ root }}state/mo/">Missouri</a> (records since 2017)</li>{% endif %}
+  {% if ny_history %}<li><a href="{{ root }}state/ny/">New York bloom history</a> (DEC's yearly summary of confirmed blooms; history only, with no current status)</li>{% endif %}
 </ul>
 {% endblock %}
