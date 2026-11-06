@@ -49,10 +49,10 @@ chooses that design, which would be its own change.
   custom events yet (no `app_store_click`, no `gear_click`): the affiliate
   links add no tracking (DECISIONS 0013), so there is nothing to mark as a
   key event until that is built.
-- Affiliate links: create a second Amazon Associates tracking id for this site
-  and put it in `AMAZON_ASSOCIATE_TAG` in `site.py` (empty until then, which
-  renders no gear block and no privacy paragraph). It is not Trout Truck's
-  `trouttruck-20`. DECISIONS 0013.
+- Affiliate links: `AMAZON_ASSOCIATE_TAG` in `site.py` is Lake Notice's own
+  Associates id, `lakenotice-20` (created 2026-11-05), never Trout Truck's
+  `trouttruck-20`. They appear on the dogs page only. `""` removes the block
+  and the privacy paragraph. DECISIONS 0013 and 0029.
 
 ## iOS identifiers to decide when the App Store record is created
 
