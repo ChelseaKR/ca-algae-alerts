@@ -7,6 +7,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- "Also listed under <county>" links between the state's entries for what
+  may be one water listed once per county, such as Lake Tahoe (El Dorado
+  and Placer) and the South Fork Eel River (Humboldt and Mendocino). Pairs
+  are found from matching names, touching counties (U.S. Census county
+  adjacency) and distance, never from a list of names. 74 pages on the
+  2026-11-05 snapshot. Merge on or after 2026-11-26 (docs/DECISIONS.md 0034).
 - Spanish groundwork, switched off (DECISIONS 0025): a Spanish catalog with a
   status per string, a review gate in `make verify`, a rendered-page check
   for English left on /es/ pages, and a levels page in English (/levels/) and
