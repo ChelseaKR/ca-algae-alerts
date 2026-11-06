@@ -51,9 +51,27 @@ Keep a Changelog, and versions follow Semantic Versioning.
   Boards' advisory signs, on every lake page, the dogs page, About and the
   app's lake screen.
 - A "not medical advice" line in every page's footer, on About and in the app.
+- New York bloom history (docs/DECISIONS.md 0020), **off by default**
+  (`site.NY_HISTORY_ENABLED`). When on: a `/state/ny/` page and one page per
+  named water from New York DEC's yearly summary of confirmed blooms, 2019 to
+  2025 (477 waters), as history only, never an advisory, a status or an end,
+  with no alerts and nothing in the app's snapshot. Only waters with 2 or more
+  bloom years or 5 or more reports may be indexed (284), and while
+  `NY_INDEX_LIMIT` is 50 only the 50 with the most reports. Built from a
+  pinned cache in `pipeline/data/ny/`; `python -m caalgae.newyork` refreshes
+  it about once a year. While the section is on, a missing or altered cache
+  fails the run instead of publishing without New York.
 
 ### Changed
 
+- New York bloom history is on (docs/DECISIONS.md 0021): a `/state/ny/` page
+  and 477 water pages, with the New York page and the 50 waters with the most
+  reports in the sitemap (546 URLs instead of 495) and the rest `noindex`.
+  Water pages open with a line dated by DEC's yearly summary, and titles lead
+  with the bloom years ("Seneca Lake, NY: confirmed blooms in 7 years, 2019 to
+  2025"), never with advisory or status words. The New York copy test now runs
+  on every real page and splits sentences after a closing quotation mark.
+  To undo, set `site.NY_HISTORY_ENABLED` to False.
 - A California spot the state renames a few meters away is now the same
   spot. When two reports share a landmark once a trailing station code such
   as "(714SKIERS)" and case are set aside, and their points are within 25 m,

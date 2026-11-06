@@ -261,7 +261,7 @@ def test_gate_passes_on_main_and_fails_when_switched_on(
 ) -> None:
     assert i18n.main([]) == 0
     out = capsys.readouterr().out
-    assert "77 Spanish strings (0 state, 0 reviewed, 1 same, 76 draft)" in out
+    assert "80 Spanish strings (0 state, 0 reviewed, 1 same, 79 draft)" in out
     assert "33 safety drafts; Spanish off; 0 problems" in out
     assert i18n.main(["--enabled"]) == 1
     assert "37 problems" in capsys.readouterr().out

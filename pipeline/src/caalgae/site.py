@@ -28,7 +28,7 @@ from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import i18n, indexnow, levels, where_to_check, wording
+from caalgae import i18n, indexnow, levels, newyork, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import slugify
 from caalgae.water_names import display_water
@@ -60,6 +60,16 @@ INDEX_WINDOW_MONTHS = 24
 # the 308 the window keeps. To undo: set it to a number no water reaches,
 # such as 100000.
 INDEX_MIN_RECORDS = 5
+# New York's yearly bloom history (docs/DECISIONS.md 0020): a separate section
+# at /state/ny/, history only, built from the pinned cache in data/ny/. ON since
+# DECISIONS 0021, at the first stage of the rollout: NY_INDEX_LIMIT = 50, so
+# only the 50 waters with the deepest history may be indexed. After about three
+# weeks of Search Console, set the limit to None so every water over the
+# thin-page threshold may be. Pages under the threshold, or past the limit, are
+# built with noindex and kept out of the sitemap. Off again: set
+# NY_HISTORY_ENABLED to False; nothing else changes.
+NY_HISTORY_ENABLED = True
+NY_INDEX_LIMIT: int | None = 50
 
 
 # Search results show about 60 characters of a title and 155 of a
@@ -680,8 +690,16 @@ class SiteBuilder:
         support_email: str,
         app_store_url: str,
         ga4_measurement_id: str,
+        ny_history: newyork.History | None = None,
+        ny_index_limit: int | None = NY_INDEX_LIMIT,
     ) -> None:
         self.snap = snap
+        self.ny = ny_history
+        self.ny_indexed = (
+            newyork.indexed_ids(ny_history.waters, ny_index_limit)
+            if ny_history
+            else set()
+        )
         self.out = out
         self.base_url = (base_url or DEFAULT_BASE_URL).rstrip("/") + "/"
         self.env = _env()
@@ -706,6 +724,8 @@ class SiteBuilder:
             "state_names": STATE_NAMES,
             "run_date": self.run_date,
             "quarantine": snap["quarantine"],
+            "ny_history": ny_history is not None,
+            "ny_attribution": newyork.ATTRIBUTION,
         }
         self.waters = [display_water(w) for w in snap["waterbodies"]]
         # Titles add the county when the source's name is shared (0009), so a
@@ -1121,6 +1141,166 @@ class SiteBuilder:
         )
         self.lastmods[self.base_url + rel] = where_to_check.AS_OF.isoformat()
 
+    # -- New York: yearly bloom history, never a status (DECISIONS 0020) ------
+
+    @staticmethod
+    def _ny_context(history: newyork.History) -> dict[str, Any]:
+        return {
+            "ny": history,
+            "ny_source": {
+                "agency": newyork.AGENCY,
+                "dataset_name": newyork.DATASET_NAME,
+                "dataset_url": newyork.DATASET_PAGE_URL,
+                "notifications_url": newyork.NOTIFICATIONS_URL,
+                "program_url": newyork.PROGRAM_URL,
+                "terms_url": newyork.TERMS_URL,
+                "no_vouch": newyork.NO_VOUCH_CLAUSE,
+            },
+            # The date of DEC's file: its own "rows updated" time, the same
+            # role the state's file date plays on the other pages (0016).
+            "ny_file_date": history.rows_updated_at[:10],
+            "ny_min_years": newyork.MIN_YEARS,
+            "ny_min_reports": newyork.MIN_REPORTS,
+        }
+
+    def ny_pages(self) -> None:
+        if self.ny is None:
+            return
+        context = self._ny_context(self.ny)
+        rel = "state/ny/"
+        crumbs = self._crumbs(("New York bloom history", self.base_url + rel))
+        ordered = sorted(self.ny.waters, key=newyork.rank_key)
+        self._write(
+            rel,
+            "ny_state.html.jinja",
+            title=f"New York lake algae bloom history by year | {SITE_NAME}",
+            description=fit(
+                [
+                    f"Years New York DEC confirmed a harmful algal bloom at "
+                    f"{len(ordered)} lakes and rivers, {self.ny.first_year} to "
+                    f"{self.ny.last_year}. History only, not a current status.",
+                    f"New York DEC's confirmed algal blooms by water and year, "
+                    f"{self.ny.first_year} to {self.ny.last_year}. History only.",
+                ],
+                DESCRIPTION_MAX,
+            ),
+            lastmod=newest(w.newest_report for w in ordered),
+            waters=ordered,
+            breadcrumb=crumbs,
+            structured_data={
+                "@context": "https://schema.org",
+                **self._breadcrumb_data(crumbs),
+            },
+            **context,
+        )
+        names = Counter(w.name.casefold() for w in ordered)
+        in_county = Counter((w.name.casefold(), w.counties[0]) for w in ordered)
+        for water in ordered:
+            where = water.name
+            if names[water.name.casefold()] > 1:
+                where = f"{water.name}, {water.counties[0]} County"
+            if in_county[(water.name.casefold(), water.counties[0])] > 1:
+                where = f"{where} ({water.lat:.2f}\u00b0 N)"
+            self.ny_water_page(water, where, context)
+
+    def ny_water_page(
+        self, water: newyork.Water, where: str, context: dict[str, Any]
+    ) -> None:
+        rel = f"state/ny/{water.slug}/"
+        crumbs = self._crumbs(
+            ("New York bloom history", self.base_url + "state/ny/"),
+            (water.name, self.base_url + rel),
+        )
+        span = (
+            str(water.last_year)
+            if water.first_year == water.last_year
+            else f"{water.first_year} to {water.last_year}"
+        )
+        years = "1 year" if water.year_count == 1 else f"{water.year_count} years"
+        reports = (
+            "1 report" if water.report_count == 1 else f"{water.report_count} reports"
+        )
+        # The title leads with what DEC's summary records and its years, as
+        # 0018 does for advisories, in this data's own words: confirmed blooms
+        # by year, never an advisory, a status or an end. The years in a title
+        # always appear in the page's first sentence (0016). A name too long
+        # for any of them keeps the plain title.
+        found = (
+            f"a confirmed bloom in {span}"
+            if water.year_count == 1
+            else f"confirmed blooms in {years}, {span}"
+        )
+        short = (
+            f"a bloom in {span}"
+            if water.year_count == 1
+            else f"blooms in {years}, {span}"
+        )
+        listed = (
+            f"a confirmed algal bloom in 1 year ({span})"
+            if water.year_count == 1
+            else f"confirmed algal blooms in {years} ({span})"
+        )
+        file_date = wording.date_label(context["ny_file_date"])
+        self._write(
+            rel,
+            "ny_water.html.jinja",
+            title=fit(
+                [
+                    f"{where}, NY algae: {found}",
+                    f"{where}, NY: {found}",
+                    f"{where}, NY: {short}",
+                    f"{where}, NY algae bloom history | {SITE_NAME}",
+                    f"{where}, NY bloom history | {SITE_NAME}",
+                    f"{where} | {SITE_NAME}",
+                    # og:site_name still names the site; a cut name helps no one.
+                    where,
+                ],
+                TITLE_MAX,
+            ),
+            description=fit(
+                [
+                    f"{water.name}, NY: DEC's summary dated {file_date} lists "
+                    f"{listed}, {reports}. History, not a current status.",
+                    f"{water.name}, {water.place}, New York: DEC confirmed a harmful "
+                    f"algal bloom in {years} ({span}), {reports}. History, not a current status.",
+                    f"{water.name}, NY: DEC confirmed an algal bloom in {years} "
+                    f"({span}), {reports}. History, not a current status.",
+                    f"{water.name}, NY: confirmed algal blooms in {years}. History only.",
+                ],
+                DESCRIPTION_MAX,
+            ),
+            noindex=water.id not in self.ny_indexed,
+            robots="noindex,follow",
+            lastmod=water.newest_report,
+            water=water,
+            years_label=years,
+            span_label=span,
+            reports_label=reports,
+            breadcrumb=crumbs,
+            structured_data={
+                "@context": "https://schema.org",
+                "@graph": [
+                    self._breadcrumb_data(crumbs),
+                    {
+                        "@type": "WebPage",
+                        "name": f"{water.name} algae bloom history",
+                        "url": self.base_url + rel,
+                        "about": {
+                            "@type": "BodyOfWater",
+                            "name": water.name,
+                            "geo": {
+                                "@type": "GeoCoordinates",
+                                "latitude": water.lat,
+                                "longitude": water.lon,
+                            },
+                        },
+                        "isBasedOn": newyork.DATASET_PAGE_URL,
+                    },
+                ],
+            },
+            **context,
+        )
+
     def extras(self) -> None:
         assets = self.out / "assets"
         assets.mkdir(parents=True, exist_ok=True)
@@ -1164,6 +1344,7 @@ class SiteBuilder:
         self.state_pages()
         self.static_pages()
         self.where_to_check_page()
+        self.ny_pages()
         # /levels/ and /es/niveles/, both off on main (DECISIONS 0025).
         levels.build(self, levels=i18n.LEVELS_ENABLED, es=i18n.ES_ENABLED)
         self.extras()
@@ -1177,7 +1358,11 @@ def build_site(
     support_email: str = "",
     app_store_url: str = "",
     ga4_measurement_id: str | None = None,
+    ny_history: newyork.History | None = None,
+    ny_index_limit: int | None = NY_INDEX_LIMIT,
 ) -> None:
+    """``ny_history`` is the loaded New York cache, or None to build without
+    the New York section (the default while NY_HISTORY_ENABLED is False)."""
     SiteBuilder(
         snap,
         out,
@@ -1187,4 +1372,6 @@ def build_site(
         ga4_measurement_id=GA4_MEASUREMENT_ID
         if ga4_measurement_id is None
         else ga4_measurement_id,
+        ny_history=ny_history,
+        ny_index_limit=ny_index_limit,
     ).build()

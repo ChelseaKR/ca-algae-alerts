@@ -580,6 +580,262 @@ malformed answer stopped the whole run, California included. Now:
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
 
+## 0020 — New York's yearly bloom summary, as history only, behind a switch (owner, 2026-11-02)
+
+**The owner's decision, 2026-11-02:** add New York State DEC's yearly
+summary of confirmed harmful algal blooms from data.ny.gov, under the
+OPEN-NY Terms of Use. This **lifts the 2026-10-30 launch-readiness template
+freeze for this one page type only** (the New York state page and New York
+water pages, plus the lines that link to them). The freeze stands for every
+other page family until mid-January. It also answers the state research's
+ruling R3 (`_agent-tools/growth/lake-notice-state-expansion-2026-11-02.md`):
+a yearly confirmed-bloom summary is a record kind Lake Notice shows, as
+history and never as a status.
+
+The rules she set, and how they are built:
+
+- **History only.** Each row is a year in which DEC confirmed a bloom at a
+  water, with the first and last report dates that year and the number of
+  reports. The pages never call a row an advisory, never show a current
+  status, never treat a last report as an end date or a year without a row
+  as a finding, and never alert. New York data never enters the snapshot,
+  `status.py` or the app (`newyork.py`, separate templates
+  `ny_state.html.jinja` and `ny_water.html.jinja`). A copy test fails any
+  New York sentence that uses advisory, current, ended, lifted, clear, safe
+  and similar words without negating them.
+- **Different wording from the California and Missouri pages.** The pages are
+  titled "algae bloom history", carry no status box, dog section or
+  "no all-clear" copy, and open with "What this record is, and what it is
+  not". They link to DEC's notifications page for anything current.
+- **No thin-page flood.** A New York page may be indexed only when DEC lists
+  2 or more bloom years **or** 5 or more reports for that water
+  (`newyork.MIN_YEARS`, `MIN_REPORTS`). Every other page is built with
+  `noindex,follow`, no canonical, and is left out of the sitemap. Each page
+  shows its years and report count. A test with a negative control proves a
+  water one report short of the threshold is never indexed, and that the
+  same check flips when the threshold is sabotaged.
+- **Off by default, staged on.** `site.NY_HISTORY_ENABLED = False`, so merging
+  publishes nothing. Turning it on with `NY_INDEX_LIMIT = 50` lets only the
+  50 waters with the most reports be indexed; after about three weeks of
+  Search Console, setting the limit to `None` lets all waters over the
+  threshold be indexed. Turning the switch off removes the section, the nav
+  link, the footer line and the about-page paragraph in one change.
+
+Measured from the pinned file (read 2026-11-02, DEC's rows updated
+2026-01-14, seasons 2019 to 2025):
+
+- 1,371 rows, every one `bloom_type` "confirmed". The dataset defines S
+  (suspicious), C (confirmed) and HT (confirmed with high toxins); a row with
+  any value other than "confirmed" is held back and counted, never shown.
+- 477 named waters get a page; 102 rows for "Unnamed Water" or "Unnamed
+  Tributary ..." name no single water and get none (the state page says so).
+- 284 waters meet the threshold (283 with 2 or more years, 180 with 5 or more
+  reports). The research's estimate was 190 to 300.
+- Identity: rows with the same name whose points lie within 1 mile are one
+  water. DEC repeats a water's point exactly across years, even when it spells
+  the counties differently (Seneca Lake: one point, four county spellings);
+  same-name waters are miles apart (Suffolk County's two Long Ponds, 2.9 mi).
+  The id is `ny-<name>`, plus the county when the name repeats in the state,
+  plus the point when it repeats in one county. The refresh prints any id it
+  removes, because that is a published page that would disappear.
+- The research counted 555 "waters" by name and county text; that count split
+  multi-county lakes by spelling and included unnamed rows.
+
+### The terms, re-read 2026-11-02 (0004)
+
+Source: "OPEN-NY Terms of Use", <https://data.ny.gov/dataset/OPEN-NY-Terms-Of-Use/77gx-ii52>,
+the PDF `OPEN-NY_20Terms_20of_20Use.pdf` (SHA-256
+`9437c849705d58df008f01fc23f404444becce6b86676adc3974f9160a4cb650`), headed
+"LAST MODIFIED: March 8, 2013". Verbatim:
+
+- Grant: "You are welcome to freely download and use this Content as long as
+  you abide by these Terms of Use ("Terms of Use," or "Terms"), which
+  constitute a contract between you and the State." And: "The State grants
+  you a non-exclusive, revocable license to use the Content contained on this
+  website in a manner consistent with the Terms of Use."
+- No attribution or other condition: "The OPEN NY Terms of Service do not
+  contain restrictions requiring members of the public to use attribution, to
+  re-post the license terms with any re-uses of the data, to impose share-alike
+  or technical restrictions, nor require the public to obtain pre-approval
+  before re-use of the data." And: "So long as you are not doing anything
+  malicious with NYS data, you may use it as you wish, subject to no other
+  requirements." We credit DEC on every page anyway.
+- Dataset-specific terms: "Other terms may apply generally to the OPEN-NY
+  website, such as its Privacy Policy, or may be imposed specifically on
+  specific Content." The dataset's metadata (`/api/views/95my-wijm.json`,
+  read 2026-11-02) has no license (`license` null) and names
+  "NYS Department of Environmental Conservation" as its attribution.
+- **Revocation (flagged).** "The State may require you, by providing you with
+  a notice in writing with which you shall comply, to cease using or
+  displaying its Content if the State reasonably believes you are violating
+  these Terms of Use, violating other terms posted on OPEN-NY and applicable to
+  the website's Content, or that you are failing to abide by international,
+  federal, state, or local laws, regulations, or ordinances." And: "The State
+  reserves the right to modify, discontinue or remove any Content on OPEN-NY
+  or terminate your access to OPEN-NY for any reason, without notice, at any
+  time, and without liability to you. Upon termination, all licenses and other
+  rights granted to you in these Terms of Use will immediately cease." If
+  either happens, `NY_HISTORY_ENABLED = False` removes the section.
+- **Indemnity (flagged).** "By accessing or using OPEN-NY, you represent and
+  warrant that your activities are lawful in every jurisdiction where you
+  access or use OPEN-NY. You agree to defend, indemnify and hold harmless the
+  State, its officers, directors, employees and agents, and OPEN-NY's
+  contributors, any entity jointly created by them, their respective
+  affiliates and their respective directors, officers, employees, and agents
+  from and against any and all claims, liabilities, damages, losses or
+  expenses, including reasonable attorneys' fees and costs, arising out of or
+  in any way connected with your access to or use of the OPEN-NY website, in
+  reference to any claim however caused and on any theory of legal liability,
+  whether in contract, strict liability, or tort, including negligence." This
+  is the research's ruling R2. The decision above proceeds under these terms;
+  the clause is recorded here so it is on file before the switch is turned on.
+- Changes: "The State may modify these Terms of Use at any time and without
+  notice other than posting its modifications on this webpage. Each time you
+  use OPEN-NY you are required to review these Terms of Use for any changes
+  since your last visit." The refresh plan below re-reads them each time.
+- Shown on every New York page: "The State also does not vouch for the
+  continued accuracy or currency of Content after it has been downloaded from
+  OPEN-NY, nor the quality or accuracy of any analyses or re-uses of that
+  Content."
+- Read but judged not to apply (flagged for the owner): the "Public
+  Participation" section says "You must not create accounts with OPEN-NY or
+  access the site through unauthorized means, including but not limited to,
+  by using an automated device, script, bot, spider, crawler or scraper." That
+  section opens "To the extent OPEN-NY activates a module or forum for public
+  comment or the uploading of Content ... the following provisions concerning
+  acceptable use apply, and uploading such information indicates your
+  agreement". Lake Notice uploads nothing, and the dataset's documented API
+  (`/resource/`) is the access the portal publishes. The refresh is one
+  person-run command a year.
+
+### robots.txt, re-read 2026-11-02 (0011)
+
+`https://data.ny.gov/robots.txt` answered HTTP 200 with `User-agent: *`,
+`Crawl-delay: 1`, and disallow rules for browse, catalog, facet and page
+queries plus `Disallow: /OData.svc/`, `Disallow: /api/odata/`,
+`Disallow: /tiles/` and `Disallow: /api/collocate*`. The two paths the refresh
+reads, `/api/views/95my-wijm.json` and `/resource/95my-wijm.json`, are
+allowed. `fetch.guard_url` refuses the four API prefixes above.
+
+### Fetching, the pin, and the refresh plan
+
+- The daily publish **never fetches New York**. The site is built from the
+  cache in `pipeline/data/ny/` (`95my-wijm.rows.json`, byte for byte as served,
+  and `95my-wijm.meta.json`: URL, columns, DEC's update time, read time,
+  SHA-256). `newyork.PINNED_SHA256` pins the rows. While the section is on,
+  a cache that is missing, malformed, or does not match its sidecar or the
+  pin **refuses the whole run**, before anything is written, so a refresh
+  that forgets the pin cannot drop every `/state/ny/` page from a green
+  publish (2026-11-05 branch review; it used to warn and build without New
+  York). While it is off, the cache is never read and never stops a run.
+- `uv run --frozen python -m caalgae.newyork` (from `pipeline/`) is the only
+  thing that reads data.ny.gov: robots.txt first (a 403, 5xx, redirect or a
+  disallow stops it), then at least 2 s, the metadata, at least 2 s (longer if
+  robots.txt asks), the rows with nine named columns. Three requests in all.
+- **Refresh plan.** DEC posts once a year ("Posting Frequency: Annually"; the
+  2025 season posted 2026-01-14). From mid-January 2027, check the dataset
+  page monthly until the 2026 season appears. Then: re-read the OPEN-NY terms
+  (stop and re-review if "LAST MODIFIED" is not March 8, 2013) and
+  robots.txt; run the refresh; review the printed counts, held-back rows and
+  any REMOVED ids; update `PINNED_SHA256`, the counts in
+  `tests/test_newyork.py` and this entry's numbers in the same commit; run
+  `make verify`; open a PR. No scheduled job does this: a yearly file deserves
+  a person reading the diff.
+
+## 0021 — Turn New York's bloom history on, first stage: 50 indexable waters (prepared 2026-11-04)
+
+The owner approved New York's yearly summary under the OPEN-NY terms on
+2026-11-02 (0020), with the turn-on planned one to two weeks after
+2026-11-03. This change flips `site.NY_HISTORY_ENABLED` to True and keeps
+`NY_INDEX_LIMIT = 50`. Nothing else about the data changes.
+
+**Re-checked 2026-11-04, before the flip (0004, 0011):**
+
+- The terms are unchanged. The OPEN-NY Terms of Use dataset page still
+  links the same PDF. It is byte for byte the file 0020 read (SHA-256
+  `9437c849705d58df008f01fc23f404444becce6b86676adc3974f9160a4cb650`), headed
+  "LAST MODIFIED: March 8, 2013". It still says "The State grants you a
+  non-exclusive, revocable license to use the Content", "So long as you are
+  not doing anything malicious with NYS data, you may use it as you wish,
+  subject to no other requirements", and "You agree to defend, indemnify and
+  hold harmless the State". The revocation and indemnity clauses the owner
+  accepted are the same text.
+- `https://data.ny.gov/robots.txt` answered 200 with the same rules as on
+  2026-11-02 (`User-agent: *`, `Crawl-delay: 1`, and nothing that covers
+  `/api/views/` or `/resource/`).
+- `95my-wijm` metadata: rows updated 2026-01-14T17:36:47Z, the same as the
+  pin; "Posting Frequency: Annually"; `license` null; attribution "NYS
+  Department of Environmental Conservation". The live rows, read with the
+  pinned query, are byte for byte the pinned file (SHA-256 `a9b3a0e8…3623`,
+  1,371 rows, 2019 to 2025). So the 2026 season is not posted yet, as
+  expected (0020's refresh plan starts mid-January 2027).
+- `qtg2-hjth` (2012 to 2018) is reachable under the same robots.txt and
+  terms. Its rows were last updated 2019-05-31, so it is a closed archive.
+  It is **not used**. Its fields count weeks "on DEC notification list",
+  which is closer to an advisory than 95my-wijm's report counts, and its
+  bloom types include S (suspicious). Adding it would need its own owner
+  decision on that wording.
+
+**What the pages say, matched to 0016 to 0018 for this data type.** The
+New York pages have no status box, so 0017's 12-month headline and age
+line do not reach them (tested since 0020: no "no all-clear" copy). The
+other rules carry over in New York's own words:
+
+- **A dated first line (0016).** Every water page now opens "As of DEC's
+  yearly summary dated Jan 14, 2026, the records for <water> (<counties>,
+  New York) show a confirmed harmful algal bloom in <n> years (<first> to
+  <last>), with <n> reports in all. That is history, not an advisory or a
+  current status." The date is DEC's own "rows updated" time, which plays
+  the role of the state's file date. The New York page opens the same way.
+- **Titles lead with what the summary records, and its years (0018).**
+  "Seneca Lake, NY: confirmed blooms in 7 years, 2019 to 2025". Shorter
+  forms first add "algae" when it fits ("Adirondack Lake, NY algae: a
+  confirmed bloom in 2025") or drop "confirmed" ("Allegheny Reservoir, NY:
+  blooms in 3 years, 2020 to 2025"). A form such as "confirmed blooms 2020
+  to 2025" is not used, because it reads as a bloom every year. The years
+  in a title always appear in the first sentence. A title never says
+  advisory, status, current, ended, lifted, clear or safe. On the pinned
+  file: 453 of 477 titles carry their years, 23 names are too long and keep
+  the plain "… NY bloom history | Lake Notice" title, and one name (50
+  characters) is the whole title rather than being cut.
+- **Descriptions carry the file date.** "Seneca Lake, NY: DEC's summary
+  dated Jan 14, 2026 lists confirmed algal blooms in 7 years (2019 to
+  2025), 732 reports. History, not a current status." 444 of 477 fit the
+  dated form.
+
+**Index effect, measured by building from the 2026-11-04 snapshot.** With
+the switch off the sitemap lists 495 URLs. On, at the first stage, it lists
+546: the New York page and the 50 waters with the most reports. Of those
+50 titles, 47 carry their years. All 477 water pages are built; 427 are
+`noindex,follow` with no canonical: 193 are under the thin-page threshold
+and 234 are past the staged limit. No existing URL leaves the
+sitemap and no existing lastmod changes, so the first deploy's IndexNow
+announcement (0015) is the 51 new URLs. Every page gains the "New York
+history" nav link and the footer credit line. At the second stage
+(`NY_INDEX_LIMIT = None`) the sitemap would list 780 URLs: 284 New York
+waters plus the New York page. That stage waits for about three weeks of
+Search Console data on the first 50 (0020).
+
+**Tests.** The default build now reads the pinned cache. Every one of the
+477 real pages must pass the copy guard on its title, description and body.
+The water's own name is left out of that check, because Clear Lake, Lake
+Clear and Follensby Clear Pond are names, not findings. Each page must also
+open with the dated line and repeat its title's years in the first
+sentence. A negative control sabotages a real page five ways (a "clear"
+finding after the name is removed, an "ended" in the description, a wrong
+year in the title, an undated first line, no history sentence) and checks
+each is reported. That control found a gap: the guard did not split a
+sentence after a closing quotation mark, so a claim after a quote passed
+because the quote contained "not". The guard now splits there. A second
+control checks that the switched-off build's "no New York anywhere" test
+finds New York in a default build. The California and Missouri page tests
+(`test_site.py`, `test_lastmod_breadcrumb.py`) build with `--ny-history
+off`, because they check pages against the snapshot alone.
+
+**To undo:** set `NY_HISTORY_ENABLED = False`. One change removes every New
+York page, link, sitemap URL and credit line (tested). If DEC or the State
+sends a notice under the revocation clause, do that first.
+
 ## 0022 — The same landmark within 25 m is the same spot (owner, 2026-11-05)
 
 This supersedes 0017's "nothing is matched by name or by distance" for
@@ -634,6 +890,7 @@ Tests: `pipeline/tests/test_same_name_spots.py`, with the audit's Lake
 Havasu, Antelope Creek and Four Island Lake records, and McLeod Lake and a
 33 m move as negative controls, plus two Nuwuvi Park station codes 20 m
 apart, an uncoded report between them, and the same-code control.
+
 
 ## 0025 — Spanish groundwork: a catalog with a status per string, a review gate, and the levels page, all switched off (2026-11-05)
 
