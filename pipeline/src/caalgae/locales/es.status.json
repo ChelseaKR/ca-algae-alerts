@@ -206,5 +206,62 @@
     "safety": true,
     "paste_from": "https://mywaterquality.ca.gov/habs/docs/toxic-algal-mat-signs.pdf",
     "note": "Placeholder. Chelsea pastes the sign's Spanish text from a browser (the host admits only Googlebot), then sets status state with url, read_on and sha256 (cd pipeline && uv run python -m caalgae.i18n --hash KEY)."
+  },
+  "swim.heading": {
+    "status": "draft"
+  },
+  "swim.cannot_say": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.advisory": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.guidance.caution": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.guidance.warning": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.guidance.danger": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.guidance.algal_mat": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.guidance.other_advisory": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.generic": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.not_advisory": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.unknown_level": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.unclassified": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.check": {
+    "status": "draft",
+    "safety": true
+  },
+  "swim.own_page": {
+    "status": "draft"
+  },
+  "swim.covers": {
+    "status": "draft"
   }
 }

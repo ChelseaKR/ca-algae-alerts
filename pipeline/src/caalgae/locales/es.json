@@ -56,5 +56,20 @@
   "level.caution.sign": "⟦PEGAR: el texto en español del letrero de Precaución, copiado en un navegador del documento de letreros del estado, con su dirección y la fecha⟧",
   "level.warning.sign": "⟦PEGAR: el texto en español del letrero de Advertencia, copiado en un navegador del documento de letreros del estado, con su dirección y la fecha⟧",
   "level.danger.sign": "⟦PEGAR: el texto en español del letrero de Peligro, copiado en un navegador del documento de letreros del estado, con su dirección y la fecha⟧",
-  "level.algal_mat.sign": "⟦PEGAR: el texto en español del letrero de mantos de algas, copiado en un navegador del documento de letreros del estado, con su dirección y la fecha⟧"
+  "level.algal_mat.sign": "⟦PEGAR: el texto en español del letrero de mantos de algas, copiado en un navegador del documento de letreros del estado, con su dirección y la fecha⟧",
+  "swim.heading": "Nadar en {name}",
+  "swim.cannot_say": "Los registros del estado no pueden decir cómo está hoy el agua de {name} para nadar. Muestran lo que el estado registró y cuándo, no cómo está el agua ahora.",
+  "swim.advisory": "La publicación más reciente: {level}, publicada por última vez el {date}. No se ha registrado el fin del aviso.",
+  "swim.guidance.caution": "El letrero de Precaución del estado pide mantener a los niños lejos de las algas en el agua y en la orilla, y mantener a las mascotas fuera del agua.",
+  "swim.guidance.warning": "El letrero de Advertencia del estado dice «No nadar». También pide mantenerse lejos de la espuma y del agua turbia o descolorida.",
+  "swim.guidance.danger": "El letrero de Peligro del estado dice que no se meta al agua hasta nuevo aviso.",
+  "swim.guidance.algal_mat": "El letrero de mantos de algas del estado dice que ni niños ni adultos toquen, coman o traguen mantos de algas, que pueden estar en el fondo, flotando o en la orilla.",
+  "swim.guidance.other_advisory": "El estado registró un aviso de un tipo distinto de los niveles de Precaución, Advertencia y Peligro. Lea el letrero colocado junto al agua antes de que alguien entre.",
+  "swim.generic": "Lea el aviso del estado y cualquier letrero colocado junto al agua antes de que alguien entre, y mantenga a las personas, los niños y las mascotas fuera del agua descolorida o con espuma.",
+  "swim.not_advisory": "{status} Eso no quiere decir que hoy no haya riesgo en el agua. Las floraciones pueden volver en pocos días, y muchas nunca se reportan. Antes de que alguien nade, mire el agua: no entre en agua verde, verde azulada o con espuma, y aléjese de los mantos en la orilla.",
+  "swim.unknown_level": "{status} Hasta que se interprete, no se meta al agua en {name} y aléjese de la espuma de la orilla.",
+  "swim.unclassified": "El estado tiene reportes registrados para {name}, pero no ha clasificado un nivel de aviso, así que los registros no pueden responder si se puede nadar. No entre en agua descolorida o con espuma.",
+  "swim.check": "Antes de que alguien entre, revise la página oficial de algas del estado y cualquier letrero colocado junto al agua.",
+  "swim.own_page": "Una página local para {name}:",
+  "swim.covers": "qué cubre"
 }

@@ -163,6 +163,18 @@ EN: dict[str, str] = {
         'water." "Call your doctor or veterinarian if you or your pet get sick '
         'after contacting or ingesting algae."'
     ),
+    # "Swimming at <water>" on an indexed water page (DECISIONS 0033)
+    "swim.heading": wording.SWIM_HEADING,
+    "swim.cannot_say": wording.SWIM_CANNOT_SAY,
+    "swim.advisory": wording.SWIM_ADVISORY,
+    **{f"swim.guidance.{key}": line for key, line in wording.SWIM_GUIDANCE.items()},
+    "swim.generic": wording.SWIM_GENERIC,
+    "swim.not_advisory": wording.SWIM_NOT_ADVISORY,
+    "swim.unknown_level": wording.SWIM_UNKNOWN_LEVEL,
+    "swim.unclassified": wording.SWIM_UNCLASSIFIED,
+    "swim.check": wording.SWIM_CHECK,
+    "swim.own_page": wording.SWIM_OWN_PAGE,
+    "swim.covers": wording.SWIM_COVERS,
 }
 
 SIGN_URLS = {tier: SIGN_URL for tier in SIGNED_TIERS} | {"algal_mat": MAT_SIGN_URL}

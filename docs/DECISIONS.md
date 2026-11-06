@@ -740,3 +740,46 @@ history.json. Negative controls: the real file passes unchanged; the 4% cut
 passes the old guard alone (the sabotage applies) and is refused by the new
 one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
 withdrawn; a blank level after "None" still reads as lifted.
+
+## 0033 — "Swimming at <water>" on indexed water pages (owner, 2026-11-05; merge on 2026-11-26)
+
+The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
+swimming questions the largest visible group of queries (6 of about 15):
+"is lake elsinore safe to swim in" at position 19, Berryessa at 9, and
+Arrowhead, the Russian River and the Missouri River at 60 to 96. Water pages
+had "Dogs at <water>" but nothing that answered the word "swim". The owner
+chose option A1: build it now, merge on 2026-11-26, after the dated-title read
+and with or after #29, before #35 on 12-01.
+
+- **Indexed water pages only.** A `noindex` page gets no section, so the
+  thin pages 0016 keeps out of search do not grow.
+- **The heading is a statement**, "Swimming at <water>", never a question
+  (0018).
+- **First, what the records cannot say**: "The state's records cannot say if
+  it is safe to swim at <water> today. They show what the state recorded and
+  when, not the water's condition now." Never "safe" as a verdict (0002).
+- **An advisory** then gets its posting in 0002's form ("The latest posting:
+  Caution advisory, last posted Sep 24, 2026. No all-clear recorded.") and
+  one line from that level's posted sign, from the quotes already in
+  wording.py: Caution asks people to keep children away from algae in the
+  water and on the shore; Warning says "No swimming."; Danger says to stay
+  out of the water until further notice; the algal mat sign says not to let
+  children or adults touch, eat or swallow mats. A non-standard California
+  level says to read the sign. Missouri, which has no levels, gets the
+  generic read-the-notice line.
+- **Any other status** gets the headline and the not-a-finding sentence
+  ("That is not a finding that the water is safe now."), that blooms can
+  return within days and many are never reported, and to look at the water
+  first. A level the site cannot read, or no classified level, says the
+  records cannot answer the question.
+- **A local page** is linked only where the where-to-check page lists a
+  source for that one water: Lake Elsinore (the Watersheds Authority's lake
+  conditions page) and Clear Lake (Big Valley Band of Pomo). The ids are in
+  `where_to_check.Source.waters`. District-wide and national pages get none.
+- **Spanish strings are drafts** (0025): 15 `swim.*` keys, 12 of them safety
+  strings, all `draft`, so turning Spanish on fails until each is reviewed.
+
+On the 2026-11-05 snapshot the section is on all 427 indexed water pages and
+on none of the 702 others.
+
+Tests: `pipeline/tests/test_site_swimming.py`.

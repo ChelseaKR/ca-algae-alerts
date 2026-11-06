@@ -324,6 +324,109 @@ def dog_answer(name: str, status: dict[str, Any]) -> str:
     )
 
 
+# "Swimming at <water>" on indexed water pages (DECISIONS 0033). The most
+# common visible search on the site is "is <water> safe to swim in"; the
+# records cannot answer it, so the section says so first, then what the state
+# posted and what that level's sign asks of people in the water. It never
+# calls a water safe, never asks a question in its heading, and says nothing
+# a status box does not. Each string is a template so the Spanish catalog
+# (i18n.py) can carry it; the sign lines paraphrase the state's posted-sign
+# wording quoted in the comment block above LEVEL_GUIDANCE.
+SWIM_HEADING = "Swimming at {name}"
+SWIM_CANNOT_SAY = (
+    "The state's records cannot say if it is safe to swim at {name} today. "
+    "They show what the state recorded and when, not the water's condition now."
+)
+SWIM_ADVISORY = (
+    "The latest posting: {level}, last posted {date}. No all-clear recorded."
+)
+SWIM_GUIDANCE = {
+    "caution": (
+        "The state's Caution sign asks people to keep children away from algae "
+        "in the water and on the shore, and to keep pets out of the water."
+    ),
+    "warning": (
+        "The state's Warning sign says \u201cNo swimming.\u201d It also asks "
+        "people to stay away from scum and cloudy or discolored water."
+    ),
+    "danger": (
+        "The state's Danger sign says to stay out of the water until further notice."
+    ),
+    "algal_mat": (
+        "The state's algal mat sign says not to let children or adults touch, "
+        "eat or swallow any algal mats, which can be on the bottom, floating, "
+        "or washed up on shore."
+    ),
+    "other_advisory": (
+        "The state recorded an advisory of a type outside the Caution, Warning "
+        "and Danger levels. Read the sign posted at the water before anyone "
+        "goes in."
+    ),
+}
+# Missouri's advisories have no levels (STATE_GUIDANCE), so its swim line is
+# the generic one, in the department's own terms of a notice and a sign.
+SWIM_GENERIC = (
+    "Read the state's notice and any sign posted at the water before anyone "
+    "goes in, and keep people, children and pets out of discolored or scummy "
+    "water."
+)
+SWIM_NOT_ADVISORY = (
+    "{status} " + NOT_A_FINDING + " Blooms can return within days, and many "
+    "are never reported. Before anyone swims, look at the water: stay out of "
+    "green, blue-green or scummy water and away from mats on the shore."
+)
+SWIM_UNKNOWN_LEVEL = (
+    "{status} Until it is read, stay out of the water at {name} and away from "
+    "scum on the shore."
+)
+SWIM_UNCLASSIFIED = (
+    "The state has reports on file for {name} but has not classified an "
+    "advisory level, so the records cannot answer the swimming question. Stay "
+    "out of discolored or scummy water."
+)
+SWIM_CHECK = (
+    "Before anyone goes in, check the state's official algae page and any "
+    "sign posted at the water."
+)
+SWIM_OWN_PAGE = "A local page for {name}:"
+SWIM_COVERS = "what it covers"
+
+
+def swim_guidance_key(water: dict[str, Any]) -> str | None:
+    """Which SWIM_GUIDANCE line an advisory gets; None means SWIM_GENERIC."""
+    tier = water["status"].get("tier")
+    if water["state"] != "CA" or not tier:
+        return None
+    if tier == "other_advisory" and is_algal_mat(water["status"].get("level")):
+        return "algal_mat"
+    return tier if tier in SWIM_GUIDANCE else None
+
+
+def swim_answer(water: dict[str, Any]) -> list[str]:
+    """The paragraphs of a water page's "Swimming at <water>" section, from
+    the water's own status only. An advisory gets the cannot-say line, the
+    posting and its level's sign line; a status that is not an advisory gets
+    the not-a-finding sentence (0002), never an all-clear."""
+    name, status = water["name"], water["status"]
+    kind = status["kind"]
+    cannot_say = SWIM_CANNOT_SAY.format(name=name)
+    if kind == "advisory":
+        key = swim_guidance_key(water)
+        posting = SWIM_ADVISORY.format(
+            level=level_name(status), date=date_label(status["posted"])
+        )
+        line = SWIM_GUIDANCE[key] if key else SWIM_GENERIC
+        return [f"{cannot_say} {posting}", line]
+    if kind == "no_advisory_recorded":
+        return [cannot_say, SWIM_NOT_ADVISORY.format(status=headline(status))]
+    if status.get("level"):
+        return [
+            cannot_say,
+            SWIM_UNKNOWN_LEVEL.format(status=headline(status), name=name),
+        ]
+    return [cannot_say, SWIM_UNCLASSIFIED.format(name=name)]
+
+
 def guidance_for(water: dict[str, Any]) -> str | None:
     tier = water["status"].get("tier")
     if not tier:

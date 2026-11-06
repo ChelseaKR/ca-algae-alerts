@@ -7,6 +7,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A "Swimming at <water>" section on every indexed water page (merge on
+  2026-11-26). It says the records cannot say if it is safe to swim there
+  today, then gives the posted advisory and what that level's sign asks of
+  people in the water, or the not-a-finding sentence when there is no
+  advisory. Lake Elsinore and Clear Lake also link their local pages.
+  Spanish strings are drafts (docs/DECISIONS.md 0033).
 - Spanish groundwork, switched off (DECISIONS 0025): a Spanish catalog with a
   status per string, a review gate in `make verify`, a rendered-page check
   for English left on /es/ pages, and a levels page in English (/levels/) and
