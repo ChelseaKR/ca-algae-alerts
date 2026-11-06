@@ -1,0 +1,222 @@
+[
+ {
+  "waterbody_name": "Greenwood Lake",
+  "county": "Orange",
+  "year": "2019",
+  "bloom_type": "confirmed",
+  "date_first_report": "2019-07-22T00:00:00.000",
+  "date_last_report": "2019-07-22T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "41.1898",
+  "longitude": "-74.319603"
+ },
+ {
+  "waterbody_name": "Seneca Lake",
+  "county": "Schuyler, Yates",
+  "year": "2019",
+  "bloom_type": "confirmed",
+  "date_first_report": "2019-09-07T00:00:00.000",
+  "date_last_report": "2019-09-08T00:00:00.000",
+  "number_of_reports": "3",
+  "latitude": "42.669266",
+  "longitude": "-76.896473"
+ },
+ {
+  "waterbody_name": "Big Fresh Pond",
+  "county": "Suffolk",
+  "year": "2019",
+  "bloom_type": "confirmed",
+  "date_first_report": "2019-07-02T00:00:00.000",
+  "date_last_report": "2019-07-02T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "40.922199",
+  "longitude": "-72.4188"
+ },
+ {
+  "waterbody_name": "Greenwood Lake",
+  "county": "Orange",
+  "year": "2020",
+  "bloom_type": "confirmed",
+  "date_first_report": "2020-05-30T00:00:00.000",
+  "date_last_report": "2020-05-30T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "41.1898",
+  "longitude": "-74.319603"
+ },
+ {
+  "waterbody_name": "Unnamed Water",
+  "county": "Oswego",
+  "year": "2020",
+  "bloom_type": "confirmed",
+  "date_first_report": "2020-08-20T00:00:00.000",
+  "date_last_report": "2020-08-20T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "43.3293",
+  "longitude": "-76.054199"
+ },
+ {
+  "waterbody_name": "Seneca Lake",
+  "county": "Seneca, Schuyler, Yates",
+  "year": "2020",
+  "bloom_type": "confirmed",
+  "date_first_report": "2020-08-22T00:00:00.000",
+  "date_last_report": "2020-10-09T00:00:00.000",
+  "number_of_reports": "16",
+  "latitude": "42.669266",
+  "longitude": "-76.896473"
+ },
+ {
+  "waterbody_name": "Big Fresh Pond",
+  "county": "Suffolk",
+  "year": "2020",
+  "bloom_type": "confirmed",
+  "date_first_report": "2020-08-14T00:00:00.000",
+  "date_last_report": "2020-08-14T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "40.922199",
+  "longitude": "-72.4188"
+ },
+ {
+  "waterbody_name": "Seneca Lake",
+  "county": "Seneca, Yates, Schuyler, Ontario",
+  "year": "2021",
+  "bloom_type": "confirmed",
+  "date_first_report": "2021-08-25T00:00:00.000",
+  "date_last_report": "2021-10-19T00:00:00.000",
+  "number_of_reports": "72",
+  "latitude": "42.669266",
+  "longitude": "-76.896473"
+ },
+ {
+  "waterbody_name": "Long Pond",
+  "county": "Suffolk",
+  "year": "2021",
+  "bloom_type": "confirmed",
+  "date_first_report": "2021-10-13T00:00:00.000",
+  "date_last_report": "2021-10-13T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "40.975102",
+  "longitude": "-72.290802"
+ },
+ {
+  "waterbody_name": "Long Pond",
+  "county": "Suffolk",
+  "year": "2021",
+  "bloom_type": "confirmed",
+  "date_first_report": "2021-10-14T00:00:00.000",
+  "date_last_report": "2021-10-14T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "40.9352",
+  "longitude": "-72.3228"
+ },
+ {
+  "waterbody_name": "Seneca Lake",
+  "county": "Seneca, Yates, Schuyler, Ontario",
+  "year": "2022",
+  "bloom_type": "confirmed",
+  "date_first_report": "2022-08-16T00:00:00.000",
+  "date_last_report": "2022-10-05T00:00:00.000",
+  "number_of_reports": "57",
+  "latitude": "42.669266",
+  "longitude": "-76.896473"
+ },
+ {
+  "waterbody_name": "Greenwood Lake",
+  "county": "Jefferson",
+  "year": "2023",
+  "bloom_type": "confirmed",
+  "date_first_report": "2023-08-14T00:00:00.000",
+  "date_last_report": "2023-08-14T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "43.910099",
+  "longitude": "-76.120697"
+ },
+ {
+  "waterbody_name": "Seneca Lake",
+  "county": "Seneca, Yates, Ontario, Schuyler",
+  "year": "2023",
+  "bloom_type": "confirmed",
+  "date_first_report": "2023-07-28T00:00:00.000",
+  "date_last_report": "2023-11-01T00:00:00.000",
+  "number_of_reports": "50",
+  "latitude": "42.669266",
+  "longitude": "-76.896473"
+ },
+ {
+  "waterbody_name": "Long Pond",
+  "county": "Suffolk",
+  "year": "2023",
+  "bloom_type": "confirmed",
+  "date_first_report": "2023-06-20T00:00:00.000",
+  "date_last_report": "2023-06-20T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "40.975102",
+  "longitude": "-72.290802"
+ },
+ {
+  "waterbody_name": "Seneca Lake",
+  "county": "Seneca, Schuyler, Yates, Ontario",
+  "year": "2024",
+  "bloom_type": "confirmed",
+  "date_first_report": "2024-07-29T00:00:00.000",
+  "date_last_report": "2024-10-28T00:00:00.000",
+  "number_of_reports": "376",
+  "latitude": "42.669266",
+  "longitude": "-76.896473"
+ },
+ {
+  "waterbody_name": "Long Pond",
+  "county": "Suffolk",
+  "year": "2024",
+  "bloom_type": "confirmed",
+  "date_first_report": "2024-06-20T00:00:00.000",
+  "date_last_report": "2024-06-20T00:00:00.000",
+  "number_of_reports": "1",
+  "latitude": "40.9352",
+  "longitude": "-72.3228"
+ },
+ {
+  "waterbody_name": "Adirondack Lake",
+  "county": "Hamilton",
+  "year": "2025",
+  "bloom_type": "confirmed",
+  "date_first_report": "2025-06-14T00:00:00.000",
+  "date_last_report": "2025-06-16T00:00:00.000",
+  "number_of_reports": "4",
+  "latitude": "43.7901",
+  "longitude": "-74.264297"
+ },
+ {
+  "waterbody_name": "Greenwood Lake",
+  "county": "Orange",
+  "year": "2025",
+  "bloom_type": "confirmed",
+  "date_first_report": "2025-07-25T00:00:00.000",
+  "date_last_report": "2025-08-01T00:00:00.000",
+  "number_of_reports": "2",
+  "latitude": "41.1898",
+  "longitude": "-74.319603"
+ },
+ {
+  "waterbody_name": "Seneca Lake",
+  "county": "Seneca, Schuyler, Yates, Ontario",
+  "year": "2025",
+  "bloom_type": "confirmed",
+  "date_first_report": "2025-07-22T00:00:00.000",
+  "date_last_report": "2025-10-28T00:00:00.000",
+  "number_of_reports": "158",
+  "latitude": "42.669266",
+  "longitude": "-76.896473"
+ },
+ {
+  "waterbody_name": "Lower Esopus Creek",
+  "county": "Ulster",
+  "year": "2025",
+  "bloom_type": "confirmed",
+  "date_first_report": "2025-09-12T00:00:00.000",
+  "date_last_report": "2025-09-24T00:00:00.000",
+  "number_of_reports": "9",
+  "latitude": "42.07425237",
+  "longitude": "-73.94540691"
+ }
+]
