@@ -29,6 +29,9 @@
   "nav.missouri": {
     "status": "draft"
   },
+  "nav.ny_history": {
+    "status": "draft"
+  },
   "nav.dogs": {
     "status": "draft"
   },
@@ -51,6 +54,12 @@
   "footer.attribution.epa-cyan": {
     "status": "draft",
     "safety": true
+  },
+  "footer.attribution.ny": {
+    "status": "draft"
+  },
+  "footer.ny_source": {
+    "status": "draft"
   },
   "footer.not_medical_advice": {
     "status": "draft",

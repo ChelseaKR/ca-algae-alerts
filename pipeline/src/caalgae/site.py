@@ -61,14 +61,14 @@ INDEX_WINDOW_MONTHS = 24
 # such as 100000.
 INDEX_MIN_RECORDS = 5
 # New York's yearly bloom history (docs/DECISIONS.md 0020): a separate section
-# at /state/ny/, history only, built from the pinned cache in data/ny/. OFF by
-# default, so merging the code publishes nothing. Staged rollout: turn it on
-# with NY_INDEX_LIMIT = 50 (only the 50 waters with the deepest history may be
-# indexed), then, after about three weeks of Search Console, set the limit to
-# None so every water over the thin-page threshold may be. Pages under the
-# threshold, or past the limit, are built with noindex and kept out of the
-# sitemap. Off again: set NY_HISTORY_ENABLED to False; nothing else changes.
-NY_HISTORY_ENABLED = False
+# at /state/ny/, history only, built from the pinned cache in data/ny/. ON since
+# DECISIONS 0021, at the first stage of the rollout: NY_INDEX_LIMIT = 50, so
+# only the 50 waters with the deepest history may be indexed. After about three
+# weeks of Search Console, set the limit to None so every water over the
+# thin-page threshold may be. Pages under the threshold, or past the limit, are
+# built with noindex and kept out of the sitemap. Off again: set
+# NY_HISTORY_ENABLED to False; nothing else changes.
+NY_HISTORY_ENABLED = True
 NY_INDEX_LIMIT: int | None = 50
 
 
@@ -1007,6 +1007,9 @@ class SiteBuilder:
                 "terms_url": newyork.TERMS_URL,
                 "no_vouch": newyork.NO_VOUCH_CLAUSE,
             },
+            # The date of DEC's file: its own "rows updated" time, the same
+            # role the state's file date plays on the other pages (0016).
+            "ny_file_date": history.rows_updated_at[:10],
             "ny_min_years": newyork.MIN_YEARS,
             "ny_min_reports": newyork.MIN_REPORTS,
         }
@@ -1068,19 +1071,47 @@ class SiteBuilder:
         reports = (
             "1 report" if water.report_count == 1 else f"{water.report_count} reports"
         )
+        # The title leads with what DEC's summary records and its years, as
+        # 0018 does for advisories, in this data's own words: confirmed blooms
+        # by year, never an advisory, a status or an end. The years in a title
+        # always appear in the page's first sentence (0016). A name too long
+        # for any of them keeps the plain title.
+        found = (
+            f"a confirmed bloom in {span}"
+            if water.year_count == 1
+            else f"confirmed blooms in {years}, {span}"
+        )
+        short = (
+            f"a bloom in {span}"
+            if water.year_count == 1
+            else f"blooms in {years}, {span}"
+        )
+        listed = (
+            f"a confirmed algal bloom in 1 year ({span})"
+            if water.year_count == 1
+            else f"confirmed algal blooms in {years} ({span})"
+        )
+        file_date = wording.date_label(context["ny_file_date"])
         self._write(
             rel,
             "ny_water.html.jinja",
             title=fit(
                 [
+                    f"{where}, NY algae: {found}",
+                    f"{where}, NY: {found}",
+                    f"{where}, NY: {short}",
                     f"{where}, NY algae bloom history | {SITE_NAME}",
                     f"{where}, NY bloom history | {SITE_NAME}",
                     f"{where} | {SITE_NAME}",
+                    # og:site_name still names the site; a cut name helps no one.
+                    where,
                 ],
                 TITLE_MAX,
             ),
             description=fit(
                 [
+                    f"{water.name}, NY: DEC's summary dated {file_date} lists "
+                    f"{listed}, {reports}. History, not a current status.",
                     f"{water.name}, {water.place}, New York: DEC confirmed a harmful "
                     f"algal bloom in {years} ({span}), {reports}. History, not a current status.",
                     f"{water.name}, NY: DEC confirmed an algal bloom in {years} "

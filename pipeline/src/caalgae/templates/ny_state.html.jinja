@@ -2,7 +2,7 @@
 {% from "_ny.html.jinja" import ny_note, ny_source_section with context %}
 {% block content %}
 <h1>New York: algae bloom history by water</h1>
-<p class="lede">New York DEC's yearly summary lists a confirmed harmful algal bloom at {{ waters|length }} named lakes, ponds and rivers in at least one year from {{ ny.first_year }} to {{ ny.last_year }}. Each has a page with every year on record.</p>
+<p class="lede">As of its yearly summary dated {{ ny_file_date|date }}, New York DEC lists a confirmed harmful algal bloom at {{ waters|length }} named lakes, ponds and rivers in at least one year from {{ ny.first_year }} to {{ ny.last_year }}. Each has a page with every year on record.</p>
 {{ ny_note(ny_source, root) }}
 
 <h2 id="waters">Waters with a confirmed bloom on record</h2>

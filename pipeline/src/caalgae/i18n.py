@@ -38,7 +38,7 @@ from importlib import resources
 from pathlib import Path
 from typing import Any
 
-from caalgae import sources, wording
+from caalgae import newyork, sources, wording
 
 # Off on main. Turning on ES_ENABLED needs every safety string reviewed or
 # pasted from the state (the gate below fails the build otherwise) and waits
@@ -84,6 +84,7 @@ EN: dict[str, str] = {
     "nav.advisories": "All advisories",
     "nav.county": "By county",
     "nav.missouri": "Missouri",
+    "nav.ny_history": "New York history",
     "nav.dogs": "Dogs",
     "nav.about": "About",
     "state.CA": "California",
@@ -91,6 +92,8 @@ EN: dict[str, str] = {
     "footer.attribution.ca-swrcb-fhab": sources.CA_SWRCB_FHAB.attribution,
     "footer.attribution.mo-dnr-hab": sources.MO_DNR_HAB.attribution,
     "footer.attribution.epa-cyan": sources.EPA_CYAN.attribution,
+    "footer.attribution.ny": newyork.ATTRIBUTION,
+    "footer.ny_source": "Source and terms",
     "footer.not_medical_advice": wording.NOT_MEDICAL_ADVICE,
     "footer.independent": (
         "{site_name} is independent and is not affiliated with or endorsed by "
