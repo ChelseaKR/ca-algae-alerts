@@ -10,13 +10,20 @@ struct LakeDetailView: View {
         if let water = env.snapshot?.waterbody(id: id) {
             content(water)
         } else {
-            ContentUnavailableView("Not in the current data", systemImage: "drop", description: Text("This lake is not in the state's current file. Its favorite and alert settings are kept."))
+            EmptyState(title: "Not in the current data", systemImage: "drop", message: "This lake is not in the state's current file. Its favorite and alert settings are kept.")
         }
     }
 
     private func content(_ water: Waterbody) -> some View {
         List {
             Section {
+                // The name, in full and wrapped: a large navigation title
+                // truncates a long name, so the bar shows it small and the
+                // content shows it large.
+                Text(water.name)
+                    .font(.title2.bold())
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityIdentifier("lake-name")
                 VStack(alignment: .leading, spacing: 8) {
                     Label {
                         Text(StatusWording.headline(water.status)).font(.headline)
@@ -103,6 +110,7 @@ struct LakeDetailView: View {
             }
         }
         .navigationTitle(water.name)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -138,9 +146,9 @@ struct RecordRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            HStack {
+            DateValueRow {
                 Text(record.date.label).font(.subheadline.monospacedDigit())
-                Spacer()
+            } trailing: {
                 Text(StatusWording.recordLevel(record))
                     .font(.subheadline.weight(record.tier.isAdvisory ? .semibold : .regular))
                     .foregroundStyle(record.tier.isAdvisory ? Theme.advisory : .primary)
@@ -165,9 +173,9 @@ struct SatelliteSection: View {
                 Text("Week ending \(latest.weekEnd.label): \(StatusWording.cellsLabel(latest.cellsPerMl)) of cyanobacteria near the center of \(satellite.cyanName).")
                     .font(.headline)
                 ForEach(satellite.readings.dropFirst(), id: \.weekEnd) { r in
-                    HStack {
+                    DateValueRow {
                         Text(r.weekEnd.label).font(.subheadline.monospacedDigit())
-                        Spacer()
+                    } trailing: {
                         Text(StatusWording.cellsLabel(r.cellsPerMl)).font(.subheadline)
                     }
                     .accessibilityElement(children: .combine)

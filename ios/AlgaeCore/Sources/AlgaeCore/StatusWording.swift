@@ -56,6 +56,12 @@ public enum StatusWording {
         }
     }
 
+    /// `shortLine` for VoiceOver: the " · " separator becomes a comma, so it
+    /// isn't read aloud as "dot".
+    public static func spokenShortLine(_ status: Status) -> String {
+        shortLine(status).replacingOccurrences(of: " · ", with: ", ")
+    }
+
     public static func caveat(_ status: Status) -> String {
         if status.kind == .advisory {
             return "Reporting is voluntary, so the state may not have recorded an end even if conditions changed. Check posted signs and the official map."
@@ -65,7 +71,10 @@ public enum StatusWording {
 
     // Paraphrased from the state's own posted-sign wording, the same as
     // `LEVEL_GUIDANCE` in wording.py (its comment quotes each source in
-    // full). Sources, read 2026-11-05:
+    // full). Sources read 2026-11-05; the two California quotes were checked
+    // by Chelsea Kelly-Reif in a browser on 2026-11-05. That host's robots.txt
+    // allows only Googlebot, so it is read by hand, never by the pipeline or
+    // an agent.
     // California HAB program, https://mywaterquality.ca.gov/habs/resources/signage.html
     //   CAUTION and WARNING: "Do not let pets and other animals go into or
     //   drink the water, or eat scum on the shore." WARNING and DANGER: "Do
