@@ -411,7 +411,8 @@ both fixed here:
   fall from 1,322 to 1,088, and 15 waters move from an advisory to the
   state's latest record recommending none. Nothing is matched by name or by
   distance: two points a meter apart stay two spots, and a report without
-  coordinates is its own spot. Missouri is not matched (its readings are
+  coordinates is its own spot. (Superseded in part by 0022, which also
+  matches the same landmark within 25 m.) Missouri is not matched (its readings are
   owner-confirmed per case, 0013).
 
 The state's data has no other end signal. Checked on the 2026-11-03 files:
@@ -579,6 +580,128 @@ malformed answer stopped the whole run, California included. Now:
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
 
+## 0022 — The same landmark within 25 m is the same spot (owner, 2026-11-05)
+
+This supersedes 0017's "nothing is matched by name or by distance" for
+California. Found in the 2026-11-05 quality audit: the state adds a station
+code to a landmark and moves its point a few meters, so a later "None"
+landed on a new spot and the older advisory stayed open. At Lake Havasu,
+"Skiers Island" (Danger, 2022-12-09, -114.31938) and "Skiers Island
+(714SKIERS)" (None, 2026-04-16, -114.31936) are about 2 m apart.
+
+- Two reports of a coordinate-matched source (`SPOT_BY_COORDINATES`, still
+  California only) are one spot when their latest landmarks are the same
+  after removing one trailing parenthetical, case and extra spacing
+  (`snapshot.landmark_key`), and their latest coordinates are within
+  `SAME_NAME_METERS` (25) of each other. Sharing coordinates still joins
+  reports too (0017). Each link meets one of the two tests, so a chain of
+  same-name links can span more than 25 m (Four Island Lake's "Bear Valley
+  Springs" reports span 34 m).
+- Two different station codes are never joined by name. When both
+  landmarks carry a trailing parenthetical, they match only if the codes are
+  the same after case and spacing are set aside (`snapshot.landmark_code`),
+  so Lake Havasu's "Nuwuvi Park (714NVWVVI-01)" and "(714NVWVVI-02)" stay
+  two stations if the state ever moves one of them. An uncoded landmark
+  still matches a coded one, nearest pair first, and a link that would put
+  two different codes on one spot is refused, so a "None" at one station
+  can never end an advisory at the other through an uncoded report between
+  them. Shared coordinates still join any codes (0017's "CL-4" and
+  "CL-04"). Added after the 2026-11-05 branch review; on the 2026-11-03
+  file it changes no spot, because the two Nuwuvi Park stations share
+  coordinates today.
+- Different names are never matched by distance alone. McLeod Lake's
+  "Morelli Park Boat Launch" (Danger, 2020) stays apart from "Morelli Park
+  (MP)" (None, 2026), about 4 m away. A landmark that is only a code, such as
+  "(MP)", matches nothing. Reports without coordinates and Missouri are not
+  matched (0013).
+- The spot is still named by the report with the newest record, and a later
+  "None" there is an explicit record at the same spot (0002). Silence still
+  ends nothing.
+
+Measured on `pipeline/data/history.json` (California file dated
+2026-11-03): spots fall from 2,450 to 2,425 and spots with an open advisory
+from 1,138 to 1,129. 9 waters change. Four Island Lake moves from "Caution
+advisory, last posted Aug 8, 2022" to the state's latest record
+recommending none. Antelope Creek, East Creek, H.V. Eastman Lake, Lake
+Havasu, Lake Tahoe, McKinley Park, Mormon Slough and Pyramid Lake keep their
+headline and count one fewer spot under an advisory. Counted the audit's
+way (an open spot with a later "None" within 25 m, whatever its name), 22
+waters qualified on this file before and 15 after; those 15 have a
+differently named "None" nearby, such as McLeod Lake, and are left to the
+wording in batch LN-B.
+
+Tests: `pipeline/tests/test_same_name_spots.py`, with the audit's Lake
+Havasu, Antelope Creek and Four Island Lake records, and McLeod Lake and a
+33 m move as negative controls, plus two Nuwuvi Park station codes 20 m
+apart, an uncoded report between them, and the same-code control.
+
+## 0025 — Spanish groundwork: a catalog with a status per string, a review gate, and the levels page, all switched off (2026-11-05)
+
+Plan: `_agent-tools/growth/spanish-pages-plan-tt-ln-2026-11-05.md`, its first
+PR. Nothing changes on the live site: `i18n.LEVELS_ENABLED` and
+`i18n.ES_ENABLED` are both False, so a build writes neither /levels/ nor
+/es/niveles/, and the sitemap is unchanged.
+
+- **One catalog, one status per string.** `pipeline/src/caalgae/locales/es.json`
+  holds the Spanish strings and `es.status.json` their status: `state` (the
+  state's own words, with URL, date read and a SHA-256 of the text),
+  `reviewed` (reviewer initials and date), `same` (correct Spanish is
+  identical to English) or `draft`. `safety: true` marks safety strings: the
+  level names, guidance and sign wording, after-contact and dog advice, the
+  not-a-finding sentence, the not-medical-advice line and the attribution
+  caveats. The English catalog (`i18n.EN`) reads `wording.py` and
+  `sources.py`, so English output is unchanged and the existing tests still
+  pin it.
+- **Always checked (`make i18n`, inside `make verify`).** Key and placeholder
+  parity; a Spanish string identical to English must be `same` or `draft`;
+  a stale `same` fails; a safety string cannot be `same`; a `state` string
+  must still hash to its quote; a `reviewed` string needs its sign-off; a
+  paste placeholder can only be `draft`. Ported from Family Greenhouse's
+  `check-i18n-catalogs.mjs` (`todo` and `intentionallyEqual`).
+- **Checked when Spanish is on, in `make i18n` and in the build itself.** No
+  safety string may be `draft`, no placeholder may remain, and the Spanish
+  copy guard applies: never "seguro" and its forms, "sin peligro", "apta
+  para nadar", "limpia" or "libre de toxinas"; "Peligro" only as the level's
+  label. A missing string raises during rendering; there is no English
+  fallback.
+- **Rendered-page check.** After the Spanish page is written, every /es/
+  page must have `lang="es"` (every other page `lang="en"`) and no run of
+  four or more English words, and English stopwords must be at most 3% of its
+  words. It reads visible text, the title, `alt`, `aria-label`, `title`
+  attributes, the description and script string literals. Proper nouns come
+  from the snapshot (waters, counties, spots, agencies, programs), never a
+  hand list. The English vocabulary is read from the English catalog only,
+  so English pasted into es.json cannot teach the check its own words.
+- **The state's Spanish sign wording is not in the repo yet.** The four
+  `level.*.sign` strings are marked placeholders (`⟦PEGAR…`). The host,
+  mywaterquality.ca.gov, admits only Googlebot, so no script fetched it.
+  **Owner:** open the sign PDFs in a browser, paste each level's Spanish text,
+  then set its status to `state` with `url`, `read_on` and `sha256` (`cd
+  pipeline && uv run python -m caalgae.i18n --hash KEY`). The Spanish level
+  names (Precaución, Advertencia, Peligro) are drafts too, seen only in a
+  search-index summary; they become `state` from the same paste.
+- **All Spanish safety strings are drafts.** No reviewer has signed off.
+  Turning Spanish on today fails with 26 problems (22 draft safety strings,
+  4 placeholders), by design.
+- **Known blocker before turn-on:** `_ga4.html.jinja`'s opt-out messages are
+  English, and GA4 is on in production, so the rendered-page check fails the
+  Spanish page until they come from the catalog. A test records it.
+- **No hreflang yet.** It waits until after the ~2026-11-25 read of the dated
+  titles (0018). The twins link to each other with a plain "En español" /
+  "In English" link only when both are built.
+- The levels pages use `_base_i18n.html.jinja`, a copy of `base.html.jinja`
+  with every string from the catalog. A test checks that the English header
+  and footer are byte-for-byte those of the dogs page, so the copy cannot
+  drift without failing.
+
+Four sabotages each turn the gate red, and each test checks the sabotage
+applied first: English in a safety key, one word changed in a state quote,
+an English sentence hard-coded in the Spanish template (the rendered bytes
+differ), and a safety claim ("segura") in a reviewed string. Tests:
+`pipeline/tests/test_i18n_catalog.py`, `pipeline/tests/test_es_pages.py`. To
+undo: delete `i18n.py`, `levels.py`, `locales/`, the two templates, the
+`i18n` make target and the one `levels.build` line in `site.py`.
+
 ## 0026 — A water page links the same water on Trout Truck, labeled as Chelsea's other site (owner, 2026-11-05)
 
 Chelsea approved the first cross-site link in
@@ -618,3 +741,43 @@ after the dated-title read (0018), so these pages do not change mid-window.
 
 Tests: `pipeline/tests/test_trout_truck_links.py`, with a removed Trout Truck
 page as the negative control.
+
+## 0027 — A short or reshaped California file cannot flip a live advisory (2026-11-05)
+
+The source-outage audit of 2026-11-05 cut the newest 5% of advisory rows
+from the real history. The old guard, which refused only above 5% withdrawn
+(713 of 14,270 records), let it through, and 10 waters flipped from a current
+advisory to "The state's latest record ... recommends no advisory"; 37 more
+went to undetermined. The next good file would bring the advisories back and
+the app would alert again. In 15 runs the state withdrew 0 records. Now:
+
+- **At most 25 withdrawn records per California run** (`MAX_REMOVED_RECORDS`),
+  whatever the fraction. The 5% limit stays, for every source.
+- **No withdrawal of a report's current advisory** (the report's latest
+  deciding record, when that record is an advisory). Withdrawing it would let
+  an older record speak for the spot, so the run is refused.
+- **The quarantine may grow by at most 25 rows per run** (`cli.MAX_QUARANTINE_GROWTH`).
+  It held at exactly 249 for 15 runs; a date-format change would quarantine
+  every new posting silently.
+- **A refused run publishes nothing**, so yesterday's site stays live and the
+  publish-failure issue opens. After reading the state's file, the owner can
+  let it through with the publish workflow's `accept_ca_edits` input
+  (`caalgae --accept-ca-edits`).
+- **A level this pipeline does not recognize decides its spot as undetermined.**
+  A blank level still decides nothing. A non-blank level with no mapping (a
+  new spelling such as "Danger - Closure") used to decide nothing too, so an
+  older "None" showed through it. Now the spot, and the water unless another
+  spot has an advisory, reads "The state's latest record says “Danger -
+  Closure”, a level this site does not recognize, so it cannot say what
+  applies. Check the official map." A later "None" still ends it. The run
+  warns with the levels it could not read. The same rule covers a Missouri
+  status code outside the known list. Today's data has no such level (all
+  57 California `unknown` records and all 80 Missouri ones are blank), so
+  nothing on the site changes.
+
+Tests: `pipeline/tests/test_ca_short_file.py`, run on the committed
+history.json. Negative controls: the real file passes unchanged; the 4% cut
+passes the old guard alone (the sabotage applies) and is refused by the new
+one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
+withdrawn; a blank level after "None" still reads as lifted.
+

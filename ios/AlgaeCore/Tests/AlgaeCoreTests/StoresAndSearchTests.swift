@@ -58,6 +58,10 @@ final class StoresAndSearchTests: XCTestCase {
         XCTAssertFalse(open.locked)
         XCTAssertEqual(open.rows.map(\.name), ["Lake Alpha"])
         XCTAssertEqual(open.missingFavorites, 1)
+        for row in open.rows {
+            XCTAssertFalse(row.spokenLine.contains("·"), row.spokenLine)
+            XCTAssertEqual(row.spokenLine, row.line.replacingOccurrences(of: " · ", with: ", "))
+        }
         XCTAssertEqual(WidgetDigest.build(snapshot: nil, favorites: favorites, isEntitled: true, lastCheckFailed: false), .empty)
     }
 

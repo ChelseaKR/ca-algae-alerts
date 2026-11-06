@@ -23,7 +23,15 @@ name: publish
 on:
   schedule:
     - cron: "41 14 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      accept_ca_edits:
+        # Only after reading the state's file: lets through a California file
+        # that withdraws current advisories, more than 25 records, or grows
+        # the quarantine by more than 25 rows (docs/DECISIONS.md 0027).
+        description: "Accept the California file's withdrawals or quarantine jump (read the file first)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -76,11 +84,16 @@ jobs:
           SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
           SUPPORT_EMAIL: ${{ vars.SUPPORT_EMAIL }}
           APP_STORE_URL: ${{ vars.APP_STORE_URL }}
+          ACCEPT_CA_EDITS: ${{ inputs.accept_ca_edits == true }}
         run: |
+          set -euo pipefail
+          accept=""
+          if [ "$ACCEPT_CA_EDITS" = "true" ]; then accept="--accept-ca-edits"; fi
           uv run caalgae --site-out ../site \
             --base-url "$SITE_BASE_URL" \
             --support-email "$SUPPORT_EMAIL" \
-            --app-store-url "$APP_STORE_URL"
+            --app-store-url "$APP_STORE_URL" \
+            ${accept:+"$accept"}
 
       - name: commit updated history, if any
         env:

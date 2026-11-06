@@ -7,10 +7,22 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- Spanish groundwork, switched off (DECISIONS 0025): a Spanish catalog with a
+  status per string, a review gate in `make verify`, a rendered-page check
+  for English left on /es/ pages, and a levels page in English (/levels/) and
+  Spanish (/es/niveles/). Neither page is built while `LEVELS_ENABLED` and
+  `ES_ENABLED` are off, and every Spanish safety string is still a draft.
 - A water page that matches a Trout Truck water links that page, labeled as
   Chelsea Kelly-Reif's other free site, with no planting data copied. 66
   committed pairs in `pipeline/data/trout_truck_pairs.json`; a pair drops when
   either page is gone. DECISIONS 0026.
+- A short or reshaped California file can no longer flip a live advisory to
+  "recommends no advisory". A run that would withdraw more than 25 records,
+  withdraw any report's current advisory, or grow the quarantine by more than
+  25 rows is refused, and yesterday's site stays up. The publish workflow's
+  `accept_ca_edits` input lets a checked file through. A level the pipeline
+  does not recognize now reads as undetermined, quoting the state's words,
+  instead of letting an older "None" show through (docs/DECISIONS.md 0027).
 - A plain-language terms of use page at /terms/, linked from every page's
   footer next to privacy and listed in the sitemap. It names who runs the
   site, says in bold that the site is not a safety determination, tells
@@ -34,6 +46,14 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- A California spot the state renames a few meters away is now the same
+  spot. When two reports share a landmark once a trailing station code such
+  as "(714SKIERS)" and case are set aside, and their points are within 25 m,
+  a later "None" at one ends the older advisory at the other. Four Island
+  Lake no longer leads with a 2022 Caution, and 8 other waters count one
+  fewer spot under an advisory. Two different station codes, such as
+  "(714NVWVVI-01)" and "(714NVWVVI-02)", are never joined this way, and
+  different names are never matched by distance (docs/DECISIONS.md 0022).
 - Advisory guidance follows the state's posted signs more closely, on the
   site and in the app alike. Every California level now says not to let pets
   or other animals go into the water, not only not to drink it, and that
