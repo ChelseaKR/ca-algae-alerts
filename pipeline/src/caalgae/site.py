@@ -272,6 +272,64 @@ def advisories_description(waters: list[dict[str, Any]]) -> str:
     )
 
 
+def state_list(states: Iterable[str]) -> str:
+    """State codes as names in STATE_NAMES order: "California",
+    "California and Missouri", "California, Missouri and ..."."""
+    present = set(states)
+    names = [name for code, name in STATE_NAMES.items() if code in present]
+    if len(names) <= 1:
+        return "".join(names)
+    return f"{', '.join(names[:-1])} and {names[-1]}"
+
+
+def home_title(states: Iterable[str]) -> str:
+    """The home page title, naming every state whose data is live in this
+    build (DECISIONS 0032). California alone keeps the title it has had
+    since launch; a state is named only while its waters are in the
+    snapshot, so an empty or dropped Missouri source drops the name too."""
+    where = state_list(states) or "California"
+    return fit(
+        [
+            f"{where} lake toxic algae advisories by date | {SITE_NAME}",
+            f"{where} toxic algae advisories by date",
+            f"{where} algae advisories by date",
+        ],
+        TITLE_MAX,
+    )
+
+
+def home_description(states: Iterable[str]) -> str:
+    """The home page description, naming the same states as its title.
+    "Since 2016" is California's span only, so a build with another state
+    says "history" without a year."""
+    where = state_list(states) or "California"
+    span = " since 2016" if where == "California" else ""
+    return fit(
+        [
+            f"Toxic algae (harmful algal bloom) advisories at {where} lakes "
+            f"and rivers, newest first, with each lake's history{span} for "
+            "swimmers and dogs.",
+            f"Toxic algae advisories at {where} lakes and rivers, newest "
+            f"first, with each lake's history{span}.",
+        ],
+        DESCRIPTION_MAX,
+    )
+
+
+def advisories_title(waters: list[dict[str, Any]]) -> str:
+    """The advisory list's title, naming the states its table lists, the
+    same states its description counts (DECISIONS 0032)."""
+    where = state_list(w["state"] for w in waters) or "California"
+    return fit(
+        [
+            f"All {where} toxic algae advisories on file | {SITE_NAME}",
+            f"All {where} toxic algae advisories on file",
+            f"{where} toxic algae advisories on file",
+        ],
+        TITLE_MAX,
+    )
+
+
 # Lake Notice's own GA4 web stream (property 561648146, "Lake Notice", created
 # 2026-10-31 in the ChelseaKR account; DECISIONS 0007). Set, every page carries
 # the tag and the privacy page describes it; empty, no page loads any script
@@ -279,27 +337,37 @@ def advisories_description(waters: list[dict[str, Any]]) -> str:
 # product's id here: it would mix this site's visits into that property
 # (tests/test_site.py checks this one against the portfolio's other ids).
 GA4_MEASUREMENT_ID = "G-75YLGQKDHG"
-# Amazon Associates dog-gear links (docs/DECISIONS.md 0013). Website only: the
-# iOS app has no web view and never shows them. This is Lake Notice's own
-# tracking id, never Trout Truck's. PLACEHOLDER, deliberately empty: the owner
-# has not created the second Associates id yet. Empty, the gear block and the
-# privacy paragraph render nothing and no Amazon URL is built anywhere; set,
-# one line here turns both on. The links are dog gear for lake days, as plain
-# search links. Never a home toxin test kit: a negative strip is not safety
-# and nothing here may imply it (tests/test_site_affiliate.py fails on any
-# test-kit wording in the categories or in a built page).
-AMAZON_ASSOCIATE_TAG = ""
+# Amazon Associates dog-gear links (docs/DECISIONS.md 0013, narrowed by 0029).
+# Website only, and only on the Dogs and algae page (/dogs/): never on a lake,
+# county, state or any other page, and never in the iOS app, which has no web
+# view. The one config value is the tracking id below: Lake Notice's own
+# Associates id, lakenotice-20, never Trout Truck's. Empty, the gear block and
+# the privacy paragraph render nothing and no Amazon URL is built anywhere.
+# Never a home toxin test kit: a negative strip is not safety, and nothing here
+# may imply that gear makes algae exposure any less of a risk
+# (tests/test_site_affiliate.py fails on test-kit or safety wording in the
+# categories or in a built page).
+AMAZON_ASSOCIATE_TAG = "lakenotice-20"
 AMAZON_SEARCH_URL = "https://www.amazon.com/s"
 # Amazon's required wording, byte for byte: do not paraphrase it.
 AMAZON_ASSOCIATE_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
 AFFILIATE_LINK_REL = "sponsored nofollow noopener"
-# Label, then the search terms. Generic categories: a search has no product to
-# go out of stock, so the page states no price, rating or "best" claim.
-GEAR_CATEGORIES: tuple[tuple[str, str], ...] = (
-    ("Dog life jacket", "dog life jacket"),
-    ("Portable dog water bottle", "portable dog water bottle"),
-    ("Dog rinse sprayer for after a swim", "dog rinse sprayer bath"),
-)
+# Label, the search terms, then the line tying the item to the dogs page's own
+# advice (DOG_ADVICE and "At the water"). Generic searches, not products, so
+# nothing goes stale and the page states no price, rating or "best" claim.
+GEAR_CATEGORIES: tuple[tuple[str, str, str], ...] = (
+    ("Portable dog water bottle", "portable dog water bottle",
+     "Bring fresh drinking water so your dog does not drink from the lake."),
+    ("Collapsible dog water bowl", "collapsible dog water bowl",
+     "Something to pour that fresh water into, away from the shore."),
+    ("Long dog leash", "long dog leash",
+     "Keep your dog out of the water and away from scum on the shore where "
+     "an advisory is on file or the water looks green, blue-green or scummy."),
+    ("Portable dog rinse bottle", "portable dog rinse shower bottle",
+     "If your dog does go in, rinse it off with fresh water you brought."),
+    ("Dog drying towel", "dog drying towel",
+     "Dry its coat after the rinse, and do not let it lick its coat."),
+)  # fmt: skip
 # How each state's agency is named in the non-endorsement sentence.
 AGENCY_GEAR_NAME = {"CA": "the Water Board", "MO": "Missouri DNR"}
 
@@ -314,8 +382,8 @@ def gear_links() -> list[dict[str, str]]:
     if not AMAZON_ASSOCIATE_TAG:
         return []
     return [
-        {"label": label, "url": amazon_search_url(terms)}
-        for label, terms in GEAR_CATEGORIES
+        {"label": label, "url": amazon_search_url(terms), "why": why}
+        for label, terms, why in GEAR_CATEGORIES
     ]
 
 
@@ -533,6 +601,14 @@ class SiteBuilder:
         )
         self._same_name_nearby = same_name_nearby(self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
+        # States whose data is live in this build: waters in the snapshot and
+        # the state's source listed, the same test state_pages uses.
+        self.live_states = [
+            state
+            for state in STATE_NAMES
+            if state in self.common["states_present"]
+            and STATE_SOURCE[state] in self.sources
+        ]
         self.by_county: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.no_county: list[dict[str, Any]] = []
         for water in self.waters:
@@ -606,12 +682,8 @@ class SiteBuilder:
         self._write(
             "",
             "index.html.jinja",
-            title=f"California lake toxic algae advisories by date | {SITE_NAME}",
-            description=(
-                "Toxic algae (harmful algal bloom) advisories at California lakes "
-                "and rivers, newest first, with each lake's history since 2016 "
-                "for swimmers and dogs."
-            ),
+            title=home_title(self.live_states),
+            description=home_description(self.live_states),
             lastmod=self.site_date,
             recent=recent,
             older_count=len(open_) - len(recent),
@@ -631,7 +703,7 @@ class SiteBuilder:
         self._write(
             "advisories/",
             "advisories.html.jinja",
-            title=f"All California toxic algae advisories on file | {SITE_NAME}",
+            title=advisories_title(waters),
             description=advisories_description(waters),
             lastmod=self.site_date,
             waters=waters,
@@ -721,9 +793,6 @@ class SiteBuilder:
             robots="noindex,follow",
             lastmod=self.water_dates.get(water["id"]),
             water=water,
-            gear_links=gear_links(),
-            affiliate_rel=AFFILIATE_LINK_REL,
-            gear_endorsement=gear_endorsement(water["state"]),
             water_source=water_source,
             satellite_source=satellite_source,
             county=county,
@@ -876,6 +945,11 @@ class SiteBuilder:
                 lastmod=self.site_date if rel == "dogs/" else None,
                 counties_known=len(CA_COUNTIES),
                 tiers=["caution", "warning", "danger", "other_advisory"],
+                # The gear block is on the dogs page and nowhere else
+                # (DECISIONS 0029); every other page gets no links.
+                gear_links=gear_links() if rel == "dogs/" else [],
+                affiliate_rel=AFFILIATE_LINK_REL,
+                gear_endorsement=gear_endorsement(),
             )
         self._write("404.html", "404.html.jinja", title=f"Page not found | {SITE_NAME}",
                     description="Page not found.", noindex=True)  # fmt: skip

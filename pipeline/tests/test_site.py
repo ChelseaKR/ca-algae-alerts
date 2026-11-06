@@ -403,7 +403,10 @@ def test_default_build_carries_lake_notices_own_ga4_id(traps_site: Path) -> None
             assert f'var id = "{measurement_id}";' in page.read_text(), page
     privacy = text_of(traps_site / "privacy" / "index.html")
     assert "Google Analytics 4" in privacy
-    assert "Last updated 2026-10-31" in privacy
+    # The dogs-page-only gear paragraph (DECISIONS 0029) is the latest change
+    # when the affiliate tag is set; GA4 (0014) is the latest otherwise.
+    updated = "2026-11-05" if site.AMAZON_ASSOCIATE_TAG else "2026-10-31"
+    assert f"Last updated {updated}" in privacy
     assert "Global Privacy Control" in privacy
 
 
