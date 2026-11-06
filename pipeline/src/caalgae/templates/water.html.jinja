@@ -27,8 +27,6 @@
 <p>{{ dog_answer(water.name, water.status) }}</p>
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>
 
-{% include "_gear.html.jinja" %}
-
 {% if water.satellite and satellite_source %}
 {{ satellite_box(water.satellite, satellite_explainer, satellite_source) }}
 {% endif %}
