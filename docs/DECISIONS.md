@@ -771,3 +771,35 @@ impressions within two days of shipping an identical affiliate block on about
   privacy-page section, no click tracking, never in the iOS app, never a home
   toxin test kit, and the block's own text says no gear changes what is in the
   water. Removal is one edit: set the tag to `""`.
+
+## 0032 — The home and /advisories/ titles name Missouri while its data is live (owner, 2026-11-05)
+
+The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
+/advisories/ the site's top page by impressions (45, 0 clicks, position about
+7) and the home page fourth (29, 0 clicks). Both titles said "California"
+while /advisories/ listed 47 Missouri waters. The owner chose option C1:
+name Missouri in both now. They are not water pages, so the dated-title read
+of water pages (~2026-11-25) is not disturbed.
+
+- **States come from the build's data, never a constant.** The home page
+  names every state in `STATE_NAMES` with waters in the snapshot and its
+  source listed (`SiteBuilder.live_states`, the same test `state_pages`
+  uses). /advisories/ names the states its own table lists, the states its
+  description already counts. A Missouri source that is dropped or empty
+  drops the word, and a Missouri with no open advisory is not named on
+  /advisories/.
+- **California alone keeps the launch titles byte for byte**: "California
+  lake toxic algae advisories by date | Lake Notice" and "All California
+  toxic algae advisories on file | Lake Notice".
+- **With Missouri**: "California and Missouri toxic algae advisories by date"
+  and "All California and Missouri toxic algae advisories on file". Neither
+  fits 60 characters with "| Lake Notice", so the site name is left out, as
+  0018 does for dated water titles; `og:site_name` still names the site.
+- **The home description names the same states.** "Since 2016" is
+  California's span, so with another state it says "history" with no year.
+- **Not changed**: every water, county and state page title and
+  description. New York (#17, #34) is not in `STATE_NAMES`, so turning it on
+  does not change these titles; adding it there would.
+
+Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
+and the California-and-Missouri fixture build.
