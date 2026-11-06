@@ -16,7 +16,7 @@ import pytest
 from paths import PAGE, TRAPS
 from test_i18n_catalog import green, with_changes
 
-from caalgae import cli, i18n, levels, site, wording
+from caalgae import cli, i18n, levels, newyork, site, wording
 
 ENGLISH_SENTENCE = "<p>Keep your dog out of the water today.</p>"
 
@@ -48,6 +48,8 @@ def snap_of(root: Path) -> dict[str, Any]:
 def builder_for(root: Path, tmp_path: Path, ga4: str = "") -> site.SiteBuilder:
     out = tmp_path / "site"
     shutil.copytree(root, out)
+    # The fixture site follows site.NY_HISTORY_ENABLED, as a publish does, so
+    # this builder carries the same New York section and the same nav.
     return site.SiteBuilder(
         snap_of(root),
         out,
@@ -55,6 +57,7 @@ def builder_for(root: Path, tmp_path: Path, ga4: str = "") -> site.SiteBuilder:
         support_email="",
         app_store_url="",
         ga4_measurement_id=ga4,
+        ny_history=newyork.load() if site.NY_HISTORY_ENABLED else None,
     )
 
 

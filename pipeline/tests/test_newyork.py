@@ -298,24 +298,48 @@ def test_the_staged_limit_takes_the_deepest_histories_first() -> None:
     assert newyork.indexed_ids(waters, 0) == set()
 
 
-# -- the rollout switch: off by default ------------------------------------------------
+# -- the rollout switch: on, at the first stage (DECISIONS 0021) --------------------
 
 
-def test_the_section_is_off_by_default() -> None:
-    assert site.NY_HISTORY_ENABLED is False
+def test_the_section_is_on_at_the_first_stage() -> None:
+    assert site.NY_HISTORY_ENABLED is True
     assert site.NY_INDEX_LIMIT == 50
 
 
-def test_default_build_has_no_new_york_page_link_or_url(tmp_path: Path) -> None:
-    out = build(tmp_path)
-    assert not (out / "state" / "ny").exists()
-    assert not any("/state/ny/" in u for u in sitemap_urls(out))
+def new_york_traces(out: Path) -> list[str]:
+    """Every place a build shows New York: pages, links, sitemap URLs and
+    snapshot rows. Empty when the section is off."""
+    found = [str(p) for p in ny_pages(out)]
+    found += [u for u in sitemap_urls(out) if "/state/ny/" in u]
     for page in out.rglob("*.html"):
         text = page.read_text(encoding="utf-8")
-        assert "New York" not in text, page
-        assert "state/ny/" not in text, page
+        if "New York" in text or "state/ny/" in text:
+            found.append(f"{page}: mentions New York")
     snapshot = json.loads((out / "snapshot" / "v1.json").read_text())
-    assert {w["state"] for w in snapshot["waterbodies"]} <= {"CA", "MO"}
+    found += [
+        w["id"] for w in snapshot["waterbodies"] if w["state"] not in {"CA", "MO"}
+    ]
+    return found
+
+
+def test_switched_off_build_has_no_new_york_page_link_or_url(tmp_path: Path) -> None:
+    assert new_york_traces(build(tmp_path, "--ny-history", "off")) == []
+
+
+def test_negative_control_the_default_build_shows_new_york(tmp_path: Path) -> None:
+    """The check above must find New York in a default build, now that the
+    switch is on, so it cannot pass by never looking."""
+    traces = new_york_traces(build(tmp_path))
+    assert any(t.endswith("mentions New York") for t in traces)
+    assert any("/state/ny/" in t for t in traces)
+
+
+def test_config_off_builds_no_new_york(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Turning the one switch off is the whole rollback."""
+    monkeypatch.setattr(site, "NY_HISTORY_ENABLED", False)
+    assert new_york_traces(build(tmp_path)) == []
 
 
 def test_turned_on_from_the_command_line_with_a_cache(tmp_path: Path) -> None:
@@ -410,14 +434,18 @@ def test_off_never_reads_the_cache(
     assert not (out / "state" / "ny").exists()
 
 
-def test_config_on_reads_the_pinned_cache(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    monkeypatch.setattr(site, "NY_HISTORY_ENABLED", True)
-    out = build(tmp_path)
-    assert len(ny_pages(out)) == 478  # the state page and 477 waters
-    ny_urls = [u for u in sitemap_urls(out) if "/state/ny/" in u]
+@pytest.fixture(scope="module")
+def pinned_site(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The default build: the switch is on, so it reads the pinned cache."""
+    return build(tmp_path_factory.mktemp("ny-pinned"))
+
+
+def test_config_on_reads_the_pinned_cache(pinned_site: Path) -> None:
+    assert len(ny_pages(pinned_site)) == 478  # the state page and 477 waters
+    ny_urls = [u for u in sitemap_urls(pinned_site) if "/state/ny/" in u]
     assert len(ny_urls) == 51  # the state page and the first 50 waters
+    waters = [p.parent.name for p in ny_pages(pinned_site) if p.parent.name != "ny"]
+    assert sum(is_indexed(pinned_site, slug) for slug in waters) == 50
 
 
 # -- indexing: only waters over the threshold, never one below it -----------------------
@@ -480,7 +508,7 @@ _FORBIDDEN = re.compile(
 def unnegated_status_words(text: str) -> list[str]:
     """Sentences that call a row an advisory, a current status or an end, or
     call a water safe or clear, without negating it."""
-    sentences = re.split(r"(?<=[.!?:])\s+", text)
+    sentences = re.split(r"(?<=[.!?:])\s+|(?<=[.!?][\"\u201d])\s+", text)
     return [s for s in sentences if _FORBIDDEN.search(s) and not _NEGATION.search(s)]
 
 
@@ -509,6 +537,104 @@ def test_new_york_pages_never_call_a_row_an_advisory_a_status_or_an_end(
             html.unescape(description.group(1)),
         ):
             assert unnegated_status_words(line) == [], line
+
+
+_LEDE = re.compile(r'<p class="lede">(.*?)</p>', re.S)
+_YEARS = re.compile(r"\b\d{4}(?: to \d{4})?$")
+
+
+def head_lines(page: Path) -> tuple[str, str, str]:
+    """A page's title, description and first line (its lede), as text."""
+    raw = page.read_text(encoding="utf-8")
+    title = re.search(r"<title>(.*?)</title>", raw)
+    description = re.search(r'name="description" content="([^"]*)"', raw)
+    lede = _LEDE.search(raw)
+    assert title and description and lede, page
+    return (
+        html.unescape(title.group(1)),
+        html.unescape(description.group(1)),
+        html.unescape(_TAG.sub("", lede.group(1))),
+    )
+
+
+def copy_problems(
+    name: str, title: str, description: str, lede: str, body: str
+) -> list[str]:
+    """What DECISIONS 0021 holds every New York water page to, on real data.
+    The water's own name is taken out first: Clear Lake and Lake Clear are
+    names, not findings. Any other "clear" still counts."""
+    problems = [
+        f"{where}: {hit}"
+        for where, text in (
+            ("title", title),
+            ("description", description),
+            ("body", body),
+        )
+        for hit in unnegated_status_words(text.replace(name, "the water"))
+    ]
+    if not lede.startswith("As of DEC's yearly summary dated "):
+        problems.append(f"first sentence is not dated: {lede}")
+    if "That is history, not an advisory or a current status." not in lede:
+        problems.append("first line lacks the history sentence")
+    years = _YEARS.search(title)
+    if years and years.group(0) not in lede.split(". ")[0]:
+        problems.append(f"title years {years.group(0)!r} are not in the first sentence")
+    return problems
+
+
+def test_every_real_new_york_page_passes_the_copy_rules(pinned_site: Path) -> None:
+    """All 477 pages built from DEC's pinned file, not just the fixture."""
+    waters = {w.slug: w for w in newyork.load().waters}
+    checked = 0
+    for page in ny_pages(pinned_site):
+        slug = page.parent.name
+        if slug == "ny":
+            continue
+        title, description, lede = head_lines(page)
+        body = main_text(page)
+        assert copy_problems(waters[slug].name, title, description, lede, body) == []
+        checked += 1
+    assert checked == 477
+
+
+def test_real_titles_lead_with_the_bloom_years(pinned_site: Path) -> None:
+    titles = [head_lines(p)[0] for p in ny_pages(pinned_site) if p.parent.name != "ny"]
+    dated = [t for t in titles if _YEARS.search(t)]
+    # 24 names are too long for any dated form. 23 keep the plain title; one
+    # is too long even for that and is the bare name, never cut.
+    assert len(dated) == 453
+    undated = [t for t in titles if t not in dated]
+    assert sum(t.endswith(f" | {site.SITE_NAME}") for t in undated) == 23
+    assert [t for t in undated if site.SITE_NAME not in t] == [
+        "The Lindsay-Parsons Biodiversity Preserve Lakes(S)"
+    ]
+    assert not any("\u2026" in t for t in titles)
+    seneca = head_lines(pinned_site / "state" / "ny" / DEEP / "index.html")
+    assert seneca[0] == "Seneca Lake, NY: confirmed blooms in 7 years, 2019 to 2025"
+    assert seneca[2].startswith(
+        "As of DEC's yearly summary dated Jan 14, 2026, the records for Seneca Lake "
+        "(Ontario, Schuyler, Seneca and Yates counties, New York) show a confirmed "
+        "harmful algal bloom in 7 years (2019 to 2025), with 732 reports in all."
+    )
+
+
+def test_negative_control_the_real_page_check_reports_each_fault(
+    pinned_site: Path,
+) -> None:
+    """Sabotage a real page's lines and each rule must report it, so the test
+    above cannot pass by never looking."""
+    page = pinned_site / "state" / "ny" / "clear-lake" / "index.html"
+    title, description, lede = head_lines(page)
+    body = main_text(page)
+    name = "Clear Lake"
+    assert copy_problems(name, title, description, lede, body) == []
+    # The name is taken out, but a finding of "clear" still counts.
+    assert copy_problems(name, title, description, lede, body + " Clear Lake is clear.")
+    assert copy_problems(name, title, description + " The bloom ended.", lede, body)
+    assert copy_problems(name, title.replace("2020", "2018"), description, lede, body)
+    assert copy_problems(name, title, description, lede.replace("As of", "Per"), body)
+    no_history = lede.replace("That is history", "That is a record")
+    assert copy_problems(name, title, description, no_history, body)
 
 
 def test_every_new_york_page_says_what_the_data_is_and_is_not(ny_site: Path) -> None:

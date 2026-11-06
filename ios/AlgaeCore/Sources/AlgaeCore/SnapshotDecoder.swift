@@ -45,7 +45,52 @@ public enum SnapshotDecoder {
             }
             for site in water.sites { try check(site.status, at: "\(water.id)/\(site.id)") }
         }
-        return snapshot
+        for entry in snapshot.stateStatus ?? [] where entry.mode == .unavailable && entry.since == nil {
+            throw SnapshotDecodingError.invariant("\(entry.state): an unavailable state needs its since date")
+        }
+        return snapshot.maskingUnavailable()
+    }
+
+    /// The file with every state this build does not know removed: its
+    /// waterbodies, its sources, its source files and its state-status
+    /// entries. A source whose record kind this build does not know is
+    /// removed too. Anything else, including a known state's water with an
+    /// unknown kind, is left for the strict decode to refuse. When nothing is
+    /// removed the original bytes are decoded unchanged.
+    static func knownStatesOnly(_ data: Data) throws -> Data {
+        guard var root = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return data
+        }
+        var removed = false
+        func keep(_ key: String, where include: ([String: Any]) -> Bool) {
+            guard let items = root[key] as? [Any] else { return }
+            let kept = items.filter { item in
+                guard let object = item as? [String: Any] else { return true }
+                return include(object)
+            }
+            if kept.count != items.count {
+                removed = true
+                root[key] = kept
+            }
+        }
+        func known(_ object: [String: Any]) -> Bool {
+            guard let state = object["state"] as? String else { return true }
+            return knownStates.contains(state)
+        }
+        keep("waterbodies", where: known)
+        keep("state_status", where: known)
+        keep("sources") { source in
+            if let kind = source["record_kind"] as? String, RecordKind(rawValue: kind) == nil { return false }
+            guard let state = source["state"] as? String else { return true }
+            return knownStates.contains(state) || state == nationalSourceState
+        }
+        let sourceIDs = Set(((root["sources"] as? [Any]) ?? []).compactMap { ($0 as? [String: Any])?["id"] as? String })
+        keep("source_files") { file in
+            guard let source = file["source"] as? String else { return true }
+            return sourceIDs.contains(source)
+        }
+        guard removed else { return data }
+        return try JSONSerialization.data(withJSONObject: root)
     }
 
     /// The file with every state this build does not know removed: its

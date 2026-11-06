@@ -38,6 +38,9 @@ def build(tmp_path: Path, csv: Path, tag: str = "a") -> Path:
                 "--run-today", "2026-10-12",
                 "--history", str(tmp_path / f"history-{tag}.json"),
                 "--site-out", str(out),
+                # lastmods here come from the snapshot's records; New York's
+                # come from its own cache (test_newyork.py).
+                "--ny-history", "off",
             ]
         )
         == 0

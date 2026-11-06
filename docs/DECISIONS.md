@@ -580,6 +580,10 @@ malformed answer stopped the whole run, California included. Now:
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
 
+Amended by 0024: a gone or changed layer now keeps Missouri's pages up in a
+dated "data unavailable" mode instead of removing them. Switching the source
+off (the State's revocation) still removes everything.
+
 ## 0020 — New York's yearly bloom summary, as history only, behind a switch (owner, 2026-11-02)
 
 **The owner's decision, 2026-11-02:** add New York State DEC's yearly
@@ -742,6 +746,100 @@ allowed. `fetch.guard_url` refuses the four API prefixes above.
   `make verify`; open a PR. No scheduled job does this: a yearly file deserves
   a person reading the diff.
 
+## 0021 — Turn New York's bloom history on, first stage: 50 indexable waters (prepared 2026-11-04)
+
+The owner approved New York's yearly summary under the OPEN-NY terms on
+2026-11-02 (0020), with the turn-on planned one to two weeks after
+2026-11-03. This change flips `site.NY_HISTORY_ENABLED` to True and keeps
+`NY_INDEX_LIMIT = 50`. Nothing else about the data changes.
+
+**Re-checked 2026-11-04, before the flip (0004, 0011):**
+
+- The terms are unchanged. The OPEN-NY Terms of Use dataset page still
+  links the same PDF. It is byte for byte the file 0020 read (SHA-256
+  `9437c849705d58df008f01fc23f404444becce6b86676adc3974f9160a4cb650`), headed
+  "LAST MODIFIED: March 8, 2013". It still says "The State grants you a
+  non-exclusive, revocable license to use the Content", "So long as you are
+  not doing anything malicious with NYS data, you may use it as you wish,
+  subject to no other requirements", and "You agree to defend, indemnify and
+  hold harmless the State". The revocation and indemnity clauses the owner
+  accepted are the same text.
+- `https://data.ny.gov/robots.txt` answered 200 with the same rules as on
+  2026-11-02 (`User-agent: *`, `Crawl-delay: 1`, and nothing that covers
+  `/api/views/` or `/resource/`).
+- `95my-wijm` metadata: rows updated 2026-01-14T17:36:47Z, the same as the
+  pin; "Posting Frequency: Annually"; `license` null; attribution "NYS
+  Department of Environmental Conservation". The live rows, read with the
+  pinned query, are byte for byte the pinned file (SHA-256 `a9b3a0e8…3623`,
+  1,371 rows, 2019 to 2025). So the 2026 season is not posted yet, as
+  expected (0020's refresh plan starts mid-January 2027).
+- `qtg2-hjth` (2012 to 2018) is reachable under the same robots.txt and
+  terms. Its rows were last updated 2019-05-31, so it is a closed archive.
+  It is **not used**. Its fields count weeks "on DEC notification list",
+  which is closer to an advisory than 95my-wijm's report counts, and its
+  bloom types include S (suspicious). Adding it would need its own owner
+  decision on that wording.
+
+**What the pages say, matched to 0016 to 0018 for this data type.** The
+New York pages have no status box, so 0017's 12-month headline and age
+line do not reach them (tested since 0020: no "no all-clear" copy). The
+other rules carry over in New York's own words:
+
+- **A dated first line (0016).** Every water page now opens "As of DEC's
+  yearly summary dated Jan 14, 2026, the records for <water> (<counties>,
+  New York) show a confirmed harmful algal bloom in <n> years (<first> to
+  <last>), with <n> reports in all. That is history, not an advisory or a
+  current status." The date is DEC's own "rows updated" time, which plays
+  the role of the state's file date. The New York page opens the same way.
+- **Titles lead with what the summary records, and its years (0018).**
+  "Seneca Lake, NY: confirmed blooms in 7 years, 2019 to 2025". Shorter
+  forms first add "algae" when it fits ("Adirondack Lake, NY algae: a
+  confirmed bloom in 2025") or drop "confirmed" ("Allegheny Reservoir, NY:
+  blooms in 3 years, 2020 to 2025"). A form such as "confirmed blooms 2020
+  to 2025" is not used, because it reads as a bloom every year. The years
+  in a title always appear in the first sentence. A title never says
+  advisory, status, current, ended, lifted, clear or safe. On the pinned
+  file: 453 of 477 titles carry their years, 23 names are too long and keep
+  the plain "… NY bloom history | Lake Notice" title, and one name (50
+  characters) is the whole title rather than being cut.
+- **Descriptions carry the file date.** "Seneca Lake, NY: DEC's summary
+  dated Jan 14, 2026 lists confirmed algal blooms in 7 years (2019 to
+  2025), 732 reports. History, not a current status." 444 of 477 fit the
+  dated form.
+
+**Index effect, measured by building from the 2026-11-04 snapshot.** With
+the switch off the sitemap lists 495 URLs. On, at the first stage, it lists
+546: the New York page and the 50 waters with the most reports. Of those
+50 titles, 47 carry their years. All 477 water pages are built; 427 are
+`noindex,follow` with no canonical: 193 are under the thin-page threshold
+and 234 are past the staged limit. No existing URL leaves the
+sitemap and no existing lastmod changes, so the first deploy's IndexNow
+announcement (0015) is the 51 new URLs. Every page gains the "New York
+history" nav link and the footer credit line. At the second stage
+(`NY_INDEX_LIMIT = None`) the sitemap would list 780 URLs: 284 New York
+waters plus the New York page. That stage waits for about three weeks of
+Search Console data on the first 50 (0020).
+
+**Tests.** The default build now reads the pinned cache. Every one of the
+477 real pages must pass the copy guard on its title, description and body.
+The water's own name is left out of that check, because Clear Lake, Lake
+Clear and Follensby Clear Pond are names, not findings. Each page must also
+open with the dated line and repeat its title's years in the first
+sentence. A negative control sabotages a real page five ways (a "clear"
+finding after the name is removed, an "ended" in the description, a wrong
+year in the title, an undated first line, no history sentence) and checks
+each is reported. That control found a gap: the guard did not split a
+sentence after a closing quotation mark, so a claim after a quote passed
+because the quote contained "not". The guard now splits there. A second
+control checks that the switched-off build's "no New York anywhere" test
+finds New York in a default build. The California and Missouri page tests
+(`test_site.py`, `test_lastmod_breadcrumb.py`) build with `--ny-history
+off`, because they check pages against the snapshot alone.
+
+**To undo:** set `NY_HISTORY_ENABLED = False`. One change removes every New
+York page, link, sitemap URL and credit line (tested). If DEC or the State
+sends a notice under the revocation clause, do that first.
+
 ## 0022 — The same landmark within 25 m is the same spot (owner, 2026-11-05)
 
 This supersedes 0017's "nothing is matched by name or by distance" for
@@ -796,6 +894,84 @@ Tests: `pipeline/tests/test_same_name_spots.py`, with the audit's Lake
 Havasu, Antelope Creek and Four Island Lake records, and McLeod Lake and a
 33 m move as negative controls, plus two Nuwuvi Park station codes 20 m
 apart, an uncoded report between them, and the same-code control.
+
+## 0024 — A state whose data stops is shown as "data unavailable since <date>", not hidden; the publish is guarded (owner, 2026-11-05)
+
+Accepted 2026-11-05 by Chelsea, as the plan recommended (decision 1b, with the deploy guard of 2a).
+
+Amends 0019. The department plans to retire Missouri's layer, and the risk
+is not a sudden 404 but an old layer that keeps answering with frozen data.
+Hiding Missouri also made its 41 sitemap URLs (its best performers in
+Search Console) return 404. Now three situations get three answers
+(growth/ln-expansion-plan-2026-11-05.md, section 1.3):
+
+- **A passing failure** (timeout, 5xx, robots.txt unreadable): as before,
+  shown with its read date while the last good read is at most 2 days old.
+  After that it becomes unavailable (below), never hidden.
+- **Unavailable.** Any of:
+  - gone or changed: HTTP 404 or 410, an ArcGIS error, missing fields,
+    fewer than 50 rows, no placeable case (0019's checks);
+  - partial: an answer that would withdraw more than 5% of Missouri's
+    records (it used to stop California too; source-outage audit finding 8);
+  - frozen: from May 15 to Oct 15, no record dated within 30 days of the
+    run. The worst measured in-season gap was 22 days (21 in 2024, 22 in
+    2025, 18 in 2026). Out of season nothing is checked. In 2018 and 2020 the
+    first report came after mid-May, so a quiet May can read as frozen; that
+    errs toward "unavailable", which claims nothing;
+  - superseded: the department's public viewer ("HAB Public Viewer PROD",
+    www.arcgis.com item 96d87e1fda0e445b90c23ce52d67a2d9, its `/data` JSON)
+    no longer names `HAB_SUBMIT_POINTS/MapServer/6` among its data sources.
+    One request per run, after robots.txt (www.arcgis.com, read 2026-11-05:
+    `User-agent: *` with no Disallow). On 2026-11-05 it names layers 4 to 8
+    of that service. A failed or unreadable viewer read only warns: only a
+    readable list of data sources without the layer proves the move. The
+    item's `licenseInfo` is a no-warranty statement and adds no condition;
+    the viewer's data is never shown, only checked.
+
+  Every Missouri page stays built and answers 200. A notice leads each one:
+  "Missouri's harmful algal bloom data stopped reaching Lake Notice on
+  <since>, so Lake Notice can't show this water's current status. The records
+  below are the last ones it read, on <last read>." It links the
+  department's HAB Reports Map. The status box says "No current status:
+  Missouri's data unavailable since <since>." and carries no level, no "No
+  all-clear recorded" and no "recommends no advisory". The history table is
+  headed "Records read before <since>". The State's disclaimer and the
+  department's caveat stay. Titles read "<Lake> algae: Missouri data
+  unavailable since <since>" (the name is cut before the date is). Missouri
+  waters leave the advisory lists and the home page says why. For 30 days
+  the pages stay indexed and in the sitemap; after that they carry
+  `noindex,follow` and leave the sitemap, still built. `since` is the first
+  run that found the outage, kept in history.json (`outages`) until a good
+  read clears it. A passing failure during an outage never brings the old
+  data back.
+
+  The snapshot carries a `state_status` entry per state (`live`,
+  `stale_dated` or `unavailable`, with `since`, `reason`, `last_read` and the
+  map link). The app shows the same notice, reads every status of that
+  state as undetermined with no current claim, lists none as an advisory,
+  sends no alert, and keeps each favorite's alert baseline, so the state's
+  return announces only a real change.
+- **Revoked** (`MO_DNR_HAB.enabled = False`): as 0019, no Missouri content.
+
+**Publish guard.** `publish.yml` runs `caalgae.publish_guard` after the build
+and before the history commit and the Pages upload. It compares the built
+sitemap with the live one per state and fails the run, keeping yesterday's
+site, when a state loses all its sitemap URLs or more than 20% of them,
+unless its source is switched off, the owner names it in the
+`allow_page_drop` dispatch input, or it is unavailable past its 30 indexed
+days with every dropped page still built. The failure issue names the
+state and the counts. A state in its unavailable mode deploys and opens or
+updates the issue "publish: a state's data is unavailable" the same day.
+No live sitemap (first deploy, 404, unreachable) means nothing live to
+protect, and the run says so.
+
+Tests: `pipeline/tests/test_data_unavailable.py`,
+`pipeline/tests/test_publish_guard.py`, the updated
+`test_missouri_fail_closed.py` and `test_publish_workflow.py`, and
+`ios/AlgaeCore/Tests/AlgaeCoreTests/UnavailableStateTests.swift`. Negative
+controls: the real layer and the real viewer are live; a live build has no
+outage wording; an unchanged build passes the guard; a live snapshot alerts
+and lists Missouri advisories.
 
 ## 0025 — Spanish groundwork: a catalog with a status per string, a review gate, and the levels page, all switched off (2026-11-05)
 

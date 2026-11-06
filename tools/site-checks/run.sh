@@ -39,9 +39,9 @@ echo "== the checkers' own dependencies (SEC-12/13 applied to this toolchain)"
 (cd "$tools" && npm audit --audit-level=high --no-fund)
 
 echo "== build the site from the real-data sample fixture, the Missouri layer and the New York fixture"
-# The New York history section is off in production until the owner turns it
-# on (site.NY_HISTORY_ENABLED, docs/DECISIONS.md 0020). It is built here from
-# its real-row fixture so its pages get the same a11y gates before that day.
+# The New York history section is on in production (site.NY_HISTORY_ENABLED,
+# docs/DECISIONS.md 0020 and 0021). It is built here from its real-row fixture
+# so its pages get the same a11y gates as the rest.
 # Served under the same path prefix as production (the default base URL's
 # path), because 404.html links its stylesheet by that absolute path.
 prefix="$(cd "$root/pipeline" && uv run --frozen python -c \
