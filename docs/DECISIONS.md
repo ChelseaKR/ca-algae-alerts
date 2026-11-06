@@ -741,6 +741,37 @@ passes the old guard alone (the sabotage applies) and is refused by the new
 one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
 withdrawn; a blank level after "None" still reads as lifted.
 
+## 0029 — Dog-gear links on the dogs page only, with Lake Notice's own Associates id (owner, 2026-10-30; id 2026-11-05)
+
+The owner approved a small Amazon Associates section on the Dogs and algae
+page (`/dogs/`) and nowhere else. This narrows the affiliate part of 0013,
+which put the gear block on every lake page (off until a tag was set). The
+block comes off lake pages because Trout Truck lost most of its search
+impressions within two days of shipping an identical affiliate block on about
+1,900 pages.
+
+- **Placement.** Only `dogs.html.jinja` includes `_gear.html.jinja`, and
+  `site.py` passes gear links to the dogs page alone. Lake, county, state,
+  advisories, home and every other page carry no Amazon link.
+  `tests/test_site_affiliate.py` checks this, with a negative control that a
+  tagged link put into a lake page is caught.
+- **Tracking id.** `AMAZON_ASSOCIATE_TAG` is Lake Notice's own Associates
+  id, `lakenotice-20`, which the owner created on 2026-11-05. It is never
+  Trout Truck's `trouttruck-20`, as 0013 says. Before this ships, the owner
+  adds lakenotice.com to the Associates account's website list.
+- **Items.** Five generic Amazon searches, each tied to the page's own advice:
+  a water bottle and a collapsible bowl (bring fresh drinking water so the dog
+  does not drink from the lake), a long leash (keep the dog out of the water
+  and away from scum), a rinse bottle and a towel (rinse the dog with fresh
+  water if it goes in, and do not let it lick its coat). No life jacket: it
+  ties to no algae advice. Search links, not products, so nothing goes stale.
+- **Unchanged from 0013.** Plain links with `rel="sponsored nofollow noopener"`,
+  no Amazon script, image or price, Amazon's sentence and the "Affiliate links"
+  label before the links, the non-endorsement sentence naming both agencies, a
+  privacy-page section, no click tracking, never in the iOS app, never a home
+  toxin test kit, and the block's own text says no gear changes what is in the
+  water. Removal is one edit: set the tag to `""`.
+
 ## 0032 — The home and /advisories/ titles name Missouri while its data is live (owner, 2026-11-05)
 
 The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found

@@ -55,6 +55,9 @@ Keep a Changelog, and versions follow Semantic Versioning.
   fewer spot under an advisory. Two different station codes, such as
   "(714NVWVVI-01)" and "(714NVWVVI-02)", are never joined this way, and
   different names are never matched by distance (docs/DECISIONS.md 0022).
+- The dog-gear Amazon links are on the Dogs and algae page only, never on a
+  lake page, with five searches tied to that page's advice, and they carry
+  Lake Notice's own Associates id, lakenotice-20 (docs/DECISIONS.md 0029).
 - Advisory guidance follows the state's posted signs more closely, on the
   site and in the app alike. Every California level now says not to let pets
   or other animals go into the water, not only not to drink it, and that
