@@ -64,4 +64,13 @@ final class StatusWordingTests: XCTestCase {
         XCTAssertFalse(StatusWording.shortLine(lifted).contains("Caution"))
         XCTAssertTrue(StatusWording.shortLine(lifted).contains("Sep 1, 2026"))
     }
+
+    /// VoiceOver reads " · " aloud, so the spoken line uses a comma and
+    /// keeps every other word.
+    func testSpokenShortLineDropsTheSeparator() {
+        XCTAssertEqual(StatusWording.shortLine(advisory), "Caution advisory · posted Sep 20, 2026")
+        XCTAssertEqual(StatusWording.spokenShortLine(advisory), "Caution advisory, posted Sep 20, 2026")
+        XCTAssertEqual(StatusWording.spokenShortLine(lifted), "No advisory in latest record, Sep 1, 2026")
+        for s in [advisory, lifted] { XCTAssertFalse(StatusWording.spokenShortLine(s).contains("·")) }
+    }
 }

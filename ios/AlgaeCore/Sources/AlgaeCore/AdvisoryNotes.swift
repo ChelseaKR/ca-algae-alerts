@@ -7,8 +7,9 @@ import Foundation
 /// The headline itself comes from the snapshot: the pipeline picks the
 /// highest level posted in the 12 months before the state's file date, at
 /// that level's own last posted date, or the newest posting when nothing was
-/// posted in that window. Reports at the same coordinates are already one
-/// reported spot in the snapshot. These lines only read the snapshot's spots
+/// posted in that window. Reports at the same coordinates, or with the same
+/// landmark within 25 m (0022), are already one reported spot in the
+/// snapshot. These lines only read the snapshot's spots
 /// and records; they never end an advisory (0002).
 /// `AdvisoryParityTests` checks them against the website's sentences for
 /// Lake Elsinore's real records.

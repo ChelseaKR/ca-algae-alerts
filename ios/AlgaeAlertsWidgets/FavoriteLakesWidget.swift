@@ -43,15 +43,29 @@ struct FavoriteLakesView: View {
                 Text("Open the app to load the state's advisory data here.").font(.caption)
             }
         }
+        // Capped like Queer Frame's widget: past this size the status words
+        // and dates are cut off in a widget's fixed frame.
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .containerBackground(.fill.tertiary, for: .widget)
     }
 
     @ViewBuilder
     private func locked(_ digest: WidgetDigest) -> some View {
+        if family == .accessoryInline {
+            // The inline slot shows only one line of text.
+            Text("Favorite lakes: part of full access")
+                .widgetURL(WaterLink.unlockURL)
+        } else {
+            lockedBlock(digest)
+        }
+    }
+
+    @ViewBuilder
+    private func lockedBlock(_ digest: WidgetDigest) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Favorite lakes").font(.headline)
             Text("Part of full access.").font(.caption)
-            if family != .accessoryInline, let date = digest.fileDate {
+            if let date = digest.fileDate {
                 Text("\(digest.advisoryCount) waters with an advisory on file, state data \(date.label).").font(.caption2)
             }
         }
@@ -65,15 +79,21 @@ struct FavoriteLakesView: View {
             Text("Star a lake in the app to see it here.").font(.caption)
         } else if family == .accessoryInline, let row = digest.rows.first {
             Text("\(row.name): \(row.line)")
+                .accessibilityLabel("\(row.name): \(row.spokenLine)")
                 .widgetURL(WaterLink.url(for: row.id))
         } else {
             VStack(alignment: .leading, spacing: 6) {
                 ForEach(digest.rows.prefix(limit), id: \.id) { row in
                     Link(destination: WaterLink.url(for: row.id)) {
+                        // The status line gets its two lines before the
+                        // name gets a second: the level and date are the point.
                         VStack(alignment: .leading, spacing: 1) {
-                            Text(row.name).font(.caption.bold()).lineLimit(1)
+                            Text(row.name).font(.caption.bold()).lineLimit(family == .systemSmall ? 2 : 1)
                             Text(row.line).font(.caption2).lineLimit(2)
+                                .layoutPriority(1)
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(row.name), \(row.spokenLine)")
                     }
                 }
                 if digest.missingFavorites > 0 {

@@ -268,7 +268,9 @@ def test_no_sponsor_affiliate_or_agency_marks(sample_site: Path) -> None:
 
 
 def test_every_source_url_is_in_the_research_log() -> None:
-    # Guard against a stray URL: the hosts the research fetched with a 200.
+    # Guard against a stray URL: the hosts the research checked.
+    # mywaterquality.ca.gov's robots.txt allows only Googlebot, so it is read
+    # by hand in a browser, never by the pipeline or an agent.
     hosts = {
         "www.waterboards.ca.gov", "mywaterquality.ca.gov", "data.ca.gov",
         "emd.saccounty.gov", "ehs.sbcounty.gov", "www.ebparks.org",
