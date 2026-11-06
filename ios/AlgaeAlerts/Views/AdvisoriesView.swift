@@ -52,13 +52,15 @@ struct AdvisoriesView: View {
             switch scope {
             case .advisories:
                 let advisories = WaterSearch.advisories(matches)
-                let recent = advisories.filter { WaterSearch.isRecent($0, today: env.today) }
-                let older = advisories.filter { !WaterSearch.isRecent($0, today: env.today) }
+                // Counted back from the data's run date, not this iPhone's
+                // today, so an old copy never reads as a quiet month.
+                let recent = advisories.filter { CoverageCopy.isRecent($0, in: snapshot) }
+                let older = advisories.filter { !CoverageCopy.isRecent($0, in: snapshot) }
                 Section {
-                    if recent.isEmpty { Text("None posted in the last 30 days.").foregroundStyle(Theme.secondaryText) }
+                    if recent.isEmpty { Text(CoverageCopy.recentEmpty(snapshot)).foregroundStyle(Theme.secondaryText) }
                     ForEach(recent) { row($0) }
                 } header: {
-                    SectionTitle("Posted in the last 30 days")
+                    SectionTitle(CoverageCopy.recentHeader(snapshot))
                 }
                 Section {
                     ForEach(older) { row($0) }
@@ -71,7 +73,7 @@ struct AdvisoriesView: View {
                 Section {
                     ForEach(WaterSearch.alphabetical(matches)) { row($0) }
                 } footer: {
-                    Text("A lake missing from this list has no advisory records at all. Most lakes are never tested.").foregroundStyle(Theme.label)
+                    Text(CoverageCopy.allFooter(snapshot)).foregroundStyle(Theme.label)
                 }
             }
         }

@@ -832,7 +832,7 @@ class SiteBuilder:
             ("privacy/", "privacy.html.jinja", "Privacy policy",
              "What the website and the iPhone app collect."),
             ("support/", "support.html.jinja", "Support",
-             "Help with the website and the iPhone app."),
+             "Help with the website. The iPhone app is not released yet."),
             ("terms/", "terms.html.jinja", "Terms of use",
              "Who runs Lake Notice, what it is and is not, and why it is never a determination about a water."),
         ]  # fmt: skip

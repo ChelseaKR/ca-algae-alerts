@@ -30,7 +30,10 @@ struct NotificationScheduler {
         center.setNotificationCategories([category])
     }
 
-    func schedule(_ notifications: [PlannedNotification]) async {
+    /// Returns the keys iOS accepted, so only those count as delivered.
+    @discardableResult
+    func schedule(_ notifications: [PlannedNotification]) async -> [String] {
+        var accepted: [String] = []
         for n in notifications {
             let content = UNMutableNotificationContent()
             content.title = n.title
@@ -40,8 +43,14 @@ struct NotificationScheduler {
             content.threadIdentifier = n.waterID
             content.categoryIdentifier = AdvisoryAlertAction.categoryIdentifier
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-            try? await center.add(UNNotificationRequest(identifier: n.id, content: content, trigger: trigger))
+            do {
+                try await center.add(UNNotificationRequest(identifier: n.id, content: content, trigger: trigger))
+                accepted.append(n.id)
+            } catch {
+                continue
+            }
         }
+        return accepted
     }
 }
 
