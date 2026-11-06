@@ -965,3 +965,38 @@ of water pages (~2026-11-25) is not disturbed.
 
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
+
+## 0035 — Lake Notice's own look: a notice posted at the shore (2026-11-05)
+
+The owner asked for every monetized site to be as polished and as
+distinctive as Family Greenhouse (growth/design-parity-brief-2026-11-05.md).
+Lake Notice looked like Trout Truck: the same plain header band, system
+sans and tables. The two share water as a subject and an Apple 4.3(a) risk,
+so sameness is a business risk as well as a taste one. docs/DESIGN.md has
+the tokens and the reasons.
+
+- **Identity**: warm paper and deep-lake indigo ink, a sign-board-at-the-
+  shore mark (also the favicon), a DIN-style signage face for the wordmark,
+  headings and table heads, and depth contours as the only ornament. System
+  fonts only, so no page contacts another server. Trout Truck keeps its dark
+  green band, gold slab wordmark and Bitter headings; Lake Notice uses none
+  of them.
+- **Levels look like the state's posted signs.** The status box on a water
+  page is drawn as a notice: a band with the level's words, in Caution
+  yellow, Warning orange or Danger red, and one to three filled marks for
+  the rank. Missouri's levels get a slate band with no marks, since they are
+  not the same scale. Table rows get a small swatch before the level words.
+- **Color is never the only signal**: the words were always there; the band
+  is aria-hidden because the headline under it says the same thing.
+- **Nothing that is not an advisory looks like one.** A record that
+  recommends no advisory, or an undetermined one, gets a neutral dashed box
+  whose band says "Latest state record". No color on the site is green.
+- **Not changed**: URLs, titles, H1s, descriptions, every sentence on a
+  water page, and water.html.jinja itself, so the dated-title read and the
+  water-page PRs queued for 11-26 and 12-01 are not disturbed.
+
+Tests: `pipeline/tests/test_design_identity.py` checks band and table
+contrast at 4.5:1 or more in light and dark, three distinct level colors,
+no green token, the band words and marks per level, the neutral band for
+non-advisories, and the mark and favicon on every page, each with a
+negative control.

@@ -1120,6 +1120,9 @@ class SiteBuilder:
             .read_text("utf-8")
         )
         (assets / "style.css").write_text(css, encoding="utf-8")
+        # The favicon: the sign-board mark (docs/DESIGN.md).
+        mark = resources.files("caalgae").joinpath("templates/mark.svg")
+        (assets / "mark.svg").write_text(mark.read_text("utf-8"), encoding="utf-8")
         snap_dir = self.out / "snapshot"
         snap_dir.mkdir(parents=True, exist_ok=True)
         (snap_dir / "v1.json").write_text(
