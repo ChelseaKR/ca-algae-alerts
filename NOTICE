@@ -62,5 +62,18 @@ endorse this project. Files: pipeline/data/cyan.json and
 pipeline/tests/fixtures/cyan-*.json (cyan-cache-traps.json is hand-built).
 
 
+Data: New York State Department of Environmental Conservation
+-------------------------------------------------------------
+
+"Harmful Algal Blooms by Waterbody Summary: Beginning 2019"
+(https://data.ny.gov/Energy-Environment/Harmful-Algal-Blooms-by-Waterbody-Summary-Beginnin/95my-wijm),
+used under the OPEN-NY Terms of Use
+(https://data.ny.gov/dataset/OPEN-NY-Terms-Of-Use/77gx-ii52), a revocable
+license. "The State also does not vouch for the continued accuracy or currency
+of Content after it has been downloaded from OPEN-NY, nor the quality or
+accuracy of any analyses or re-uses of that Content." DEC does not endorse
+this project. Files: pipeline/data/ny/ and pipeline/tests/fixtures/ny/ (real
+rows, reformatted).
+
 The project is independent and is not affiliated with or endorsed by any state
 or federal agency.
