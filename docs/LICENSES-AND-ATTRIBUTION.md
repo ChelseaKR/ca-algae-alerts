@@ -17,6 +17,18 @@ Read before the first pipeline fetch, 2026-10-12. **Unknown = not used**
 | U.S. EPA CyAN (CyANWeb backend), `https://qed.epa.gov/cyanweb/` | Waterbody list (name, id, state, area, centroid) and, for matched California and Missouri lakes, the weekly cells/mL series at CyAN's centroid. Nothing personal exists in either. | No license is stated on the API. `https://www.epa.gov/web-policies-and-procedures/epa-disclaimers` (via the research lane, read 2026-10-12): "geospatial data produced by the EPA is by default in the public domain … under 17 U.S.C. § 105". EPA calls CyANWeb "an experimental application … provisional … a research level tool". The research rated the API formally Unclear and the federal default Clear; the owner approved adding it on 2026-10-12. | Public domain by federal default | Credited on every lake page with an estimate and in About; "EPA does not endorse this site." | List once, then one request per matched lake, 2 s apart, at most weekly (85 lakes on 2026-10-12) |
 | U.S. Census Bureau, county adjacency file, 2024 edition, `https://www2.census.gov/geo/docs/reference/county_adjacency/county_adjacency2024.txt` | Only which California counties share a border, 144 pairs, copied into `pipeline/src/caalgae/county_adjacency.py` by hand once (DECISIONS 0034). Nothing is fetched at build time. | A U.S. government work, public domain under 17 U.S.C. § 105. `https://www2.census.gov/robots.txt`, read 2026-11-05, has rules only for named crawlers and none for others. File SHA-256 at download: `912ca408163016864fe64aaf667b53ad03a19ce4acbc586d3ac508395bdac980`. | Public domain | Not required. Cited in the module's header. | Once; county lines change rarely |
 
+## New York yearly bloom history (added 2026-11-02; section off by default)
+
+| Source | What we take | Terms (verbatim, where, date read) | Commercial reuse | Attribution or condition | Cadence |
+|---|---|---|---|---|---|
+| NYS Department of Environmental Conservation, "Harmful Algal Blooms by Waterbody Summary: Beginning 2019", data.ny.gov `95my-wijm` (<https://data.ny.gov/Energy-Environment/Harmful-Algal-Blooms-by-Waterbody-Summary-Beginnin/95my-wijm>) | Only `waterbody_name`, `county`, `year`, `bloom_type`, `date_first_report`, `date_last_report`, `number_of_reports`, `latitude`, `longitude`. Nothing personal exists in the dataset. Shown as history only (docs/DECISIONS.md 0020). | OPEN-NY Terms of Use (<https://data.ny.gov/dataset/OPEN-NY-Terms-Of-Use/77gx-ii52>, "LAST MODIFIED: March 8, 2013"), read 2026-11-02: "You are welcome to freely download and use this Content as long as you abide by these Terms of Use"; "The State grants you a non-exclusive, revocable license to use the Content contained on this website in a manner consistent with the Terms of Use."; "So long as you are not doing anything malicious with NYS data, you may use it as you wish, subject to no other requirements." The dataset's own metadata states no license. The revocation and indemnity clauses are quoted in full in DECISIONS 0020. | Permitted; revocable; the terms carry an indemnity clause (flagged for the owner) | Not required. We credit DEC on every page while the section is on, link the dataset and the terms, and quote the terms' no-vouch sentence on every New York page. | Yearly; read by a person-run refresh, never by the daily publish |
+
+robots.txt: `https://data.ny.gov/robots.txt`, read 2026-11-02: 200,
+`Crawl-delay: 1`; `/resource/` and `/api/views/` allowed; `/OData.svc/`,
+`/api/odata/`, `/tiles/` and `/api/collocate*` disallowed and refused by
+`fetch.guard_url`. Not used: New York's live NYHABS map and DEC's pages,
+which are linked for readers only.
+
 ## Attribution shown
 
 Every site page footer and the app's About screen carry:
