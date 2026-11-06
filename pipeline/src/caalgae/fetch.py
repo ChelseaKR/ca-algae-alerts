@@ -42,10 +42,13 @@ _RESPONSES_LINK = re.compile(
     r"/resource/(?P<resource>[0-9a-f-]{36})"
     r"/download/hab-responses_(?P<date>\d{4}-\d{2}-\d{2})\.csv"
 )
-# Paths robots.txt disallows on the two data.ca.gov hosts, read 2026-10-12.
+# Paths robots.txt disallows on the two data.ca.gov hosts, read 2026-10-12,
+# and the API prefixes data.ny.gov's robots.txt disallows, read 2026-11-02
+# (its other rules cover browse and catalog pages this pipeline never asks for).
 _DISALLOWED_PREFIXES = {
     "data.ca.gov": ("/api/", "/datastore/", "/search?"),
     "publish.data.ca.gov": ("/api/",),
+    "data.ny.gov": ("/api/odata/", "/OData.svc/", "/api/collocate", "/tiles/"),
 }
 _FORBIDDEN_HOSTS = frozenset({"mywaterquality.ca.gov", "www.mywaterquality.ca.gov"})
 # 7.1 MB on 2026-10-09; growth is ~1 MB a year. A file far above this is not
@@ -170,8 +173,13 @@ class RobotsOffLimits(FetchError):
     """The host's robots.txt could not be read, or disallows the path."""
 
 
-def robots_allows(client: httpx.Client, url: str) -> None:
+def robots_allows(
+    client: httpx.Client, url: str
+) -> urllib.robotparser.RobotFileParser | None:
     """Read the host's robots.txt before touching it (docs/DECISIONS.md 0011).
+
+    Returns the parsed file, so a caller can check further paths on the same
+    host and honor its crawl delay, or None when the host has no robots.txt.
 
     - 200: parsed and enforced for our User-Agent.
     - 404 (no robots.txt): no rules. The owner's ruling of 2026-10-12.
@@ -192,7 +200,7 @@ def robots_allows(client: httpx.Client, url: str) -> None:
             "the host is off-limits"
         )
     if response.status_code == 404:
-        return
+        return None
     if response.status_code != 200:
         raise RobotsOffLimits(
             f"{robots_url} returned HTTP {response.status_code}; the host is off-limits"
@@ -201,3 +209,4 @@ def robots_allows(client: httpx.Client, url: str) -> None:
     parser.parse(response.text.splitlines())
     if not parser.can_fetch(USER_AGENT, url):
         raise RobotsOffLimits(f"{robots_url} disallows {parts.path}")
+    return parser

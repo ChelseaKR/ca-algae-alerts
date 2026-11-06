@@ -1,0 +1,21 @@
+{
+  "dataset": "95my-wijm",
+  "dataset_name": "Harmful Algal Blooms by Waterbody Summary: Beginning 2019",
+  "fetched_at": "2026-11-03T03:03:53Z",
+  "fields": [
+    "waterbody_name",
+    "county",
+    "year",
+    "bloom_type",
+    "date_first_report",
+    "date_last_report",
+    "number_of_reports",
+    "latitude",
+    "longitude"
+  ],
+  "note": "Every row for eight real waters and one unnamed row, copied from the 2026-11-02 read; reformatted, so its hash differs from the pinned file.",
+  "rows_updated_at": "2026-01-14T17:36:47Z",
+  "sha256": "773ea68518e53add7a844cff41fec0b96d12f27ec62abfe09aedd00553f055c8",
+  "terms_url": "https://data.ny.gov/dataset/OPEN-NY-Terms-Of-Use/77gx-ii52",
+  "url": "https://data.ny.gov/resource/95my-wijm.json?%24select=waterbody_name%2Ccounty%2Cyear%2Cbloom_type%2Cdate_first_report%2Cdate_last_report%2Cnumber_of_reports%2Clatitude%2Clongitude&%24order=year%2Ccounty%2Cwaterbody_name&%24limit=50000"
+}
