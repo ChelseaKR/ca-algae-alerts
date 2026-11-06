@@ -411,7 +411,8 @@ both fixed here:
   fall from 1,322 to 1,088, and 15 waters move from an advisory to the
   state's latest record recommending none. Nothing is matched by name or by
   distance: two points a meter apart stay two spots, and a report without
-  coordinates is its own spot. Missouri is not matched (its readings are
+  coordinates is its own spot. (Superseded in part by 0022, which also
+  matches the same landmark within 25 m.) Missouri is not matched (its readings are
   owner-confirmed per case, 0013).
 
 The state's data has no other end signal. Checked on the 2026-11-03 files:
@@ -834,6 +835,62 @@ off`, because they check pages against the snapshot alone.
 **To undo:** set `NY_HISTORY_ENABLED = False`. One change removes every New
 York page, link, sitemap URL and credit line (tested). If DEC or the State
 sends a notice under the revocation clause, do that first.
+
+## 0022 — The same landmark within 25 m is the same spot (owner, 2026-11-05)
+
+This supersedes 0017's "nothing is matched by name or by distance" for
+California. Found in the 2026-11-05 quality audit: the state adds a station
+code to a landmark and moves its point a few meters, so a later "None"
+landed on a new spot and the older advisory stayed open. At Lake Havasu,
+"Skiers Island" (Danger, 2022-12-09, -114.31938) and "Skiers Island
+(714SKIERS)" (None, 2026-04-16, -114.31936) are about 2 m apart.
+
+- Two reports of a coordinate-matched source (`SPOT_BY_COORDINATES`, still
+  California only) are one spot when their latest landmarks are the same
+  after removing one trailing parenthetical, case and extra spacing
+  (`snapshot.landmark_key`), and their latest coordinates are within
+  `SAME_NAME_METERS` (25) of each other. Sharing coordinates still joins
+  reports too (0017). Each link meets one of the two tests, so a chain of
+  same-name links can span more than 25 m (Four Island Lake's "Bear Valley
+  Springs" reports span 34 m).
+- Two different station codes are never joined by name. When both
+  landmarks carry a trailing parenthetical, they match only if the codes are
+  the same after case and spacing are set aside (`snapshot.landmark_code`),
+  so Lake Havasu's "Nuwuvi Park (714NVWVVI-01)" and "(714NVWVVI-02)" stay
+  two stations if the state ever moves one of them. An uncoded landmark
+  still matches a coded one, nearest pair first, and a link that would put
+  two different codes on one spot is refused, so a "None" at one station
+  can never end an advisory at the other through an uncoded report between
+  them. Shared coordinates still join any codes (0017's "CL-4" and
+  "CL-04"). Added after the 2026-11-05 branch review; on the 2026-11-03
+  file it changes no spot, because the two Nuwuvi Park stations share
+  coordinates today.
+- Different names are never matched by distance alone. McLeod Lake's
+  "Morelli Park Boat Launch" (Danger, 2020) stays apart from "Morelli Park
+  (MP)" (None, 2026), about 4 m away. A landmark that is only a code, such as
+  "(MP)", matches nothing. Reports without coordinates and Missouri are not
+  matched (0013).
+- The spot is still named by the report with the newest record, and a later
+  "None" there is an explicit record at the same spot (0002). Silence still
+  ends nothing.
+
+Measured on `pipeline/data/history.json` (California file dated
+2026-11-03): spots fall from 2,450 to 2,425 and spots with an open advisory
+from 1,138 to 1,129. 9 waters change. Four Island Lake moves from "Caution
+advisory, last posted Aug 8, 2022" to the state's latest record
+recommending none. Antelope Creek, East Creek, H.V. Eastman Lake, Lake
+Havasu, Lake Tahoe, McKinley Park, Mormon Slough and Pyramid Lake keep their
+headline and count one fewer spot under an advisory. Counted the audit's
+way (an open spot with a later "None" within 25 m, whatever its name), 22
+waters qualified on this file before and 15 after; those 15 have a
+differently named "None" nearby, such as McLeod Lake, and are left to the
+wording in batch LN-B.
+
+Tests: `pipeline/tests/test_same_name_spots.py`, with the audit's Lake
+Havasu, Antelope Creek and Four Island Lake records, and McLeod Lake and a
+33 m move as negative controls, plus two Nuwuvi Park station codes 20 m
+apart, an uncoded report between them, and the same-code control.
+
 
 ## 0025 — Spanish groundwork: a catalog with a status per string, a review gate, and the levels page, all switched off (2026-11-05)
 

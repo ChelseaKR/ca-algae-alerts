@@ -52,9 +52,10 @@ STATUSES = ("state", "reviewed", "same", "draft")
 PLACEHOLDER = "⟦PEGAR"
 
 # The state's posted-sign page, the source of the English sign quotes below
-# (wording.py's comment block, read 2026-11-05) and of the Spanish sign text
-# still to be pasted. Never fetched by a script: the host admits only
-# Googlebot.
+# (wording.py's comment block; quotes checked by Chelsea Kelly-Reif in a
+# browser on 2026-11-05) and of the Spanish sign text still to be pasted.
+# This host's robots.txt allows only Googlebot, so it is read by hand, never
+# by the pipeline or an agent.
 SIGN_URL = "https://mywaterquality.ca.gov/habs/resources/signage.html"
 MAT_SIGN_URL = "https://mywaterquality.ca.gov/habs/docs/toxic-algal-mat-signs.pdf"
 EN_SIGN_READ_ON = dt.date(2026, 11, 5)
