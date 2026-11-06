@@ -140,12 +140,15 @@ def test_a_none_at_the_same_coordinates_under_a_new_report_ends_the_old_one() ->
     assert w["status"]["sites_with_advisory"] == 8
 
 
-def test_negative_control_a_meter_apart_is_another_spot() -> None:
-    """Move the None one millionth of a degree. It is no longer the same
-    reported spot, so the 2022 Danger stands: nothing is matched by
-    distance, and the test above fails if the matching is switched off."""
+def test_negative_control_a_meter_apart_under_another_name_is_another_spot() -> None:
+    """Move the None one millionth of a degree and give it another landmark.
+    It is no longer the same reported spot, so the 2022 Danger stands: a
+    different name is never matched by distance (0022), and the test above
+    fails if the matching is switched off."""
     moved = [
-        dataclasses.replace(r, lat=TMDL[0] + 0.000001) if r.id == "13297" else r
+        dataclasses.replace(r, lat=TMDL[0] + 0.000001, landmark="Mid-lake buoy")
+        if r.id == "13297"
+        else r
         for r in elsinore()
     ]
     assert next(r for r in moved if r.id == "13297").lat != TMDL[0]  # it applied
