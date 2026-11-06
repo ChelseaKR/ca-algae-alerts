@@ -7,6 +7,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- The iPhone app takes the website's look: paper and indigo colors with
+  light and dark variants, each lake's status drawn as its posted sign with
+  the level's words and rank marks, signage-style headings and the sign-board
+  mark. It also gets worded empty, offline and no-match screens, sharing a
+  lake's web page, a support row and a review ask that follows Apple's rules
+  (docs/DECISIONS.md 0036).
 - The app never delivers the same alert twice, across a relaunch or a new
   snapshot; "the last 30 days" and the "All lakes" footer count from the
   data's run date; About and the introduction name only the states the data
