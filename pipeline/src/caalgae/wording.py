@@ -35,7 +35,9 @@ TIER_LABEL = {
 
 # Who each level asks to take care, paraphrased from the state's own
 # posted-sign wording. The sign at the water and the state's own guidance
-# govern; the about page says so. Sources, read 2026-11-05:
+# govern; the about page says so. Sources, quotes checked by Chelsea
+# Kelly-Reif in a browser on 2026-11-05. This host's robots.txt allows only
+# Googlebot, so it is read by hand, never by the pipeline or an agent.
 #
 # California HAB program, "Posting Signs" (posted-sign levels of the
 # California Voluntary Guidance),
