@@ -8,6 +8,9 @@ public struct WidgetDigest: Codable, Equatable, Sendable {
         public let name: String
         public let line: String
         public let isAdvisory: Bool
+
+        /// `line` for VoiceOver, without the spoken " · ".
+        public var spokenLine: String { line.replacingOccurrences(of: " · ", with: ", ") }
     }
 
     /// Before the purchase: no favorites, only the data's date and count.

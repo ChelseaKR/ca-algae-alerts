@@ -48,6 +48,14 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- A California spot the state renames a few meters away is now the same
+  spot. When two reports share a landmark once a trailing station code such
+  as "(714SKIERS)" and case are set aside, and their points are within 25 m,
+  a later "None" at one ends the older advisory at the other. Four Island
+  Lake no longer leads with a 2022 Caution, and 8 other waters count one
+  fewer spot under an advisory. Two different station codes, such as
+  "(714NVWVVI-01)" and "(714NVWVVI-02)", are never joined this way, and
+  different names are never matched by distance (docs/DECISIONS.md 0022).
 - Advisory guidance follows the state's posted signs more closely, on the
   site and in the app alike. Every California level now says not to let pets
   or other animals go into the water, not only not to drink it, and that
