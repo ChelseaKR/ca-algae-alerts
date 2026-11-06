@@ -54,6 +54,51 @@ struct StatusLine: View {
         }
         .font(.subheadline)
         .foregroundStyle(status.kind == .advisory ? Theme.advisory : Theme.secondaryText)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(StatusWording.spokenShortLine(status))
+    }
+}
+
+/// The app's own empty state. `ContentUnavailableView`'s text failed the
+/// Dynamic Type audit in Tide Hours and Queer Frame; this one wraps at
+/// every text size.
+struct EmptyState: View {
+    let title: String
+    let systemImage: String
+    let message: String
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 12) {
+                Image(systemName: systemImage).font(.largeTitle).foregroundStyle(Theme.secondaryText)
+                    .accessibilityHidden(true)
+                Text(title).font(.title2.bold()).accessibilityAddTraits(.isHeader)
+                Text(message).foregroundStyle(Theme.secondaryText)
+            }
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity)
+            .padding(24)
+        }
+    }
+}
+
+/// A date beside a value at normal sizes, stacked at accessibility sizes,
+/// where side by side squeezes both. Trout Truck's `WaterRow` pattern.
+struct DateValueRow<Leading: View, Trailing: View>: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ViewBuilder let leading: Leading
+    @ViewBuilder let trailing: Trailing
+
+    var body: some View {
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 2))
+            : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
+        layout {
+            leading
+            if !dynamicTypeSize.isAccessibilitySize { Spacer(minLength: 8) }
+            trailing
+        }
     }
 }
 
