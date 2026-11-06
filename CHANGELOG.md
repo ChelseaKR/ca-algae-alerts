@@ -7,6 +7,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- The app's purchase is named "Lake Alerts & Widget" (product id
+  unchanged), and the App Store listing and Review Notes are rewritten around
+  algae advisories, with none of Trout Truck's headings or captions and a
+  copy test that keeps it so. A snapshot state the app does not know is left
+  out instead of stopping updates, and a changed CyAN answer keeps the cache
+  instead of stopping the run (docs/DECISIONS.md 0030).
 - The home and /advisories/ titles name Missouri while Missouri's data is
   in the build: "California and Missouri toxic algae advisories by date" and
   "All California and Missouri toxic algae advisories on file". The states
