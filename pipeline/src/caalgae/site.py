@@ -28,7 +28,7 @@ from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import i18n, indexnow, levels, where_to_check, wording
+from caalgae import i18n, indexnow, levels, newyork, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import UNAVAILABLE_INDEX_DAYS, slugify
 from caalgae.water_names import display_water
@@ -60,6 +60,16 @@ INDEX_WINDOW_MONTHS = 24
 # the 308 the window keeps. To undo: set it to a number no water reaches,
 # such as 100000.
 INDEX_MIN_RECORDS = 5
+# New York's yearly bloom history (docs/DECISIONS.md 0020): a separate section
+# at /state/ny/, history only, built from the pinned cache in data/ny/. OFF by
+# default, so merging the code publishes nothing. Staged rollout: turn it on
+# with NY_INDEX_LIMIT = 50 (only the 50 waters with the deepest history may be
+# indexed), then, after about three weeks of Search Console, set the limit to
+# None so every water over the thin-page threshold may be. Pages under the
+# threshold, or past the limit, are built with noindex and kept out of the
+# sitemap. Off again: set NY_HISTORY_ENABLED to False; nothing else changes.
+NY_HISTORY_ENABLED = False
+NY_INDEX_LIMIT: int | None = 50
 
 
 # Search results show about 60 characters of a title and 155 of a
@@ -297,6 +307,64 @@ def advisories_description(waters: list[dict[str, Any]]) -> str:
     )
 
 
+def state_list(states: Iterable[str]) -> str:
+    """State codes as names in STATE_NAMES order: "California",
+    "California and Missouri", "California, Missouri and ..."."""
+    present = set(states)
+    names = [name for code, name in STATE_NAMES.items() if code in present]
+    if len(names) <= 1:
+        return "".join(names)
+    return f"{', '.join(names[:-1])} and {names[-1]}"
+
+
+def home_title(states: Iterable[str]) -> str:
+    """The home page title, naming every state whose data is live in this
+    build (DECISIONS 0032). California alone keeps the title it has had
+    since launch; a state is named only while its waters are in the
+    snapshot, so an empty or dropped Missouri source drops the name too."""
+    where = state_list(states) or "California"
+    return fit(
+        [
+            f"{where} lake toxic algae advisories by date | {SITE_NAME}",
+            f"{where} toxic algae advisories by date",
+            f"{where} algae advisories by date",
+        ],
+        TITLE_MAX,
+    )
+
+
+def home_description(states: Iterable[str]) -> str:
+    """The home page description, naming the same states as its title.
+    "Since 2016" is California's span only, so a build with another state
+    says "history" without a year."""
+    where = state_list(states) or "California"
+    span = " since 2016" if where == "California" else ""
+    return fit(
+        [
+            f"Toxic algae (harmful algal bloom) advisories at {where} lakes "
+            f"and rivers, newest first, with each lake's history{span} for "
+            "swimmers and dogs.",
+            f"Toxic algae advisories at {where} lakes and rivers, newest "
+            f"first, with each lake's history{span}.",
+        ],
+        DESCRIPTION_MAX,
+    )
+
+
+def advisories_title(waters: list[dict[str, Any]]) -> str:
+    """The advisory list's title, naming the states its table lists, the
+    same states its description counts (DECISIONS 0032)."""
+    where = state_list(w["state"] for w in waters) or "California"
+    return fit(
+        [
+            f"All {where} toxic algae advisories on file | {SITE_NAME}",
+            f"All {where} toxic algae advisories on file",
+            f"{where} toxic algae advisories on file",
+        ],
+        TITLE_MAX,
+    )
+
+
 # Lake Notice's own GA4 web stream (property 561648146, "Lake Notice", created
 # 2026-10-31 in the ChelseaKR account; DECISIONS 0007). Set, every page carries
 # the tag and the privacy page describes it; empty, no page loads any script
@@ -304,27 +372,37 @@ def advisories_description(waters: list[dict[str, Any]]) -> str:
 # product's id here: it would mix this site's visits into that property
 # (tests/test_site.py checks this one against the portfolio's other ids).
 GA4_MEASUREMENT_ID = "G-75YLGQKDHG"
-# Amazon Associates dog-gear links (docs/DECISIONS.md 0013). Website only: the
-# iOS app has no web view and never shows them. This is Lake Notice's own
-# tracking id, never Trout Truck's. PLACEHOLDER, deliberately empty: the owner
-# has not created the second Associates id yet. Empty, the gear block and the
-# privacy paragraph render nothing and no Amazon URL is built anywhere; set,
-# one line here turns both on. The links are dog gear for lake days, as plain
-# search links. Never a home toxin test kit: a negative strip is not safety
-# and nothing here may imply it (tests/test_site_affiliate.py fails on any
-# test-kit wording in the categories or in a built page).
-AMAZON_ASSOCIATE_TAG = ""
+# Amazon Associates dog-gear links (docs/DECISIONS.md 0013, narrowed by 0029).
+# Website only, and only on the Dogs and algae page (/dogs/): never on a lake,
+# county, state or any other page, and never in the iOS app, which has no web
+# view. The one config value is the tracking id below: Lake Notice's own
+# Associates id, lakenotice-20, never Trout Truck's. Empty, the gear block and
+# the privacy paragraph render nothing and no Amazon URL is built anywhere.
+# Never a home toxin test kit: a negative strip is not safety, and nothing here
+# may imply that gear makes algae exposure any less of a risk
+# (tests/test_site_affiliate.py fails on test-kit or safety wording in the
+# categories or in a built page).
+AMAZON_ASSOCIATE_TAG = "lakenotice-20"
 AMAZON_SEARCH_URL = "https://www.amazon.com/s"
 # Amazon's required wording, byte for byte: do not paraphrase it.
 AMAZON_ASSOCIATE_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
 AFFILIATE_LINK_REL = "sponsored nofollow noopener"
-# Label, then the search terms. Generic categories: a search has no product to
-# go out of stock, so the page states no price, rating or "best" claim.
-GEAR_CATEGORIES: tuple[tuple[str, str], ...] = (
-    ("Dog life jacket", "dog life jacket"),
-    ("Portable dog water bottle", "portable dog water bottle"),
-    ("Dog rinse sprayer for after a swim", "dog rinse sprayer bath"),
-)
+# Label, the search terms, then the line tying the item to the dogs page's own
+# advice (DOG_ADVICE and "At the water"). Generic searches, not products, so
+# nothing goes stale and the page states no price, rating or "best" claim.
+GEAR_CATEGORIES: tuple[tuple[str, str, str], ...] = (
+    ("Portable dog water bottle", "portable dog water bottle",
+     "Bring fresh drinking water so your dog does not drink from the lake."),
+    ("Collapsible dog water bowl", "collapsible dog water bowl",
+     "Something to pour that fresh water into, away from the shore."),
+    ("Long dog leash", "long dog leash",
+     "Keep your dog out of the water and away from scum on the shore where "
+     "an advisory is on file or the water looks green, blue-green or scummy."),
+    ("Portable dog rinse bottle", "portable dog rinse shower bottle",
+     "If your dog does go in, rinse it off with fresh water you brought."),
+    ("Dog drying towel", "dog drying towel",
+     "Dry its coat after the rinse, and do not let it lick its coat."),
+)  # fmt: skip
 # How each state's agency is named in the non-endorsement sentence.
 AGENCY_GEAR_NAME = {"CA": "the Water Board", "MO": "Missouri DNR"}
 
@@ -339,8 +417,8 @@ def gear_links() -> list[dict[str, str]]:
     if not AMAZON_ASSOCIATE_TAG:
         return []
     return [
-        {"label": label, "url": amazon_search_url(terms)}
-        for label, terms in GEAR_CATEGORIES
+        {"label": label, "url": amazon_search_url(terms), "why": why}
+        for label, terms, why in GEAR_CATEGORIES
     ]
 
 
@@ -517,8 +595,16 @@ class SiteBuilder:
         support_email: str,
         app_store_url: str,
         ga4_measurement_id: str,
+        ny_history: newyork.History | None = None,
+        ny_index_limit: int | None = NY_INDEX_LIMIT,
     ) -> None:
         self.snap = snap
+        self.ny = ny_history
+        self.ny_indexed = (
+            newyork.indexed_ids(ny_history.waters, ny_index_limit)
+            if ny_history
+            else set()
+        )
         self.out = out
         self.base_url = (base_url or DEFAULT_BASE_URL).rstrip("/") + "/"
         self.env = _env()
@@ -550,6 +636,8 @@ class SiteBuilder:
             "run_date": self.run_date,
             "quarantine": snap["quarantine"],
             "unavailable": self.unavailable,
+            "ny_history": ny_history is not None,
+            "ny_attribution": newyork.ATTRIBUTION,
         }
         self.waters = [display_water(w) for w in snap["waterbodies"]]
         # Titles add the county when the source's name is shared (0009), so a
@@ -559,6 +647,14 @@ class SiteBuilder:
         )
         self._same_name_nearby = same_name_nearby(self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
+        # States whose data is live in this build: waters in the snapshot and
+        # the state's source listed, the same test state_pages uses.
+        self.live_states = [
+            state
+            for state in STATE_NAMES
+            if state in self.common["states_present"]
+            and STATE_SOURCE[state] in self.sources
+        ]
         self.by_county: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.no_county: list[dict[str, Any]] = []
         for water in self.waters:
@@ -650,12 +746,8 @@ class SiteBuilder:
         self._write(
             "",
             "index.html.jinja",
-            title=f"California lake toxic algae advisories by date | {SITE_NAME}",
-            description=(
-                "Toxic algae (harmful algal bloom) advisories at California lakes "
-                "and rivers, newest first, with each lake's history since 2016 "
-                "for swimmers and dogs."
-            ),
+            title=home_title(self.live_states),
+            description=home_description(self.live_states),
             lastmod=self.site_date,
             recent=recent,
             older_count=len(open_) - len(recent),
@@ -675,7 +767,7 @@ class SiteBuilder:
         self._write(
             "advisories/",
             "advisories.html.jinja",
-            title=f"All California toxic algae advisories on file | {SITE_NAME}",
+            title=advisories_title(waters),
             description=advisories_description(waters),
             lastmod=self.site_date,
             waters=waters,
@@ -783,9 +875,6 @@ class SiteBuilder:
             robots="noindex,follow",
             lastmod=self.water_dates.get(water["id"]),
             water=water,
-            gear_links=gear_links(),
-            affiliate_rel=AFFILIATE_LINK_REL,
-            gear_endorsement=gear_endorsement(water["state"]),
             water_source=water_source,
             satellite_source=satellite_source,
             county=county,
@@ -965,6 +1054,11 @@ class SiteBuilder:
                 lastmod=self.site_date if rel == "dogs/" else None,
                 counties_known=len(CA_COUNTIES),
                 tiers=["caution", "warning", "danger", "other_advisory"],
+                # The gear block is on the dogs page and nowhere else
+                # (DECISIONS 0029); every other page gets no links.
+                gear_links=gear_links() if rel == "dogs/" else [],
+                affiliate_rel=AFFILIATE_LINK_REL,
+                gear_endorsement=gear_endorsement(),
             )
         self._write("404.html", "404.html.jinja", title=f"Page not found | {SITE_NAME}",
                     description="Page not found.", noindex=True)  # fmt: skip
@@ -996,6 +1090,135 @@ class SiteBuilder:
             },
         )
         self.lastmods[self.base_url + rel] = where_to_check.AS_OF.isoformat()
+
+    # -- New York: yearly bloom history, never a status (DECISIONS 0020) ------
+
+    @staticmethod
+    def _ny_context(history: newyork.History) -> dict[str, Any]:
+        return {
+            "ny": history,
+            "ny_source": {
+                "agency": newyork.AGENCY,
+                "dataset_name": newyork.DATASET_NAME,
+                "dataset_url": newyork.DATASET_PAGE_URL,
+                "notifications_url": newyork.NOTIFICATIONS_URL,
+                "program_url": newyork.PROGRAM_URL,
+                "terms_url": newyork.TERMS_URL,
+                "no_vouch": newyork.NO_VOUCH_CLAUSE,
+            },
+            "ny_min_years": newyork.MIN_YEARS,
+            "ny_min_reports": newyork.MIN_REPORTS,
+        }
+
+    def ny_pages(self) -> None:
+        if self.ny is None:
+            return
+        context = self._ny_context(self.ny)
+        rel = "state/ny/"
+        crumbs = self._crumbs(("New York bloom history", self.base_url + rel))
+        ordered = sorted(self.ny.waters, key=newyork.rank_key)
+        self._write(
+            rel,
+            "ny_state.html.jinja",
+            title=f"New York lake algae bloom history by year | {SITE_NAME}",
+            description=fit(
+                [
+                    f"Years New York DEC confirmed a harmful algal bloom at "
+                    f"{len(ordered)} lakes and rivers, {self.ny.first_year} to "
+                    f"{self.ny.last_year}. History only, not a current status.",
+                    f"New York DEC's confirmed algal blooms by water and year, "
+                    f"{self.ny.first_year} to {self.ny.last_year}. History only.",
+                ],
+                DESCRIPTION_MAX,
+            ),
+            lastmod=newest(w.newest_report for w in ordered),
+            waters=ordered,
+            breadcrumb=crumbs,
+            structured_data={
+                "@context": "https://schema.org",
+                **self._breadcrumb_data(crumbs),
+            },
+            **context,
+        )
+        names = Counter(w.name.casefold() for w in ordered)
+        in_county = Counter((w.name.casefold(), w.counties[0]) for w in ordered)
+        for water in ordered:
+            where = water.name
+            if names[water.name.casefold()] > 1:
+                where = f"{water.name}, {water.counties[0]} County"
+            if in_county[(water.name.casefold(), water.counties[0])] > 1:
+                where = f"{where} ({water.lat:.2f}\u00b0 N)"
+            self.ny_water_page(water, where, context)
+
+    def ny_water_page(
+        self, water: newyork.Water, where: str, context: dict[str, Any]
+    ) -> None:
+        rel = f"state/ny/{water.slug}/"
+        crumbs = self._crumbs(
+            ("New York bloom history", self.base_url + "state/ny/"),
+            (water.name, self.base_url + rel),
+        )
+        span = (
+            str(water.last_year)
+            if water.first_year == water.last_year
+            else f"{water.first_year} to {water.last_year}"
+        )
+        years = "1 year" if water.year_count == 1 else f"{water.year_count} years"
+        reports = (
+            "1 report" if water.report_count == 1 else f"{water.report_count} reports"
+        )
+        self._write(
+            rel,
+            "ny_water.html.jinja",
+            title=fit(
+                [
+                    f"{where}, NY algae bloom history | {SITE_NAME}",
+                    f"{where}, NY bloom history | {SITE_NAME}",
+                    f"{where} | {SITE_NAME}",
+                ],
+                TITLE_MAX,
+            ),
+            description=fit(
+                [
+                    f"{water.name}, {water.place}, New York: DEC confirmed a harmful "
+                    f"algal bloom in {years} ({span}), {reports}. History, not a current status.",
+                    f"{water.name}, NY: DEC confirmed an algal bloom in {years} "
+                    f"({span}), {reports}. History, not a current status.",
+                    f"{water.name}, NY: confirmed algal blooms in {years}. History only.",
+                ],
+                DESCRIPTION_MAX,
+            ),
+            noindex=water.id not in self.ny_indexed,
+            robots="noindex,follow",
+            lastmod=water.newest_report,
+            water=water,
+            years_label=years,
+            span_label=span,
+            reports_label=reports,
+            breadcrumb=crumbs,
+            structured_data={
+                "@context": "https://schema.org",
+                "@graph": [
+                    self._breadcrumb_data(crumbs),
+                    {
+                        "@type": "WebPage",
+                        "name": f"{water.name} algae bloom history",
+                        "url": self.base_url + rel,
+                        "about": {
+                            "@type": "BodyOfWater",
+                            "name": water.name,
+                            "geo": {
+                                "@type": "GeoCoordinates",
+                                "latitude": water.lat,
+                                "longitude": water.lon,
+                            },
+                        },
+                        "isBasedOn": newyork.DATASET_PAGE_URL,
+                    },
+                ],
+            },
+            **context,
+        )
 
     def extras(self) -> None:
         assets = self.out / "assets"
@@ -1040,6 +1263,7 @@ class SiteBuilder:
         self.state_pages()
         self.static_pages()
         self.where_to_check_page()
+        self.ny_pages()
         # /levels/ and /es/niveles/, both off on main (DECISIONS 0025).
         levels.build(self, levels=i18n.LEVELS_ENABLED, es=i18n.ES_ENABLED)
         self.extras()
@@ -1053,7 +1277,11 @@ def build_site(
     support_email: str = "",
     app_store_url: str = "",
     ga4_measurement_id: str | None = None,
+    ny_history: newyork.History | None = None,
+    ny_index_limit: int | None = NY_INDEX_LIMIT,
 ) -> None:
+    """``ny_history`` is the loaded New York cache, or None to build without
+    the New York section (the default while NY_HISTORY_ENABLED is False)."""
     SiteBuilder(
         snap,
         out,
@@ -1063,4 +1291,6 @@ def build_site(
         ga4_measurement_id=GA4_MEASUREMENT_ID
         if ga4_measurement_id is None
         else ga4_measurement_id,
+        ny_history=ny_history,
+        ny_index_limit=ny_index_limit,
     ).build()

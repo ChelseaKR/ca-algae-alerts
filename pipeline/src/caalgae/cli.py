@@ -25,7 +25,7 @@ from typing import Any
 
 import httpx
 
-from caalgae import cyan, fetch, missouri, normalize, site, snapshot
+from caalgae import cyan, fetch, missouri, newyork, normalize, site, snapshot
 from caalgae import history as hist
 from caalgae.sources import CA_SWRCB_FHAB, EPA_CYAN, MO_DNR_HAB
 
@@ -61,6 +61,18 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     p.add_argument("--mo-viewer-fixture", type=Path, default=None)
     p.add_argument("--cyan-cache", type=Path, default=None)
     p.add_argument("--cyan-refresh", choices=("auto", "never", "force"), default="auto")
+    p.add_argument(
+        "--ny-history",
+        choices=("config", "on", "off"),
+        default="config",
+        help="New York bloom history section; 'config' follows site.NY_HISTORY_ENABLED",
+    )
+    p.add_argument(
+        "--ny-cache",
+        type=Path,
+        default=None,
+        help="a New York cache directory other than the pinned one (tests, previews)",
+    )
     p.add_argument(
         "--accept-ca-edits",
         action="store_true",
@@ -353,12 +365,33 @@ def _cyan(
     return cache
 
 
+def _new_york(args: argparse.Namespace) -> newyork.History | None:
+    """The New York history section, history only (docs/DECISIONS.md 0020).
+    Built from the cache in the repository, never fetched by this run. When
+    the section is on, a missing, altered or malformed cache refuses the
+    run, so /state/ny/ pages never vanish from a green publish."""
+    wanted = args.ny_history == "on" or (
+        args.ny_history == "config" and site.NY_HISTORY_ENABLED
+    )
+    if not wanted:
+        return None
+    try:
+        if args.ny_cache is not None:
+            return newyork.load(args.ny_cache, pinned=None)
+        return newyork.load()
+    except newyork.NYDataError as error:
+        raise RunRefused(f"New York history is on but not built: {error}") from error
+
+
 def run(args: argparse.Namespace) -> int:
     run_date = (
         dt.date.fromisoformat(args.run_today)
         if args.run_today
         else dt.datetime.now(dt.UTC).date()
     )
+    # Read first, so a bad New York cache refuses the run before anything
+    # is written.
+    ny_history = _new_york(args) if args.site_out is not None else None
     history = hist.load(args.history)
     merged, quarantine, download = _california(args, history, run_date)
     now = download.fetched_at
@@ -383,6 +416,7 @@ def run(args: argparse.Namespace) -> int:
             base_url=args.base_url,
             support_email=args.support_email,
             app_store_url=args.app_store_url,
+            ny_history=ny_history,
         )
     hist.save(merged, args.history)
     for reason, count in sorted((quarantine + mo_quarantine).items()):
