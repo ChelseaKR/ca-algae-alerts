@@ -684,3 +684,59 @@ history.json. Negative controls: the real file passes unchanged; the 4% cut
 passes the old guard alone (the sabotage applies) and is refused by the new
 one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
 withdrawn; a blank level after "None" still reads as lifted.
+
+## 0030 — The app reads as Lake Notice's own, and a new state or a changed CyAN answer never stops updates (2026-11-05)
+
+The launch review of 2026-11-05 (§5) found that the app shared a reviewer's
+view of Trout Truck, which drew a second 4.3(a) on 2026-11-03: the same
+purchase name, the same listing headings and the same last caption. Its §3
+also found two ways a shipped app could stop updating. This changes only
+what is true of the product; nothing was invented to look different.
+
+- **The purchase is "Lake Alerts & Widget"** (reference name "Lake Notice
+  Alerts"), named for what it adds, in `Configuration.storekit`,
+  `FreeTier.purchaseName` (the unlock screen's title and About's section),
+  LISTING.md and REVIEW-NOTES.md. **The product id stays
+  `net.chelseakr.algaealerts.fullaccess`**; the name is a display string and
+  an id cannot change once the record exists. The owner can still pick
+  another name (launch review decision 3); the copy test then says every
+  place to change.
+- **The listing is written around what an algae advisory is**: sign levels,
+  the dogs section, after-contact steps, spot-by-spot history, the separately
+  labeled satellite estimate and "never an all-clear". It has none of Trout
+  Truck's headings, and caption 6 is "Your favorite lakes stay on your
+  iPhone." instead of Trout Truck's "No account. No tracking." Alert timing
+  is "when iOS lets the app check, often within a day, not real time" in the
+  listing, the unlock screen and Favorites.
+- **The Review Notes open with a factual "what Lake Notice is" paragraph**,
+  fill in the name and snapshot URL, say "any state or federal agency", mark
+  every Missouri sentence for removal if Missouri is off at submission, and
+  stay under 4,000 characters.
+- **A state this build does not know is left out of the snapshot before it
+  is decoded**: its waterbodies, sources, source files and state-status
+  entries, and any source in a record kind this build does not know. A New
+  York water in a new `bloom_history` kind used to make the whole file
+  undecodable, so shipped apps would have kept old California data forever.
+  States the build knows are still decoded strictly: an unknown status or
+  record kind on a California or Missouri water still refuses the file and
+  keeps the copy on the phone. A new state reaches the app only in a build
+  that knows it. A file with nothing unknown is decoded from its own bytes.
+- **A CyAN answer in another shape is a failed refresh.** The list and each
+  weekly series are shape-checked (`cyan.ShapeError`, a `FetchError`), so a
+  renamed or mistyped field keeps the cache and the run goes on, instead of a
+  `KeyError` stopping every run (source-outage audit finding 8). A lake in
+  another state is never checked.
+
+Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/UnknownStateTests.swift`,
+`PurchaseNameTests.swift`, `pipeline/tests/test_cyan_shape.py`,
+`pipeline/tests/test_app_store_copy.py`. Negative controls: the injected New
+York file fails a plain decode (the sabotage applies) and fails the tests
+with the filter removed; the same water labeled California is refused; the
+old CyAN read raises `KeyError` on the renamed field; Trout Truck's heading
+or the old display name put back turns the copy test red.
+
+Not done here, and why: the widget's "Part of full access." line waits for
+PR #32, which rewrites that block; Missouri's data-unavailable mode and its
+`HistoryError` catch are PR #31 (DECISIONS 0024); the icon, screenshots, the
+name check, the subtitle and category picks, the Missouri readings and the
+level summaries are the owner's.

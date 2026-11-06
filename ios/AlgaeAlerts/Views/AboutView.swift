@@ -23,10 +23,10 @@ struct AboutView: View {
                         Label("Unlocked. Thank you.", systemImage: "checkmark.seal")
                     } else {
                         Text(FreeTier.unlockSummary)
-                        Button("Unlock full access") { router.showUnlock = true }
+                        Button("Unlock alerts and the widget") { router.showUnlock = true }
                     }
                     Button("Restore purchases") { Task { await env.purchases.restorePurchases() } }
-                } header: { SectionTitle("Full access") }
+                } header: { SectionTitle(FreeTier.purchaseName) }
                 ForEach(env.snapshot?.sources ?? [], id: \.id) { source in
                     Section {
                         Text(source.agency)

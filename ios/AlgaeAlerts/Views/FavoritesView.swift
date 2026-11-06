@@ -47,7 +47,7 @@ struct FavoritesView: View {
             } else if env.notificationStatus == .notDetermined {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Turn on alerts").font(.headline)
-                    Text("When a favorite lake gets a new advisory in the state's records, this iPhone shows an alert, usually within about a day of the state publishing it. Alerts are made on this iPhone; nothing about you is sent anywhere.")
+                    Text("When a favorite lake gets a new advisory in the state's records, this iPhone shows an alert when iOS lets Lake Notice check, often within a day of the state publishing it. Alerts are not real time. Alerts are made on this iPhone; nothing about you is sent anywhere.")
                         .font(.subheadline)
                     Button("Turn on alerts") { Task { await env.requestNotifications() } }
                 }
