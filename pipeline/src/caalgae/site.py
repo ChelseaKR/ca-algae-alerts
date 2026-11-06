@@ -262,6 +262,64 @@ def advisories_description(waters: list[dict[str, Any]]) -> str:
     )
 
 
+def state_list(states: Iterable[str]) -> str:
+    """State codes as names in STATE_NAMES order: "California",
+    "California and Missouri", "California, Missouri and ..."."""
+    present = set(states)
+    names = [name for code, name in STATE_NAMES.items() if code in present]
+    if len(names) <= 1:
+        return "".join(names)
+    return f"{', '.join(names[:-1])} and {names[-1]}"
+
+
+def home_title(states: Iterable[str]) -> str:
+    """The home page title, naming every state whose data is live in this
+    build (DECISIONS 0032). California alone keeps the title it has had
+    since launch; a state is named only while its waters are in the
+    snapshot, so an empty or dropped Missouri source drops the name too."""
+    where = state_list(states) or "California"
+    return fit(
+        [
+            f"{where} lake toxic algae advisories by date | {SITE_NAME}",
+            f"{where} toxic algae advisories by date",
+            f"{where} algae advisories by date",
+        ],
+        TITLE_MAX,
+    )
+
+
+def home_description(states: Iterable[str]) -> str:
+    """The home page description, naming the same states as its title.
+    "Since 2016" is California's span only, so a build with another state
+    says "history" without a year."""
+    where = state_list(states) or "California"
+    span = " since 2016" if where == "California" else ""
+    return fit(
+        [
+            f"Toxic algae (harmful algal bloom) advisories at {where} lakes "
+            f"and rivers, newest first, with each lake's history{span} for "
+            "swimmers and dogs.",
+            f"Toxic algae advisories at {where} lakes and rivers, newest "
+            f"first, with each lake's history{span}.",
+        ],
+        DESCRIPTION_MAX,
+    )
+
+
+def advisories_title(waters: list[dict[str, Any]]) -> str:
+    """The advisory list's title, naming the states its table lists, the
+    same states its description counts (DECISIONS 0032)."""
+    where = state_list(w["state"] for w in waters) or "California"
+    return fit(
+        [
+            f"All {where} toxic algae advisories on file | {SITE_NAME}",
+            f"All {where} toxic algae advisories on file",
+            f"{where} toxic algae advisories on file",
+        ],
+        TITLE_MAX,
+    )
+
+
 # Lake Notice's own GA4 web stream (property 561648146, "Lake Notice", created
 # 2026-10-31 in the ChelseaKR account; DECISIONS 0007). Set, every page carries
 # the tag and the privacy page describes it; empty, no page loads any script
@@ -513,6 +571,14 @@ class SiteBuilder:
         )
         self._same_name_nearby = same_name_nearby(self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
+        # States whose data is live in this build: waters in the snapshot and
+        # the state's source listed, the same test state_pages uses.
+        self.live_states = [
+            state
+            for state in STATE_NAMES
+            if state in self.common["states_present"]
+            and STATE_SOURCE[state] in self.sources
+        ]
         self.by_county: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.no_county: list[dict[str, Any]] = []
         for water in self.waters:
@@ -586,12 +652,8 @@ class SiteBuilder:
         self._write(
             "",
             "index.html.jinja",
-            title=f"California lake toxic algae advisories by date | {SITE_NAME}",
-            description=(
-                "Toxic algae (harmful algal bloom) advisories at California lakes "
-                "and rivers, newest first, with each lake's history since 2016 "
-                "for swimmers and dogs."
-            ),
+            title=home_title(self.live_states),
+            description=home_description(self.live_states),
             lastmod=self.site_date,
             recent=recent,
             older_count=len(open_) - len(recent),
@@ -611,7 +673,7 @@ class SiteBuilder:
         self._write(
             "advisories/",
             "advisories.html.jinja",
-            title=f"All California toxic algae advisories on file | {SITE_NAME}",
+            title=advisories_title(waters),
             description=advisories_description(waters),
             lastmod=self.site_date,
             waters=waters,

@@ -7,6 +7,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- The home and /advisories/ titles name Missouri while Missouri's data is
+  in the build: "California and Missouri toxic algae advisories by date" and
+  "All California and Missouri toxic algae advisories on file". The states
+  come from the data, so a California-only build keeps the old titles. Water
+  page titles are unchanged (docs/DECISIONS.md 0032).
 - Spanish groundwork, switched off (DECISIONS 0025): a Spanish catalog with a
   status per string, a review gate in `make verify`, a rendered-page check
   for English left on /es/ pages, and a levels page in English (/levels/) and
