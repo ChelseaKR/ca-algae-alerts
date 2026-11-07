@@ -25,7 +25,7 @@ from typing import Any
 
 import httpx
 
-from caalgae import cyan, fetch, missouri, newyork, normalize, site, snapshot
+from caalgae import cyan, fetch, flagged, missouri, newyork, normalize, site, snapshot
 from caalgae import history as hist
 from caalgae.sources import CA_SWRCB_FHAB, EPA_CYAN, MO_DNR_HAB
 
@@ -82,6 +82,22 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
             f"more than {MAX_QUARANTINE_GROWTH} rows; only after reading the "
             "file (docs/DECISIONS.md 0027)"
         ),
+    )
+    p.add_argument(
+        "--state-fixture",
+        action="append",
+        default=[],
+        metavar="STATE=PATH",
+        help=(
+            "a flagged state's fixture page (repeatable, in order); only with "
+            "that state's flag on (docs/DECISIONS.md 0037)"
+        ),
+    )
+    p.add_argument(
+        "--state-review-out",
+        type=Path,
+        default=None,
+        help="directory for flagged states' review files; never published",
     )
     return p.parse_args(argv)
 
@@ -389,6 +405,15 @@ def run(args: argparse.Namespace) -> int:
         if args.run_today
         else dt.datetime.now(dt.UTC).date()
     )
+    # Flagged states first (DECISIONS 0037): with every flag off this does
+    # nothing at all; with one on, a failed read refuses the run before
+    # anything is written. Their records never reach the history or site.
+    flagged.review(
+        run_date=run_date,
+        fixtures=flagged.parse_fixtures(args.state_fixture),
+        out_dir=args.state_review_out,
+        site_out=args.site_out,
+    )
     # Read first, so a bad New York cache refuses the run before anything
     # is written.
     ny_history = _new_york(args) if args.site_out is not None else None
@@ -435,6 +460,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         normalize.SourceShapeError,
         hist.HistoryError,
         snapshot.SnapshotError,
+        flagged.FlagError,
     ) as error:
         print(f"caalgae: run refused -- nothing published: {error}", file=sys.stderr)
         return 2

@@ -1198,6 +1198,138 @@ of water pages (~2026-11-25) is not disturbed.
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
 
+## 0037 — Oregon and Kansas readers are built and tested behind flags that are off (2026-11-06)
+
+(0020 to 0036 are on main or on open branches, so this is the next free
+number.)
+
+Each state has a reader, `pipeline/src/caalgae/oregon.py` and
+`pipeline/src/caalgae/kansas.py`, registered in `pipeline/src/caalgae/flagged.py`.
+Neither agency publishes a reuse grant, so under 0004 each license is
+recorded as `unknown` and the data is not used. Permission was asked in
+writing on 2026-11-02 (OHA and KDHE). Nothing goes live until an agency says
+yes in writing; this is the same pattern as Trout Truck's DECISIONS 0055.
+
+- **The flags.** `LN_ENABLE_OREGON` and `LN_ENABLE_KANSAS`, environment
+  variables: `1` is on; unset, empty and `0` are off; anything else refuses
+  the run before anything is written. No workflow sets either (a test reads
+  every workflow).
+- **Off means identical.** With both off, the run fetches nothing, prints
+  nothing and writes nothing for these states. A default build of the
+  fixture site, snapshot and history is byte-identical whether or not the
+  readers are registered, and with both flags set to `0`
+  (`pipeline/tests/test_flagged_states.py`).
+- **On is review only.** A flag that is on reads that state (or the fixture
+  given with `--state-fixture XX=path`) and writes
+  `--state-review-out/<xx>-review.json`, which may not sit inside the site.
+  Its records never enter the history, snapshot, site or app; a test builds
+  with both flags on and checks the published files are the default's byte
+  for byte. A fixture given while its flag is off refuses the run. Wiring a
+  state into pages and the app is a later change, after the written yes.
+- **Sources are off and unlisted.** `sources.OR_OHA_HAB` and
+  `sources.KS_KDHE_HAB` have `enabled=False`, no attribution, and are kept
+  out of `SOURCES`, so the snapshot never names them.
+- **The agency's own words, no level invented.** Every advisory keeps the
+  agency's status as its `level`, under the `other_advisory` tier, never
+  California's caution, warning or danger.
+  - **Oregon (OHA).** One request to the SharePoint list behind the
+    advisories page, for nine named fields; robots.txt read first.
+    "Advisory in effect", "Precaution in effect", "Permanent Advisory" and
+    the legend's "Advisory downgraded to precaution" are advisories; "…has
+    been lifted" is an explicit end. Markup is stripped from the stretch
+    description and toxin notes. The list has no coordinates, so none is
+    given. A water leaving the list is never read as an end. A row with no
+    date, more than one status, or not shown on OHA's page is quarantined.
+    A record's id carries its status and date, because OHA edits one item
+    per water in place.
+  - **Kansas (KDHE).** Layer 6 of KDHE's own MapServer, every status since
+    2010, read in 2,000-row pages 5 s apart, with robots.txt (404, no rules)
+    read first. Watch, Warning, Advisory and Lake Hazard are advisories;
+    Lifted is an explicit end. "Historical Pending" and "MIXED" decide
+    nothing until KDHE says what they mean (asked 11-02). A read that stops
+    before the layer's last row, misses a field or has under 1,000 rows is
+    refused whole.
+  - **Any other status** is undetermined (0027), never an end.
+- **Fixtures are invented.** `pipeline/tests/fixtures/states-invented/` is
+  written by hand in each agency's format with invented waters ("Invented
+  Lake", "INVENTED LAKE A"); no agency data is committed.
+- **Development reads, 2026-11-06.** Each host's robots.txt, then the Kansas
+  layer metadata, a status count, a four-row sample and one full read (two
+  pages); one read of the Oregon list. Against them: Oregon gave 56 records
+  from 57 rows (one "Permanent Advisory" row has no date and is
+  quarantined); Kansas gave 3,105 records from 3,116 rows (11 repeated
+  status rows). Nothing from these reads is committed.
+- **Turning one on** is the owner's call after the agency's yes: record the
+  grant's text in docs/LICENSES-AND-ATTRIBUTION.md, then a separate change
+  adds the state to `SOURCES`, `site.STATE_NAMES`, the snapshot and the app.
+
+Open questions for the agencies, before any page: what a lifted Oregon
+row's date records (the lift, or the last change), whether Oregon has
+coordinates Lake Notice may use, and what Kansas's "Historical Pending" and
+"MIXED" mean.
+
+## 0038 — An Iowa reader is built and tested behind a flag that is off (2026-11-06)
+
+Same pattern as 0037, for the Iowa Department of Natural Resources' beach
+monitoring results (AQuIA). The reader is `pipeline/src/caalgae/iowa.py`,
+registered in `pipeline/src/caalgae/flagged.py` under `LN_ENABLE_IOWA`. No
+reuse terms were found at all (AQuIA's "Site Policies" link answered 404 on
+2026-11-06), so under 0004 the license is recorded as `unknown` and the data
+is not used. Permission has not been asked yet; the draft is for the AQuIA
+contact form, topic "Beaches".
+
+- **The flag, off means identical, on is review only, the source is off and
+  unlisted:** exactly as 0037. `sources.IA_DNR_BEACHES` has `enabled=False`,
+  no attribution, and is kept out of `SOURCES`. A default build of the
+  fixture site, snapshot and history is byte-identical with or without the
+  Iowa reader registered and with `LN_ENABLE_IOWA=0`; with it on, the
+  published files are still the default's byte for byte and only
+  `ia-review.json` is written (`pipeline/tests/test_flagged_iowa.py`).
+- **What is read.** The two CSV downloads on programs.iowadnr.gov (robots.txt
+  404, no rules under 0011), `DownloadBeachResults/State` and
+  `.../CountyCity`, 5 s apart: `siteID`, `name`, `sampleDate`,
+  `microcystin`, `status`, `comments`. The E. coli columns are never read.
+  The files have no coordinates, so none is given.
+- **The sign is shared, so the toxin result decides.** The DNR posts
+  "Swimming is Not Recommended" for indicator bacteria and for
+  cyanobacteria toxins alike. A row is an algae advisory only when that sign
+  is posted and the microcystin result is over the DNR's own threshold,
+  "8 µg/L total microcystins". The level is the file's own status text,
+  under the `other_advisory` tier; no level is invented.
+  - The same sign with a result of 8, under 8, blank or unreadable decides
+    nothing (it may be a bacteria advisory, and is not shown as "no
+    advisory").
+  - "Watch / General Information" with a result under 8 (a reporting limit
+    like `<0.3` counts as under only when the limit is) is an explicit end.
+    With a result over 8 it is undetermined (0027); with 8 or no result it
+    decides nothing.
+  - "Beach Closed", "Special Status", "Insufficient Data", "County-City
+    Beach" and a blank status decide nothing. Any other status is
+    undetermined (0027).
+  - Both spellings are read: the beach page's "Swimming is Not Recommended"
+    and "Watch / General Information", and AQuIA's status reference's
+    "Swimming Not Recommended" and "Ok for Swimming". Which one the download
+    carries was not seen (off season).
+- **Refusals.** A download missing a column, answering a web page, not
+  UTF-8, or with no rows at all is refused whole. Out of season the DNR
+  publishes no rows, and an empty read is never taken as "no advisory".
+- **Fixtures are invented.** `ia-state.csv` and `ia-countycity.csv` under
+  `pipeline/tests/fixtures/states-invented/`, written by hand in AQuIA's
+  column layout with invented beaches ("Invented Lake Beach") and site ids
+  in the 99000000s; no DNR data is committed.
+- **Development reads, 2026-11-06,** with a User-Agent naming Lake Notice and
+  chelsea@chelseakr.com: programs.iowadnr.gov/robots.txt (404), the API
+  guide, the beach page, the State download (header only, no rows, off
+  season), the status reference and the weekly results (an empty list).
+  Nothing from these reads is committed.
+- **Turning it on** is the owner's call after the DNR's written yes, as in
+  0037.
+
+Open questions for the DNR, before any page: which status words the
+download carries in season; whether a result of exactly 8 µg/L is over the
+threshold; whether a "Swimming is Not Recommended" sign with a high
+microcystin result can still be for bacteria alone; and coordinates Lake
+Notice may use.
 
 ## 0039 — A saved lake missing from the data says what is missing, dated, and is not a finding (2026-11-07)
 

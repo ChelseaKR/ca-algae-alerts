@@ -28,6 +28,30 @@ robots.txt: `https://data.ny.gov/robots.txt`, read 2026-11-02: 200,
 `fetch.guard_url`. Not used: New York's live NYHABS map and DEC's pages,
 which are linked for readers only.
 
+## Pending, not used: Oregon and Kansas (added 2026-11-06; DECISIONS 0037)
+
+Readers are built behind flags that are off. **Unknown = not used.**
+
+| Source | What the reader would take | Terms found (verbatim, where, date read) | Commercial reuse | Status |
+|---|---|---|---|---|
+| Oregon Health Authority, Current Cyanobacteria Advisories (SharePoint list behind <https://www.oregon.gov/oha/PH/HEALTHYENVIRONMENTS/RECREATION/HARMFULALGAEBLOOMS/Pages/Blue-GreenAlgaeAdvisories.aspx>) | `ID`, `Title`, `Waterbody`, `County`, `Status`, `Date`, `Details`, `Toxin_x002f_Measure`, `Display_x002d_On_x002d_Page` | <https://www.oregon.gov/pages/terms-and-conditions.aspx>, read 2026-11-02: no reuse grant; "You agree to hold harmless and indemnify Oregon and its agencies and officers from and against any damages and liability based on or arising out of your access or use of content on any of the Sites." | Unknown | Permission asked 2026-11-02 (hab.health@oha.oregon.gov). Not used |
+| Kansas Department of Health and Environment, HAB status (`https://maps.kdhe.ks.gov/kdhe_doe/rest/services/HAB/HAB_Manager_Status_Map/MapServer/6`) | `waterbody_id`, `waterbody_name`, `status`, `Status_Set_Date`, `LATITUDE`, `LONGITUDE` | The layer states no license (`copyrightText` blank, read 2026-11-06). kdhe.ks.gov's own pages sit behind a bot wall (robots.txt 403), so its copyright page was not read. | Unknown | Permission asked 2026-11-02 (KDHE HAB program coordinator). Not used |
+
+robots.txt, read 2026-11-06: `https://www.oregon.gov/robots.txt` 200,
+disallows `/_layouts`, `/_vti_bin` and search pages, nothing under `/oha/`
+or `_api`; `https://maps.kdhe.ks.gov/robots.txt` 404 (no rules under 0011).
+
+## Pending, not used: Iowa (added 2026-11-06; DECISIONS 0038)
+
+A reader is built behind a flag that is off. **Unknown = not used.**
+
+| Source | What the reader would take | Terms found (verbatim, where, date read) | Commercial reuse | Status |
+|---|---|---|---|---|
+| Iowa Department of Natural Resources, Beach Monitoring results (AQuIA CSV downloads `https://programs.iowadnr.gov/aquia/Programs/DownloadBeachResults/State` and `.../CountyCity`) | `siteID`, `name`, `sampleDate`, `microcystin`, `status`, `comments` | None found. AQuIA's "Site Policies" link, <https://www.iowa.gov/pages/policies>, answered 404 on 2026-11-06; the API guide (<https://programs.iowadnr.gov/aquia/Docs/API>) states no license. | Unknown | Permission not yet asked (AQuIA contact form, topic "Beaches"). Not used |
+
+robots.txt, read 2026-11-06: `https://programs.iowadnr.gov/robots.txt` 404
+(no rules under 0011).
+
 ## Attribution shown
 
 Every site page footer and the app's About screen carry:

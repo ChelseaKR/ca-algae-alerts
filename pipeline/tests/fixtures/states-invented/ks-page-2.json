@@ -1,0 +1,137 @@
+{
+ "displayFieldName": "waterbody_name",
+ "fields": [
+  {
+   "name": "SQLVW_ID",
+   "type": "esriFieldTypeOID",
+   "alias": "SQLVW_ID"
+  },
+  {
+   "name": "objectid",
+   "type": "esriFieldTypeInteger",
+   "alias": "objectid"
+  },
+  {
+   "name": "waterbody_id",
+   "type": "esriFieldTypeString",
+   "alias": "waterbody_id"
+  },
+  {
+   "name": "waterbody_name",
+   "type": "esriFieldTypeString",
+   "alias": "waterbody_name"
+  },
+  {
+   "name": "status",
+   "type": "esriFieldTypeString",
+   "alias": "status"
+  },
+  {
+   "name": "Status_Set_Date",
+   "type": "esriFieldTypeDate",
+   "alias": "Status_Set_Date"
+  },
+  {
+   "name": "LATITUDE",
+   "type": "esriFieldTypeDouble",
+   "alias": "LATITUDE"
+  },
+  {
+   "name": "LONGITUDE",
+   "type": "esriFieldTypeDouble",
+   "alias": "LONGITUDE"
+  }
+ ],
+ "features": [
+  {
+   "attributes": {
+    "waterbody_id": "LM9004",
+    "waterbody_name": "INVENTED LAKE D",
+    "status": "Closed for Season",
+    "Status_Set_Date": 1790312400000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9005",
+    "waterbody_name": "INVENTED LAKE E",
+    "status": "",
+    "Status_Set_Date": 1777611600000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9006",
+    "waterbody_name": "INVENTED LAKE F",
+    "status": "Watch",
+    "Status_Set_Date": 1784264400000,
+    "LATITUDE": 45.0,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "",
+    "waterbody_name": "INVENTED LAKE G",
+    "status": "Watch",
+    "Status_Set_Date": 1784264400000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9008",
+    "waterbody_name": "",
+    "status": "Watch",
+    "Status_Set_Date": 1784264400000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9009",
+    "waterbody_name": "INVENTED LAKE I",
+    "status": "Watch",
+    "Status_Set_Date": null,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9010",
+    "waterbody_name": "INVENTED LAKE J",
+    "status": "Watch",
+    "Status_Set_Date": 1241154000000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9011",
+    "waterbody_name": "INVENTED LAKE K",
+    "status": "Watch",
+    "Status_Set_Date": 1798783200000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9001",
+    "waterbody_name": "INVENTED LAKE A",
+    "status": "Watch",
+    "Status_Set_Date": 1780635600000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  }
+ ]
+}
