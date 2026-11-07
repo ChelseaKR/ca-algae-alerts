@@ -1198,3 +1198,72 @@ of water pages (~2026-11-25) is not disturbed.
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
 
+## 0037 — Oregon and Kansas readers are built and tested behind flags that are off (2026-11-06)
+
+(0020 to 0036 are on main or on open branches, so this is the next free
+number.)
+
+Each state has a reader, `pipeline/src/caalgae/oregon.py` and
+`pipeline/src/caalgae/kansas.py`, registered in `pipeline/src/caalgae/flagged.py`.
+Neither agency publishes a reuse grant, so under 0004 each license is
+recorded as `unknown` and the data is not used. Permission was asked in
+writing on 2026-11-02 (OHA and KDHE). Nothing goes live until an agency says
+yes in writing; this is the same pattern as Trout Truck's DECISIONS 0055.
+
+- **The flags.** `LN_ENABLE_OREGON` and `LN_ENABLE_KANSAS`, environment
+  variables: `1` is on; unset, empty and `0` are off; anything else refuses
+  the run before anything is written. No workflow sets either (a test reads
+  every workflow).
+- **Off means identical.** With both off, the run fetches nothing, prints
+  nothing and writes nothing for these states. A default build of the
+  fixture site, snapshot and history is byte-identical whether or not the
+  readers are registered, and with both flags set to `0`
+  (`pipeline/tests/test_flagged_states.py`).
+- **On is review only.** A flag that is on reads that state (or the fixture
+  given with `--state-fixture XX=path`) and writes
+  `--state-review-out/<xx>-review.json`, which may not sit inside the site.
+  Its records never enter the history, snapshot, site or app; a test builds
+  with both flags on and checks the published files are the default's byte
+  for byte. A fixture given while its flag is off refuses the run. Wiring a
+  state into pages and the app is a later change, after the written yes.
+- **Sources are off and unlisted.** `sources.OR_OHA_HAB` and
+  `sources.KS_KDHE_HAB` have `enabled=False`, no attribution, and are kept
+  out of `SOURCES`, so the snapshot never names them.
+- **The agency's own words, no level invented.** Every advisory keeps the
+  agency's status as its `level`, under the `other_advisory` tier, never
+  California's caution, warning or danger.
+  - **Oregon (OHA).** One request to the SharePoint list behind the
+    advisories page, for nine named fields; robots.txt read first.
+    "Advisory in effect", "Precaution in effect", "Permanent Advisory" and
+    the legend's "Advisory downgraded to precaution" are advisories; "…has
+    been lifted" is an explicit end. Markup is stripped from the stretch
+    description and toxin notes. The list has no coordinates, so none is
+    given. A water leaving the list is never read as an end. A row with no
+    date, more than one status, or not shown on OHA's page is quarantined.
+    A record's id carries its status and date, because OHA edits one item
+    per water in place.
+  - **Kansas (KDHE).** Layer 6 of KDHE's own MapServer, every status since
+    2010, read in 2,000-row pages 5 s apart, with robots.txt (404, no rules)
+    read first. Watch, Warning, Advisory and Lake Hazard are advisories;
+    Lifted is an explicit end. "Historical Pending" and "MIXED" decide
+    nothing until KDHE says what they mean (asked 11-02). A read that stops
+    before the layer's last row, misses a field or has under 1,000 rows is
+    refused whole.
+  - **Any other status** is undetermined (0027), never an end.
+- **Fixtures are invented.** `pipeline/tests/fixtures/states-invented/` is
+  written by hand in each agency's format with invented waters ("Invented
+  Lake", "INVENTED LAKE A"); no agency data is committed.
+- **Development reads, 2026-11-06.** Each host's robots.txt, then the Kansas
+  layer metadata, a status count, a four-row sample and one full read (two
+  pages); one read of the Oregon list. Against them: Oregon gave 56 records
+  from 57 rows (one "Permanent Advisory" row has no date and is
+  quarantined); Kansas gave 3,105 records from 3,116 rows (11 repeated
+  status rows). Nothing from these reads is committed.
+- **Turning one on** is the owner's call after the agency's yes: record the
+  grant's text in docs/LICENSES-AND-ATTRIBUTION.md, then a separate change
+  adds the state to `SOURCES`, `site.STATE_NAMES`, the snapshot and the app.
+
+Open questions for the agencies, before any page: what a lifted Oregon
+row's date records (the lift, or the last change), whether Oregon has
+coordinates Lake Notice may use, and what Kansas's "Historical Pending" and
+"MIXED" mean.
