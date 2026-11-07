@@ -198,6 +198,65 @@ EPA_CYAN = Source(
     ),
 )
 
+# States whose readers are built but switched off (DECISIONS 0037). Neither
+# agency publishes a reuse grant, so under 0004 the license is "unknown" and
+# the data is not used. Permission was asked in writing on 2026-11-02. These
+# are deliberately not in ``SOURCES``: nothing in the snapshot, site or app
+# names them until an agency says yes and the owner turns its flag on.
+OR_OHA_HAB = Source(
+    id="or-oha-hab",
+    state="OR",
+    agency="Oregon Health Authority",
+    program="Harmful Algae Blooms program, recreational use health advisories",
+    dataset_url=(
+        "https://www.oregon.gov/oha/PH/HEALTHYENVIRONMENTS/RECREATION/"
+        "HARMFULALGAEBLOOMS/_api/web/GetList("
+        "'%2Foha%2FPH%2FHEALTHYENVIRONMENTS%2FRECREATION%2FHARMFULALGAEBLOOMS"
+        "%2FLists%2FCurrentCyanobacteriaAdvisories')/items"
+    ),
+    official_map_url=(
+        "https://www.oregon.gov/oha/PH/HEALTHYENVIRONMENTS/RECREATION/"
+        "HARMFULALGAEBLOOMS/Pages/Blue-GreenAlgaeAdvisories.aspx"
+    ),
+    license="unknown (oregon.gov terms grant no reuse right; permission asked 2026-11-02)",
+    rights="Not used until the Oregon Health Authority agrees in writing",
+    license_read_on="2026-11-02",
+    attribution="",
+    contact="hab.health@oha.oregon.gov",
+    lift_semantics="explicit_record",
+    lift_explanation=(
+        "An advisory or precaution ends only when the Oregon Health Authority "
+        'lists it as "has been lifted". A water that leaves the list is not '
+        "read as an end."
+    ),
+    enabled=False,
+)
+
+KS_KDHE_HAB = Source(
+    id="ks-kdhe-hab",
+    state="KS",
+    agency="Kansas Department of Health and Environment",
+    program="Harmful Algal Bloom program, public water status",
+    dataset_url=(
+        "https://maps.kdhe.ks.gov/kdhe_doe/rest/services/HAB/"
+        "HAB_Manager_Status_Map/MapServer/6"
+    ),
+    official_map_url="https://www.kdhe.ks.gov/777/Harmful-Algal-Blooms",
+    license="unknown (no reuse grant found; permission asked 2026-11-02)",
+    rights="Not used until the Kansas Department of Health and Environment agrees in writing",
+    license_read_on="2026-11-06",
+    attribution="",
+    contact="Kansas Department of Health and Environment, HAB program",
+    lift_semantics="explicit_record",
+    lift_explanation=(
+        'A status ends only when the department records a later "Lifted" for '
+        "the same water. A water with no newer status is not read as an end."
+    ),
+    enabled=False,
+)
+
+FLAGGED_SOURCES: dict[str, Source] = {s.id: s for s in (OR_OHA_HAB, KS_KDHE_HAB)}
+
 SOURCES: dict[str, Source] = {s.id: s for s in (CA_SWRCB_FHAB, MO_DNR_HAB, EPA_CYAN)}
 
 

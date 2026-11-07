@@ -7,6 +7,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- Oregon (OHA) and Kansas (KDHE) readers, each behind its own flag
+  (`LN_ENABLE_OREGON`, `LN_ENABLE_KANSAS`) that is off. Off, a build is
+  byte-identical to one without them; on, a state is read for review only
+  and never published. Neither agency has granted reuse yet, so nothing
+  goes live (docs/DECISIONS.md 0037).
 - The app's purchase is named "Lake Alerts & Widget" (product id
   unchanged), and the App Store listing and Review Notes are rewritten around
   algae advisories, with none of Trout Truck's headings or captions and a
