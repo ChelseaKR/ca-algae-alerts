@@ -28,7 +28,7 @@ from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import i18n, indexnow, levels, newyork, where_to_check, wording
+from caalgae import i18n, indexnow, levels, llms, newyork, where_to_check, wording
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import UNAVAILABLE_INDEX_DAYS, slugify
 from caalgae.water_names import display_water
@@ -1275,6 +1275,8 @@ class SiteBuilder:
             encoding="utf-8",
         )
         (self.out / ".nojekyll").write_text("", encoding="utf-8")
+        # /llms.txt (llms.py), plain text served as text/plain by the host.
+        (self.out / "llms.txt").write_text(llms.render(self), encoding="utf-8")
         # The IndexNow ownership file (indexnow.py), served from the domain's
         # root. Public by design. Only a build for lakenotice.com carries it,
         # because the key proves ownership of that one host; find_key reads the
