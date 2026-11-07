@@ -41,6 +41,17 @@ robots.txt, read 2026-11-06: `https://www.oregon.gov/robots.txt` 200,
 disallows `/_layouts`, `/_vti_bin` and search pages, nothing under `/oha/`
 or `_api`; `https://maps.kdhe.ks.gov/robots.txt` 404 (no rules under 0011).
 
+## Pending, not used: Iowa (added 2026-11-06; DECISIONS 0038)
+
+A reader is built behind a flag that is off. **Unknown = not used.**
+
+| Source | What the reader would take | Terms found (verbatim, where, date read) | Commercial reuse | Status |
+|---|---|---|---|---|
+| Iowa Department of Natural Resources, Beach Monitoring results (AQuIA CSV downloads `https://programs.iowadnr.gov/aquia/Programs/DownloadBeachResults/State` and `.../CountyCity`) | `siteID`, `name`, `sampleDate`, `microcystin`, `status`, `comments` | None found. AQuIA's "Site Policies" link, <https://www.iowa.gov/pages/policies>, answered 404 on 2026-11-06; the API guide (<https://programs.iowadnr.gov/aquia/Docs/API>) states no license. | Unknown | Permission not yet asked (AQuIA contact form, topic "Beaches"). Not used |
+
+robots.txt, read 2026-11-06: `https://programs.iowadnr.gov/robots.txt` 404
+(no rules under 0011).
+
 ## Attribution shown
 
 Every site page footer and the app's About screen carry:

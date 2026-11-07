@@ -1,4 +1,4 @@
-"""States whose readers are built but switched off (DECISIONS 0037).
+"""States whose readers are built but switched off (DECISIONS 0037, 0038).
 
 Each state has its own flag, an environment variable read like Trout
 Truck's: exactly ``1`` is on; unset, empty and ``0`` are off; anything else
@@ -25,10 +25,10 @@ from pathlib import Path
 
 import httpx
 
-from caalgae import fetch, kansas, oregon
+from caalgae import fetch, iowa, kansas, oregon
 from caalgae.history import record_to_json
 from caalgae.normalize import Normalized
-from caalgae.sources import KS_KDHE_HAB, OR_OHA_HAB, Source
+from caalgae.sources import IA_DNR_BEACHES, KS_KDHE_HAB, OR_OHA_HAB, Source
 
 
 class FlagError(ValueError):
@@ -50,6 +50,10 @@ READERS: dict[str, Reader] = {
     ),
     "KS": Reader(
         "KS", "LN_ENABLE_KANSAS", KS_KDHE_HAB, kansas.fetch_pages, kansas.normalize
+    ),
+    # DECISIONS 0038.
+    "IA": Reader(
+        "IA", "LN_ENABLE_IOWA", IA_DNR_BEACHES, iowa.fetch_pages, iowa.normalize
     ),
 }
 

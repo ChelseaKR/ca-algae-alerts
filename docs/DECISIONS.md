@@ -1267,3 +1267,66 @@ Open questions for the agencies, before any page: what a lifted Oregon
 row's date records (the lift, or the last change), whether Oregon has
 coordinates Lake Notice may use, and what Kansas's "Historical Pending" and
 "MIXED" mean.
+
+## 0038 — An Iowa reader is built and tested behind a flag that is off (2026-11-06)
+
+Same pattern as 0037, for the Iowa Department of Natural Resources' beach
+monitoring results (AQuIA). The reader is `pipeline/src/caalgae/iowa.py`,
+registered in `pipeline/src/caalgae/flagged.py` under `LN_ENABLE_IOWA`. No
+reuse terms were found at all (AQuIA's "Site Policies" link answered 404 on
+2026-11-06), so under 0004 the license is recorded as `unknown` and the data
+is not used. Permission has not been asked yet; the draft is for the AQuIA
+contact form, topic "Beaches".
+
+- **The flag, off means identical, on is review only, the source is off and
+  unlisted:** exactly as 0037. `sources.IA_DNR_BEACHES` has `enabled=False`,
+  no attribution, and is kept out of `SOURCES`. A default build of the
+  fixture site, snapshot and history is byte-identical with or without the
+  Iowa reader registered and with `LN_ENABLE_IOWA=0`; with it on, the
+  published files are still the default's byte for byte and only
+  `ia-review.json` is written (`pipeline/tests/test_flagged_iowa.py`).
+- **What is read.** The two CSV downloads on programs.iowadnr.gov (robots.txt
+  404, no rules under 0011), `DownloadBeachResults/State` and
+  `.../CountyCity`, 5 s apart: `siteID`, `name`, `sampleDate`,
+  `microcystin`, `status`, `comments`. The E. coli columns are never read.
+  The files have no coordinates, so none is given.
+- **The sign is shared, so the toxin result decides.** The DNR posts
+  "Swimming is Not Recommended" for indicator bacteria and for
+  cyanobacteria toxins alike. A row is an algae advisory only when that sign
+  is posted and the microcystin result is over the DNR's own threshold,
+  "8 µg/L total microcystins". The level is the file's own status text,
+  under the `other_advisory` tier; no level is invented.
+  - The same sign with a result of 8, under 8, blank or unreadable decides
+    nothing (it may be a bacteria advisory, and is not shown as "no
+    advisory").
+  - "Watch / General Information" with a result under 8 (a reporting limit
+    like `<0.3` counts as under only when the limit is) is an explicit end.
+    With a result over 8 it is undetermined (0027); with 8 or no result it
+    decides nothing.
+  - "Beach Closed", "Special Status", "Insufficient Data", "County-City
+    Beach" and a blank status decide nothing. Any other status is
+    undetermined (0027).
+  - Both spellings are read: the beach page's "Swimming is Not Recommended"
+    and "Watch / General Information", and AQuIA's status reference's
+    "Swimming Not Recommended" and "Ok for Swimming". Which one the download
+    carries was not seen (off season).
+- **Refusals.** A download missing a column, answering a web page, not
+  UTF-8, or with no rows at all is refused whole. Out of season the DNR
+  publishes no rows, and an empty read is never taken as "no advisory".
+- **Fixtures are invented.** `ia-state.csv` and `ia-countycity.csv` under
+  `pipeline/tests/fixtures/states-invented/`, written by hand in AQuIA's
+  column layout with invented beaches ("Invented Lake Beach") and site ids
+  in the 99000000s; no DNR data is committed.
+- **Development reads, 2026-11-06,** with a User-Agent naming Lake Notice and
+  chelsea@chelseakr.com: programs.iowadnr.gov/robots.txt (404), the API
+  guide, the beach page, the State download (header only, no rows, off
+  season), the status reference and the weekly results (an empty list).
+  Nothing from these reads is committed.
+- **Turning it on** is the owner's call after the DNR's written yes, as in
+  0037.
+
+Open questions for the DNR, before any page: which status words the
+download carries in season; whether a result of exactly 8 µg/L is over the
+threshold; whether a "Swimming is Not Recommended" sign with a high
+microcystin result can still be for bacteria alone; and coordinates Lake
+Notice may use.

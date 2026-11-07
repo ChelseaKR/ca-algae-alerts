@@ -24,6 +24,8 @@ OR_LIST = INVENTED / "or-list.json"
 RUN = dt.date(2026, 10, 12)
 ROOT = Path(__file__).resolve().parents[2]
 FLAGS = ("LN_ENABLE_OREGON", "LN_ENABLE_KANSAS")
+# Every registered flag, Iowa's included (DECISIONS 0038; test_flagged_iowa.py).
+ALL_FLAGS = (*FLAGS, "LN_ENABLE_IOWA")
 ADVISORY_WORDS = {
     "OR": oregon.ADVISORY_STATUSES | oregon.END_STATUSES,
     "KS": kansas.ADVISORY_STATUSES | {kansas.END_STATUS} | kansas.UNREAD_STATUSES,
@@ -32,7 +34,7 @@ ADVISORY_WORDS = {
 
 @pytest.fixture(autouse=True)
 def _flags_unset(monkeypatch: pytest.MonkeyPatch) -> None:
-    for flag in FLAGS:
+    for flag in ALL_FLAGS:
         monkeypatch.delenv(flag, raising=False)
 
 
@@ -75,7 +77,7 @@ def test_each_flag_turns_on_its_own_state_and_nothing_else() -> None:
 
 
 def test_the_flags_are_distinct_and_the_sources_are_off_and_unlisted() -> None:
-    assert sorted(r.flag for r in flagged.READERS.values()) == sorted(FLAGS)
+    assert sorted(r.flag for r in flagged.READERS.values()) == sorted(ALL_FLAGS)
     for reader in flagged.READERS.values():
         assert reader.source.enabled is False
         assert reader.source.license.startswith("unknown")
@@ -83,7 +85,11 @@ def test_the_flags_are_distinct_and_the_sources_are_off_and_unlisted() -> None:
         assert reader.source.id not in sources.SOURCES
         assert reader.source not in sources.enabled_sources()
         assert reader.source.state == reader.state
-    assert set(sources.FLAGGED_SOURCES) == {"or-oha-hab", "ks-kdhe-hab"}
+    assert set(sources.FLAGGED_SOURCES) == {
+        "or-oha-hab",
+        "ks-kdhe-hab",
+        "ia-dnr-beaches",
+    }
 
 
 def test_no_workflow_mentions_a_flag_or_the_review_options() -> None:
@@ -91,7 +97,7 @@ def test_no_workflow_mentions_a_flag_or_the_review_options() -> None:
     assert workflows, "the workflows were not found"
     for path in workflows:
         text = path.read_text(encoding="utf-8")
-        for word in (*FLAGS, "--state-fixture", "--state-review-out"):
+        for word in (*ALL_FLAGS, "--state-fixture", "--state-review-out"):
             assert word not in text, f"{path.name} mentions {word}"
 
 
@@ -157,7 +163,7 @@ def test_flags_set_to_zero_build_the_same_bytes(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     default, _ = build(tmp_path / "default", capsys)
-    for flag in FLAGS:
+    for flag in ALL_FLAGS:
         monkeypatch.setenv(flag, "0")
     zero, _ = build(
         tmp_path / "zero", capsys, "--state-review-out", str(tmp_path / "r")
