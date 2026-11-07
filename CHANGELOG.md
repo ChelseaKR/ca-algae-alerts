@@ -7,6 +7,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- An Iowa DNR beach reader behind its own flag (`LN_ENABLE_IOWA`) that is
+  off. It counts a "Swimming is Not Recommended" sign as an algae advisory
+  only with a microcystin result over 8 µg/L, since the sign is shared with
+  bacteria. Off, a build is byte-identical; on, it writes a review file only.
+  No reuse terms were found, so nothing goes live (docs/DECISIONS.md 0038).
 - Oregon (OHA) and Kansas (KDHE) readers, each behind its own flag
   (`LN_ENABLE_OREGON`, `LN_ENABLE_KANSAS`) that is off. Off, a build is
   byte-identical to one without them; on, a state is read for review only

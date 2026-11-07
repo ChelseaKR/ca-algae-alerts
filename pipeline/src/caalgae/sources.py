@@ -255,7 +255,37 @@ KS_KDHE_HAB = Source(
     enabled=False,
 )
 
-FLAGGED_SOURCES: dict[str, Source] = {s.id: s for s in (OR_OHA_HAB, KS_KDHE_HAB)}
+# Iowa (DECISIONS 0038): the same pattern. No reuse terms were found at all
+# (AQuIA's "Site Policies" link answered 404 on 2026-11-06), so the license
+# is "unknown" and the data is not used.
+IA_DNR_BEACHES = Source(
+    id="ia-dnr-beaches",
+    state="IA",
+    agency="Iowa Department of Natural Resources",
+    program=(
+        "Beach Monitoring Program (AQuIA), with the Iowa Department of Health "
+        "and Human Services"
+    ),
+    dataset_url="https://programs.iowadnr.gov/aquia/Programs/DownloadBeachResults",
+    official_map_url="https://programs.iowadnr.gov/aquia/Programs/Beaches",
+    license="unknown (no reuse terms found; permission not yet asked)",
+    rights="Not used until the Iowa Department of Natural Resources agrees in writing",
+    license_read_on="2026-11-06",
+    attribution="",
+    contact="AQuIA contact form, https://programs.iowadnr.gov/aquia/Docs/Contact",
+    lift_semantics="explicit_record",
+    lift_explanation=(
+        "A beach's algae advisory ends only when a later weekly sample is "
+        'posted "Watch / General Information" with a microcystin result under '
+        "8 ug/L. "
+        "A beach with no newer sample is not read as an end."
+    ),
+    enabled=False,
+)
+
+FLAGGED_SOURCES: dict[str, Source] = {
+    s.id: s for s in (OR_OHA_HAB, KS_KDHE_HAB, IA_DNR_BEACHES)
+}
 
 SOURCES: dict[str, Source] = {s.id: s for s in (CA_SWRCB_FHAB, MO_DNR_HAB, EPA_CYAN)}
 
