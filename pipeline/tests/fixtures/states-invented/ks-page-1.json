@@ -1,0 +1,118 @@
+{
+ "displayFieldName": "waterbody_name",
+ "fields": [
+  {
+   "name": "SQLVW_ID",
+   "type": "esriFieldTypeOID",
+   "alias": "SQLVW_ID"
+  },
+  {
+   "name": "objectid",
+   "type": "esriFieldTypeInteger",
+   "alias": "objectid"
+  },
+  {
+   "name": "waterbody_id",
+   "type": "esriFieldTypeString",
+   "alias": "waterbody_id"
+  },
+  {
+   "name": "waterbody_name",
+   "type": "esriFieldTypeString",
+   "alias": "waterbody_name"
+  },
+  {
+   "name": "status",
+   "type": "esriFieldTypeString",
+   "alias": "status"
+  },
+  {
+   "name": "Status_Set_Date",
+   "type": "esriFieldTypeDate",
+   "alias": "Status_Set_Date"
+  },
+  {
+   "name": "LATITUDE",
+   "type": "esriFieldTypeDouble",
+   "alias": "LATITUDE"
+  },
+  {
+   "name": "LONGITUDE",
+   "type": "esriFieldTypeDouble",
+   "alias": "LONGITUDE"
+  }
+ ],
+ "features": [
+  {
+   "attributes": {
+    "waterbody_id": "LM9001",
+    "waterbody_name": "INVENTED LAKE A",
+    "status": "Watch",
+    "Status_Set_Date": 1780635600000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9001",
+    "waterbody_name": "INVENTED LAKE A",
+    "status": "Warning",
+    "Status_Set_Date": 1781845200000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9001",
+    "waterbody_name": "INVENTED LAKE A",
+    "status": "Lifted",
+    "Status_Set_Date": 1786683600000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9002",
+    "waterbody_name": "INVENTED RESERVOIR B",
+    "status": "Advisory",
+    "Status_Set_Date": 1752210000000,
+    "LATITUDE": 39.1,
+    "LONGITUDE": -96.1
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9002",
+    "waterbody_name": "INVENTED RESERVOIR B",
+    "status": "Lake Hazard",
+    "Status_Set_Date": 1783054800000,
+    "LATITUDE": 39.1,
+    "LONGITUDE": -96.1
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9003",
+    "waterbody_name": "INVENTED POND C",
+    "status": "Historical Pending",
+    "Status_Set_Date": 1564722000000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  },
+  {
+   "attributes": {
+    "waterbody_id": "LM9003",
+    "waterbody_name": "INVENTED POND C",
+    "status": "MIXED",
+    "Status_Set_Date": 1599195600000,
+    "LATITUDE": 38.5,
+    "LONGITUDE": -97.5
+   }
+  }
+ ],
+ "exceededTransferLimit": true
+}
