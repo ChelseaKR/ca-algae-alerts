@@ -1198,3 +1198,34 @@ of water pages (~2026-11-25) is not disturbed.
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
 
+
+## 0039 — A saved lake missing from the data says what is missing, dated, and is not a finding (2026-11-07)
+
+The pre-submission check of 2026-11-07 found one app line left from the
+launch review's honesty list (source-outage audit finding 9). Favorites
+saves only a lake's id, and a saved lake the data on the phone does not
+have showed "A saved lake / No longer in the state's current file." That
+claims something the phone cannot know. With no data file on the phone it
+was shown for every favorite, and a lake can also leave Lake Notice's data
+because a state's layer dropped it or a state is switched off.
+
+- **No data on the phone:** "Lake Notice has no lake data on this iPhone
+  yet, so it can't show this lake's status."
+- **A state with no lakes in the data** (the id's state prefix, when this
+  build knows the state): "Lake Notice's data dated <run date> has no
+  Missouri lakes, so it can't show this lake's status."
+- **Otherwise:** "This lake is not in Lake Notice's data dated <run date>,
+  so it can't show its status."
+- Each ends with "That is not a finding of no advisory." No level, no
+  "no advisory" and no state's-file claim. An id prefix this build does not
+  know names no state.
+
+The copy is `SavedLakeCopy` in AlgaeCore. The widget already counted these
+lakes as "not in the current data" and is unchanged. Everything else on the
+launch review's pre-submission code list was already on main (0024, 0027,
+0030) or is in open PRs #37 (0031) and #42 (0036).
+
+Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/SavedLakeCopyTests.swift`.
+Negative controls: the old line fails the same checks, and with `detail`
+returning it three of the five tests fail; with Missouri waters in the data
+a Missouri id reads as a missing lake, not a missing state.
