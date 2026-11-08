@@ -1166,6 +1166,55 @@ PR #32, which rewrites that block; Missouri's data-unavailable mode and its
 name check, the subtitle and category picks, the Missouri readings and the
 level summaries are the owner's.
 
+## 0031 — App words come from the snapshot, an alert is delivered once, and the support page says the app is not out (2026-11-05)
+
+The launch review of 2026-11-05 left six small app items after PR #36
+(DECISIONS 0030). Each one is a place where the app could say something the
+data on the phone does not support.
+
+- **"The last 30 days" counts back from the snapshot's run date**, not from
+  this iPhone's today. On an old copy (no network, a stuck source) the list
+  used to say "None posted in the last 30 days" about advisories posted the
+  week the file was made. The header now names the date: "Posted in the 30
+  days to Oct 12, 2026". `AppEnvironment.today` is removed so nothing else
+  measures from the device's calendar.
+- **The "All lakes" footer no longer says a missing lake has "no advisory
+  records at all".** Some waters have only rows Lake Notice cannot read, and a
+  state's layer can drop a lake. It now reads "As of the data dated <run
+  date>, a lake missing from this list has no advisory record Lake Notice
+  could read. Most lakes are never tested."
+- **About and the introduction name the states the snapshot carries
+  waters for**, in source order, with each state's first record year taken
+  from its records. A state whose source is listed but whose waters are gone
+  is not named. A state with no dated record gets no year, never a made-up
+  one. With no snapshot, no state is named.
+- **An alert key is delivered at most once.** The key is the water, the
+  level and the posted date (`PlannedNotification.id`). Keys iOS accepted are
+  saved to `delivered-alerts.json`, so a relaunch or a new snapshot cannot
+  repeat one. The baseline alone could: a short file that drops an advisory
+  and a later file that brings it back reads as "no advisory, then
+  advisory". A new posting date or a new level is a new key and still
+  alerts. A missing or corrupt file reads as empty, which can only allow an
+  alert, never hide a new one. Keys are kept; a few favorites make a few
+  keys a year.
+- **`processing` is removed from `UIBackgroundModes`.** The app registers
+  one `BGAppRefreshTask` and no `BGProcessingTask`, so `fetch` is the only
+  mode in use. An unused mode invites an App Review question.
+- **The PrivacyInfo comment no longer points to `docs/APP-STORE.md`**, which
+  does not exist. It names Xcode's archive privacy report instead.
+- **The support page's app section says only what is true today**: the
+  iPhone app is not released, cannot be downloaded or bought, and the website
+  does not need it. The old "When do app alerts arrive?" answer, which
+  promised timing for an app nobody can install, is gone, and so is "help
+  with the iPhone app" in the page description. Restore, refund and alert
+  help is written when the app is released.
+
+Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/CoverageCopyTests.swift`,
+`DeliveredAlertsTests.swift`, `pipeline/tests/test_support_app_section.py`,
+and the UI test's header check. Negative controls: measuring from the
+device's today turns the stale-snapshot test red; an empty delivered set
+turns the drop-and-return, relaunch and one-key tests red.
+
 ## 0032 — The home and /advisories/ titles name Missouri while its data is live (owner, 2026-11-05)
 
 The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found

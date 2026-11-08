@@ -17,6 +17,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
   byte-identical to one without them; on, a state is read for review only
   and never published. Neither agency has granted reuse yet, so nothing
   goes live (docs/DECISIONS.md 0037).
+- The app never delivers the same alert twice, across a relaunch or a new
+  snapshot; "the last 30 days" and the "All lakes" footer count from the
+  data's run date; About and the introduction name only the states the data
+  carries; the unused `processing` background mode is gone; and the support
+  page says the iPhone app is not released yet (docs/DECISIONS.md 0031).
 - The app's purchase is named "Lake Alerts & Widget" (product id
   unchanged), and the App Store listing and Review Notes are rewritten around
   algae advisories, with none of Trout Truck's headings or captions and a
