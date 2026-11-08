@@ -83,6 +83,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- In the app, a saved lake the data on the phone does not have no longer
+  says "No longer in the state's current file." It names what is missing
+  (no data on this iPhone yet, a state with no lakes in the data, or the lake
+  not in the data dated <run date>) and says that is not a finding of no
+  advisory (docs/DECISIONS.md 0039).
+
 - New York bloom history is on (docs/DECISIONS.md 0021): a `/state/ny/` page
   and 477 water pages, with the New York page and the 50 waters with the most
   reports in the sitemap (546 URLs instead of 495) and the rest `noindex`.
