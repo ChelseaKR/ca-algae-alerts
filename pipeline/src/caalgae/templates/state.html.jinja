@@ -2,15 +2,20 @@
 {% from "_macros.html.jinja" import required_disclaimer %}
 {% block content %}
 <h1>{{ state_name }}: lake and river algae advisories</h1>
-<p class="lede">{{ waters|length }} waters appear in the records of the {{ state_source.agency }}. Waters whose latest record is an advisory come first, newest first.</p>
+{% if outage %}
+<div class="notice-unavailable" role="note">
+  <p><strong>{{ outage_banner }}</strong> Check the <a href="{{ outage.map_url }}">{{ state_name }} state map</a> before you go.</p>
+</div>
+{% endif %}
+<p class="lede">{{ waters|length }} waters appear in the records of the {{ state_source.agency }}.{% if not outage %} Waters whose latest record is an advisory come first, newest first.{% endif %}</p>
 {% if state == "CA" %}<p><a href="{{ root }}county/">Browse California by county</a>.</p>{% endif %}
 <p class="muted">{{ state_source.lift_explanation }}</p>
 <table>
   <caption class="visually-hidden">Waters in {{ state_name }} and what the state's latest record says</caption>
-  <thead><tr><th scope="col">Water</th><th scope="col">Latest record</th></tr></thead>
+  <thead><tr><th scope="col">Water</th><th scope="col">{{ unavailable_history_heading(outage.since) if outage else "Latest record" }}</th></tr></thead>
   <tbody>
   {% for w in waters %}
-    <tr><td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td><td>{{ list_row(w, file_date) }}</td></tr>
+    <tr><td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td><td>{% if outage %}No current status. {% if row_date(w) %}Newest record read: {{ row_date(w)|date }}.{% endif %}{% else %}{{ list_row(w, file_date) }}{% endif %}</td></tr>
   {% endfor %}
   </tbody>
 </table>

@@ -1,0 +1,135 @@
+{
+ "value": [
+  {
+   "ID": 901,
+   "Title": "Invented Lake",
+   "Waterbody": "<div class=\"ExternalClassX\">​<strong>Invented Lake (north arm&#160;to the dam)​</strong><br></div>",
+   "County": "Lane",
+   "Status": [
+    "Advisory in effect"
+   ],
+   "Date": "2026-07-10T07:00:00Z",
+   "Details": "Visible bloom",
+   "Toxin_x002f_Measure": "<div class=\"ExternalClassY\">Microcystin 9.9 ug/L​<br></div>",
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 902,
+   "Title": "Invented Reservoir",
+   "Waterbody": "<div><strong>Invented Reservoir</strong></div>",
+   "County": "Douglas",
+   "Status": [
+    "Precaution has been lifted"
+   ],
+   "Date": "2026-09-30T07:00:00Z",
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 903,
+   "Title": "Invented River",
+   "Waterbody": null,
+   "County": "Linn",
+   "Status": [
+    "Precaution in effect"
+   ],
+   "Date": "2026-08-21T07:00:00Z",
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 904,
+   "Title": "Invented Pond",
+   "Waterbody": "<div><strong>Invented Pond</strong></div>",
+   "County": "Coos",
+   "Status": [
+    "Permanent Advisory"
+   ],
+   "Date": "2020-06-01T07:00:00Z",
+   "Details": "Ongoing toxins.",
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 905,
+   "Title": "Invented Creek",
+   "Waterbody": "<div>Invented Creek</div>",
+   "County": "Jackson",
+   "Status": [
+    "Boil water notice"
+   ],
+   "Date": "2026-08-01T07:00:00Z",
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 906,
+   "Title": "Invented Hidden Lake",
+   "Waterbody": "<div>x</div>",
+   "County": "Lane",
+   "Status": [
+    "Advisory in effect"
+   ],
+   "Date": "2026-08-01T07:00:00Z",
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": false
+  },
+  {
+   "ID": 907,
+   "Title": "Invented Two Status Lake",
+   "Waterbody": "<div>x</div>",
+   "County": "Lane",
+   "Status": [
+    "Advisory in effect",
+    "Precaution in effect"
+   ],
+   "Date": "2026-08-01T07:00:00Z",
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 908,
+   "Title": "Invented Undated Lake",
+   "Waterbody": "<div>x</div>",
+   "County": "Lane",
+   "Status": [
+    "Advisory in effect"
+   ],
+   "Date": null,
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 909,
+   "Title": "",
+   "Waterbody": "<div>x</div>",
+   "County": "Lane",
+   "Status": [
+    "Advisory in effect"
+   ],
+   "Date": "2026-08-01T07:00:00Z",
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  },
+  {
+   "ID": 910,
+   "Title": "Invented Future Lake",
+   "Waterbody": "<div>x</div>",
+   "County": "Lane",
+   "Status": [
+    "Advisory in effect"
+   ],
+   "Date": "2027-03-01T08:00:00Z",
+   "Details": null,
+   "Toxin_x002f_Measure": null,
+   "Display_x002d_On_x002d_Page": true
+  }
+ ]
+}

@@ -12,6 +12,11 @@ public enum FreeTier {
         !widgetsRequireFullAccess || isEntitled
     }
 
+    /// The purchase's display name, named for what it adds (DECISIONS 0030).
+    /// Must match `Configuration.storekit` and the App Store Connect record;
+    /// the product id (`net.chelseakr.algaealerts.fullaccess`) never changes.
+    public static let purchaseName = "Lake Alerts & Widget"
+
     /// The words every unlock surface uses for what the purchase includes.
     public static let unlockSummary = "Alerts when a favorite lake gets a new advisory, and a Home Screen and Lock Screen widget for your favorites."
 }
