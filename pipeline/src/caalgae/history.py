@@ -105,6 +105,10 @@ class HistoryEntry:
 class History:
     entries: dict[str, HistoryEntry]
     files: list[dict[str, Any]]
+    # A source in its "data unavailable" mode (DECISIONS 0024), by source id:
+    # ``{"since": "YYYY-MM-DD", "reason": str}``. ``since`` is the first run
+    # that found it unavailable and is kept until a good read clears it.
+    outages: dict[str, dict[str, str]] = dataclasses.field(default_factory=dict)
 
     def last_file(self, source: str) -> dict[str, Any] | None:
         mine = [f for f in self.files if f.get("source") == source]
@@ -138,7 +142,11 @@ def load(path: Path) -> History:
         )
         for record_id, item in data["records"].items()
     }
-    return History(entries=entries, files=list(data["files"]))
+    return History(
+        entries=entries,
+        files=list(data["files"]),
+        outages=dict(data.get("outages", {})),
+    )
 
 
 def save(history: History, path: Path) -> None:
@@ -158,7 +166,10 @@ def save(history: History, path: Path) -> None:
         if entry.removed_from_source:
             item["removed_from_source"] = entry.removed_from_source
         records[record_id] = item
-    payload = {"version": HISTORY_VERSION, "files": history.files, "records": records}
+    payload: dict[str, Any] = {"version": HISTORY_VERSION, "files": history.files}
+    if history.outages:
+        payload["outages"] = dict(sorted(history.outages.items()))
+    payload["records"] = records
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, indent=1, sort_keys=False, ensure_ascii=False)
     path.write_text(text + "\n", encoding="utf-8")
@@ -252,4 +263,4 @@ def merge(
         old = entries[record_id]
         entries[record_id] = dataclasses.replace(old, removed_from_source=today)
     files = [*history.files, file_info]
-    return History(entries=entries, files=files)
+    return History(entries=entries, files=files, outages=dict(history.outages))

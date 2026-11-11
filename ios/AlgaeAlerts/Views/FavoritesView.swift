@@ -26,10 +26,10 @@ struct FavoritesView: View {
                             if let water = env.snapshot?.waterbody(id: id) {
                                 NavigationLink(value: id) { LakeRow(water: water, isFavorite: false) }
                             } else {
+                                // Absence is not a status (DECISIONS 0039).
                                 VStack(alignment: .leading, spacing: 4) {
-                                    SignChip(band: NoticeBand(Status(kind: .undetermined)))
-                                    Text("A saved lake").font(.headline)
-                                    Text("No longer in the state's current file.").font(.subheadline).foregroundStyle(Theme.secondaryText)
+                                    Text(SavedLakeCopy.title).font(.headline)
+                                    Text(SavedLakeCopy.detail(id: id, snapshot: env.snapshot)).font(.subheadline).foregroundStyle(Theme.secondaryText)
                                 }
                                 .accessibilityElement(children: .combine)
                             }

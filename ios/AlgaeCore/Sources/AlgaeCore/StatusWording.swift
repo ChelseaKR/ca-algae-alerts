@@ -19,6 +19,7 @@ public enum StatusWording {
     }
 
     public static func headline(_ status: Status) -> String {
+        if let outage = status.unavailable { return unavailableStatus(outage) }
         switch status.kind {
         case .advisory:
             let posted = status.posted?.label ?? "on an unrecorded date"
@@ -40,8 +41,27 @@ public enum StatusWording {
         }
     }
 
+    // A state whose data is unavailable (DECISIONS 0024). Mirrors
+    // `unavailable_status` and `unavailable_banner` in wording.py.
+    public static func unavailableStatus(_ outage: Status.Outage) -> String {
+        "No current status: \(outage.stateName)'s data unavailable since \(outage.since.label)."
+    }
+
+    public static func unavailableBanner(_ outage: Status.Outage) -> String {
+        var line = "\(outage.stateName)'s harmful algal bloom data stopped reaching Lake Notice on \(outage.since.label), so Lake Notice can't show this water's current status."
+        if let last = outage.lastRead {
+            line += " The records below are the last ones it read, on \(last.label)."
+        }
+        return line
+    }
+
+    public static func unavailableHistoryHeading(_ outage: Status.Outage) -> String {
+        "Records read before \(outage.since.label)"
+    }
+
     /// A short form for list rows and the widget.
     public static func shortLine(_ status: Status) -> String {
+        if let outage = status.unavailable { return "No current data since \(outage.since.label)" }
         switch status.kind {
         case .advisory:
             return "\(levelName(status)) · posted \(status.posted?.label ?? "date not recorded")"
@@ -63,6 +83,9 @@ public enum StatusWording {
     }
 
     public static func caveat(_ status: Status) -> String {
+        if status.unavailable != nil {
+            return "The records here are history, not a current status. Check the state's map and any signs posted at the water."
+        }
         if status.kind == .advisory {
             return "Reporting is voluntary, so the state may not have recorded an end even if conditions changed. Check posted signs and the official map."
         }
@@ -153,6 +176,9 @@ public enum StatusWording {
     public static let notMedicalAdvice = "Lake Notice republishes state records for information only. It is not medical advice, and records can be late or wrong. In an emergency, call 911. For a possible poisoning, call Poison Control at 1-800-222-1222."
 
     public static func dogAnswer(name: String, status: Status) -> String {
+        if let outage = status.unavailable {
+            return "Lake Notice has no current \(outage.stateName) data for \(name), so the records cannot answer this. Check the state's map and posted signs, and keep your dog out of discolored or scummy water."
+        }
         switch status.kind {
         case .advisory:
             return "The state has an advisory on file for \(name) (\(levelName(status))), last posted \(status.posted?.label ?? "on an unrecorded date"), and no all-clear recorded. Keep your dog out of the water and away from scum on the shore until the state records an end."

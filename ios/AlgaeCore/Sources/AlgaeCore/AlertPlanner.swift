@@ -47,6 +47,10 @@ public enum AlertPlanner {
         var next = baseline
         var out: [PlannedNotification] = []
         for water in snapshot.waterbodies where favorites.contains(water.id) {
+            // A state whose data is unavailable (DECISIONS 0024): no alert,
+            // and the baseline is kept, so its return announces only a real
+            // change since the last current read.
+            if water.status.unavailable != nil { continue }
             let now = AlertBaseline.Seen(water.status)
             defer { next.seen[water.id] = now }
             guard let before = baseline.seen[water.id], now.kind == .advisory else { continue }

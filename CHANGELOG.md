@@ -13,6 +13,16 @@ Keep a Changelog, and versions follow Semantic Versioning.
   mark. It also gets worded empty, offline and no-match screens, sharing a
   lake's web page, a support row and a review ask that follows Apple's rules
   (docs/DECISIONS.md 0036).
+- An Iowa DNR beach reader behind its own flag (`LN_ENABLE_IOWA`) that is
+  off. It counts a "Swimming is Not Recommended" sign as an algae advisory
+  only with a microcystin result over 8 µg/L, since the sign is shared with
+  bacteria. Off, a build is byte-identical; on, it writes a review file only.
+  No reuse terms were found, so nothing goes live (docs/DECISIONS.md 0038).
+- Oregon (OHA) and Kansas (KDHE) readers, each behind its own flag
+  (`LN_ENABLE_OREGON`, `LN_ENABLE_KANSAS`) that is off. Off, a build is
+  byte-identical to one without them; on, a state is read for review only
+  and never published. Neither agency has granted reuse yet, so nothing
+  goes live (docs/DECISIONS.md 0037).
 - The app never delivers the same alert twice, across a relaunch or a new
   snapshot; "the last 30 days" and the "All lakes" footer count from the
   data's run date; About and the introduction name only the states the data
@@ -41,6 +51,16 @@ Keep a Changelog, and versions follow Semantic Versioning.
   `accept_ca_edits` input lets a checked file through. A level the pipeline
   does not recognize now reads as undetermined, quoting the state's words,
   instead of letting an older "None" show through (docs/DECISIONS.md 0027).
+- When a state's data stops (Missouri's layer gone, changed, partial,
+  frozen in season for 30 days, or dropped by the department's own viewer),
+  its pages stay up with a dated "data unavailable since <date>" notice, no
+  status headline, the history labeled "Records read before <date>", and a
+  link to the department's map. They stay indexed for 30 days, then carry
+  noindex. The app shows the same notice and sends no alert for that state.
+  A new publish guard fails the deploy, keeping yesterday's site, when a
+  state's sitemap URLs vanish or drop by more than 20% without the state
+  being switched off or named in the `allow_page_drop` input
+  (docs/DECISIONS.md 0024).
 - A plain-language terms of use page at /terms/, linked from every page's
   footer next to privacy and listed in the sitemap. It names who runs the
   site, says in bold that the site is not a safety determination, tells
@@ -74,6 +94,20 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- In the app, a saved lake the data on the phone does not have no longer
+  says "No longer in the state's current file." It names what is missing
+  (no data on this iPhone yet, a state with no lakes in the data, or the lake
+  not in the data dated <run date>) and says that is not a finding of no
+  advisory (docs/DECISIONS.md 0039).
+
+- New York bloom history is on (docs/DECISIONS.md 0021): a `/state/ny/` page
+  and 477 water pages, with the New York page and the 50 waters with the most
+  reports in the sitemap (546 URLs instead of 495) and the rest `noindex`.
+  Water pages open with a line dated by DEC's yearly summary, and titles lead
+  with the bloom years ("Seneca Lake, NY: confirmed blooms in 7 years, 2019 to
+  2025"), never with advisory or status words. The New York copy test now runs
+  on every real page and splits sentences after a closing quotation mark.
+  To undo, set `site.NY_HISTORY_ENABLED` to False.
 - A California spot the state renames a few meters away is now the same
   spot. When two reports share a landmark once a trailing station code such
   as "(714SKIERS)" and case are set aside, and their points are within 25 m,
