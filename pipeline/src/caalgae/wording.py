@@ -511,3 +511,46 @@ def age_note(water: dict[str, Any], file_date: str | None) -> str | None:
             f"{date_label(newest)}."
         )
     return line
+
+
+# -- a state whose data is unavailable (DECISIONS 0024) ----------------------
+# Its pages stay up, but no sentence here claims a status: no level, no
+# "No all-clear recorded", no "recommends no advisory". Each line dates the
+# gap and points to the agency's own map. Website and app say the same.
+
+
+def unavailable_banner(
+    state_name: str,
+    since: str,
+    last_read: str | None,
+    what: str = "this water's current status",
+) -> str:
+    """The notice that leads every page of an unavailable state."""
+    line = (
+        f"{state_name}'s harmful algal bloom data stopped reaching Lake Notice "
+        f"on {date_label(since)}, so Lake Notice can't show {what}."
+    )
+    if last_read:
+        line += (
+            f" The records below are the last ones it read, on {date_label(last_read)}."
+        )
+    return line
+
+
+def unavailable_status(state_name: str, since: str) -> str:
+    """The status box's line, in place of a headline."""
+    return (
+        f"No current status: {state_name}'s data unavailable since {date_label(since)}."
+    )
+
+
+def unavailable_history_heading(since: str) -> str:
+    return f"Records read before {date_label(since)}"
+
+
+def unavailable_dog_answer(name: str, state_name: str) -> str:
+    return (
+        f"Lake Notice has no current {state_name} data for {name}, so the "
+        "records cannot answer this. Check the state's map and posted signs, "
+        "and keep your dog out of discolored or scummy water."
+    )

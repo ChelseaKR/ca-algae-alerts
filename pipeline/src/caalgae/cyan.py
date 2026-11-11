@@ -48,6 +48,52 @@ REFRESH_DAYS = 6
 KEEP_WEEKS = 8
 SPACING_SECONDS = 2.0
 CACHE_VERSION = 1
+LAKE_FIELDS = (
+    "objectid",
+    "name",
+    "state_abbr",
+    "areasqkm",
+    "centroid_lat",
+    "centroid_lng",
+)
+
+
+class ShapeError(fetch.FetchError):
+    """CyAN answered in a shape this pipeline does not read. Like any failed
+    refresh, the cache is kept and the run goes on (source-outage audit,
+    2026-11-05, finding 8): a changed field must never stop the advisories."""
+
+
+def _number(value: Any) -> bool:
+    return isinstance(value, int | float) and not isinstance(value, bool)
+
+
+def parse_lakes(body: Any) -> list[dict[str, Any]]:
+    """California and Missouri lakes from the CyAN list, every field checked.
+    A missing or mistyped field on one of our lakes is a changed format, so
+    the whole list is refused rather than read in part."""
+    if not isinstance(body, dict) or not isinstance(body.get("waterbodies"), list):
+        raise ShapeError("CyAN list is not an object with a waterbodies list")
+    lakes = []
+    for lake in body["waterbodies"]:
+        if not isinstance(lake, dict):
+            raise ShapeError("CyAN list holds an entry that is not an object")
+        if lake.get("state_abbr") not in STATES:
+            continue
+        missing = [k for k in LAKE_FIELDS if k not in lake]
+        if missing:
+            raise ShapeError(f"CyAN lake is missing {', '.join(missing)}")
+        if not (
+            isinstance(lake["objectid"], int)
+            and not isinstance(lake["objectid"], bool)
+            and isinstance(lake["name"], str)
+            and all(
+                _number(lake[k]) for k in ("areasqkm", "centroid_lat", "centroid_lng")
+            )
+        ):
+            raise ShapeError(f"CyAN lake {lake.get('objectid')!r} has a mistyped field")
+        lakes.append({k: lake[k] for k in LAKE_FIELDS})
+    return lakes
 
 
 def norm_name(name: str) -> str:
@@ -102,12 +148,17 @@ def _week_end(text: str) -> dt.date | None:
         return None
 
 
-def parse_weekly(body: dict[str, Any]) -> list[dict[str, Any]]:
+def parse_weekly(body: Any) -> list[dict[str, Any]]:
     """Weekly readings, newest first. An entry with no valid cells is a
     week the satellite could not see the lake; it is dropped, never read as
-    zero."""
+    zero. An answer in another shape raises ``ShapeError``."""
+    if not isinstance(body, dict):
+        raise ShapeError("CyAN series is not an object")
+    outputs = body.get("outputs") or []
+    if not isinstance(outputs, list) or not all(isinstance(o, dict) for o in outputs):
+        raise ShapeError("CyAN series outputs is not a list of objects")
     readings: list[dict[str, Any]] = []
-    for o in body.get("outputs") or []:
+    for o in outputs:
         end = _week_end(str(o.get("imageDate", "")))
         cells = o.get("cellConcentration")
         valid = o.get("validCellsCount")
@@ -175,21 +226,7 @@ def refresh(
     response = client.get(SEARCH_URL)
     if response.status_code != 200:
         raise fetch.FetchError(f"CyAN list returned HTTP {response.status_code}")
-    lakes = [
-        {
-            k: lake[k]
-            for k in (
-                "objectid",
-                "name",
-                "state_abbr",
-                "areasqkm",
-                "centroid_lat",
-                "centroid_lng",
-            )
-        }
-        for lake in response.json().get("waterbodies", [])
-        if lake.get("state_abbr") in STATES
-    ]
+    lakes = parse_lakes(response.json())
     if not lakes:
         raise fetch.FetchError("CyAN list holds no California or Missouri lake")
     series: dict[str, Any] = {}

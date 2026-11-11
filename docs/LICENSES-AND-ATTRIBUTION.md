@@ -17,7 +17,7 @@ Read before the first pipeline fetch, 2026-10-12. **Unknown = not used**
 | U.S. EPA CyAN (CyANWeb backend), `https://qed.epa.gov/cyanweb/` | Waterbody list (name, id, state, area, centroid) and, for matched California and Missouri lakes, the weekly cells/mL series at CyAN's centroid. Nothing personal exists in either. | No license is stated on the API. `https://www.epa.gov/web-policies-and-procedures/epa-disclaimers` (via the research lane, read 2026-10-12): "geospatial data produced by the EPA is by default in the public domain … under 17 U.S.C. § 105". EPA calls CyANWeb "an experimental application … provisional … a research level tool". The research rated the API formally Unclear and the federal default Clear; the owner approved adding it on 2026-10-12. | Public domain by federal default | Credited on every lake page with an estimate and in About; "EPA does not endorse this site." | List once, then one request per matched lake, 2 s apart, at most weekly (85 lakes on 2026-10-12) |
 | U.S. Census Bureau, county adjacency file, 2024 edition, `https://www2.census.gov/geo/docs/reference/county_adjacency/county_adjacency2024.txt` | Only which California counties share a border, 144 pairs, copied into `pipeline/src/caalgae/county_adjacency.py` by hand once (DECISIONS 0034). Nothing is fetched at build time. | A U.S. government work, public domain under 17 U.S.C. § 105. `https://www2.census.gov/robots.txt`, read 2026-11-05, has rules only for named crawlers and none for others. File SHA-256 at download: `912ca408163016864fe64aaf667b53ad03a19ce4acbc586d3ac508395bdac980`. | Public domain | Not required. Cited in the module's header. | Once; county lines change rarely |
 
-## New York yearly bloom history (added 2026-11-02; section off by default)
+## New York yearly bloom history (added 2026-11-02; turned on by DECISIONS 0021)
 
 | Source | What we take | Terms (verbatim, where, date read) | Commercial reuse | Attribution or condition | Cadence |
 |---|---|---|---|---|---|
@@ -28,6 +28,30 @@ robots.txt: `https://data.ny.gov/robots.txt`, read 2026-11-02: 200,
 `/api/odata/`, `/tiles/` and `/api/collocate*` disallowed and refused by
 `fetch.guard_url`. Not used: New York's live NYHABS map and DEC's pages,
 which are linked for readers only.
+
+## Pending, not used: Oregon and Kansas (added 2026-11-06; DECISIONS 0037)
+
+Readers are built behind flags that are off. **Unknown = not used.**
+
+| Source | What the reader would take | Terms found (verbatim, where, date read) | Commercial reuse | Status |
+|---|---|---|---|---|
+| Oregon Health Authority, Current Cyanobacteria Advisories (SharePoint list behind <https://www.oregon.gov/oha/PH/HEALTHYENVIRONMENTS/RECREATION/HARMFULALGAEBLOOMS/Pages/Blue-GreenAlgaeAdvisories.aspx>) | `ID`, `Title`, `Waterbody`, `County`, `Status`, `Date`, `Details`, `Toxin_x002f_Measure`, `Display_x002d_On_x002d_Page` | <https://www.oregon.gov/pages/terms-and-conditions.aspx>, read 2026-11-02: no reuse grant; "You agree to hold harmless and indemnify Oregon and its agencies and officers from and against any damages and liability based on or arising out of your access or use of content on any of the Sites." | Unknown | Permission asked 2026-11-02 (hab.health@oha.oregon.gov). Not used |
+| Kansas Department of Health and Environment, HAB status (`https://maps.kdhe.ks.gov/kdhe_doe/rest/services/HAB/HAB_Manager_Status_Map/MapServer/6`) | `waterbody_id`, `waterbody_name`, `status`, `Status_Set_Date`, `LATITUDE`, `LONGITUDE` | The layer states no license (`copyrightText` blank, read 2026-11-06). kdhe.ks.gov's own pages sit behind a bot wall (robots.txt 403), so its copyright page was not read. | Unknown | Permission asked 2026-11-02 (KDHE HAB program coordinator). Not used |
+
+robots.txt, read 2026-11-06: `https://www.oregon.gov/robots.txt` 200,
+disallows `/_layouts`, `/_vti_bin` and search pages, nothing under `/oha/`
+or `_api`; `https://maps.kdhe.ks.gov/robots.txt` 404 (no rules under 0011).
+
+## Pending, not used: Iowa (added 2026-11-06; DECISIONS 0038)
+
+A reader is built behind a flag that is off. **Unknown = not used.**
+
+| Source | What the reader would take | Terms found (verbatim, where, date read) | Commercial reuse | Status |
+|---|---|---|---|---|
+| Iowa Department of Natural Resources, Beach Monitoring results (AQuIA CSV downloads `https://programs.iowadnr.gov/aquia/Programs/DownloadBeachResults/State` and `.../CountyCity`) | `siteID`, `name`, `sampleDate`, `microcystin`, `status`, `comments` | None found. AQuIA's "Site Policies" link, <https://www.iowa.gov/pages/policies>, answered 404 on 2026-11-06; the API guide (<https://programs.iowadnr.gov/aquia/Docs/API>) states no license. | Unknown | Permission not yet asked (AQuIA contact form, topic "Beaches"). Not used |
+
+robots.txt, read 2026-11-06: `https://programs.iowadnr.gov/robots.txt` 404
+(no rules under 0011).
 
 ## Attribution shown
 

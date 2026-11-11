@@ -15,9 +15,10 @@
    `DEVELOPMENT_TEAM` in `ios/project.yml`.
 2. Create the App Store Connect app record (US only, version 1.0.0).
 3. Create the in-app purchase: non-consumable, product id
-   `net.chelseakr.algaealerts.fullaccess`, USD 9.99, display name "Full
-   Access". It must match `PurchaseManager.productID` and
-   `ios/AlgaeAlerts/Configuration.storekit`.
+   `net.chelseakr.algaealerts.fullaccess`, USD 9.99, display name "Lake
+   Alerts & Widget", reference name "Lake Notice Alerts" (DECISIONS 0030).
+   The id must match `PurchaseManager.productID`, and the names
+   `ios/AlgaeAlerts/Configuration.storekit` and `FreeTier.purchaseName`.
 4. Hosting is decided (docs/DECISIONS.md 0013): the app fetches
    `https://lakenotice.com/snapshot/v1.json`, which does not serve until the
    site is published (docs/DOMAIN.md). `SnapshotEndpoint` already carries

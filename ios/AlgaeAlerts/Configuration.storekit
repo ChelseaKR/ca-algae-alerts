@@ -9,12 +9,12 @@
       "localizations" : [
         {
           "description" : "Alerts and a widget for your favorite lakes",
-          "displayName" : "Full Access",
+          "displayName" : "Lake Alerts & Widget",
           "locale" : "en_US"
         }
       ],
       "productID" : "net.chelseakr.algaealerts.fullaccess",
-      "referenceName" : "Full Access",
+      "referenceName" : "Lake Notice Alerts",
       "type" : "NonConsumable"
     }
   ],

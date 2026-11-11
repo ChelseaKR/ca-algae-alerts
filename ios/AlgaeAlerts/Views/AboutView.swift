@@ -9,7 +9,7 @@ struct AboutView: View {
         NavigationStack {
             List {
                 Section {
-                    Text("Harmful algal bloom advisories that California and Missouri have recorded for lakes, rivers and shorelines, with each water's history: California's since 2016, Missouri's since 2017.")
+                    Text(CoverageCopy.aboutSummary(env.snapshot))
                     Text("For large lakes, a separately labeled satellite estimate from the U.S. EPA. It is never an advisory.")
                     Text("An advisory stays listed, with its date, until the state records an end.")
                 } header: { SectionTitle("What this app shows") }
@@ -23,10 +23,10 @@ struct AboutView: View {
                         Label("Unlocked. Thank you.", systemImage: "checkmark.seal")
                     } else {
                         Text(FreeTier.unlockSummary)
-                        Button("Unlock full access") { router.showUnlock = true }
+                        Button("Unlock alerts and the widget") { router.showUnlock = true }
                     }
                     Button("Restore purchases") { Task { await env.purchases.restorePurchases() } }
-                } header: { SectionTitle("Full access") }
+                } header: { SectionTitle(FreeTier.purchaseName) }
                 ForEach(env.snapshot?.sources ?? [], id: \.id) { source in
                     Section {
                         Text(source.agency)

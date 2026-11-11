@@ -2,7 +2,7 @@
 {% from "_ny.html.jinja" import ny_note, ny_source_section with context %}
 {% block content %}
 <h1>{{ water.name }}: algae bloom history</h1>
-<p class="lede">{{ water.name }}, {{ water.place }}, New York. DEC's yearly summary lists a confirmed harmful algal bloom here in {{ years_label }} ({{ span_label }}), with {{ reports_label }} in all.</p>
+<p class="lede">As of DEC's yearly summary dated {{ ny_file_date|date }}, the records for {{ water.name }} ({{ water.place }}, New York) show a confirmed harmful algal bloom in {{ years_label }} ({{ span_label }}), with {{ reports_label }} in all. That is history, not an advisory or a current status.</p>
 {{ ny_note(ny_source, root) }}
 
 <h2 id="years">Years with a confirmed bloom</h2>
