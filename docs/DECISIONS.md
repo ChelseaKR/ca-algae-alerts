@@ -1290,6 +1290,8 @@ on none of the 702 others.
 
 Tests: `pipeline/tests/test_site_swimming.py`.
 
+While a state's data is unavailable (0024), its water pages leave the swimming section out, since the answer reads the water's status (owner, 2026-11-11: option A, no new wording).
+
 ## 0037 — Oregon and Kansas readers are built and tested behind flags that are off (2026-11-06)
 
 (0020 to 0036 are on main or on open branches, so this is the next free
