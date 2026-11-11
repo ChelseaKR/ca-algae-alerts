@@ -80,8 +80,6 @@ final class AppEnvironment {
 
     var isEntitled: Bool { purchases.isEntitled }
 
-    var today: PlainDate { PlainDate.today() }
-
     // MARK: Refresh
 
     func refreshIfDue() async {
@@ -115,13 +113,18 @@ final class AppEnvironment {
     }
 
     /// Replans for everyone, so the baseline is current; schedules only
-    /// with the purchase, and never for a muted lake.
+    /// with the purchase, never for a muted lake, and never an alert this
+    /// phone has already delivered (DECISIONS 0031).
     func planAlerts(schedule: Bool) async {
         guard let snapshot else { return }
         let plan = AlertPlanner.plan(favorites: Set(favorites.ids), snapshot: snapshot, baseline: stores.baseline())
         try? stores.save(plan.baseline)
         guard schedule, FreeTier.notificationsAllowed(isEntitled: isEntitled) else { return }
-        await notifications.schedule(muted.unmuted(plan.notifications))
+        var delivered = stores.delivered()
+        let fresh = delivered.undelivered(muted.unmuted(plan.notifications))
+        guard !fresh.isEmpty else { return }
+        for key in await notifications.schedule(fresh) { delivered.record(key) }
+        try? stores.save(delivered)
     }
 
     // MARK: Favorites, mutes, intro

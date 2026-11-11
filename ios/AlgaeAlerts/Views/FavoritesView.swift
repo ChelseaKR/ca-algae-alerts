@@ -19,9 +19,10 @@ struct FavoritesView: View {
                             if let water = env.snapshot?.waterbody(id: id) {
                                 NavigationLink(value: id) { LakeRow(water: water, isFavorite: false) }
                             } else {
+                                // Absence is not a status (DECISIONS 0039).
                                 VStack(alignment: .leading) {
-                                    Text("A saved lake").font(.headline)
-                                    Text("No longer in the state's current file.").font(.subheadline).foregroundStyle(Theme.secondaryText)
+                                    Text(SavedLakeCopy.title).font(.headline)
+                                    Text(SavedLakeCopy.detail(id: id, snapshot: env.snapshot)).font(.subheadline).foregroundStyle(Theme.secondaryText)
                                 }
                             }
                         }
@@ -47,7 +48,7 @@ struct FavoritesView: View {
             } else if env.notificationStatus == .notDetermined {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Turn on alerts").font(.headline)
-                    Text("When a favorite lake gets a new advisory in the state's records, this iPhone shows an alert, usually within about a day of the state publishing it. Alerts are made on this iPhone; nothing about you is sent anywhere.")
+                    Text("When a favorite lake gets a new advisory in the state's records, this iPhone shows an alert when iOS lets Lake Notice check, often within a day of the state publishing it. Alerts are not real time. Alerts are made on this iPhone; nothing about you is sent anywhere.")
                         .font(.subheadline)
                     Button("Turn on alerts") { Task { await env.requestNotifications() } }
                 }

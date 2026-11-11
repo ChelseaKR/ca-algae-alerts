@@ -580,6 +580,10 @@ malformed answer stopped the whole run, California included. Now:
 Tests: `pipeline/tests/test_missouri_fail_closed.py`, with the real layer as
 the negative control.
 
+Amended by 0024: a gone or changed layer now keeps Missouri's pages up in a
+dated "data unavailable" mode instead of removing them. Switching the source
+off (the State's revocation) still removes everything.
+
 ## 0020 — New York's yearly bloom summary, as history only, behind a switch (owner, 2026-11-02)
 
 **The owner's decision, 2026-11-02:** add New York State DEC's yearly
@@ -891,6 +895,83 @@ Havasu, Antelope Creek and Four Island Lake records, and McLeod Lake and a
 33 m move as negative controls, plus two Nuwuvi Park station codes 20 m
 apart, an uncoded report between them, and the same-code control.
 
+## 0024 — A state whose data stops is shown as "data unavailable since <date>", not hidden; the publish is guarded (owner, 2026-11-05)
+
+Accepted 2026-11-05 by Chelsea, as the plan recommended (decision 1b, with the deploy guard of 2a).
+
+Amends 0019. The department plans to retire Missouri's layer, and the risk
+is not a sudden 404 but an old layer that keeps answering with frozen data.
+Hiding Missouri also made its 41 sitemap URLs (its best performers in
+Search Console) return 404. Now three situations get three answers
+(growth/ln-expansion-plan-2026-11-05.md, section 1.3):
+
+- **A passing failure** (timeout, 5xx, robots.txt unreadable): as before,
+  shown with its read date while the last good read is at most 2 days old.
+  After that it becomes unavailable (below), never hidden.
+- **Unavailable.** Any of:
+  - gone or changed: HTTP 404 or 410, an ArcGIS error, missing fields,
+    fewer than 50 rows, no placeable case (0019's checks);
+  - partial: an answer that would withdraw more than 5% of Missouri's
+    records (it used to stop California too; source-outage audit finding 8);
+  - frozen: from May 15 to Oct 15, no record dated within 30 days of the
+    run. The worst measured in-season gap was 22 days (21 in 2024, 22 in
+    2025, 18 in 2026). Out of season nothing is checked. In 2018 and 2020 the
+    first report came after mid-May, so a quiet May can read as frozen; that
+    errs toward "unavailable", which claims nothing;
+  - superseded: the department's public viewer ("HAB Public Viewer PROD",
+    www.arcgis.com item 96d87e1fda0e445b90c23ce52d67a2d9, its `/data` JSON)
+    no longer names `HAB_SUBMIT_POINTS/MapServer/6` among its data sources.
+    One request per run, after robots.txt (www.arcgis.com, read 2026-11-05:
+    `User-agent: *` with no Disallow). On 2026-11-05 it names layers 4 to 8
+    of that service. A failed or unreadable viewer read only warns: only a
+    readable list of data sources without the layer proves the move. The
+    item's `licenseInfo` is a no-warranty statement and adds no condition;
+    the viewer's data is never shown, only checked.
+
+  Every Missouri page stays built and answers 200. A notice leads each one:
+  "Missouri's harmful algal bloom data stopped reaching Lake Notice on
+  <since>, so Lake Notice can't show this water's current status. The records
+  below are the last ones it read, on <last read>." It links the
+  department's HAB Reports Map. The status box says "No current status:
+  Missouri's data unavailable since <since>." and carries no level, no "No
+  all-clear recorded" and no "recommends no advisory". The history table is
+  headed "Records read before <since>". The State's disclaimer and the
+  department's caveat stay. Titles read "<Lake> algae: Missouri data
+  unavailable since <since>" (the name is cut before the date is). Missouri
+  waters leave the advisory lists and the home page says why. For 30 days
+  the pages stay indexed and in the sitemap; after that they carry
+  `noindex,follow` and leave the sitemap, still built. `since` is the first
+  run that found the outage, kept in history.json (`outages`) until a good
+  read clears it. A passing failure during an outage never brings the old
+  data back.
+
+  The snapshot carries a `state_status` entry per state (`live`,
+  `stale_dated` or `unavailable`, with `since`, `reason`, `last_read` and the
+  map link). The app shows the same notice, reads every status of that
+  state as undetermined with no current claim, lists none as an advisory,
+  sends no alert, and keeps each favorite's alert baseline, so the state's
+  return announces only a real change.
+- **Revoked** (`MO_DNR_HAB.enabled = False`): as 0019, no Missouri content.
+
+**Publish guard.** `publish.yml` runs `caalgae.publish_guard` after the build
+and before the history commit and the Pages upload. It compares the built
+sitemap with the live one per state and fails the run, keeping yesterday's
+site, when a state loses all its sitemap URLs or more than 20% of them,
+unless its source is switched off, the owner names it in the
+`allow_page_drop` dispatch input, or it is unavailable past its 30 indexed
+days with every dropped page still built. The failure issue names the
+state and the counts. A state in its unavailable mode deploys and opens or
+updates the issue "publish: a state's data is unavailable" the same day.
+No live sitemap (first deploy, 404, unreachable) means nothing live to
+protect, and the run says so.
+
+Tests: `pipeline/tests/test_data_unavailable.py`,
+`pipeline/tests/test_publish_guard.py`, the updated
+`test_missouri_fail_closed.py` and `test_publish_workflow.py`, and
+`ios/AlgaeCore/Tests/AlgaeCoreTests/UnavailableStateTests.swift`. Negative
+controls: the real layer and the real viewer are live; a live build has no
+outage wording; an unchanged build passes the guard; a live snapshot alerts
+and lists Missouri advisories.
 
 ## 0025 — Spanish groundwork: a catalog with a status per string, a review gate, and the levels page, all switched off (2026-11-05)
 
@@ -1076,6 +1157,111 @@ impressions within two days of shipping an identical affiliate block on about
   toxin test kit, and the block's own text says no gear changes what is in the
   water. Removal is one edit: set the tag to `""`.
 
+## 0030 — The app reads as Lake Notice's own, and a new state or a changed CyAN answer never stops updates (2026-11-05)
+
+The launch review of 2026-11-05 (§5) found that the app shared a reviewer's
+view of Trout Truck, which drew a second 4.3(a) on 2026-11-03: the same
+purchase name, the same listing headings and the same last caption. Its §3
+also found two ways a shipped app could stop updating. This changes only
+what is true of the product; nothing was invented to look different.
+
+- **The purchase is "Lake Alerts & Widget"** (reference name "Lake Notice
+  Alerts"), named for what it adds, in `Configuration.storekit`,
+  `FreeTier.purchaseName` (the unlock screen's title and About's section),
+  LISTING.md and REVIEW-NOTES.md. **The product id stays
+  `net.chelseakr.algaealerts.fullaccess`**; the name is a display string and
+  an id cannot change once the record exists. The owner can still pick
+  another name (launch review decision 3); the copy test then says every
+  place to change.
+- **The listing is written around what an algae advisory is**: sign levels,
+  the dogs section, after-contact steps, spot-by-spot history, the separately
+  labeled satellite estimate and "never an all-clear". It has none of Trout
+  Truck's headings, and caption 6 is "Your favorite lakes stay on your
+  iPhone." instead of Trout Truck's "No account. No tracking." Alert timing
+  is "when iOS lets the app check, often within a day, not real time" in the
+  listing, the unlock screen and Favorites.
+- **The Review Notes open with a factual "what Lake Notice is" paragraph**,
+  fill in the name and snapshot URL, say "any state or federal agency", mark
+  every Missouri sentence for removal if Missouri is off at submission, and
+  stay under 4,000 characters.
+- **A state this build does not know is left out of the snapshot before it
+  is decoded**: its waterbodies, sources, source files and state-status
+  entries, and any source in a record kind this build does not know. A New
+  York water in a new `bloom_history` kind used to make the whole file
+  undecodable, so shipped apps would have kept old California data forever.
+  States the build knows are still decoded strictly: an unknown status or
+  record kind on a California or Missouri water still refuses the file and
+  keeps the copy on the phone. A new state reaches the app only in a build
+  that knows it. A file with nothing unknown is decoded from its own bytes.
+- **A CyAN answer in another shape is a failed refresh.** The list and each
+  weekly series are shape-checked (`cyan.ShapeError`, a `FetchError`), so a
+  renamed or mistyped field keeps the cache and the run goes on, instead of a
+  `KeyError` stopping every run (source-outage audit finding 8). A lake in
+  another state is never checked.
+
+Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/UnknownStateTests.swift`,
+`PurchaseNameTests.swift`, `pipeline/tests/test_cyan_shape.py`,
+`pipeline/tests/test_app_store_copy.py`. Negative controls: the injected New
+York file fails a plain decode (the sabotage applies) and fails the tests
+with the filter removed; the same water labeled California is refused; the
+old CyAN read raises `KeyError` on the renamed field; Trout Truck's heading
+or the old display name put back turns the copy test red.
+
+Not done here, and why: the widget's "Part of full access." line waits for
+PR #32, which rewrites that block; Missouri's data-unavailable mode and its
+`HistoryError` catch are PR #31 (DECISIONS 0024); the icon, screenshots, the
+name check, the subtitle and category picks, the Missouri readings and the
+level summaries are the owner's.
+
+## 0031 — App words come from the snapshot, an alert is delivered once, and the support page says the app is not out (2026-11-05)
+
+The launch review of 2026-11-05 left six small app items after PR #36
+(DECISIONS 0030). Each one is a place where the app could say something the
+data on the phone does not support.
+
+- **"The last 30 days" counts back from the snapshot's run date**, not from
+  this iPhone's today. On an old copy (no network, a stuck source) the list
+  used to say "None posted in the last 30 days" about advisories posted the
+  week the file was made. The header now names the date: "Posted in the 30
+  days to Oct 12, 2026". `AppEnvironment.today` is removed so nothing else
+  measures from the device's calendar.
+- **The "All lakes" footer no longer says a missing lake has "no advisory
+  records at all".** Some waters have only rows Lake Notice cannot read, and a
+  state's layer can drop a lake. It now reads "As of the data dated <run
+  date>, a lake missing from this list has no advisory record Lake Notice
+  could read. Most lakes are never tested."
+- **About and the introduction name the states the snapshot carries
+  waters for**, in source order, with each state's first record year taken
+  from its records. A state whose source is listed but whose waters are gone
+  is not named. A state with no dated record gets no year, never a made-up
+  one. With no snapshot, no state is named.
+- **An alert key is delivered at most once.** The key is the water, the
+  level and the posted date (`PlannedNotification.id`). Keys iOS accepted are
+  saved to `delivered-alerts.json`, so a relaunch or a new snapshot cannot
+  repeat one. The baseline alone could: a short file that drops an advisory
+  and a later file that brings it back reads as "no advisory, then
+  advisory". A new posting date or a new level is a new key and still
+  alerts. A missing or corrupt file reads as empty, which can only allow an
+  alert, never hide a new one. Keys are kept; a few favorites make a few
+  keys a year.
+- **`processing` is removed from `UIBackgroundModes`.** The app registers
+  one `BGAppRefreshTask` and no `BGProcessingTask`, so `fetch` is the only
+  mode in use. An unused mode invites an App Review question.
+- **The PrivacyInfo comment no longer points to `docs/APP-STORE.md`**, which
+  does not exist. It names Xcode's archive privacy report instead.
+- **The support page's app section says only what is true today**: the
+  iPhone app is not released, cannot be downloaded or bought, and the website
+  does not need it. The old "When do app alerts arrive?" answer, which
+  promised timing for an app nobody can install, is gone, and so is "help
+  with the iPhone app" in the page description. Restore, refund and alert
+  help is written when the app is released.
+
+Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/CoverageCopyTests.swift`,
+`DeliveredAlertsTests.swift`, `pipeline/tests/test_support_app_section.py`,
+and the UI test's header check. Negative controls: measuring from the
+device's today turns the stale-snapshot test red; an empty delivered set
+turns the drop-and-return, relaunch and one-key tests red.
+
 ## 0032 — The home and /advisories/ titles name Missouri while its data is live (owner, 2026-11-05)
 
 The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
@@ -1108,3 +1294,166 @@ of water pages (~2026-11-25) is not disturbed.
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
 
+## 0037 — Oregon and Kansas readers are built and tested behind flags that are off (2026-11-06)
+
+(0020 to 0036 are on main or on open branches, so this is the next free
+number.)
+
+Each state has a reader, `pipeline/src/caalgae/oregon.py` and
+`pipeline/src/caalgae/kansas.py`, registered in `pipeline/src/caalgae/flagged.py`.
+Neither agency publishes a reuse grant, so under 0004 each license is
+recorded as `unknown` and the data is not used. Permission was asked in
+writing on 2026-11-02 (OHA and KDHE). Nothing goes live until an agency says
+yes in writing; this is the same pattern as Trout Truck's DECISIONS 0055.
+
+- **The flags.** `LN_ENABLE_OREGON` and `LN_ENABLE_KANSAS`, environment
+  variables: `1` is on; unset, empty and `0` are off; anything else refuses
+  the run before anything is written. No workflow sets either (a test reads
+  every workflow).
+- **Off means identical.** With both off, the run fetches nothing, prints
+  nothing and writes nothing for these states. A default build of the
+  fixture site, snapshot and history is byte-identical whether or not the
+  readers are registered, and with both flags set to `0`
+  (`pipeline/tests/test_flagged_states.py`).
+- **On is review only.** A flag that is on reads that state (or the fixture
+  given with `--state-fixture XX=path`) and writes
+  `--state-review-out/<xx>-review.json`, which may not sit inside the site.
+  Its records never enter the history, snapshot, site or app; a test builds
+  with both flags on and checks the published files are the default's byte
+  for byte. A fixture given while its flag is off refuses the run. Wiring a
+  state into pages and the app is a later change, after the written yes.
+- **Sources are off and unlisted.** `sources.OR_OHA_HAB` and
+  `sources.KS_KDHE_HAB` have `enabled=False`, no attribution, and are kept
+  out of `SOURCES`, so the snapshot never names them.
+- **The agency's own words, no level invented.** Every advisory keeps the
+  agency's status as its `level`, under the `other_advisory` tier, never
+  California's caution, warning or danger.
+  - **Oregon (OHA).** One request to the SharePoint list behind the
+    advisories page, for nine named fields; robots.txt read first.
+    "Advisory in effect", "Precaution in effect", "Permanent Advisory" and
+    the legend's "Advisory downgraded to precaution" are advisories; "…has
+    been lifted" is an explicit end. Markup is stripped from the stretch
+    description and toxin notes. The list has no coordinates, so none is
+    given. A water leaving the list is never read as an end. A row with no
+    date, more than one status, or not shown on OHA's page is quarantined.
+    A record's id carries its status and date, because OHA edits one item
+    per water in place.
+  - **Kansas (KDHE).** Layer 6 of KDHE's own MapServer, every status since
+    2010, read in 2,000-row pages 5 s apart, with robots.txt (404, no rules)
+    read first. Watch, Warning, Advisory and Lake Hazard are advisories;
+    Lifted is an explicit end. "Historical Pending" and "MIXED" decide
+    nothing until KDHE says what they mean (asked 11-02). A read that stops
+    before the layer's last row, misses a field or has under 1,000 rows is
+    refused whole.
+  - **Any other status** is undetermined (0027), never an end.
+- **Fixtures are invented.** `pipeline/tests/fixtures/states-invented/` is
+  written by hand in each agency's format with invented waters ("Invented
+  Lake", "INVENTED LAKE A"); no agency data is committed.
+- **Development reads, 2026-11-06.** Each host's robots.txt, then the Kansas
+  layer metadata, a status count, a four-row sample and one full read (two
+  pages); one read of the Oregon list. Against them: Oregon gave 56 records
+  from 57 rows (one "Permanent Advisory" row has no date and is
+  quarantined); Kansas gave 3,105 records from 3,116 rows (11 repeated
+  status rows). Nothing from these reads is committed.
+- **Turning one on** is the owner's call after the agency's yes: record the
+  grant's text in docs/LICENSES-AND-ATTRIBUTION.md, then a separate change
+  adds the state to `SOURCES`, `site.STATE_NAMES`, the snapshot and the app.
+
+Open questions for the agencies, before any page: what a lifted Oregon
+row's date records (the lift, or the last change), whether Oregon has
+coordinates Lake Notice may use, and what Kansas's "Historical Pending" and
+"MIXED" mean.
+
+## 0038 — An Iowa reader is built and tested behind a flag that is off (2026-11-06)
+
+Same pattern as 0037, for the Iowa Department of Natural Resources' beach
+monitoring results (AQuIA). The reader is `pipeline/src/caalgae/iowa.py`,
+registered in `pipeline/src/caalgae/flagged.py` under `LN_ENABLE_IOWA`. No
+reuse terms were found at all (AQuIA's "Site Policies" link answered 404 on
+2026-11-06), so under 0004 the license is recorded as `unknown` and the data
+is not used. Permission has not been asked yet; the draft is for the AQuIA
+contact form, topic "Beaches".
+
+- **The flag, off means identical, on is review only, the source is off and
+  unlisted:** exactly as 0037. `sources.IA_DNR_BEACHES` has `enabled=False`,
+  no attribution, and is kept out of `SOURCES`. A default build of the
+  fixture site, snapshot and history is byte-identical with or without the
+  Iowa reader registered and with `LN_ENABLE_IOWA=0`; with it on, the
+  published files are still the default's byte for byte and only
+  `ia-review.json` is written (`pipeline/tests/test_flagged_iowa.py`).
+- **What is read.** The two CSV downloads on programs.iowadnr.gov (robots.txt
+  404, no rules under 0011), `DownloadBeachResults/State` and
+  `.../CountyCity`, 5 s apart: `siteID`, `name`, `sampleDate`,
+  `microcystin`, `status`, `comments`. The E. coli columns are never read.
+  The files have no coordinates, so none is given.
+- **The sign is shared, so the toxin result decides.** The DNR posts
+  "Swimming is Not Recommended" for indicator bacteria and for
+  cyanobacteria toxins alike. A row is an algae advisory only when that sign
+  is posted and the microcystin result is over the DNR's own threshold,
+  "8 µg/L total microcystins". The level is the file's own status text,
+  under the `other_advisory` tier; no level is invented.
+  - The same sign with a result of 8, under 8, blank or unreadable decides
+    nothing (it may be a bacteria advisory, and is not shown as "no
+    advisory").
+  - "Watch / General Information" with a result under 8 (a reporting limit
+    like `<0.3` counts as under only when the limit is) is an explicit end.
+    With a result over 8 it is undetermined (0027); with 8 or no result it
+    decides nothing.
+  - "Beach Closed", "Special Status", "Insufficient Data", "County-City
+    Beach" and a blank status decide nothing. Any other status is
+    undetermined (0027).
+  - Both spellings are read: the beach page's "Swimming is Not Recommended"
+    and "Watch / General Information", and AQuIA's status reference's
+    "Swimming Not Recommended" and "Ok for Swimming". Which one the download
+    carries was not seen (off season).
+- **Refusals.** A download missing a column, answering a web page, not
+  UTF-8, or with no rows at all is refused whole. Out of season the DNR
+  publishes no rows, and an empty read is never taken as "no advisory".
+- **Fixtures are invented.** `ia-state.csv` and `ia-countycity.csv` under
+  `pipeline/tests/fixtures/states-invented/`, written by hand in AQuIA's
+  column layout with invented beaches ("Invented Lake Beach") and site ids
+  in the 99000000s; no DNR data is committed.
+- **Development reads, 2026-11-06,** with a User-Agent naming Lake Notice and
+  chelsea@chelseakr.com: programs.iowadnr.gov/robots.txt (404), the API
+  guide, the beach page, the State download (header only, no rows, off
+  season), the status reference and the weekly results (an empty list).
+  Nothing from these reads is committed.
+- **Turning it on** is the owner's call after the DNR's written yes, as in
+  0037.
+
+Open questions for the DNR, before any page: which status words the
+download carries in season; whether a result of exactly 8 µg/L is over the
+threshold; whether a "Swimming is Not Recommended" sign with a high
+microcystin result can still be for bacteria alone; and coordinates Lake
+Notice may use.
+
+## 0039 — A saved lake missing from the data says what is missing, dated, and is not a finding (2026-11-07)
+
+The pre-submission check of 2026-11-07 found one app line left from the
+launch review's honesty list (source-outage audit finding 9). Favorites
+saves only a lake's id, and a saved lake the data on the phone does not
+have showed "A saved lake / No longer in the state's current file." That
+claims something the phone cannot know. With no data file on the phone it
+was shown for every favorite, and a lake can also leave Lake Notice's data
+because a state's layer dropped it or a state is switched off.
+
+- **No data on the phone:** "Lake Notice has no lake data on this iPhone
+  yet, so it can't show this lake's status."
+- **A state with no lakes in the data** (the id's state prefix, when this
+  build knows the state): "Lake Notice's data dated <run date> has no
+  Missouri lakes, so it can't show this lake's status."
+- **Otherwise:** "This lake is not in Lake Notice's data dated <run date>,
+  so it can't show its status."
+- Each ends with "That is not a finding of no advisory." No level, no
+  "no advisory" and no state's-file claim. An id prefix this build does not
+  know names no state.
+
+The copy is `SavedLakeCopy` in AlgaeCore. The widget already counted these
+lakes as "not in the current data" and is unchanged. Everything else on the
+launch review's pre-submission code list was already on main (0024, 0027,
+0030) or is in open PRs #37 (0031) and #42 (0036).
+
+Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/SavedLakeCopyTests.swift`.
+Negative controls: the old line fails the same checks, and with `detail`
+returning it three of the five tests fail; with Missouri waters in the data
+a Missouri id reads as a missing lake, not a missing state.

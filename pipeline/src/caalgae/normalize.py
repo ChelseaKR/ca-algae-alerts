@@ -188,7 +188,13 @@ def parse_coordinate(lat_text: str, lon_text: str) -> tuple[float | None, float 
     return None, None
 
 
-_BBOX = {"CA": _CA_BBOX, "MO": (35.9, 40.7, -95.9, -89.0)}
+_BBOX = {
+    "CA": _CA_BBOX,
+    "MO": (35.9, 40.7, -95.9, -89.0),
+    # Flagged-off states (DECISIONS 0037).
+    "KS": (36.9, 40.1, -102.1, -94.5),
+    "OR": (41.9, 46.3, -124.7, -116.4),
+}
 
 
 def parse_coordinate_any(

@@ -11,7 +11,7 @@ struct PurchaseView: View {
             List {
                 Section {
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Full access").font(.title2.bold())
+                        Text(FreeTier.purchaseName).font(.title2.bold())
                         Text(FreeTier.unlockSummary)
                         Text("One purchase, no subscription. Browsing, search, favorites and every lake's history stay free.")
                             .font(.subheadline).foregroundStyle(Theme.secondaryText)
@@ -19,7 +19,7 @@ struct PurchaseView: View {
                     .padding(.vertical, 4)
                 }
                 Section {
-                    Text("Your iPhone checks the state's data in the background, about once a day, and alerts you when a favorite lake gets a new advisory or its level changes. iOS decides exactly when, so alerts are not real time.")
+                    Text("Your iPhone checks the state's data in the background when iOS lets it, often within a day of the state publishing, and alerts you when a favorite lake gets a new advisory or its level changes. Alerts are not real time.")
                     Text("An alert is never an all-clear: the app does not send one when an advisory ends.")
                 } header: { SectionTitle("How alerts work") }
                 Section {

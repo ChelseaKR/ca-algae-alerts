@@ -32,6 +32,12 @@ on:
         description: "Accept the California file's withdrawals or quarantine jump (read the file first)"
         type: boolean
         default: false
+      allow_page_drop:
+        # A deliberate drop of a state's pages (say "MO"), which the publish
+        # guard otherwise refuses (docs/DECISIONS.md 0024). Empty: no override.
+        description: "State codes whose pages may drop this run, such as MO (blank for none)"
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -52,6 +58,9 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
+    outputs:
+      guard_reason: ${{ steps.guard.outputs.reason }}
+      unavailable: ${{ steps.guard.outputs.unavailable }}
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
@@ -94,6 +103,24 @@ jobs:
             --support-email "$SUPPORT_EMAIL" \
             --app-store-url "$APP_STORE_URL" \
             ${accept:+"$accept"}
+
+      - name: guard against a silent drop of a state's pages
+        # Before the history commit and the Pages upload: a refusal leaves
+        # yesterday's site live and opens the publish-failure issue. It
+        # compares this build's sitemap with the live one, state by state,
+        # and fails when a state loses all, or more than 20%, of its pages
+        # without being switched off or named in allow_page_drop
+        # (pipeline/src/caalgae/publish_guard.py, docs/DECISIONS.md 0024).
+        id: guard
+        if: vars.PAGES_ENABLED == 'true' && vars.SITE_BASE_URL != ''
+        working-directory: pipeline
+        env:
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
+          ALLOW_PAGE_DROP: ${{ inputs.allow_page_drop }}
+        run: |
+          set -euo pipefail
+          uv run python -m caalgae.publish_guard --site-dir ../site \
+            --base-url "$SITE_BASE_URL" --allow "$ALLOW_PAGE_DROP"
 
       - name: commit updated history, if any
         env:
@@ -214,12 +241,44 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          GUARD_REASON: ${{ needs.build.outputs.guard_reason }}
         run: |
           set -euo pipefail
           title="publish: the pipeline run failed"
           existing="$(gh issue list --state open --search "\"${title}\" in:title" \
             --json number,title --jq "[.[] | select(.title == \"${title}\")][0].number // empty")"
           body="The publish workflow did not finish. Nothing from this run was committed or deployed. Run: ${RUN_URL}"
+          if [ -n "${GUARD_REASON}" ]; then
+            body="${body} Publish guard: ${GUARD_REASON}"
+          fi
+          if [ -n "${existing}" ]; then
+            gh issue comment "${existing}" --body "${body}"
+          else
+            gh issue create --title "${title}" --body "${body}" --label bug
+          fi
+
+  # A state in its "data unavailable" mode still deploys (its pages stay up,
+  # dated), but the owner hears about it the same day (DECISIONS 0024).
+  notice-unavailable:
+    needs: build
+    if: needs.build.outputs.unavailable != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: open or update the data-unavailable issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          UNAVAILABLE: ${{ needs.build.outputs.unavailable }}
+        run: |
+          set -euo pipefail
+          title="publish: a state's data is unavailable"
+          existing="$(gh issue list --state open --search "\"${title}\" in:title" \
+            --json number,title --jq "[.[] | select(.title == \"${title}\")][0].number // empty")"
+          body="${UNAVAILABLE}. Its pages stay up with a dated notice and no status. Run: ${RUN_URL}"
           if [ -n "${existing}" ]; then
             gh issue comment "${existing}" --body "${body}"
           else

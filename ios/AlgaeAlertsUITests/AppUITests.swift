@@ -18,7 +18,7 @@ final class AppUITests: XCTestCase {
         XCTAssertTrue(start.waitForExistence(timeout: 10))
         start.tap()
         XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Posted in the last 30 days"].exists || app.staticTexts["POSTED IN THE LAST 30 DAYS"].exists)
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH[c] 'Posted in the 30 days to '")).firstMatch.exists)
         app.searchFields.firstMatch.tap()
         app.searchFields.firstMatch.typeText("Temescal")
         let row = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Lake Temescal'")).firstMatch
