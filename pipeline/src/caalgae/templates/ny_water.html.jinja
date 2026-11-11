@@ -1,0 +1,28 @@
+{% extends "base.html.jinja" %}
+{% from "_ny.html.jinja" import ny_note, ny_source_section with context %}
+{% block content %}
+<h1>{{ water.name }}: algae bloom history</h1>
+<p class="lede">As of DEC's yearly summary dated {{ ny_file_date|date }}, the records for {{ water.name }} ({{ water.place }}, New York) show a confirmed harmful algal bloom in {{ years_label }} ({{ span_label }}), with {{ reports_label }} in all. That is history, not an advisory or a current status.</p>
+{{ ny_note(ny_source, root) }}
+
+<h2 id="years">Years with a confirmed bloom</h2>
+<p>{{ years_label|capitalize }} and {{ reports_label }} on record, newest first.</p>
+<table>
+  <caption class="visually-hidden">Years DEC confirmed a harmful algal bloom at {{ water.name }}, newest first</caption>
+  <thead><tr><th scope="col">Year</th><th scope="col">DEC's finding</th><th scope="col">First report that year</th><th scope="col">Last report that year</th><th scope="col">Reports that year</th></tr></thead>
+  <tbody>
+  {% for y in water.years %}
+    <tr>
+      <th scope="row">{{ y.year }}</th>
+      <td>{{ y.label }}</td>
+      <td>{{ y.first_report|date }}</td>
+      <td>{{ y.last_report|date }}</td>
+      <td>{{ y.reports }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p><a href="{{ root }}state/ny/">Every New York water with a confirmed bloom on record</a>.</p>
+
+{{ ny_source_section(ny, ny_source) }}
+{% endblock %}

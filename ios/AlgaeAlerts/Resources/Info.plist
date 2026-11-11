@@ -54,13 +54,14 @@
 	</array>
 	<!--
 	Background App Refresh only — no remote-notification/VoIP/audio modes,
-	since there is no server push (docs/DECISIONS.md 0006). This is what lets
-	BGAppRefreshTask run at all; iOS still decides exactly when.
+	since there is no server push (docs/DECISIONS.md 0006), and no
+	"processing" mode: the app registers one BGAppRefreshTask and no
+	BGProcessingTask (DECISIONS 0031). This is what lets BGAppRefreshTask run
+	at all; iOS still decides exactly when.
 	-->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>processing</string>
 	</array>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>

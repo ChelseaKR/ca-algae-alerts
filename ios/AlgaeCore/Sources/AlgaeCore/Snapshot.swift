@@ -12,8 +12,12 @@ public struct Snapshot: Codable, Equatable, Sendable {
     /// Every advisory source's last read file (California first).
     public let sourceFiles: [SourceFile]
     public let waterbodies: [Waterbody]
+    /// How current each state's data is (DECISIONS 0024). Absent in files
+    /// written before it existed, which means every state is live.
+    public let stateStatus: [StateStatus]?
 
-    public init(schemaVersion: Int, generatedAt: String, runDate: PlainDate, sources: [DataSource], sourceFile: SourceFile, sourceFiles: [SourceFile], waterbodies: [Waterbody]) {
+    public init(schemaVersion: Int, generatedAt: String, runDate: PlainDate, sources: [DataSource], sourceFile: SourceFile, sourceFiles: [SourceFile], waterbodies: [Waterbody], stateStatus: [StateStatus]? = nil) {
+        self.stateStatus = stateStatus
         self.schemaVersion = schemaVersion
         self.generatedAt = generatedAt
         self.runDate = runDate
@@ -33,8 +37,51 @@ public struct Snapshot: Codable, Equatable, Sendable {
     public func waterbody(id: Waterbody.ID) -> Waterbody? { waterbodies.first { $0.id == id } }
 
     enum CodingKeys: String, CodingKey {
-        case schemaVersion, generatedAt, runDate, sources, sourceFile, sourceFiles, waterbodies
+        case schemaVersion, generatedAt, runDate, sources, sourceFile, sourceFiles, waterbodies, stateStatus
     }
+
+    /// The entry of a state whose data is unavailable, or nil.
+    public func outage(state: String) -> StateStatus? {
+        stateStatus?.first { $0.state == state && $0.mode == .unavailable }
+    }
+
+    /// Every water of an unavailable state with its status, and each spot's,
+    /// replaced by an undetermined one that carries the outage, so no
+    /// screen, list, widget or alert can show its last records as current.
+    func maskingUnavailable() -> Snapshot {
+        guard let entries = stateStatus, entries.contains(where: { $0.mode == .unavailable }) else { return self }
+        let masked = waterbodies.map { water -> Waterbody in
+            guard let entry = outage(state: water.state), let since = entry.since else { return water }
+            let outage = Status.Outage(stateName: Waterbody.stateNames[water.state] ?? water.state,
+                                       since: since, lastRead: entry.lastRead, mapUrl: entry.mapUrl)
+            let mask = { (status: Status) in
+                Status(kind: .undetermined, lastAdvisory: status.lastAdvisory, unavailable: outage)
+            }
+            return Waterbody(id: water.id, state: water.state, name: water.name, countyText: water.countyText,
+                             counties: water.counties, center: water.center, status: mask(water.status),
+                             sites: water.sites.map { Site(id: $0.id, landmark: $0.landmark, lat: $0.lat, lon: $0.lon, status: mask($0.status)) },
+                             records: water.records, satellite: water.satellite)
+        }
+        return Snapshot(schemaVersion: schemaVersion, generatedAt: generatedAt, runDate: runDate, sources: sources,
+                        sourceFile: sourceFile, sourceFiles: sourceFiles, waterbodies: masked, stateStatus: stateStatus)
+    }
+}
+
+/// One state's data mode, as the pipeline wrote it.
+public struct StateStatus: Codable, Equatable, Sendable {
+    public enum Mode: String, Codable, Sendable {
+        case live
+        case staleDated = "stale_dated"
+        case unavailable
+    }
+
+    public let state: String
+    public let source: String
+    public let mode: Mode
+    public let lastRead: PlainDate?
+    public let since: PlainDate?
+    public let reason: String?
+    public let mapUrl: String
 }
 
 /// Official advisories decide a status; satellite estimates never do.
@@ -131,10 +178,34 @@ public struct Status: Codable, Equatable, Sendable {
     public let liftDate: PlainDate?
     public let lastAdvisory: PlainDate?
     public let sitesWithAdvisory: Int
+    /// Set by the decoder, never read from the file, when this water's state
+    /// is in its "data unavailable" mode (DECISIONS 0024). The status then
+    /// reads as undetermined, says nothing current, and never alerts.
+    public private(set) var unavailable: Outage? = nil
+
+    /// Why a state's status is not shown, and where to look instead.
+    public struct Outage: Equatable, Sendable {
+        public let stateName: String
+        public let since: PlainDate
+        public let lastRead: PlainDate?
+        public let mapUrl: String
+
+        public init(stateName: String, since: PlainDate, lastRead: PlainDate?, mapUrl: String) {
+            self.stateName = stateName
+            self.since = since
+            self.lastRead = lastRead
+            self.mapUrl = mapUrl
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case kind, tier, level, posted, plannedEnd, liftKind, liftDate, lastAdvisory, sitesWithAdvisory
+    }
 
     public init(kind: Kind, tier: AdvisoryTier? = nil, level: String? = nil, posted: PlainDate? = nil,
                 plannedEnd: PlainDate? = nil, liftKind: LiftKind? = nil, liftDate: PlainDate? = nil,
-                lastAdvisory: PlainDate? = nil, sitesWithAdvisory: Int = 0) {
+                lastAdvisory: PlainDate? = nil, sitesWithAdvisory: Int = 0, unavailable: Outage? = nil) {
+        self.unavailable = unavailable
         self.kind = kind
         self.tier = tier
         self.level = level

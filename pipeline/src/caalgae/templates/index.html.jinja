@@ -8,7 +8,7 @@
   heading to the water: swimmers, families, paddlers, anglers and dog owners.
 </p>
 <p class="muted">
-  {% for f in source_files %}{% if f.source == "ca-swrcb-fhab" %}California: the state's file dated {{ f.file_date|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% elif f.source == "mo-dnr-hab" %} Missouri: read {{ f.fetched_at[:10]|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% endif %}{% endfor %}
+  {% for f in source_files %}{% if f.source == "ca-swrcb-fhab" %}California: the state's file dated {{ f.file_date|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% elif f.source == "mo-dnr-hab" %}{% if "MO" in unavailable %} Missouri: data unavailable since {{ unavailable.MO.since|date }}; its pages show only records read before then, and none is listed here.{% else %} Missouri: read {{ f.fetched_at[:10]|date }}{% if f.newest_record_date %}, newest record {{ f.newest_record_date|date }}{% endif %}.{% endif %}{% endif %}{% endfor %}
   An advisory stays listed until the state records an end. The list below
   shows only advisories posted in the last {{ recent_days }} days. This site
   lists only waters in the state's data, and a water not listed may still
@@ -34,5 +34,6 @@
 <ul>
   <li><a href="{{ root }}county/">California, by county</a> (records since 2016)</li>
   {% if "MO" in states_present %}<li><a href="{{ root }}state/mo/">Missouri</a> (records since 2017)</li>{% endif %}
+  {% if ny_history %}<li><a href="{{ root }}state/ny/">New York bloom history</a> (DEC's yearly summary of confirmed blooms; history only, with no current status)</li>{% endif %}
 </ul>
 {% endblock %}

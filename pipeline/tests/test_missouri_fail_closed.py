@@ -1,7 +1,8 @@
-"""Missouri fails closed (docs/DECISIONS.md 0019): when the department's layer
-is gone, changed or empty, Missouri leaves the site instead of showing its
-last records as current. California is never held back by it. Also: the
-department's own "general purposes only" caveat, verbatim, beside its data."""
+"""Missouri fails closed (docs/DECISIONS.md 0019, amended by 0024): when the
+department's layer is gone, changed or empty, Missouri's pages switch to
+their dated "data unavailable" mode instead of showing its last records as
+current. California is never held back by it. Also: the department's own
+"general purposes only" caveat, verbatim, beside its data."""
 
 from __future__ import annotations
 
@@ -61,6 +62,25 @@ def assert_missouri_absent(tmp: Path) -> None:
         site / "water" / "ca-alameda-lake-alpha" / "index.html"
     )
     assert "mo-" not in (site / "sitemap.xml").read_text()
+
+
+def assert_missouri_unavailable(tmp: Path) -> None:
+    """Every Missouri page is still built, with the dated notice, and none
+    of them states a level or "No all-clear recorded" (0024)."""
+    s = snap(tmp)
+    assert {w["state"] for w in s["waterbodies"]} == {"CA", "MO"}
+    mo = [m for m in s["state_status"] if m["state"] == "MO"]
+    assert mo and mo[0]["mode"] == "unavailable" and mo[0]["since"]
+    site = tmp / "site"
+    pages = sorted((site / "water").glob("mo-*/index.html"))
+    assert pages
+    for page in [*pages, site / "state" / "mo" / "index.html"]:
+        text = text_of(page)
+        assert "stopped reaching Lake Notice" in text, page
+        assert "No all-clear recorded" not in text, page
+        assert "recommends no advisory" not in text, page
+    assert "mo-" in (site / "sitemap.xml").read_text()
+    assert "/water/mo-" not in (site / "advisories" / "index.html").read_text()
 
 
 def assert_missouri_present(tmp: Path) -> None:
@@ -142,29 +162,36 @@ def test_good_layer_shows_missouri(tmp_path: Path) -> None:
         layer(fields=[{"name": "objectid"}]),
     ],
 )
-def test_a_changed_layer_hides_missouri_and_keeps_california(
+def test_a_changed_layer_with_no_history_shows_no_missouri(
     tmp_path: Path, body: bytes, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    # Nothing was ever read, so there is nothing to show: no Missouri page.
     bad = tmp_path / "mo.json"
     bad.write_bytes(body)
     assert_missouri_absent(build(tmp_path, "--mo-fixture", str(bad)))
     captured = capsys.readouterr()
-    assert "Missouri hidden" in captured.out + captured.err
+    assert "Missouri data unavailable" in captured.out + captured.err
 
 
-def test_a_changed_layer_hides_missouri_even_with_fresh_history(tmp_path: Path) -> None:
+def test_a_changed_layer_turns_missouri_unavailable_and_keeps_california(
+    tmp_path: Path,
+) -> None:
     # Yesterday's good read is in history; today the layer changed shape.
     # Missouri's last records are not shown as current, and stay in history.
-    build(tmp_path, "--mo-fixture", str(MO_POINTS))
+    build(tmp_path, "--mo-fixture", str(MO_POINTS), run_today="2026-10-11")
     bad = tmp_path / "mo.json"
     bad.write_bytes(layer(fields=[{"name": "objectid"}]))
-    assert_missouri_absent(build(tmp_path, "--mo-fixture", str(bad)))
+    assert_missouri_unavailable(build(tmp_path, "--mo-fixture", str(bad)))
     kept = hist.load(tmp_path / "h.json")
     assert any(e.record.source == MO_DNR_HAB.id for e in kept.entries.values())
+    assert kept.outages[MO_DNR_HAB.id]["since"] == "2026-10-12"
+    assert {w["state"] for w in snap(tmp_path)["waterbodies"]} >= {"CA"}
 
 
 def namespace() -> argparse.Namespace:
-    return argparse.Namespace(mo_fixture=None, fixture_page=None)
+    return argparse.Namespace(
+        mo_fixture=None, mo_viewer_fixture=None, fixture_page=None
+    )
 
 
 def good_history(fetched_on: str) -> hist.History:
@@ -184,23 +211,25 @@ def good_history(fetched_on: str) -> hist.History:
 
 @respx.mock
 @pytest.mark.parametrize("code", [404, 410])
-def test_a_retired_live_endpoint_hides_missouri_at_once(code: int) -> None:
+def test_a_retired_live_endpoint_makes_missouri_unavailable_at_once(code: int) -> None:
     respx.get("https://gis.dnr.mo.gov/robots.txt").mock(
         return_value=httpx.Response(404)
     )
     respx.get(missouri.QUERY_URL).mock(return_value=httpx.Response(code))
     now = dt.datetime(2026, 10, 12, 14, tzinfo=dt.UTC)
     history = good_history("2026-10-11")  # read yesterday, so recent
-    _, _, shown = cli._missouri(namespace(), history, RUN, now)
-    assert shown is False
+    _, _, mode = cli._missouri(namespace(), history, RUN, now)
+    assert mode is not None and mode.mode == "unavailable"
+    assert mode.reason is not None and mode.reason.startswith("gone:")
 
 
 @respx.mock
 @pytest.mark.parametrize(
-    ("last_read", "shown"), [("2026-10-11", True), ("2026-10-09", False)]
+    ("last_read", "expected"),
+    [("2026-10-11", "stale_dated"), ("2026-10-09", "unavailable")],
 )
 def test_a_passing_failure_shows_missouri_only_while_its_read_is_recent(
-    last_read: str, shown: bool
+    last_read: str, expected: str
 ) -> None:
     respx.get("https://gis.dnr.mo.gov/robots.txt").mock(
         return_value=httpx.Response(404)
@@ -208,7 +237,7 @@ def test_a_passing_failure_shows_missouri_only_while_its_read_is_recent(
     respx.get(missouri.QUERY_URL).mock(return_value=httpx.Response(503))
     now = dt.datetime(2026, 10, 12, 14, tzinfo=dt.UTC)
     _, _, result = cli._missouri(namespace(), good_history(last_read), RUN, now)
-    assert result is shown
+    assert result is not None and result.mode == expected
 
 
 @respx.mock
@@ -218,8 +247,8 @@ def test_a_network_error_is_a_passing_failure() -> None:
     )
     respx.get(missouri.QUERY_URL).mock(side_effect=httpx.ConnectTimeout("timed out"))
     now = dt.datetime(2026, 10, 12, 14, tzinfo=dt.UTC)
-    _, _, shown = cli._missouri(namespace(), hist.empty(), RUN, now)
-    assert shown is False  # no good read on record at all
+    _, _, mode = cli._missouri(namespace(), hist.empty(), RUN, now)
+    assert mode is None  # no good read on record at all: nothing to show
 
 
 # -- the department's caveat ------------------------------------------------

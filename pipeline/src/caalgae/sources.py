@@ -68,11 +68,19 @@ class Source:
     # A switch per source, so a revoked or changed source is turned off in
     # one place without touching its history.
     enabled: bool = True
+    # The agency's own map of current reports, linked when this source's data
+    # is unavailable (DECISIONS 0024). Empty: ``official_map_url``.
+    reports_map_url: str = ""
 
     def as_json(self) -> dict[str, object]:
         out = dataclasses.asdict(self)
         out.pop("enabled")
+        out.pop("reports_map_url")
         return out
+
+    @property
+    def current_map_url(self) -> str:
+        return self.reports_map_url or self.official_map_url
 
 
 CA_SWRCB_FHAB = Source(
@@ -163,6 +171,7 @@ MO_DNR_HAB = Source(
     revocation_clause=MO_REVOCATION_CLAUSE,
     publisher_caveat=MO_MAP_CAVEAT,
     publisher_caveat_url=MO_MAP_CAVEAT_URL,
+    reports_map_url=MO_MAP_CAVEAT_URL,
 )
 
 EPA_CYAN = Source(
@@ -188,6 +197,95 @@ EPA_CYAN = Source(
         "how much cyanobacteria there is, not toxins."
     ),
 )
+
+# States whose readers are built but switched off (DECISIONS 0037). Neither
+# agency publishes a reuse grant, so under 0004 the license is "unknown" and
+# the data is not used. Permission was asked in writing on 2026-11-02. These
+# are deliberately not in ``SOURCES``: nothing in the snapshot, site or app
+# names them until an agency says yes and the owner turns its flag on.
+OR_OHA_HAB = Source(
+    id="or-oha-hab",
+    state="OR",
+    agency="Oregon Health Authority",
+    program="Harmful Algae Blooms program, recreational use health advisories",
+    dataset_url=(
+        "https://www.oregon.gov/oha/PH/HEALTHYENVIRONMENTS/RECREATION/"
+        "HARMFULALGAEBLOOMS/_api/web/GetList("
+        "'%2Foha%2FPH%2FHEALTHYENVIRONMENTS%2FRECREATION%2FHARMFULALGAEBLOOMS"
+        "%2FLists%2FCurrentCyanobacteriaAdvisories')/items"
+    ),
+    official_map_url=(
+        "https://www.oregon.gov/oha/PH/HEALTHYENVIRONMENTS/RECREATION/"
+        "HARMFULALGAEBLOOMS/Pages/Blue-GreenAlgaeAdvisories.aspx"
+    ),
+    license="unknown (oregon.gov terms grant no reuse right; permission asked 2026-11-02)",
+    rights="Not used until the Oregon Health Authority agrees in writing",
+    license_read_on="2026-11-02",
+    attribution="",
+    contact="hab.health@oha.oregon.gov",
+    lift_semantics="explicit_record",
+    lift_explanation=(
+        "An advisory or precaution ends only when the Oregon Health Authority "
+        'lists it as "has been lifted". A water that leaves the list is not '
+        "read as an end."
+    ),
+    enabled=False,
+)
+
+KS_KDHE_HAB = Source(
+    id="ks-kdhe-hab",
+    state="KS",
+    agency="Kansas Department of Health and Environment",
+    program="Harmful Algal Bloom program, public water status",
+    dataset_url=(
+        "https://maps.kdhe.ks.gov/kdhe_doe/rest/services/HAB/"
+        "HAB_Manager_Status_Map/MapServer/6"
+    ),
+    official_map_url="https://www.kdhe.ks.gov/777/Harmful-Algal-Blooms",
+    license="unknown (no reuse grant found; permission asked 2026-11-02)",
+    rights="Not used until the Kansas Department of Health and Environment agrees in writing",
+    license_read_on="2026-11-06",
+    attribution="",
+    contact="Kansas Department of Health and Environment, HAB program",
+    lift_semantics="explicit_record",
+    lift_explanation=(
+        'A status ends only when the department records a later "Lifted" for '
+        "the same water. A water with no newer status is not read as an end."
+    ),
+    enabled=False,
+)
+
+# Iowa (DECISIONS 0038): the same pattern. No reuse terms were found at all
+# (AQuIA's "Site Policies" link answered 404 on 2026-11-06), so the license
+# is "unknown" and the data is not used.
+IA_DNR_BEACHES = Source(
+    id="ia-dnr-beaches",
+    state="IA",
+    agency="Iowa Department of Natural Resources",
+    program=(
+        "Beach Monitoring Program (AQuIA), with the Iowa Department of Health "
+        "and Human Services"
+    ),
+    dataset_url="https://programs.iowadnr.gov/aquia/Programs/DownloadBeachResults",
+    official_map_url="https://programs.iowadnr.gov/aquia/Programs/Beaches",
+    license="unknown (no reuse terms found; permission not yet asked)",
+    rights="Not used until the Iowa Department of Natural Resources agrees in writing",
+    license_read_on="2026-11-06",
+    attribution="",
+    contact="AQuIA contact form, https://programs.iowadnr.gov/aquia/Docs/Contact",
+    lift_semantics="explicit_record",
+    lift_explanation=(
+        "A beach's algae advisory ends only when a later weekly sample is "
+        'posted "Watch / General Information" with a microcystin result under '
+        "8 ug/L. "
+        "A beach with no newer sample is not read as an end."
+    ),
+    enabled=False,
+)
+
+FLAGGED_SOURCES: dict[str, Source] = {
+    s.id: s for s in (OR_OHA_HAB, KS_KDHE_HAB, IA_DNR_BEACHES)
+}
 
 SOURCES: dict[str, Source] = {s.id: s for s in (CA_SWRCB_FHAB, MO_DNR_HAB, EPA_CYAN)}
 

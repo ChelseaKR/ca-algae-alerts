@@ -3,7 +3,8 @@ import StoreKit
 import Observation
 import AlgaeCore
 
-/// The app's one purchase: a single non-consumable "unlock full access".
+/// The app's one purchase: a single non-consumable, shown as
+/// `FreeTier.purchaseName`. The product id below never changes.
 /// StoreKit 2 only (no `SKPaymentQueue`/transaction-observer code) — see
 /// `docs/app-store/README.md` for what has to exist in App Store Connect to match
 /// this identifier, and `docs/DECISIONS.md` 0001 for the price and what it unlocks.
