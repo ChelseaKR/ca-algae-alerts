@@ -44,6 +44,7 @@
       <a href="{{ root }}advisories/">{{ t("nav.advisories") }}</a>
       <a href="{{ root }}county/">{{ t("nav.county") }}</a>
       {% if "MO" in states_present %}<a href="{{ root }}state/mo/">{{ t("nav.missouri") }}</a>{% endif %}
+      {% if ny_history %}<a href="{{ root }}state/ny/">{{ t("nav.ny_history") }}</a>{% endif %}
       <a href="{{ root }}dogs/">{{ t("nav.dogs") }}</a>
       <a href="{{ root }}about/">{{ t("nav.about") }}</a>
     </nav>
@@ -73,6 +74,9 @@
     {% for s in all_sources %}
     <p>{{ t("footer.attribution." ~ s.id) }}</p>
     {% endfor %}
+    {% if ny_history %}
+    <p>{{ t("footer.attribution.ny") }} <a href="{{ root }}state/ny/#source">{{ t("footer.ny_source") }}</a>.</p>
+    {% endif %}
     <p id="not-medical-advice">{{ t("footer.not_medical_advice") }}</p>
     <p>{{ t("footer.independent", site_name=site_name) }}{% for s in all_sources if s.required_disclaimer %} <a href="{{ root }}about/#{{ s.id }}">{{ t("footer.disclaimer_link", state=t("state." ~ s.state)) }}</a>.{% endfor %}</p>
     <p>{{ t("footer.file", file_name=source_file.file_name, date=local_date(source_file.fetched_at[:10])) }} <a href="{{ source.official_map_url }}">{{ source.official_map_url }}</a></p>

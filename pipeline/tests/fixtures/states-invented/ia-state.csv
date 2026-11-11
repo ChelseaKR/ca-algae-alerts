@@ -1,0 +1,16 @@
+siteID,name,beachClassification,owner,sampleDate,week,eColi,eColi5wGeomean,microcystin,status,comments
+99000001,Invented Lake Beach,Vulnerable,Invented State Park,6/12/2026,3,40,52,12.5,Swimming is Not Recommended,
+99000001,Invented Lake Beach,Vulnerable,Invented State Park,6/19/2026,4,30,48,9.1,Swimming is Not Recommended,Algae toxin over the advisory threshold
+99000001,Invented Lake Beach,Vulnerable,Invented State Park,6/26/2026,5,20,41,<0.3,Watch / General Information,
+99000002,Invented Pond Beach,Transitional,Invented State Park,7/10/2026,7,980,310,0.4,Swimming is Not Recommended,High bacteria
+99000002,Invented Pond Beach,Transitional,Invented State Park,7/17/2026,8,640,290,,Swimming is Not Recommended,
+99000003,Invented Reservoir Beach,Less Vulnerable,Invented State Park,7/24/2026,9,10,22,8,Swimming is Not Recommended,
+99000003,Invented Reservoir Beach,Less Vulnerable,Invented State Park,7/31/2026,10,10,20,15.0,Watch / General Information,
+99000004,Invented Creek Beach,Less Vulnerable,Invented State Park,8/7/2026,11,10,18,,Watch / General Information,Not sampled this week
+99000004,Invented Creek Beach,Less Vulnerable,Invented State Park,8/14/2026,12,10,18,ND,Beach Closed,Closed for repairs
+99000005,Invented Bay Beach,Vulnerable,Invented State Park,8/21/2026,13,10,15,1.2,Swimming Advisory,
+,Invented Nameless Beach,Vulnerable,Invented State Park,6/12/2026,3,10,10,0.2,Watch / General Information,
+99000006,,Vulnerable,Invented State Park,6/12/2026,3,10,10,0.2,Watch / General Information,
+99000007,Invented Marsh Beach,Vulnerable,Invented State Park,,3,10,10,0.2,Watch / General Information,
+99000007,Invented Marsh Beach,Vulnerable,Invented State Park,5/1/2027,3,10,10,0.2,Watch / General Information,
+99000001,Invented Lake Beach,Vulnerable,Invented State Park,6/12/2026,3,40,52,12.5,Swimming is Not Recommended,

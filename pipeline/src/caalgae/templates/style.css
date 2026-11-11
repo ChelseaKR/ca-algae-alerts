@@ -378,6 +378,15 @@ ul.water-index li { break-inside: avoid; }
 .level.tier-warning::before { background: var(--warning-band); }
 .level.tier-danger::before { background: var(--danger-band); }
 .level.tier-other_advisory::before { background: var(--other-band); }
+/* A state whose data is unavailable (DECISIONS 0024): the words carry it.
+   Its status box has no band, so it takes the band's side padding, and it is
+   not an advisory, so its edge is dashed like any other non-advisory box. */
+.notice-unavailable {
+  border: 2px solid var(--border);
+  padding: 0.25rem 1rem;
+  margin: 1rem 0;
+}
+.status-unavailable { border-style: dashed; padding: 0.1rem 1rem; }
 
 @media (max-width: 40rem) {
   /* Wide history tables scroll inside themselves, never the page. */

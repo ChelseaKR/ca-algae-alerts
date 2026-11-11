@@ -18,9 +18,10 @@
 	No required-reason API is called directly by this app's code as of this
 	commit: no UserDefaults, no file-timestamp reads (creationDate /
 	modificationDate / stat family), no system-boot-time or disk-space APIs,
-	no active-keyboard APIs. Re-check with an Xcode Archive privacy report
-	(docs/APP-STORE.md) before any future change that adds one of these, and
-	add the matching entry with an Apple-approved reason code then.
+	no active-keyboard APIs. Re-check with Xcode's privacy report on an archive
+	(Organizer, the archive's context menu, "Generate Privacy Report") before
+	any future change that adds one of these, and add the matching entry with
+	an Apple-approved reason code then.
 	-->
 	<key>NSPrivacyAccessedAPITypes</key>
 	<array/>

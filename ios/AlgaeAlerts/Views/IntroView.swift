@@ -15,7 +15,7 @@ struct IntroView: View {
                     .accessibilityHidden(true)
                 Text("Toxic algae advisories for lakes and rivers").font(.largeTitle.bold())
                 point("list.bullet.rectangle", "What the state has recorded",
-                      "California and Missouri advisories for lakes, rivers and shorelines, newest first, with each water's history. For swimmers, families, paddlers, anglers and dog owners.")
+                      CoverageCopy.introSummary(env.snapshot))
                 point("calendar", "Every status has a date",
                       "An advisory stays listed until the state records an end. Old ones say so, with their date.")
                 point("exclamationmark.bubble", "What the records cannot tell you",
