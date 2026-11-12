@@ -8,27 +8,37 @@ struct FavoritesView: View {
     var body: some View {
         NavigationStack {
             List {
-                alertsSection
                 if env.favorites.ids.isEmpty {
                     Section {
-                        Text("Tap the star on a lake to keep it here.").foregroundStyle(Theme.secondaryText)
+                        NoticeBoard(
+                            title: EmptyCopy.noFavoritesTitle, message: EmptyCopy.noFavoritesMessage,
+                            systemImage: "star",
+                            actionTitle: "Browse lakes", actionID: "browse-lakes",
+                            action: { router.tab = .advisories })
                     }
-                } else {
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    .listRowBackground(Theme.paper)
+                }
+                alertsSection
+                if !env.favorites.ids.isEmpty {
                     Section {
                         ForEach(env.favorites.ids, id: \.self) { id in
                             if let water = env.snapshot?.waterbody(id: id) {
                                 NavigationLink(value: id) { LakeRow(water: water, isFavorite: false) }
                             } else {
                                 // Absence is not a status (DECISIONS 0039).
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading, spacing: 4) {
                                     Text(SavedLakeCopy.title).font(.headline)
                                     Text(SavedLakeCopy.detail(id: id, snapshot: env.snapshot)).font(.subheadline).foregroundStyle(Theme.secondaryText)
                                 }
+                                .accessibilityElement(children: .combine)
                             }
                         }
                     } header: { SectionTitle("Your lakes") }
+                    .surfaceRows()
                 }
             }
+            .noticeList()
             .navigationTitle("Favorites")
             .navigationDestination(for: Waterbody.ID.self) { id in LakeDetailView(id: id) }
             .task { await env.refreshNotificationStatus() }
@@ -58,5 +68,6 @@ struct FavoritesView: View {
                 Label("Alerts are on for your favorites", systemImage: "bell")
             }
         }
+        .surfaceRows()
     }
 }
