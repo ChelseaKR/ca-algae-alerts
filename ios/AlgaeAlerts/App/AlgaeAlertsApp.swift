@@ -13,6 +13,7 @@ struct AlgaeAlertsApp: App {
         AppEnvironment.shared = environment
         BackgroundRefresh.register { await AppEnvironment.shared?.performBackgroundRefresh() ?? .failed("no environment") }
         NotificationResponder.shared.install()
+        Theme.styleNavigationBars()
     }
 
     var body: some Scene {
@@ -26,6 +27,7 @@ struct AlgaeAlertsApp: App {
         .onChange(of: scenePhase) { _, phase in
             switch phase {
             case .active:
+                environment.noteOpened()
                 Task { await refreshOnOpen() }
             case .background:
                 BackgroundRefresh.scheduleNextRefresh()

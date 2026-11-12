@@ -34,6 +34,85 @@ final class AppUITests: XCTestCase {
         XCTAssertTrue(app.buttons["open-unlock"].exists)
     }
 
+    /// The lake screen opens on its posted notice: the level's words and
+    /// rank, read aloud, and a way to share the lake's web page.
+    func testALakeShowsItsSignAndCanBeShared() {
+        let app = launch(["-skipIntro"])
+        XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 10))
+        app.searchFields.firstMatch.tap()
+        app.searchFields.firstMatch.typeText("Temescal")
+        let row = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Lake Temescal'")).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        XCTAssertTrue(row.label.contains("sign") || row.label.contains("Latest state record"), "the row speaks its sign: \(row.label)")
+        row.tap()
+        let sign = app.descendants(matching: .any)["lake-sign"]
+        XCTAssertTrue(sign.waitForExistence(timeout: 5))
+        XCTAssertTrue(sign.label.hasSuffix("of 3 marks") || sign.label.hasSuffix("not an advisory") || sign.label.hasSuffix(" sign"), sign.label)
+        let share = app.buttons["share-lake"]
+        XCTAssertTrue(share.exists)
+        XCTAssertEqual(share.label, "Share Lake Temescal")
+        share.tap()
+        // The system share sheet, whatever iOS version draws it.
+        let sheet = app.otherElements["ActivityListView"]
+        let copy = app.buttons["Copy"]
+        XCTAssertTrue(sheet.waitForExistence(timeout: 10) || copy.waitForExistence(timeout: 5), "the share sheet should open:\n\(app.debugDescription)")
+    }
+
+    func testASearchWithNoMatchSaysSoInWords() {
+        let app = launch(["-skipIntro"])
+        XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 10))
+        app.searchFields.firstMatch.tap()
+        app.searchFields.firstMatch.typeText("Qqqzx")
+        let title = app.staticTexts["No lake matches \u{201C}Qqqzx\u{201D}"]
+        XCTAssertTrue(title.waitForExistence(timeout: 5), app.debugDescription)
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'That is not a finding about the water'")).firstMatch.exists)
+    }
+
+    func testEmptyFavoritesOfferTheLakeList() {
+        let app = launch(["-skipIntro"])
+        XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 10))
+        app.tabBars.buttons["Favorites"].tap()
+        XCTAssertTrue(app.staticTexts["No saved lakes yet"].waitForExistence(timeout: 5))
+        let browse = app.buttons["browse-lakes"]
+        XCTAssertTrue(browse.exists)
+        browse.tap()
+        XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 5))
+    }
+
+    /// No data on the phone and no network: the screen says which, in
+    /// words, and offers to try again. Nothing reads as a lake's status.
+    func testNoDataOfflineStateSaysWhatHappened() {
+        let app = launch(["-skipIntro", "-noBundledSnapshot", "-simulateOffline"])
+        XCTAssertTrue(app.staticTexts["This iPhone is offline"].waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertTrue(app.buttons["retry-load"].exists)
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "label CONTAINS 'advisory'")).firstMatch.exists)
+    }
+
+    func testNoDataOnlineStateSaysTheReadFailed() {
+        let app = launch(["-skipIntro", "-noBundledSnapshot"])
+        XCTAssertTrue(app.staticTexts["No lake records on this iPhone"].waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertTrue(app.buttons["retry-load"].exists)
+    }
+
+    /// Offline with data: the list stays, with the file's date said aloud.
+    func testOfflineWithDataKeepsTheListAndSaysItsDate() {
+        let app = launch(["-skipIntro", "-simulateOffline"])
+        XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 10))
+        let banner = app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'This iPhone is offline. Showing the copy already on it, from the data file dated'")).firstMatch
+        XCTAssertTrue(banner.waitForExistence(timeout: 5), app.debugDescription)
+    }
+
+    func testAboutHasASupportRow() {
+        let app = launch(["-skipIntro"])
+        XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 10))
+        app.tabBars.buttons["About"].tap()
+        let support = app.descendants(matching: .any)["contact-support"]
+        for _ in 0..<8 where !(support.exists && support.isHittable) { app.collectionViews.firstMatch.swipeUp() }
+        XCTAssertTrue(support.exists)
+        XCTAssertEqual(support.label, "Email support at chelsea@chelseakr.com")
+        XCTAssertTrue(app.buttons["share-app"].exists)
+    }
+
     func testNoScreenSaysAWaterIsSafe() {
         let app = launch(["-skipIntro"])
         XCTAssertTrue(app.navigationBars["Algae advisories"].waitForExistence(timeout: 10))
@@ -123,6 +202,17 @@ final class AccessibilityAuditUITests: XCTestCase {
 
         select(tab: "About", in: app)
         try audit("About", app: app, label: label, isAX5: isAX5)
+        app.terminate()
+
+        // The designed empty and offline screens (DECISIONS 0036).
+        let empty = XCUIApplication()
+        empty.launchArguments = ["-uiTesting", "-skipIntro", "-noBundledSnapshot", "-simulateOffline"]
+        if let contentSize { empty.launchArguments += ["-UIPreferredContentSizeCategoryName", contentSize] }
+        empty.launch()
+        XCTAssertTrue(empty.staticTexts["This iPhone is offline"].waitForExistence(timeout: 30))
+        try audit("No data, offline", app: empty, label: label, isAX5: isAX5)
+        select(tab: "Favorites", in: empty)
+        try audit("Favorites, empty", app: empty, label: label, isAX5: isAX5)
     }
 
     /// Taps a tab until its screen shows. At the largest text sizes the

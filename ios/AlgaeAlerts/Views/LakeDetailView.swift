@@ -1,16 +1,21 @@
 import SwiftUI
+import StoreKit
 import AlgaeCore
 
 struct LakeDetailView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(AppRouter.self) private var router
+    @Environment(\.requestReview) private var requestReview
     let id: Waterbody.ID
+    /// Set when the person saves this lake on this visit; leaving the screen
+    /// afterward is the one moment the app may ask for a rating (0036).
+    @State private var savedHere = false
 
     var body: some View {
         if let water = env.snapshot?.waterbody(id: id) {
             content(water)
         } else {
-            EmptyState(title: "Not in the current data", systemImage: "drop", message: "This lake is not in the state's current file. Its favorite and alert settings are kept.")
+            NoticeEmptyState(board: NoticeBoard(title: EmptyCopy.goneTitle, message: EmptyCopy.goneMessage, systemImage: "doc.questionmark"))
         }
     }
 
@@ -32,15 +37,14 @@ struct LakeDetailView: View {
                 // truncates a long name, so the bar shows it small and the
                 // content shows it large.
                 Text(water.name)
-                    .font(.title2.bold())
+                    .font(.signage(.largeTitle, weight: .heavy))
+                    .foregroundStyle(Theme.ink)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityIdentifier("lake-name")
+                    .listRowBackground(Theme.paper)
+                NoticeCard(band: NoticeBand(water.status)) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Label {
-                        Text(StatusWording.headline(water.status)).font(.headline)
-                    } icon: {
-                        Image(systemName: Theme.symbol(for: water.status)).foregroundStyle(Theme.tint(for: water.status))
-                    }
+                    Text(StatusWording.headline(water.status)).font(.headline).foregroundStyle(Theme.ink)
                     ForEach(StatusWording.statusNotes(water, fileDate: env.snapshot?.fileDate(for: water)), id: \.self) { note in
                         Text(note)
                     }
@@ -58,6 +62,14 @@ struct LakeDetailView: View {
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityIdentifier("lake-status")
+                }
+                // Inset from the section's rounded corners, which would
+                // otherwise clip the notice's edge.
+                .padding(.horizontal, 8)
+                .padding(.top, 4)
+                .padding(.bottom, 18)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Theme.paper)
             } header: {
                 SectionTitle(water.countyLabel)
             }
@@ -66,12 +78,14 @@ struct LakeDetailView: View {
                 Section {
                     Text(guidance)
                 } header: { SectionTitle("What this level asks") }
+                .surfaceRows()
             }
 
             Section {
                 Text(StatusWording.humanAdvice)
                 Text(StatusWording.notMedicalAdvice).font(.footnote).foregroundStyle(Theme.secondaryText)
             } header: { SectionTitle("After contact with the water") }
+            .surfaceRows()
 
             Section {
                 Text(StatusWording.dogAnswer(name: water.name, status: water.status))
@@ -79,8 +93,9 @@ struct LakeDetailView: View {
                     Text(StatusWording.dogAdvice).font(.callout)
                 }
             } header: {
-                Label("Dogs", systemImage: "pawprint").foregroundStyle(Theme.label).font(.footnote.weight(.semibold))
+                SectionTitle("Dogs", systemImage: "pawprint")
             }
+            .surfaceRows()
 
             alertsSection(water)
 
@@ -90,13 +105,15 @@ struct LakeDetailView: View {
 
             Section {
                 ForEach(water.sites) { site in
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        SignChip(band: NoticeBand(site.status))
                         Text(site.landmark.isEmpty ? "Spot not described" : site.landmark)
                         Text(StatusWording.headline(site.status)).font(.subheadline).foregroundStyle(Theme.secondaryText)
                     }
                     .accessibilityElement(children: .combine)
                 }
             } header: { SectionTitle("Reported spots") }
+            .surfaceRows()
 
             Section {
                 ForEach(water.records) { record in
@@ -107,6 +124,7 @@ struct LakeDetailView: View {
             } footer: {
                 Text("\"None\" is the state's record that no advisory was recommended that day. \"NA\" records change nothing.").foregroundStyle(Theme.label)
             }
+            .surfaceRows()
 
             if let source = env.snapshot?.advisorySource(state: water.state) {
                 Section {
@@ -116,16 +134,34 @@ struct LakeDetailView: View {
                         Text(source.requiredDisclaimer).font(.caption2).accessibilityIdentifier("required-disclaimer")
                     }
                     Link("Official state algae page", destination: URL(string: source.officialMapUrl)!)
-                    Link("This lake on the website", destination: SnapshotEndpoint.siteURL.appendingPathComponent("water/\(water.id)/"))
+                    Link("This lake on the website", destination: LakeShare.url(for: water.id))
                 } header: { SectionTitle("Source") }
+                .surfaceRows()
             }
         }
+        .noticeList()
         .navigationTitle(water.name)
         .navigationBarTitleDisplayMode(.inline)
+        .onDisappear {
+            if env.takeReviewMoment(justSavedALake: savedHere && env.isFavorite(water.id)) { requestReview() }
+        }
         .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                // The lake's page on the website: anyone can open it, no app
+                // needed, and nothing about the sender goes with it.
+                ShareLink(item: LakeShare.url(for: water.id),
+                          subject: Text(LakeShare.subject(water)),
+                          message: Text(LakeShare.message(water))) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .accessibilityLabel("Share \(water.name)")
+                .accessibilityHint("Sends a link to this lake's page on lakenotice.com")
+                .accessibilityIdentifier("share-lake")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     env.toggleFavorite(water.id)
+                    if env.isFavorite(water.id) { savedHere = true }
                 } label: {
                     Image(systemName: env.isFavorite(water.id) ? "star.fill" : "star")
                 }
@@ -147,6 +183,7 @@ struct LakeDetailView: View {
                     Button("Unlock alerts and the widget") { router.showUnlock = true }
                 }
             } header: { SectionTitle("Alerts") }
+            .surfaceRows()
         }
     }
 }
@@ -160,9 +197,18 @@ struct RecordRow: View {
             DateValueRow {
                 Text(record.date.label).font(.subheadline.monospacedDigit())
             } trailing: {
-                Text(StatusWording.recordLevel(record))
-                    .font(.subheadline.weight(record.tier.isAdvisory ? .semibold : .regular))
-                    .foregroundStyle(record.tier.isAdvisory ? Theme.advisory : .primary)
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    // The sign color as a swatch; the words carry the level.
+                    let band = NoticeBand(record: record)
+                    Rectangle()
+                        .fill(Theme.band(band.paint))
+                        .overlay(Rectangle().strokeBorder(Theme.ink, style: StrokeStyle(lineWidth: 1, dash: band.isAdvisory ? [] : [2, 2])))
+                        .frame(width: 11, height: 11)
+                        .accessibilityHidden(true)
+                    Text(StatusWording.recordLevel(record))
+                        .font(.subheadline.weight(record.tier.isAdvisory ? .bold : .regular))
+                        .foregroundStyle(Theme.ink)
+                }
             }
             if !spot.isEmpty { Text(spot).font(.footnote).foregroundStyle(Theme.secondaryText) }
             if let end = record.endDate { Text("End date recorded: \(end.label)").font(.footnote) }
@@ -197,7 +243,8 @@ struct SatelliteSection: View {
             Text(StatusWording.satelliteExplainer).font(.footnote)
             Text(attribution).font(.caption2).foregroundStyle(Theme.secondaryText)
         } header: {
-            Label("Satellite estimate (not an advisory)", systemImage: "globe.americas").foregroundStyle(Theme.label).font(.footnote.weight(.semibold))
+            SectionTitle("Satellite estimate (not an advisory)", systemImage: "globe.americas")
         }
+        .surfaceRows()
     }
 }

@@ -15,6 +15,7 @@ final class AppEnvironment {
     let refresher: SnapshotRefresher
     let purchases: PurchaseManager
     let notifications: NotificationScheduler
+    let connection: ConnectionWatch
     private let launch: LaunchOptions
 
     private(set) var snapshot: Snapshot?
@@ -25,6 +26,7 @@ final class AppEnvironment {
     private(set) var lastCheckFailed: Bool
     private(set) var lastSuccess: Date?
     private(set) var notificationStatus: UNAuthorizationStatus = .notDetermined
+    private(set) var reviewAsk: ReviewAsk
 
     /// Test and screenshot switches, read from launch arguments. None of
     /// them exists in a normal launch.
@@ -33,12 +35,17 @@ final class AppEnvironment {
         var skipIntro = false
         var entitled = false
         var favorites: [String] = []
+        /// Ship no snapshot, to show the no-data screen.
+        var noBundledSnapshot = false
+        var simulateOffline = false
 
         static func current(_ args: [String] = ProcessInfo.processInfo.arguments) -> LaunchOptions {
             var o = LaunchOptions()
             o.uiTesting = args.contains("-uiTesting")
             o.skipIntro = args.contains("-skipIntro")
             o.entitled = args.contains("-entitled")
+            o.noBundledSnapshot = args.contains("-noBundledSnapshot")
+            o.simulateOffline = args.contains("-simulateOffline")
             if let i = args.firstIndex(of: "-favorites"), i + 1 < args.count {
                 o.favorites = args[i + 1].split(separator: ",").map(String.init)
             }
@@ -51,10 +58,12 @@ final class AppEnvironment {
         self.launch = launch
         let resolved = layout ?? Self.defaultLayout(uiTesting: launch.uiTesting)
         stores = AppStores(layout: resolved)
-        snapshotStore = SnapshotStore(layout: resolved, bundled: bundled)
+        snapshotStore = SnapshotStore(layout: resolved, bundled: launch.uiTesting && launch.noBundledSnapshot ? nil : bundled)
         refresher = SnapshotRefresher(session: session, store: snapshotStore)
         purchases = PurchaseManager(entitlementStore: EntitlementStore(layout: resolved))
         notifications = NotificationScheduler()
+        connection = ConnectionWatch(simulateOffline: launch.uiTesting && launch.simulateOffline)
+        reviewAsk = stores.reviewAsk()
         snapshot = snapshotStore.load()
         favorites = stores.favorites()
         muted = stores.muted()
@@ -151,6 +160,29 @@ final class AppEnvironment {
     }
 
     func showIntroAgain() { introSeen = false }
+
+    // MARK: Review prompt (DECISIONS 0036)
+
+    /// The app's version from its Info.plist, or nil: never a made-up one.
+    static var appVersion: String? { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String }
+
+    /// Counts the calendar days the app came to the front. Asks nothing.
+    func noteOpened(now: Date = Date()) {
+        reviewAsk.noteOpened(on: PlainDate.today(now: now))
+        try? stores.save(reviewAsk)
+    }
+
+    /// True once, when `ReviewAsk` allows it, and records that it asked.
+    /// The caller then calls `requestReview`. Never under UI tests, where a
+    /// system prompt would cover the screen under test.
+    func takeReviewMoment(justSavedALake: Bool) -> Bool {
+        guard !launch.uiTesting, let version = Self.appVersion,
+              reviewAsk.shouldAsk(justSavedALake: justSavedALake, favoriteCount: favorites.ids.count, version: version)
+        else { return false }
+        reviewAsk.noteAsked(version: version)
+        try? stores.save(reviewAsk)
+        return true
+    }
 
     // MARK: Notifications permission
 

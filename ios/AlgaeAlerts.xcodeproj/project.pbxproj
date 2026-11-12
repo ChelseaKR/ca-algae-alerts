@@ -13,6 +13,7 @@
 		29FD9346E130735709753859 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B63ADA62FCB97F745616137 /* Theme.swift */; };
 		34A02C184389FCEB3A7AC7EC /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09B120916499F2B6CA357F1C /* NotificationScheduler.swift */; };
 		378CF33F17D41970C2EA0F94 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 930F5FF400E874AEA0961C76 /* PrivacyInfo.xcprivacy */; };
+		388F63F93EDA93563C684DE6 /* NoticeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A632B6F5E0EB53DACACFECC /* NoticeViews.swift */; };
 		38FD33C8BA1FA1A964769AF6 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743806DE1B3DBAAF469444DD /* BackgroundRefresh.swift */; };
 		4D3640752B6C6AD5C4B207D1 /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E009B95F7BA00963B56345B0 /* WidgetBridge.swift */; };
 		59F2A095D7FC6AA4974EA1FA /* AlgaeCore in Frameworks */ = {isa = PBXBuildFile; productRef = D335BD8A0C2B02DE2FDB1F69 /* AlgaeCore */; };
@@ -34,6 +35,7 @@
 		E514D5E868851C906A45F09F /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EF81ECCB553CED89E0B5F94 /* AppEnvironment.swift */; };
 		E96E1FDF6F7DCADE365CC6A2 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE23FC8CCCA4C290A6AFEAB /* PurchaseManager.swift */; };
 		F70637C302EAC9517E6D28F5 /* PurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAF921E10EA1A47C25CC564 /* PurchaseView.swift */; };
+		FA6A8BB22C173AE43BC2CD4F /* ConnectionWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE49B43F859B11BEBB980E7D /* ConnectionWatch.swift */; };
 		FD2F177212B181CB0ECF7AF9 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E31305011D585B0392D5795 /* WidgetKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -84,6 +86,7 @@
 		44046A4247D9E9FBC1298DA8 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4575059782B1DF2CAB4F3741 /* snapshot.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = snapshot.json; sourceTree = "<group>"; };
 		46E892F9F420D45E9BFF0760 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4A632B6F5E0EB53DACACFECC /* NoticeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeViews.swift; sourceTree = "<group>"; };
 		4CAA1BFE0ECA5E7386D78F61 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		52BC3969564AB3A48F413620 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		59F903ADCFB6B48CE7666F3C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -110,6 +113,7 @@
 		E009B95F7BA00963B56345B0 /* WidgetBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetBridge.swift; sourceTree = "<group>"; };
 		ECFAD7D2AA18D433D523C88B /* AlgaeAlerts.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = AlgaeAlerts.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D515FF179C6EE41C84481A /* AlgaeAlertsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AlgaeAlertsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE49B43F859B11BEBB980E7D /* ConnectionWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionWatch.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +169,7 @@
 				8EF81ECCB553CED89E0B5F94 /* AppEnvironment.swift */,
 				07123009D33136C478782276 /* AppRouter.swift */,
 				743806DE1B3DBAAF469444DD /* BackgroundRefresh.swift */,
+				FE49B43F859B11BEBB980E7D /* ConnectionWatch.swift */,
 				09B120916499F2B6CA357F1C /* NotificationScheduler.swift */,
 				ABE23FC8CCCA4C290A6AFEAB /* PurchaseManager.swift */,
 				E009B95F7BA00963B56345B0 /* WidgetBridge.swift */,
@@ -231,6 +236,7 @@
 				52BC3969564AB3A48F413620 /* FavoritesView.swift */,
 				40D383D648E132D4C6DAD025 /* IntroView.swift */,
 				D86CD5B05C537BCCC502198C /* LakeDetailView.swift */,
+				4A632B6F5E0EB53DACACFECC /* NoticeViews.swift */,
 				CEAF921E10EA1A47C25CC564 /* PurchaseView.swift */,
 				A0C416A1661193134F3CAD78 /* RootView.swift */,
 				7B63ADA62FCB97F745616137 /* Theme.swift */,
@@ -430,9 +436,11 @@
 				E514D5E868851C906A45F09F /* AppEnvironment.swift in Sources */,
 				686BCFD79ABED2A4C577825D /* AppRouter.swift in Sources */,
 				38FD33C8BA1FA1A964769AF6 /* BackgroundRefresh.swift in Sources */,
+				FA6A8BB22C173AE43BC2CD4F /* ConnectionWatch.swift in Sources */,
 				C0E7E3FDC92FBAAF73F7C680 /* FavoritesView.swift in Sources */,
 				619EDDA14AA828C69B4B5510 /* IntroView.swift in Sources */,
 				9A48FC4B8F39D8C432D3D7CA /* LakeDetailView.swift in Sources */,
+				388F63F93EDA93563C684DE6 /* NoticeViews.swift in Sources */,
 				34A02C184389FCEB3A7AC7EC /* NotificationScheduler.swift in Sources */,
 				E96E1FDF6F7DCADE365CC6A2 /* PurchaseManager.swift in Sources */,
 				F70637C302EAC9517E6D28F5 /* PurchaseView.swift in Sources */,
