@@ -1282,6 +1282,67 @@ no green token, the band words and marks per level, the neutral band for
 non-advisories, and the mark and favicon on every page, each with a
 negative control.
 
+## 0036 — The app takes the website's identity, with worded empty states, sharing, support and a rare review ask (2026-11-05)
+
+The website's identity (0035, docs/DESIGN.md) is a notice posted at the
+shore. The app now follows it instead of the system default, and fills the
+gaps the 2026-11-05 parity audit found. The owner chose that each app takes
+its own site's identity, with no shared kit across apps (audit D1).
+
+- **Colors are the site's tokens**, as asset-catalog colors with light and
+  dark variants: Paper, Surface, Ink, Muted, Brand, Rule and AccentColor
+  (the link indigo), and a band and band ink for each sign. Lists sit on
+  the paper, rows on the surface. The old amber and teal are gone. No color
+  is green. `AppTests` checks every text token on both backgrounds and each
+  band's ink on its band at 4.5:1 in both appearances, and that no identity
+  color reads as green.
+- **A lake's status is drawn as its posted notice**: a band in the sign's
+  color with the level's words in capitals and one to three square rank
+  marks (Caution 1, Warning 2, Danger 3), a rule, then the record. Danger
+  has the heavier edge. Missouri's levels and California's algal-mat signs
+  get the slate band and no marks. Anything that is not an advisory says
+  "Latest state record" on a neutral band with a dashed edge, never a level
+  word or color. List rows, reported spots and Favorites carry the same band
+  as a chip; history rows carry a swatch beside the level's words.
+  VoiceOver reads the band as words and rank ("Danger advisory sign, 3 of 3
+  marks"; "Latest state record, not an advisory"). `NoticeBand` in AlgaeCore
+  holds the mapping and is tested.
+- **Signage-style type from system fonts**: the system sans at condensed
+  width for navigation titles, section titles (under a short brand rule,
+  the site's depth mark), a lake's name and the bands. It scales with
+  Dynamic Type; at accessibility sizes the rank marks move under the words.
+- **The mark** (the sign board on a post, from the site's `mark.svg`) is
+  drawn in code in the introduction, About and the empty screens. The app
+  icon is not changed here; that is an owner item.
+- **Empty, error and offline screens are worded**, each on a blank notice
+  board: no records on the phone (with "Try again"), offline with no records,
+  a search with no match ("That is not a finding about the water"), no saved
+  lakes (with "Browse lakes"), and a lake gone from the file. Offline with
+  data, the list stays and says it is showing the copy already on the phone,
+  with the data file's date. `NWPathMonitor` only reports offline; it never
+  hides data.
+- **Share a lake**: the lake screen shares the lake's page on lakenotice.com
+  (the same URL as "This lake on the website"), with a message about what
+  the page holds, never what the water is like. About can share the site.
+- **Support**: About's "Email support" row names the address and opens mail
+  to chelsea@chelseakr.com with "Lake Notice for iPhone <version>" as the
+  subject. With no version in the bundle, the subject leaves it out.
+- **The review ask follows Apple's rules**: never at launch and never from a
+  button. The app may call `requestReview` only when someone leaves a lake
+  screen where they just saved that lake, keeps at least two saved lakes,
+  has opened the app on three different days, and has not been asked in this
+  version. iOS still decides whether to show anything. The day count uses
+  the phone's calendar because it measures use, not data; nothing about
+  advisories is measured from it (0031 still holds). It never runs under UI
+  tests.
+
+Tests: `PostedNoticeTests` (AlgaeCore), `AppTests` (contrast, no green, the
+review rule under UI tests, day counting), and UI tests for the sign and
+share, the no-match search, empty Favorites, the offline and no-data screens,
+offline with data, and the support row. The accessibility audit now also
+covers the offline no-data screen and empty Favorites, at the default size
+and at AX5.
+
 ## 0037 — Oregon and Kansas readers are built and tested behind flags that are off (2026-11-06)
 
 (0020 to 0036 are on main or on open branches, so this is the next free

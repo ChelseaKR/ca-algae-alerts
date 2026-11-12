@@ -13,6 +13,7 @@ public struct AppStorageLayout: Sendable {
     public var mutedFile: URL { directory.appendingPathComponent("muted-alerts.json") }
     public var entitlementFile: URL { directory.appendingPathComponent("entitlement.json") }
     public var introFile: URL { directory.appendingPathComponent("intro.json") }
+    public var reviewAskFile: URL { directory.appendingPathComponent("review-ask.json") }
 
     public static func applicationSupport() throws -> AppStorageLayout {
         let base = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -80,6 +81,9 @@ public struct AppStores: Sendable {
 
     public func intro() -> IntroState { ((try? JSONFileStore<IntroState>(url: layout.introFile).load()) ?? nil) ?? IntroState(seen: false) }
     public func save(_ value: IntroState) throws { try JSONFileStore(url: layout.introFile).save(value) }
+
+    public func reviewAsk() -> ReviewAsk { ((try? JSONFileStore<ReviewAsk>(url: layout.reviewAskFile).load()) ?? nil) ?? ReviewAsk() }
+    public func save(_ value: ReviewAsk) throws { try JSONFileStore(url: layout.reviewAskFile).save(value) }
 }
 
 /// The purchase's on-disk cache. StoreKit's `currentEntitlements` is the

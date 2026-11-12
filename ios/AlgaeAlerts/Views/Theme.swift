@@ -2,32 +2,43 @@ import SwiftUI
 import UIKit
 import AlgaeCore
 
-/// Colors with checked contrast in light and dark mode. Color is never the
-/// only signal: every status also has words and a symbol.
+/// Lake Notice's identity in the app (DECISIONS 0036): the website's tokens
+/// (docs/DESIGN.md, 0035) as asset-catalog colors with light and dark
+/// variants. Paper and deep-lake indigo ink, and California's posted-sign
+/// colors for advisory levels only. Nothing here is green: no color in this
+/// app says a water is safe. Color is never the only signal: every level
+/// also has its words and its rank marks.
 enum Theme {
-    /// The system label color, by value. `.primary` is hierarchical, and in
-    /// a list section header it resolves to the header's own gray, which
-    /// the accessibility audit flags as low contrast.
-    static let label = Color(uiColor: .label)
+    static let paper = Color("Paper")
+    static let surface = Color("Surface")
+    static let ink = Color("Ink")
+    static let muted = Color("Muted")
+    static let brand = Color("Brand")
+    static let rule = Color("Rule")
+    /// Links, buttons and the tab tint.
+    static let link = Color("AccentColor")
 
-    /// Secondary text darker than the system's: 8.8:1 on white, 7.9:1 on the
-    /// grouped-list gray; 12.5:1 on black, 10.1:1 on a dark list cell. The
-    /// system's secondary gray falls just short of the accessibility audit
-    /// at body sizes.
-    static let secondaryText = Color(UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(red: 0.78, green: 0.78, blue: 0.80, alpha: 1)
-        : UIColor(red: 0.29, green: 0.29, blue: 0.31, alpha: 1) })
+    /// Older names, kept so every screen reads the same tokens.
+    static let label = ink
+    static let secondaryText = muted
+    static let accent = link
 
-    /// Deep amber: 6.9:1 on white, 6.2:1 on the grouped-list gray; light amber
-    /// on dark: 11.5:1 on black, 9.3:1 on a dark list cell. `ThemeContrastTests`.
-    static let advisory = Color(UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(red: 0.94, green: 0.71, blue: 0.35, alpha: 1)
-        : UIColor(red: 0.54, green: 0.29, blue: 0.0, alpha: 1) })
+    static func band(_ paint: NoticeBand.Paint) -> Color { Color(bandName(paint)) }
+    static func bandInk(_ paint: NoticeBand.Paint) -> Color { Color(bandInkName(paint)) }
 
-    /// Lake teal, the app's accent: 7.8:1 on white, 12.2:1 on black.
-    static let accent = Color(UIColor { $0.userInterfaceStyle == .dark
-        ? UIColor(red: 0.50, green: 0.82, blue: 0.92, alpha: 1)
-        : UIColor(red: 0.03, green: 0.35, blue: 0.45, alpha: 1) })
+    static func bandName(_ paint: NoticeBand.Paint) -> String {
+        switch paint {
+        case .caution: "CautionBand"
+        case .warning: "WarningBand"
+        case .danger: "DangerBand"
+        case .otherAdvisory: "OtherBand"
+        case .record: "RecordBand"
+        }
+    }
+
+    static func bandInkName(_ paint: NoticeBand.Paint) -> String {
+        bandName(paint).replacingOccurrences(of: "Band", with: "Ink")
+    }
 
     static func symbol(for status: Status) -> String {
         switch status.kind {
@@ -37,9 +48,40 @@ enum Theme {
         }
     }
 
-    static func tint(for status: Status) -> Color {
-        status.kind == .advisory ? advisory : secondaryText
+    /// Navigation titles in the signage face: the system sans at its
+    /// condensed width, scaled with Dynamic Type, in the brand ink.
+    static func styleNavigationBars() {
+        func face(_ style: UIFont.TextStyle, _ size: CGFloat, _ weight: UIFont.Weight) -> UIFont {
+            UIFontMetrics(forTextStyle: style).scaledFont(for: .systemFont(ofSize: size, weight: weight, width: .condensed))
+        }
+        let brand = UIColor(named: "Brand") ?? .label
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        appearance.largeTitleTextAttributes = [.font: face(.largeTitle, 34, .heavy), .foregroundColor: brand]
+        appearance.titleTextAttributes = [.font: face(.headline, 18, .bold), .foregroundColor: brand]
+        let bar = UINavigationBar.appearance()
+        bar.standardAppearance = appearance
+        bar.compactAppearance = appearance
+        bar.scrollEdgeAppearance = appearance
     }
+}
+
+extension Font {
+    /// The signage face for headings, bands and section titles: the system
+    /// sans, condensed, so it scales with Dynamic Type and needs no font file.
+    static func signage(_ style: Font.TextStyle, weight: Font.Weight = .bold) -> Font {
+        .system(style, weight: weight).width(.condensed)
+    }
+}
+
+extension View {
+    /// A list on the app's paper, not the system's gray.
+    func noticeList() -> some View {
+        scrollContentBackground(.hidden).background(Theme.paper)
+    }
+
+    /// Rows on the app's surface color.
+    func surfaceRows() -> some View { listRowBackground(Theme.surface) }
 }
 
 /// One status line with its symbol, for list rows.
@@ -50,41 +92,17 @@ struct StatusLine: View {
         Label {
             Text(StatusWording.shortLine(status))
         } icon: {
-            Image(systemName: Theme.symbol(for: status)).foregroundStyle(Theme.tint(for: status))
+            Image(systemName: Theme.symbol(for: status))
         }
         .font(.subheadline)
-        .foregroundStyle(status.kind == .advisory ? Theme.advisory : Theme.secondaryText)
+        .foregroundStyle(status.kind == .advisory ? Theme.ink : Theme.muted)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(StatusWording.spokenShortLine(status))
     }
 }
 
-/// The app's own empty state. `ContentUnavailableView`'s text failed the
-/// Dynamic Type audit in Tide Hours and Queer Frame; this one wraps at
-/// every text size.
-struct EmptyState: View {
-    let title: String
-    let systemImage: String
-    let message: String
-
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                Image(systemName: systemImage).font(.largeTitle).foregroundStyle(Theme.secondaryText)
-                    .accessibilityHidden(true)
-                Text(title).font(.title2.bold()).accessibilityAddTraits(.isHeader)
-                Text(message).foregroundStyle(Theme.secondaryText)
-            }
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity)
-            .padding(24)
-        }
-    }
-}
-
 /// A date beside a value at normal sizes, stacked at accessibility sizes,
-/// where side by side squeezes both. Trout Truck's `WaterRow` pattern.
+/// where side by side squeezes both.
 struct DateValueRow<Leading: View, Trailing: View>: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @ViewBuilder let leading: Leading
@@ -102,36 +120,57 @@ struct DateValueRow<Leading: View, Trailing: View>: View {
     }
 }
 
+/// A lake in a list: its posted-sign chip first, as a person meets it at
+/// the shore, then the name, county and dated status.
 struct LakeRow: View {
     let water: Waterbody
     let isFavorite: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 5) {
+            SignChip(band: NoticeBand(water.status))
             HStack(alignment: .firstTextBaseline) {
-                Text(water.name).font(.headline)
+                Text(water.name).font(.headline).foregroundStyle(Theme.ink)
                 if isFavorite {
-                    Image(systemName: "star.fill").foregroundStyle(Theme.accent).accessibilityLabel("Favorite")
+                    Image(systemName: "star.fill").foregroundStyle(Theme.link).accessibilityLabel("Favorite")
                 }
             }
-            Text(water.countyLabel).font(.subheadline).foregroundStyle(Theme.secondaryText)
+            Text(water.countyLabel).font(.subheadline).foregroundStyle(Theme.muted)
             StatusLine(status: water.status)
             // The same notes the website's advisory lists carry (0017).
             ForEach([StatusWording.newerPosting(water), StatusWording.olderHigher(water)].compactMap { $0 }, id: \.self) { note in
-                Text(note).font(.footnote).foregroundStyle(Theme.secondaryText)
+                Text(note).font(.footnote).foregroundStyle(Theme.muted)
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
     }
 }
 
-/// A list section's title in the label color. The system's gray header
-/// falls just short of the accessibility audit's contrast check at this size.
+/// A list section's title in the signage face, under a short brand rule:
+/// the website's "depth mark" over each section.
 struct SectionTitle: View {
     let text: String
-    init(_ text: String) { self.text = text }
+    let systemImage: String?
+    init(_ text: String, systemImage: String? = nil) {
+        self.text = text
+        self.systemImage = systemImage
+    }
+
     var body: some View {
-        Text(text).foregroundStyle(Theme.label).font(.footnote.weight(.semibold))
+        VStack(alignment: .leading, spacing: 5) {
+            Rectangle().fill(Theme.brand).frame(width: 28, height: 4).accessibilityHidden(true)
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                if let systemImage { Image(systemName: systemImage).accessibilityHidden(true) }
+                Text(text)
+            }
+            .font(.signage(.subheadline))
+            .tracking(0.6)
+            .textCase(.uppercase)
+            .foregroundStyle(Theme.ink)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(text)
+        .accessibilityAddTraits(.isHeader)
     }
 }
