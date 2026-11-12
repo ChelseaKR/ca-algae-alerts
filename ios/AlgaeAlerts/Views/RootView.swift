@@ -18,7 +18,7 @@ struct RootView: View {
                 .tabItem { Label("About", systemImage: "info.circle") }
                 .tag(AppRouter.Tab.about)
         }
-        .tint(Theme.accent)
+        .tint(Theme.link)
         .sheet(isPresented: $router.showUnlock) { PurchaseView() }
         .fullScreenCover(isPresented: Binding(get: { !env.introSeen }, set: { if !$0 { env.finishIntro() } })) {
             IntroView()

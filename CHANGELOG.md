@@ -13,6 +13,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
   people in the water, or the not-a-finding sentence when there is no
   advisory. Lake Elsinore and Clear Lake also link their local pages.
   Spanish strings are drafts (docs/DECISIONS.md 0033).
+- The iPhone app takes the website's look: paper and indigo colors with
+  light and dark variants, each lake's status drawn as its posted sign with
+  the level's words and rank marks, signage-style headings and the sign-board
+  mark. It also gets worded empty, offline and no-match screens, sharing a
+  lake's web page, a support row and a review ask that follows Apple's rules
+  (docs/DECISIONS.md 0036).
 - An Iowa DNR beach reader behind its own flag (`LN_ENABLE_IOWA`) that is
   off. It counts a "Swimming is Not Recommended" sign as an algae advisory
   only with a microcystin result over 8 µg/L, since the sign is shared with
