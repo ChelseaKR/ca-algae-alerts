@@ -13,6 +13,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
   are found from matching names, touching counties (U.S. Census county
   adjacency) and distance, never from a list of names. 74 pages on the
   2026-11-05 snapshot. Merge on or after 2026-11-26 (docs/DECISIONS.md 0034).
+- The iPhone app takes the website's look: paper and indigo colors with
+  light and dark variants, each lake's status drawn as its posted sign with
+  the level's words and rank marks, signage-style headings and the sign-board
+  mark. It also gets worded empty, offline and no-match screens, sharing a
+  lake's web page, a support row and a review ask that follows Apple's rules
+  (docs/DECISIONS.md 0036).
 - An Iowa DNR beach reader behind its own flag (`LN_ENABLE_IOWA`) that is
   off. It counts a "Swimming is Not Recommended" sign as an algae advisory
   only with a microcystin result over 8 µg/L, since the sign is shared with

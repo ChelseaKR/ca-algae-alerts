@@ -21,9 +21,16 @@ struct AdvisoriesView: View {
         NavigationStack(path: $path) {
             Group {
                 if let snapshot = env.snapshot {
-                    list(snapshot)
+                    let matches = WaterSearch.filter(snapshot.waterbodies, query: query)
+                    if matches.isEmpty, !query.trimmingCharacters(in: .whitespaces).isEmpty {
+                        NoticeEmptyState(board: NoticeBoard(
+                            title: EmptyCopy.noMatchTitle(query), message: EmptyCopy.noMatchMessage,
+                            systemImage: "magnifyingglass"))
+                    } else {
+                        list(snapshot, matches: matches)
+                    }
                 } else {
-                    EmptyState(title: "No data yet", systemImage: "drop", message: "Pull to refresh to load the state's advisory records.")
+                    noData
                 }
             }
             .navigationTitle("Algae advisories")
@@ -41,9 +48,21 @@ struct AdvisoriesView: View {
         }
     }
 
+    /// No snapshot on the phone at all: offline says so; otherwise the read
+    /// failed. Either way, a way to try again.
+    private var noData: some View {
+        let offline = env.connection.isOffline
+        return NoticeEmptyState(board: NoticeBoard(
+            title: offline ? EmptyCopy.offlineTitle : EmptyCopy.noDataTitle,
+            message: offline ? EmptyCopy.offlineNoDataMessage : EmptyCopy.noDataMessage,
+            systemImage: offline ? "wifi.slash" : "exclamationmark.icloud",
+            actionTitle: env.isRefreshing ? "Checking…" : "Try again",
+            actionID: "retry-load",
+            action: { Task { await env.refreshNow() } }))
+    }
+
     @ViewBuilder
-    private func list(_ snapshot: Snapshot) -> some View {
-        let matches = WaterSearch.filter(snapshot.waterbodies, query: query)
+    private func list(_ snapshot: Snapshot, matches: [Waterbody]) -> some View {
         List {
             Section {
                 // Segment text stays small at accessibility sizes and
@@ -65,6 +84,7 @@ struct AdvisoriesView: View {
                 }
                 DataFreshnessView(snapshot: snapshot)
             }
+            .surfaceRows()
             switch scope {
             case .advisories:
                 let advisories = WaterSearch.advisories(matches)
@@ -78,6 +98,7 @@ struct AdvisoriesView: View {
                 } header: {
                     SectionTitle(CoverageCopy.recentHeader(snapshot))
                 }
+                .surfaceRows()
                 Section {
                     ForEach(older) { row($0) }
                 } header: {
@@ -85,15 +106,18 @@ struct AdvisoriesView: View {
                 } footer: {
                     Text("The state never recorded an end for these, so they stay listed with their date. Reporting is voluntary.").foregroundStyle(Theme.label)
                 }
+                .surfaceRows()
             case .all:
                 Section {
                     ForEach(WaterSearch.alphabetical(matches)) { row($0) }
                 } footer: {
                     Text(CoverageCopy.allFooter(snapshot)).foregroundStyle(Theme.label)
                 }
+                .surfaceRows()
             }
         }
         .listStyle(.insetGrouped)
+        .noticeList()
     }
 
     private func row(_ water: Waterbody) -> some View {
@@ -114,7 +138,12 @@ struct DataFreshnessView: View {
             if let mo = snapshot.sourceFiles.first(where: { $0.source == "mo-dnr-hab" }) {
                 Text("Missouri data read \(mo.fileDate.label)").font(.footnote)
             }
-            if env.lastCheckFailed {
+            if env.connection.isOffline {
+                Label(EmptyCopy.offlineBanner(fileDate: snapshot.sourceFile.fileDate), systemImage: "wifi.slash")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Theme.ink)
+                    .accessibilityIdentifier("offline-banner")
+            } else if env.lastCheckFailed {
                 Text("The last check for newer data did not finish. Showing the copy on this iPhone.")
                     .font(.footnote).foregroundStyle(Theme.secondaryText)
             }
