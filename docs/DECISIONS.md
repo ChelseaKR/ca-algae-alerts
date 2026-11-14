@@ -1471,3 +1471,42 @@ Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/SavedLakeCopyTests.swift`.
 Negative controls: the old line fails the same checks, and with `detail`
 returning it three of the five tests fail; with Missouri waters in the data
 a Missouri id reads as a missing lake, not a missing state.
+
+## 0040 — Chesterfield: the two lakes with an advisory are already indexed, and the park lake stays out (2026-11-13)
+
+The search read of 2026-11-12 (growth/ln-search-gaps-2026-11-12.md) saw the
+query "chesterfield lake" at position 29.5 and guessed that the Missouri
+pages it matches were among the noindexed thin pages. The owner chose
+"index Chesterfield Lake" (2026-11-12). Built from the history of
+2026-11-13, three Missouri waters carry the name, and the guess holds for
+only one of them:
+
+- **Lake Chesterfield (and tributary)** and **Harbors at Lake
+  Chesterfield** were already indexable. Each has one record, an "Advisory
+  (advise)" posted Jul 5 and Jul 16, 2026, inside the 24-month window
+  (0016). Both pages have no robots tag, a canonical of their own and a
+  sitemap entry. Nothing in the index rule needed to change for them.
+- **Chesterfield Central Park Lake stays `noindex,follow` and out of the
+  sitemap.** It has one record, "Dissipated (dissap)" from Aug 17, 2024,
+  and its page's only status line is "Reports on file, with no advisory
+  level the state has classified." The noindex audit of 2026-11-07
+  (growth/ln-noindex-audit-2026-11-07.md) sets out why such a page is held
+  back: built from one record, in a search result, it reads as an
+  all-clear (0002). The page is still built and linked from /state/mo/.
+- **No index rule changed.** The search read also proposed indexing any
+  thin page that Search Console shows impressions for. That rule would
+  index pages like the park lake's, so it is not adopted here. **Owner to
+  confirm.**
+- **Not changed, and worth knowing:** both indexed pages have names too
+  long for a dated title (0018), so they read "Lake Chesterfield (and
+  tributary) | Lake Notice" and "Harbors at Lake Chesterfield algae
+  advisories | Lake Notice". Water titles are under the dated-title read
+  until about 2026-11-25. Both pages leave the index in July 2028 if the
+  department posts nothing newer.
+
+Tests: `pipeline/tests/test_missouri_indexing.py`. The site tests build
+California only, so this is the first check of the staging rule (robots tag,
+canonical and sitemap agreeing with the snapshot) on a build with Missouri
+in it. It then checks the three Chesterfield waters by name. Negative
+control: with `INDEX_MIN_RECORDS` set to 1 the park lake's page becomes
+indexable, so the record floor is what holds it back.
