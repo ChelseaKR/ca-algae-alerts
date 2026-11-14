@@ -513,6 +513,163 @@ def age_note(water: dict[str, Any], file_date: str | None) -> str | None:
     return line
 
 
+# -- winter records (DECISIONS 0028) ------------------------------------------
+#
+# A quiet winter is not an all-clear. "Winter" is November through February,
+# calendar months, not a state term. Every number comes from the state's own
+# records at build time; none is written here. These are templates so the
+# Spanish catalog (i18n.EN) reads the same words. Website only for now: the
+# app's StatusWording.swift follows in its own change (#23).
+
+WINTER_MONTHS = (11, 12, 1, 2)
+
+WINTER_HEADING = "Winter records at {name}"
+WINTER_TOTAL = (
+    "In past winters (November through February), the state posted {records} "
+    "for {name}."
+)
+WINTER_LATEST = "The latest winter posting was on {date}: {level}."
+WINTER_LAST = "Last winter ({season}) it posted {records}, the last on {date}."
+WINTER_ENDS = (
+    "An advisory stays in effect until the state records an end; winter does "
+    "not end it."
+)
+WINTER_NO_LEVEL = (
+    "The state posted {records} for {name} in November through February, none "
+    "of them at an advisory level. That is not a finding that the water is "
+    "free of toxic algae in winter."
+)
+WINTER_ABSENT = (
+    "None of the state's records for {name}, which begin on {first}, were "
+    "posted in November through February. That is not a finding that the "
+    "water is free of toxic algae: across the state's file, {december} were "
+    "posted in all Decembers on file, against {peak} in all {peak_month}s."
+)
+WINTER_UNCOVERED = (
+    "The state's records for {name} begin on {first}, after the start of the "
+    "last whole winter, so they cannot say whether advisories are posted here "
+    "in winter."
+)
+WINTER_TABLE_CAPTION = "Advisory records at {name} by winter, newest first"
+WINTER_ADVISORY_ONE = "1 advisory record"
+WINTER_ADVISORY_MANY = "{count} advisory records"
+WINTER_RECORD_ONE = "1 record"
+WINTER_RECORD_MANY = "{count} records"
+
+DOGS_WINTER_POSTED = (
+    "Algae advisories here have been posted in winter too: see Winter records."
+)
+DOGS_WINTER_NO_LEVEL = (
+    "None of the state's winter records here is at an advisory level. That is "
+    "not a finding that the water is free of toxic algae in winter."
+)
+DOGS_WINTER_ABSENT = (
+    "None of the state's records here were posted in November through "
+    "February. That is not a finding that the water is free of toxic algae in "
+    "winter: look at the water before your dog goes in."
+)
+
+DOGS_PAGE_WINTER = (
+    "the state still posts algae advisories. Its California file holds "
+    "advisory records from {months}: {november} from Novembers, {december} "
+    "from Decembers, {january} from Januaries and {february} from Februaries, "
+    "against {peak} from {peak_month}s. Most lakes are never tested in any "
+    "month. A winter visit gets the same check as a summer one: the lake's "
+    "page, the state's map and the signs at the water."
+)
+DOGS_PAGE_EVERY_MONTH = "every month of the year"
+DOGS_PAGE_SOME_MONTHS = "{count} of the 12 months"
+
+
+def _count(n: int, one: str, many: str) -> str:
+    return one if n == 1 else many.format(count=f"{n:,}")
+
+
+def advisory_records(n: int) -> str:
+    return _count(n, WINTER_ADVISORY_ONE, WINTER_ADVISORY_MANY)
+
+
+def any_records(n: int) -> str:
+    return _count(n, WINTER_RECORD_ONE, WINTER_RECORD_MANY)
+
+
+def winter_lines(name: str, winter: dict[str, Any]) -> list[str]:
+    """The sentences of a water page's "Winter records" section, from
+    ``site.winter_record``. Never "safe", never "no advisory": a water with
+    no winter record gets the not-a-finding sentence with the state's month
+    counts, and a record too short to cover a winter says so."""
+    kind = winter["kind"]
+    if kind == "advisories":
+        lines = [
+            WINTER_TOTAL.format(records=advisory_records(winter["count"]), name=name),
+            WINTER_LATEST.format(
+                date=date_label(winter["latest"]["date"]),
+                level=level_name(winter["latest"]),
+            ),
+        ]
+        last = winter.get("last_winter")
+        if last:
+            lines.append(
+                WINTER_LAST.format(
+                    season=last["label"],
+                    records=advisory_records(last["count"]),
+                    date=date_label(last["last_date"]),
+                )
+            )
+        return [*lines, WINTER_ENDS]
+    if kind == "no_advisory_level":
+        return [
+            WINTER_NO_LEVEL.format(records=any_records(winter["any_count"]), name=name)
+        ]
+    if kind == "absent":
+        months = winter["state_months"]
+        return [
+            WINTER_ABSENT.format(
+                name=name,
+                first=date_label(winter["first"]),
+                december=any_records(months["december"]),
+                peak=f"{months['peak']:,}",
+                peak_month=months["peak_month"],
+            )
+        ]
+    return [WINTER_UNCOVERED.format(name=name, first=date_label(winter["first"]))]
+
+
+def dogs_winter_line(winter: dict[str, Any] | None, run_date: dt.date) -> str | None:
+    """The one winter sentence the "Dogs at" section adds from November
+    through February (by the snapshot's run date), or None."""
+    if winter is None or run_date.month not in WINTER_MONTHS:
+        return None
+    return {
+        "advisories": DOGS_WINTER_POSTED,
+        "no_advisory_level": DOGS_WINTER_NO_LEVEL,
+        "absent": DOGS_WINTER_ABSENT,
+    }.get(winter["kind"])
+
+
+def dogs_page_winter(months: dict[str, Any] | None) -> str | None:
+    """The /dogs/ "In winter" sentence from the state's advisory counts per
+    calendar month, or None when the file has no winter advisory at all
+    (then the page claims nothing about winter)."""
+    if not months or not any(
+        months[m] for m in ("november", "december", "january", "february")
+    ):
+        return None
+    span = (
+        DOGS_PAGE_EVERY_MONTH
+        if months["months_with"] == 12
+        else DOGS_PAGE_SOME_MONTHS.format(count=months["months_with"])
+    )
+    return DOGS_PAGE_WINTER.format(
+        months=span,
+        **{
+            k: f"{months[k]:,}"
+            for k in ("november", "december", "january", "february", "peak")
+        },
+        peak_month=months["peak_month"],
+    )
+
+
 # -- a state whose data is unavailable (DECISIONS 0024) ----------------------
 # Its pages stay up, but no sentence here claims a status: no level, no
 # "No all-clear recorded", no "recommends no advisory". Each line dates the

@@ -1079,6 +1079,53 @@ passes the old guard alone (the sabotage applies) and is refused by the new
 one; 25 withdrawals pass and 26 are refused; a superseded advisory can be
 withdrawn; a blank level after "None" still reads as lifted.
 
+## 0028 — Winter records on each indexed water page, and no winter all-clear (owner, 2026-11-05)
+
+Plan: `_agent-tools/growth/winter-content-plan-2026-11-05.md`, item LN-W1;
+owner decision B1. Ships 2026-12-01, after the ~2026-11-25 read of the dated
+titles (#22), so that read sees unchanged pages. No title or description
+changes. Numbered 0028: 0020 to 0026 are reserved and 0027 is the short-file
+guard (#30).
+
+- **Why.** Algae season does not end in the state's records. Last winter
+  (November 2025 to February 2026) the state posted 315 records at 54
+  waters, 156 of them Caution, Warning or Danger; Castaic Lake got four
+  Danger postings on 2026-11-03. A quiet winter page must not read as an
+  all-clear (0002).
+- **The section.** Every indexed water page (0016 and the 24-month window)
+  gains "Winter records at <water>", after "Advisory history": its advisory
+  records posted in November through February of any year, the latest
+  winter posting with its own level and date (0017's rule that a level and
+  a date come from one posting), last whole winter's count and last date,
+  and a row per winter that has any advisory record (no zero rows). It says
+  an advisory stays in effect until the state records an end and winter
+  does not end it. "None" and "NA" records are not advisories, and records
+  withdrawn from the state's file are not counted.
+- **A water with no winter record (B1).** It gets the not-a-finding
+  sentence with the state's own counts per month, computed from the
+  snapshot at build time, never written into the code: "That is not a
+  finding that the water is free of toxic algae: across the state's file,
+  N records were posted in all Decembers on file, against M in all
+  <peak month>s." It never shows a level, a zero or "no advisory". A water
+  with winter records but none at an advisory level says that, with the
+  same not-a-finding clause. A water whose records begin after the start of
+  the last whole winter says its records cannot answer.
+- **Dogs.** From November through February, by the snapshot's run date,
+  the "Dogs at <water>" section adds one sentence: winter advisories have
+  been posted here (linked to the section), or the not-a-finding sentence.
+  /dogs/ gains an "In winter" item with the state's California advisory
+  counts for the four winter months and the peak month. Never "safe" and
+  never "all clear".
+- **Spanish.** The new strings are in `es.json` as `draft`, the winter
+  sentences marked `safety: true`, so the one Spanish review covers them
+  (0025). Spanish stays off.
+- **App.** The iPhone app's `StatusWording.swift` gets the same lines in a
+  follow-up (#23). This change touches no app file.
+- **lastmod.** Unchanged: a water page's winter counts change only when its
+  own records do, which `water_lastmod` already counts. The state's month
+  counts in the not-a-finding sentence and the dogs line's season change
+  without moving lastmod, a known under-report.
+
 ## 0029 — Dog-gear links on the dogs page only, with Lake Notice's own Associates id (owner, 2026-10-30; id 2026-11-05)
 
 The owner approved a small Amazon Associates section on the Dogs and algae
