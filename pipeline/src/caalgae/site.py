@@ -28,7 +28,16 @@ from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import i18n, indexnow, levels, llms, newyork, where_to_check, wording
+from caalgae import (
+    county_adjacency,
+    i18n,
+    indexnow,
+    levels,
+    llms,
+    newyork,
+    where_to_check,
+    wording,
+)
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import UNAVAILABLE_INDEX_DAYS, slugify
 from caalgae.water_names import display_water
@@ -580,6 +589,64 @@ def same_name_nearby(waters: list[dict[str, Any]]) -> dict[str, list[dict[str, A
     }
 
 
+# Also listed under another county (DECISIONS 0034). The state's file lists
+# some waters once per county: Lake Tahoe under El Dorado and Placer, the
+# South Fork Eel River under Humboldt and Mendocino. Their centers are farther
+# apart than SAME_NAME_NEARBY_MILES, so "Matching names nearby" misses them
+# and the pages compete with each other in search. A pair is linked when its
+# names match (``name_key``), its counties touch (share a county or a border,
+# ``county_adjacency``) and its centers are within the cap below. Rivers and
+# other long waters reach farther than lakes and creeks, whose names repeat
+# across neighboring counties for different waters (two Horseshoe Lakes 67
+# miles apart, two Rock Creeks 80 miles apart). Pairs that "Matching names
+# nearby" already links are left to it. Detected from the data, never a list
+# of names.
+SPLIT_COUNTY_MILES = 30
+SPLIT_COUNTY_LONG_MILES = 120
+_LONG_WATER_WORDS = frozenset({"river", "bay", "sea", "ocean", "slough", "strait"})
+
+
+def split_county_miles(name: str) -> int:
+    """The distance cap for a water's name: longer for a river or bay."""
+    return (
+        SPLIT_COUNTY_LONG_MILES
+        if _LONG_WATER_WORDS & set(name_key(name))
+        else SPLIT_COUNTY_MILES
+    )
+
+
+def also_listed(
+    waters: list[dict[str, Any]], nearby: dict[str, list[dict[str, Any]]]
+) -> dict[str, list[dict[str, Any]]]:
+    """For each water id, the other entries for what may be the same water
+    listed under another county. Symmetric: if A lists B, B lists A."""
+    groups: dict[tuple[str, tuple[str, ...]], list[dict[str, Any]]] = defaultdict(list)
+    for water in waters:
+        key = name_key(water["name"])
+        if key and water.get("center") and water["counties"]:
+            groups[(water["state"], key)].append(water)
+    found: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for group in groups.values():
+        for i, a in enumerate(group):
+            for b in group[i + 1 :]:
+                if set(a["counties"]) == set(b["counties"]):
+                    continue
+                if any(o["id"] == b["id"] for o in nearby.get(a["id"], [])):
+                    continue
+                if not county_adjacency.touching(a["counties"], b["counties"]):
+                    continue
+                if miles_between(a["center"], b["center"]) > split_county_miles(
+                    a["name"]
+                ):
+                    continue
+                found[a["id"]].append(b)
+                found[b["id"]].append(a)
+    return {
+        wid: sorted(others, key=lambda w: (w["counties"], w["id"]))
+        for wid, others in found.items()
+    }
+
+
 def newest(days: Iterable[dt.date | None]) -> dt.date | None:
     present = [d for d in days if d is not None]
     return max(present) if present else None
@@ -646,6 +713,7 @@ class SiteBuilder:
             (w["state"], w["source_name"].casefold()) for w in self.waters
         )
         self._same_name_nearby = same_name_nearby(self.waters)
+        self._also_listed = also_listed(self.waters, self._same_name_nearby)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
         # States whose data is live in this build: waters in the snapshot and
         # the state's source listed, the same test state_pages uses.
@@ -900,6 +968,15 @@ class SiteBuilder:
                 for other in self._same_name_nearby.get(water["id"], [])
             ],
             same_name_miles=SAME_NAME_NEARBY_MILES,
+            also_listed=[
+                {
+                    "id": other["id"],
+                    "name": other["name"],
+                    "place": self._place(other),
+                    "headline": self._headline(other),
+                }
+                for other in self._also_listed.get(water["id"], [])
+            ],
             breadcrumb=crumbs,
             structured_data={
                 "@context": "https://schema.org",

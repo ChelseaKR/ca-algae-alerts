@@ -1247,6 +1247,41 @@ of water pages (~2026-11-25) is not disturbed.
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
 
+## 0034 — "Also listed under <county>" links for one water split across counties (owner, 2026-11-05; merge on or after 2026-11-26)
+
+The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
+pages for one water competing with each other: Lake Tahoe's Placer page at
+position 37.8 and its El Dorado page at 19.2, neither linking the other. The
+state's file lists such waters once per county. "Matching names nearby"
+(2026-10-29) already links entries within SAME_NAME_NEARBY_MILES (6), which
+covers Big Bear Lake and Lake Tulloch, but not Tahoe (centers 17.7 miles
+apart) or the South Fork Eel River (9.2). The owner chose option B1: mutual
+links, identity (0009) unchanged, merged on or after 2026-11-26.
+
+- **Detected, never listed by name.** Two entries are linked when their
+  names match (`name_key`, the same rule as "Matching names nearby"), their
+  counties touch (share a county or a border) and their centers are within
+  30 miles, or 120 for a river, bay, sea, ocean, slough or strait. Pairs that
+  "Matching names nearby" links are left to it.
+- **County borders come from the U.S. Census Bureau's county adjacency
+  file** (2024, public domain), copied once into `county_adjacency.py`.
+  It is what keeps Alameda's Lake Chabot and Solano's apart.
+- **The caps were set on the 2026-11-05 snapshot.** Lakes and creeks repeat
+  across neighboring counties for different waters (Horseshoe Lake 67 miles
+  apart, Rock Creek 80, Bear Creek 44), so they get 30 miles; rivers run
+  long (the Eel River's two entries are 100 miles apart, the Salinas 103), so
+  they get 120.
+- **The page hedges, as "Matching names nearby" does**: "may be the same
+  water, listed once per county. Each listing has its own records." Each
+  link shows that entry's own headline. Nothing merges statuses.
+- **On the 2026-11-05 snapshot**: 74 pages (41 indexable), 31 names,
+  including Lake Tahoe, the South Fork Eel River, the Eel, Russian, Trinity,
+  Klamath, San Joaquin and Sacramento rivers, the Salton Sea and New Melones
+  Reservoir. Known doubtful pair: Redwood Creek (Alameda and San Mateo, 22
+  miles apart across the Bay) is likely two creeks; the hedge covers it.
+
+Tests: `pipeline/tests/test_split_county_links.py`.
+
 ## 0036 — The app takes the website's identity, with worded empty states, sharing, support and a rare review ask (2026-11-05)
 
 The website's identity (0035, docs/DESIGN.md) is a notice posted at the
