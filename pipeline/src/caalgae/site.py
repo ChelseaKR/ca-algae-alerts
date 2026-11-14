@@ -279,6 +279,93 @@ def county_description(
     )
 
 
+# State pages whose title, description and first line count the waters with
+# an advisory as their latest record, the way county pages do (DECISIONS
+# 0041). Missouri only: /state/mo/ is the page the owner asked to change, and
+# /state/ca/ keeps its launch title and description. To widen, add "CA".
+STATE_COUNTED = frozenset({"MO"})
+
+
+def state_title(name: str, with_advisory: int, total: int) -> str:
+    """A state page title of at most TITLE_MAX characters.
+
+    With an advisory on record it keeps the launch title's words and adds
+    how many waters have one as their latest record, out of the waters on
+    record: the count the page's first line and its table carry. Without one
+    it is the launch title: "0 of 225 waters", with no room for the
+    not-a-finding sentence, would read as an all-clear (DECISIONS 0002)."""
+    tail = f" | {SITE_NAME}"
+    if with_advisory > 0:
+        share = f"{with_advisory} of {_waters(total)}"
+        for candidate in (
+            f"{name} lake algae advisories: {share}",
+            f"{name} algae advisories: {share}",
+        ):
+            if len(candidate) <= TITLE_MAX:
+                return candidate
+    return fit(
+        [f"{name} lake algae advisories{tail}", f"{name} algae advisories{tail}"],
+        TITLE_MAX,
+    )
+
+
+def state_count_line(
+    name: str,
+    with_advisory: int,
+    total: int,
+    file_date: str | None,
+    algae: str = "toxic algae",
+) -> str:
+    """The state page's count sentence, which its description also leads
+    with. Empty for a state with no advisory on record, as on a county page:
+    the table says the rest."""
+    if with_advisory <= 0:
+        return ""
+    if total == 1:
+        lead = f"The one water in {name} has a {algae} advisory as its"
+    elif with_advisory == 1:
+        lead = f"1 of the {_waters(total)} in {name} has a {algae} advisory as its"
+    else:
+        lead = (
+            f"{with_advisory} of the {_waters(total)} in {name} have a {algae} "
+            "advisory as their"
+        )
+    when = (
+        f", in the state's data dated {wording.date_label(file_date)}"
+        if file_date
+        else ""
+    )
+    return f"{lead} latest state record{when}."
+
+
+def state_description(
+    name: str, with_advisory: int, total: int, file_date: str | None
+) -> str:
+    """A state page description of at most DESCRIPTION_MAX characters: the
+    count sentence, naming harmful algal blooms too when that fits, or the
+    launch description for a state with no advisory on record."""
+    plain = (
+        f"Toxic algae advisory status and history for {total} "
+        f"lakes and rivers in {name}, from the state's own records."
+    )
+    if with_advisory <= 0:
+        return plain
+    return fit(
+        [
+            state_count_line(
+                name,
+                with_advisory,
+                total,
+                file_date,
+                algae="toxic algae (harmful algal bloom)",
+            ),
+            state_count_line(name, with_advisory, total, file_date),
+            plain,
+        ],
+        DESCRIPTION_MAX,
+    )
+
+
 def advisories_description(waters: list[dict[str, Any]]) -> str:
     """The advisory list's description: how many waters it lists, by state,
     the same waters the page's table lists. Missouri waters are on the page,
@@ -974,6 +1061,9 @@ class SiteBuilder:
             crumbs = self._crumbs((name, self.base_url + rel))
             ordered = sorted(waters, key=wording.list_sort_key)
             outage = self.unavailable.get(state)
+            file_date = self._file_date(state)
+            # No count while the state's data is unavailable (DECISIONS 0024).
+            count_line = ""
             if outage:
                 when = wording.date_label(outage["since"])
                 title = fit(
@@ -987,16 +1077,22 @@ class SiteBuilder:
                     f"{name} lakes", name, outage["since"], scope="their"
                 )
             else:
-                title = f"{name} lake algae advisories | {SITE_NAME}"
-                description = (
-                    f"Toxic algae advisory status and history for {len(waters)} "
-                    f"lakes and rivers in {name}, from the state's own records."
+                # Counted for Missouri only (STATE_COUNTED); zero keeps the
+                # launch title and description, and no count line.
+                counted = (
+                    sum(w["status"]["kind"] == "advisory" for w in waters)
+                    if state in STATE_COUNTED
+                    else 0
                 )
+                title = state_title(name, counted, len(waters))
+                description = state_description(name, counted, len(waters), file_date)
+                count_line = state_count_line(name, counted, len(waters), file_date)
             self._write(
                 rel,
                 "state.html.jinja",
                 title=title,
                 description=description,
+                count_line=count_line,
                 outage=outage,
                 outage_banner=wording.unavailable_banner(
                     name,
@@ -1009,7 +1105,7 @@ class SiteBuilder:
                 noindex=bool(outage) and not self._indexable_unavailable(state),
                 robots="noindex,follow",
                 state=state,
-                file_date=self._file_date(state),
+                file_date=file_date,
                 lastmod=self._newest_of(waters),
                 state_name=name,
                 waters=ordered,

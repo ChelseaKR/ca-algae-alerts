@@ -5,6 +5,8 @@ build with Missouri in it. This one builds California and Missouri from the
 fixtures and checks the rule there, then the three Chesterfield waters by
 name: the two with an advisory inside the window are indexable, and the park
 lake, whose one record carries no level the state has classified, stays out.
+Table Rock Lake, Briars Pond and Hagen Lake, the Missouri pages the search
+read of 2026-11-12 names (0041), are checked the same way.
 """
 
 from __future__ import annotations
@@ -30,6 +32,9 @@ CHESTERFIELD_INDEXED = [
 ]
 # Held back: one record, "Dissipated (dissap)", Aug 17, 2024.
 CHESTERFIELD_HELD = "mo-chesterfield-central-park-lake"
+# The Missouri waters the 2026-11-12 search read names as getting
+# impressions (DECISIONS 0041): each has an advisory inside the window.
+SEARCH_READ_NAMED = ["mo-table-rock-lake", "mo-briars-pond", "mo-hagen-lake"]
 
 
 def build_both(tmp: Path) -> Path:
@@ -76,8 +81,8 @@ def test_missouri_pages_follow_the_staging_rule(both: Path) -> None:
     assert staging_problems(both) == []
 
 
-@pytest.mark.parametrize("wid", CHESTERFIELD_INDEXED)
-def test_chesterfield_lakes_with_an_advisory_are_indexable(
+@pytest.mark.parametrize("wid", [*CHESTERFIELD_INDEXED, *SEARCH_READ_NAMED])
+def test_missouri_lakes_with_an_advisory_in_the_window_are_indexable(
     both: Path, wid: str
 ) -> None:
     water = water_of(both, wid)

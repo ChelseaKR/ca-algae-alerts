@@ -1510,3 +1510,58 @@ canonical and sitemap agreeing with the snapshot) on a build with Missouri
 in it. It then checks the three Chesterfield waters by name. Negative
 control: with `INDEX_MIN_RECORDS` set to 1 the park lake's page becomes
 indexable, so the record floor is what holds it back.
+
+## 0041 — /state/mo/ counts its advisories in the title, the description and the first line (2026-11-13)
+
+The search read of 2026-11-12 (growth/ln-search-gaps-2026-11-12.md) found
+/state/mo/ the site's top page by clicks (5 on 22 impressions in 20 days)
+and no queued work aimed at Missouri. The owner chose a Missouri pass
+(2026-11-12): a title and description for /state/mo/, and indexing for the
+Missouri lake pages with impressions. The numbers below are from the
+history of 2026-11-13.
+
+- **Title.** Was "Missouri lake algae advisories | Lake Notice". Now
+  "Missouri lake algae advisories: 47 of 225 waters". The launch words stay
+  in front, unchanged. The count is the waters whose latest record is an
+  advisory, out of the waters on record, as in a county title (0018). The
+  site name is left out to make room, as 0018 does; `og:site_name` still
+  names it.
+- **Description.** Was "Toxic algae advisory status and history for 225
+  lakes and rivers in Missouri, from the state's own records." Now "47 of
+  the 225 waters in Missouri have a toxic algae (harmful algal bloom)
+  advisory as their latest state record, in the state's data dated Nov 13,
+  2026." "Harmful algal bloom" is the department's own term; it is dropped
+  when the sentence would not fit 155 characters. Missouri's layer has no
+  file date, so the date is the day it was read, as on Missouri water pages.
+- **First line.** The page's first paragraph gains the same sentence
+  (without the parenthesis), so the count in the title is on the page.
+- **No advisory on record: no count.** The launch title and description
+  come back, and the page has no count sentence. "0 of 225 waters", with no
+  room for the not-a-finding sentence, would read as an all-clear (0002).
+- **Unavailable (0024): nothing changes.** The title stays "Missouri lake
+  algae: data unavailable since <since>", the description stays the outage
+  one, and no count appears anywhere on the page. During a passing failure
+  the count is dated by the last good read, not the run.
+- **Missouri only.** `site.STATE_COUNTED` holds "MO". /state/ca/ keeps its
+  title, description and first line byte for byte; the noindex audit of
+  2026-11-07 found it with no impressions. Adding "CA" to the constant
+  widens it.
+- **Indexing: nothing to change.** Table Rock Lake, Briars Pond and Hagen
+  Lake, the pages the search read names, each have an advisory posted in
+  August or September 2026, so they were already indexable and in the
+  sitemap, with 38 more Missouri water pages (41 of 225). The other 184
+  have fewer than five records and no advisory in the last 24 months, and
+  stay `noindex,follow` (0016, 0040).
+- **Owner to confirm the wording.** To undo, empty `STATE_COUNTED`.
+
+Built before and after from the same history, only /state/mo/index.html
+differs: its title, description, `og:` copies of both, and first paragraph.
+
+Tests: `pipeline/tests/test_state_snippets.py` checks the built page
+against the snapshot (count in the title, the description and the first
+line; the file date; the copy guard), /state/ca/ unchanged, the unavailable
+page with no count, and a passing failure dated by the last good read.
+Negative controls: a wrong count written into Missouri's title and "0 of 2
+waters" written into California's are both reported; with "CA" added to
+the constant, California's page counts too.
+`pipeline/tests/test_missouri_indexing.py` checks the three named pages.

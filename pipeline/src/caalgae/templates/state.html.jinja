@@ -7,7 +7,7 @@
   <p><strong>{{ outage_banner }}</strong> Check the <a href="{{ outage.map_url }}">{{ state_name }} state map</a> before you go.</p>
 </div>
 {% endif %}
-<p class="lede">{{ waters|length }} waters appear in the records of the {{ state_source.agency }}.{% if not outage %} Waters whose latest record is an advisory come first, newest first.{% endif %}</p>
+<p class="lede">{{ waters|length }} waters appear in the records of the {{ state_source.agency }}.{% if count_line %} {{ count_line }}{% endif %}{% if not outage %} Waters whose latest record is an advisory come first, newest first.{% endif %}</p>
 {% if state == "CA" %}<p><a href="{{ root }}county/">Browse California by county</a>.</p>{% endif %}
 <p class="muted">{{ state_source.lift_explanation }}</p>
 <table>
