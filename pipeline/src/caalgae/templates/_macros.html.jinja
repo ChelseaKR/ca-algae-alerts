@@ -1,5 +1,17 @@
 {% macro status_box(status, notes=[]) %}
+{#- The band is the posted-sign look (style.css). It is aria-hidden because
+    the headline below says the same words. Only an advisory gets a level
+    word, a sign color and rank marks; any other record says only that it is
+    the state's latest record, never anything that reads as an all-clear. #}
+{% set ranks = {"caution": 1, "warning": 2, "danger": 3} %}
 <div class="status status-{{ status.kind }}{% if status.tier %} tier-{{ status.tier }}{% endif %}">
+  <p class="sign-band" aria-hidden="true">
+    <span class="sign-word">{{ level_name(status) if status.kind == "advisory" else "Latest state record" }}</span>
+    {% if status.kind == "advisory" and status.tier in ranks %}
+    <span class="sign-pips">{% for i in range(3) %}<span{% if i < ranks[status.tier] %} class="on"{% endif %}></span>{% endfor %}</span>
+    {% endif %}
+  </p>
+  <div class="sign-body">
   <p class="status-line"><strong>{{ headline(status) }}</strong></p>
   {% for note in notes %}
   <p>{{ note }}</p>
@@ -15,6 +27,7 @@
   <p class="muted">The headline shows the highest level posted in the 12 months before the state's data, or the newest posting if none was. Each spot's latest status is listed under Reported spots below.</p>
   {% endif %}
   <p class="muted">{{ caveat(status) }}</p>
+  </div>
 </div>
 {% endmacro %}
 
@@ -28,7 +41,7 @@
       <td><a href="{{ root }}water/{{ w.id }}/">{{ w.name }}</a></td>
       <td>{{ w.state }}</td>
       <td>{{ w.counties|join(", ") if w.counties else (w.county_text or "Not recorded") }}</td>
-      <td>{{ level_name(w.status) }}{% if newer_posting(w) %}. {{ newer_posting(w) }}{% endif %}{% if older_higher(w) %}. {{ older_higher(w) }}{% endif %}</td>
+      <td class="level{% if w.status.tier %} tier-{{ w.status.tier }}{% endif %}">{{ level_name(w.status) }}{% if newer_posting(w) %}. {{ newer_posting(w) }}{% endif %}{% if older_higher(w) %}. {{ older_higher(w) }}{% endif %}</td>
       <td>{{ w.status.posted|date }}</td>
     </tr>
   {% endfor %}

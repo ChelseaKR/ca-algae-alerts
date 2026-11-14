@@ -7,6 +7,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- Lake Notice has its own look (docs/DECISIONS.md 0035, docs/DESIGN.md): a
+  sign-board mark and favicon, paper and deep-lake indigo, a signage face for
+  headings, and depth contours in the header. On water pages the status box
+  is drawn as a posted notice, with the level's words on a Caution yellow,
+  Warning orange or Danger red band and one to three filled marks; records
+  that are not advisories get a neutral dashed box. Table rows show a level
+  swatch next to the words. No text, URL or title changed.
 - The iPhone app takes the website's look: paper and indigo colors with
   light and dark variants, each lake's status drawn as its posted sign with
   the level's words and rank marks, signage-style headings and the sign-board

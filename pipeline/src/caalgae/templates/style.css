@@ -1,35 +1,81 @@
-/* Lake Notice -- plain, accessible, no build step. */
+/* Lake Notice -- plain, accessible, no build step.
+
+   The identity (docs/DESIGN.md): a notice posted at the shore. Paper and
+   deep-lake indigo ink, a sign-board mark, the posted-sign band for each
+   advisory level, and depth contours as the only ornament. System fonts
+   only, so no page asks another server for anything.
+
+   Advisory levels use the colors of California's posted signs: Caution
+   yellow, Warning orange, Danger red. Color is never the only signal: every
+   band and chip also carries the level's words, and the band repeats the
+   level as one to three filled marks (SC 1.4.1). Nothing that is not an
+   advisory ever takes a sign color, and nothing here is green: no color on
+   this site says a water is safe. */
 
 :root {
   color-scheme: light dark;
-  --bg: #ffffff;
-  --fg: #10222b;
-  --muted: #3e5560;
-  --link: #075a73;
-  --link-visited: #3a3a7a;
-  --border: #c3d3da;
-  --header-bg: #ebf4f6;
-  --row-alt: #f3f8fa;
-  --focus: #075a73;
-  --advisory-bg: #fff4e0;
-  --advisory-border: #9a5b00;
-  --record-bg: #eef3f5;
+  --paper: #fbfaf6;
+  --surface: #ffffff;
+  --wash: #eeeff7;
+  --ink: #16182b;
+  --muted: #4a4e66;
+  --link: #3634a8;
+  --link-visited: #6b2d8c;
+  --rule: #c9cbdc;
+  --rule-strong: #16182b;
+  --focus: #3634a8;
+  --brand: #262a6b;
+  --row-alt: #f4f4f9;
+  --contour: #c6c9e4;
+  /* Older name, kept so rules written against it still resolve. */
+  --border: var(--rule);
+
+  /* Posted-sign bands. -ink is the text on the band. */
+  --caution-band: #f6c800;
+  --caution-ink: #1a1700;
+  --warning-band: #e66a00;
+  --warning-ink: #1a0d00;
+  --danger-band: #b5121b;
+  --danger-ink: #ffffff;
+  --other-band: #4b4d70;
+  --other-ink: #ffffff;
+  --record-band: #e4e5ee;
+  --record-ink: #16182b;
+
+  --font-sign: "DIN Alternate", "DIN Next", Bahnschrift, "D-DIN", "Barlow Semi Condensed", "Roboto Condensed", "Arial Narrow", sans-serif-condensed, system-ui, sans-serif;
+  --font-text: "Avenir Next", "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --contour-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='120' viewBox='0 0 520 120' fill='none' stroke='%23c6c9e4' stroke-width='1.2'%3E%3Cpath d='M20 70c40-34 120-44 190-30s140 40 220 18 80-30 90-28'/%3E%3Cpath d='M60 78c36-22 100-28 160-18s120 30 186 14 64-20 94-18'/%3E%3Cpath d='M104 86c30-12 76-16 120-10s96 20 146 10 50-12 70-10'/%3E%3Cpath d='M150 94c22-6 50-8 80-4s64 12 98 6 34-6 46-5'/%3E%3C/svg%3E");
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0d1619;
-    --fg: #e8f1f4;
-    --muted: #b4c7ce;
-    --link: #7fd0ea;
-    --link-visited: #b7b7ff;
-    --border: #2f4650;
-    --header-bg: #13232a;
-    --row-alt: #111d22;
-    --focus: #7fd0ea;
-    --advisory-bg: #2a2010;
-    --advisory-border: #e0a440;
-    --record-bg: #16252b;
+    --paper: #0f1120;
+    --surface: #161930;
+    --wash: #141733;
+    --ink: #ecedf7;
+    --muted: #b3b6cc;
+    --link: #aeb3ff;
+    --link-visited: #d9b0f2;
+    --rule: #2f334f;
+    --rule-strong: #ecedf7;
+    --focus: #aeb3ff;
+    --brand: #c9ccff;
+    --row-alt: #13162b;
+    --contour: #2b3061;
+
+    --caution-band: #f6c800;
+    --caution-ink: #1a1700;
+    --warning-band: #f07a12;
+    --warning-ink: #1a0d00;
+    --danger-band: #c81e28;
+    --danger-ink: #ffffff;
+    --other-band: #6a6d99;
+    --other-ink: #ffffff;
+    --record-band: #262a45;
+    --record-ink: #ecedf7;
+
+    --contour-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='120' viewBox='0 0 520 120' fill='none' stroke='%232b3061' stroke-width='1.2'%3E%3Cpath d='M20 70c40-34 120-44 190-30s140 40 220 18 80-30 90-28'/%3E%3Cpath d='M60 78c36-22 100-28 160-18s120 30 186 14 64-20 94-18'/%3E%3Cpath d='M104 86c30-12 76-16 120-10s96 20 146 10 50-12 70-10'/%3E%3Cpath d='M150 94c22-6 50-8 80-4s64 12 98 6 34-6 46-5'/%3E%3C/svg%3E");
   }
 }
 
@@ -39,34 +85,38 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.55;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  line-height: 1.6;
   /* Long source URLs appear in every footer. Without this they cannot
      break, and the page scrolls sideways at 320px (SC 1.4.10). */
   overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
 }
 
 .wrap {
-  max-width: 62rem;
+  max-width: 60rem;
   margin: 0 auto;
   padding: 1rem 1.25rem;
 }
 
-a { color: var(--link); text-underline-offset: 0.15em; }
+a { color: var(--link); text-underline-offset: 0.18em; text-decoration-thickness: 0.08em; }
 a:visited { color: var(--link-visited); }
+a:hover { text-decoration-thickness: 0.16em; }
 a:focus-visible, button:focus-visible, input:focus-visible {
   outline: 3px solid var(--focus);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .skip-link {
   position: absolute;
   left: -999px;
   top: 0;
-  background: var(--bg);
-  color: var(--fg);
+  background: var(--paper);
+  color: var(--ink);
   padding: 0.75rem 1rem;
   z-index: 10;
   border: 2px solid var(--focus);
@@ -84,15 +134,69 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   white-space: nowrap;
 }
 
-.site-header, .site-footer {
-  background: var(--header-bg);
-  border-bottom: 1px solid var(--border);
+/* Header: paper, a survey line along the top, depth contours to the right.
+   Not a dark band: Lake Notice should not look like its sibling sites. */
+.site-header {
+  background: var(--wash);
+  border-top: 5px solid var(--brand);
+  border-bottom: 1px solid var(--rule);
 }
-.site-footer { border-top: 1px solid var(--border); border-bottom: none; margin-top: 2rem; }
-.site-header .wrap { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; align-items: baseline; justify-content: space-between; }
-.site-name a { font-weight: 700; text-decoration: none; font-size: 1.1rem; }
+/* The contours sit in their own strip under the nav, never behind text, so
+   every word in the header keeps a measurable solid background. */
+.site-header::after {
+  content: "";
+  display: block;
+  height: 1.75rem;
+  background: var(--contour-img) no-repeat right -1rem bottom -3.4rem;
+}
+.site-header .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+}
+.site-name { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; }
+.site-name a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  color: var(--brand);
+  text-decoration: none;
+  font-family: var(--font-sign);
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.site-name a:visited { color: var(--brand); }
+.site-name a:hover .wordmark { text-decoration: underline; text-underline-offset: 0.2em; }
+.mark { width: 2rem; height: 2rem; flex: none; }
 .site-tagline { color: var(--muted); font-size: 0.9rem; }
-nav a { margin-right: 1rem; }
+.site-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.1rem;
+  font-family: var(--font-sign);
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+.site-header nav a {
+  display: inline-block;
+  min-height: 24px;
+  padding: 0.2rem 0;
+  color: var(--ink);
+}
+.site-header nav a:visited { color: var(--ink); }
+
+.site-footer {
+  background: var(--wash);
+  border-top: 5px solid var(--brand);
+  margin-top: 3rem;
+}
 .site-footer p { color: var(--muted); font-size: 0.9rem; }
 /* The footer's analytics opt-out is a button, because it changes a setting
    rather than going anywhere, drawn like the links next to it. The padding
@@ -109,24 +213,54 @@ nav a { margin-right: 1rem; }
   cursor: pointer;
 }
 
-h1 { font-size: 1.6rem; margin-top: 1.25rem; }
-h2 { font-size: 1.2rem; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
-.lede { font-size: 1.05rem; }
+h1, h2, h3 {
+  font-family: var(--font-sign);
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: 0.005em;
+}
+h1 { font-size: clamp(1.75rem, 1.3rem + 2vw, 2.4rem); margin: 1.25rem 0 0.75rem; font-weight: 700; }
+/* Each section opens with a depth mark: a short brand rule over a hairline. */
+h2 {
+  font-size: 1.35rem;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  position: relative;
+}
+h2::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 3rem;
+  height: 5px;
+  background: var(--brand);
+}
+h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+.lede { font-size: 1.15rem; max-width: 46rem; }
 .muted { color: var(--muted); }
+p, li { max-width: 46rem; }
 
 table {
   width: 100%;
   border-collapse: collapse;
   margin: 1rem 0;
+  background: var(--surface);
 }
 th, td {
   text-align: left;
-  padding: 0.5rem 0.6rem;
-  border-bottom: 1px solid var(--border);
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
 }
 thead th {
-  border-bottom: 2px solid var(--fg);
+  border-bottom: 2px solid var(--rule-strong);
   white-space: nowrap;
+  font-family: var(--font-sign);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 tbody tr:nth-child(even) { background: var(--row-alt); }
 
@@ -159,6 +293,7 @@ ul.water-index li { break-inside: avoid; }
   display: flex;
   flex-wrap: wrap;
   gap: 0 0.5rem;
+  font-size: 0.95rem;
 }
 .breadcrumb li { display: flex; align-items: center; }
 .breadcrumb li + li::before {
@@ -173,25 +308,85 @@ ul.water-index li { break-inside: avoid; }
   min-height: 24px;
   padding: 0.125rem 0;
 }
-.breadcrumb a[aria-current="page"] { color: var(--fg); text-decoration: none; }
+.breadcrumb a[aria-current="page"] { color: var(--ink); text-decoration: none; }
 
-/* Status box. Color is never the only signal: the words carry the status
-   and the border only repeats it (SC 1.4.1). */
+/* The status box is drawn as a posted notice: a band across the top, then
+   the record. The band is aria-hidden because the headline under it already
+   says the same words; it is there for sighted readers at a glance. */
 .status {
-  border-left: 6px solid var(--border);
-  background: var(--record-bg);
-  padding: 0.5rem 1rem;
+  background: var(--surface);
+  border: 2px solid var(--rule-strong);
+  border-radius: 4px;
   margin: 1rem 0;
+  max-width: 46rem;
+  overflow: hidden;
 }
-.status-advisory { border-left-color: var(--advisory-border); background: var(--advisory-bg); }
-.status p { margin: 0.4rem 0; }
-.status-line { font-size: 1.05rem; }
-/* A state whose data is unavailable (DECISIONS 0024): the words carry it. */
+.sign-band {
+  margin: 0;
+  padding: 0.45rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  font-family: var(--font-sign);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--record-band);
+  color: var(--record-ink);
+  border-bottom: 2px solid var(--rule-strong);
+}
+.sign-body { padding: 0.35rem 1rem 0.5rem; }
+.status p { margin: 0.45rem 0; }
+.status .sign-band { margin: 0; }
+.status-line { font-size: 1.1rem; }
+
+/* A record that is not an advisory: neutral, dashed, never a sign color. */
+.status-no_advisory_recorded, .status-undetermined { border-style: dashed; }
+
+.tier-caution .sign-band { background: var(--caution-band); color: var(--caution-ink); }
+.tier-warning .sign-band { background: var(--warning-band); color: var(--warning-ink); }
+.tier-danger .sign-band { background: var(--danger-band); color: var(--danger-ink); }
+.tier-other_advisory .sign-band { background: var(--other-band); color: var(--other-ink); }
+.status.tier-danger { border-width: 3px; }
+
+/* One to three filled marks: the level's rank, a second non-color signal. */
+.sign-pips { display: inline-flex; gap: 0.25rem; }
+.sign-pips span {
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 2px solid currentColor;
+}
+.sign-pips span.on { background: currentColor; }
+
+/* The level word in a table row, with a small sign swatch in front. The
+   swatch is decoration; the words carry the level. */
+.level { white-space: normal; }
+.level::before {
+  content: "";
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-right: 0.4em;
+  vertical-align: -0.05em;
+  border: 1px solid var(--rule-strong);
+  background: var(--record-band);
+}
+.level.tier-caution::before { background: var(--caution-band); }
+.level.tier-warning::before { background: var(--warning-band); }
+.level.tier-danger::before { background: var(--danger-band); }
+.level.tier-other_advisory::before { background: var(--other-band); }
+/* A state whose data is unavailable (DECISIONS 0024): the words carry it.
+   Its status box has no band, so it takes the band's side padding, and it is
+   not an advisory, so its edge is dashed like any other non-advisory box. */
 .notice-unavailable {
   border: 2px solid var(--border);
   padding: 0.25rem 1rem;
   margin: 1rem 0;
 }
+.status-unavailable { border-style: dashed; padding: 0.1rem 1rem; }
 
 @media (max-width: 40rem) {
   /* Wide history tables scroll inside themselves, never the page. */
@@ -200,13 +395,42 @@ ul.water-index li { break-inside: avoid; }
      page wider than the screen (SC 1.4.10). */
   dl { grid-template-columns: 1fr; }
   dd { margin-bottom: 0.5rem; }
+  .site-header::after { background-size: 380px auto; background-position: right -1rem bottom -2.4rem; }
 }
 
 .disclaimer {
-  border: 1px solid var(--border);
+  border: 1px solid var(--rule);
+  border-left: 5px solid var(--brand);
+  background: var(--surface);
   padding: 0.25rem 1rem;
   margin: 1rem 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  max-width: 46rem;
+}
+blockquote {
+  margin: 1rem 0;
+  padding: 0.25rem 1rem;
+  border-left: 5px solid var(--rule-strong);
+  background: var(--surface);
 }
 .satellite { margin-top: 2rem; }
-h3 { font-size: 1.05rem; margin-top: 1.5rem; }
+
+/* Windows High Contrast and other forced-color modes drop backgrounds. The
+   band keeps a border, and the words were always there. */
+@media (forced-colors: active) {
+  .sign-band { border-bottom: 2px solid CanvasText; }
+  .sign-pips span.on { background: CanvasText; }
+  .level::before { border-color: CanvasText; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+@media print {
+  .site-header nav, .skip-link, #analytics-choice { display: none; }
+  .site-header, .site-footer { background: none; }
+  .site-header::after { display: none; }
+  .sign-band, .level::before { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  a { color: inherit; }
+}
