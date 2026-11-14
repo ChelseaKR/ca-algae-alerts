@@ -558,6 +558,61 @@ def miles_between(a: dict[str, float], b: dict[str, float]) -> float:
     return 2 * _EARTH_RADIUS_MILES * math.asin(math.sqrt(h))
 
 
+# Tide Hours links (DECISIONS 0042). A tidal California water within 2 km of
+# a Tide Hours station links that station's page on Tide Hours, Chelsea's
+# other free site, only when a reviewed row in
+# pipeline/data/tide_hours_stations.json names it; there is no distance match
+# at build time. No tide time or height is copied here. A row whose Lake
+# Notice id is gone from the snapshot is dropped. Plain links: no tag, no
+# tracking parameter, no rel="sponsored" (nothing is paid).
+TIDE_HOURS_URL = "https://tidehours.com"
+TIDE_HOURS_STATIONS_FILE = (
+    Path(__file__).resolve().parents[2] / "data" / "tide_hours_stations.json"
+)
+TIDE_HOURS_MAX_MILES = 1.3
+_NOAA_STATION_ID = re.compile(r"9\d{6}")
+
+
+def tide_hours_links(
+    rows: list[dict[str, Any]], water_ids: Iterable[str]
+) -> dict[str, dict[str, str]]:
+    """Each Lake Notice water id with a reviewed row, mapped to its Tide Hours
+    station page (``url``, ``name``, ``miles``). A row whose Lake Notice id is
+    gone is dropped; a malformed row or a water listed twice is an error,
+    because the file is hand-reviewed and a typo must not ship."""
+    live = set(water_ids)
+    links: dict[str, dict[str, str]] = {}
+    for row in rows:
+        ln_id, sid, name, miles = (
+            row["ln_id"],
+            row["station_id"],
+            row["station_name"],
+            row["miles"],
+        )
+        if (
+            not ln_id.startswith("ca-")
+            or not _NOAA_STATION_ID.fullmatch(sid)
+            or not name.strip()
+            or not isinstance(miles, (int, float))
+            or not 0 < miles <= TIDE_HOURS_MAX_MILES
+        ):
+            raise ValueError(f"tide_hours_stations.json: bad row {row!r}")
+        if ln_id in links:
+            raise ValueError(f"tide_hours_stations.json: {ln_id} is listed twice")
+        if ln_id in live:
+            links[ln_id] = {
+                "url": f"{TIDE_HOURS_URL}/stations/{sid}/",
+                "name": name,
+                "miles": f"{miles:.1f}",
+            }
+    return links
+
+
+def load_tide_hours_links(water_ids: Iterable[str]) -> dict[str, dict[str, str]]:
+    rows = json.loads(TIDE_HOURS_STATIONS_FILE.read_text("utf-8"))["stations"]
+    return tide_hours_links(rows, water_ids)
+
+
 def same_name_nearby(waters: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     """For each water id, the other waters in the same state whose names match
     (``name_key``) and whose centers are within SAME_NAME_NEARBY_MILES. A water
@@ -645,6 +700,7 @@ class SiteBuilder:
         self._name_counts = Counter(
             (w["state"], w["source_name"].casefold()) for w in self.waters
         )
+        self._tide_hours = load_tide_hours_links(w["id"] for w in self.waters)
         self._same_name_nearby = same_name_nearby(self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
         # States whose data is live in this build: waters in the snapshot and
@@ -889,6 +945,7 @@ class SiteBuilder:
                 if note
             ],
             sites=sites,
+            tide_hours=self._tide_hours.get(water["id"]),
             county_links=[(c, slugify(c)) for c in water["counties"]],
             same_name_nearby=[
                 {

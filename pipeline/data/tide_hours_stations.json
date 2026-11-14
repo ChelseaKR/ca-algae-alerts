@@ -1,0 +1,265 @@
+{
+  "about": "Lake Notice California waters within 2 km (1.2 miles) of a Tide Hours California station, measured from the water's center in the 2026-11-13 snapshot to the station's NOAA coordinates, reviewed by hand for tidal water (DECISIONS 0042). ln_name is for review only; the page uses the snapshot's name.",
+  "reviewed_on": "2026-11-13",
+  "excluded_not_tidal": [
+    "ca-alameda-berkeley-aquatic-park",
+    "ca-contra-costa-discovery-bay-golf-and-country-club",
+    "ca-contra-costa-martinez-regional-shoreline-park",
+    "ca-monterey-el-estero-lake",
+    "ca-monterey-lagunita-mirada-park",
+    "ca-napa-huichica-pond-8",
+    "ca-napa-napa-sonoma-marshes-wildlife-area",
+    "ca-sacramento-southside-park",
+    "ca-san-francisco-spreckels-lake",
+    "ca-san-mateo-central-lake",
+    "ca-santa-cruz-schwan-lake",
+    "ca-ventura-unnamed-outfall"
+  ],
+  "stations": [
+    {
+      "ln_id": "ca-alameda-oakland-estuary",
+      "ln_name": "Oakland Estuary",
+      "station_id": "9414764",
+      "station_name": "Oakland Inner Harbor",
+      "miles": 0.3
+    },
+    {
+      "ln_id": "ca-alameda-san-francisco-bay",
+      "ln_name": "San Francisco Bay",
+      "station_id": "9414750",
+      "station_name": "Alameda",
+      "miles": 0.5
+    },
+    {
+      "ln_id": "ca-alameda-san-francisco-bay-south",
+      "ln_name": "San Francisco Bay, South",
+      "station_id": "9414509",
+      "station_name": "Dumbarton Highway Bridge",
+      "miles": 0.4
+    },
+    {
+      "ln_id": "ca-contra-costa-bethel-island",
+      "ln_name": "Bethel Island",
+      "station_id": "9415053",
+      "station_name": "Dutch Slough",
+      "miles": 0.5
+    },
+    {
+      "ln_id": "ca-contra-costa-carquinez-strait",
+      "ln_name": "Carquinez Strait",
+      "station_id": "9415102",
+      "station_name": "Martinez-Amorco Pier",
+      "miles": 1.2
+    },
+    {
+      "ln_id": "ca-contra-costa-delta-coves",
+      "ln_name": "Delta Coves",
+      "station_id": "9415053",
+      "station_name": "Dutch Slough",
+      "miles": 0.5
+    },
+    {
+      "ln_id": "ca-contra-costa-false-river",
+      "ln_name": "False River",
+      "station_id": "9415145",
+      "station_name": "False River",
+      "miles": 0.5
+    },
+    {
+      "ln_id": "ca-contra-costa-fisherman-s-cut",
+      "ln_name": "Fisherman's Cut",
+      "station_id": "9415145",
+      "station_name": "False River",
+      "miles": 1.0
+    },
+    {
+      "ln_id": "ca-contra-costa-martinez-marina",
+      "ln_name": "Martinez Marina",
+      "station_id": "9415102",
+      "station_name": "Martinez-Amorco Pier",
+      "miles": 0.9
+    },
+    {
+      "ln_id": "ca-contra-costa-martinez-shoreline",
+      "ln_name": "Martinez Shoreline",
+      "station_id": "9415102",
+      "station_name": "Martinez-Amorco Pier",
+      "miles": 1.1
+    },
+    {
+      "ln_id": "ca-contra-costa-new-york-slough",
+      "ln_name": "New York Slough",
+      "station_id": "9415096",
+      "station_name": "Pittsburg, New York Slough",
+      "miles": 0.4
+    },
+    {
+      "ln_id": "ca-contra-costa-san-francisco-bay-central",
+      "ln_name": "San Francisco Bay, Central",
+      "station_id": "9414849",
+      "station_name": "Richmond Inner Harbor",
+      "miles": 0.7
+    },
+    {
+      "ln_id": "ca-contra-costa-san-joaquin-sacramento-river",
+      "ln_name": "San Joaquin-Sacramento River",
+      "station_id": "9415096",
+      "station_name": "Pittsburg, New York Slough",
+      "miles": 0.6
+    },
+    {
+      "ln_id": "ca-marin-richardson-bay",
+      "ln_name": "Richardson Bay",
+      "station_id": "9414819",
+      "station_name": "Sausalito, Corps of Engineers Dock",
+      "miles": 0.8
+    },
+    {
+      "ln_id": "ca-marin-san-francisco-bay-central",
+      "ln_name": "San Francisco Bay, Central",
+      "station_id": "9414837",
+      "station_name": "Point Chauncey",
+      "miles": 0.8
+    },
+    {
+      "ln_id": "ca-monterey-monterey-bay",
+      "ln_name": "Monterey Bay",
+      "station_id": "9413450",
+      "station_name": "Monterey, Monterey Bay",
+      "miles": 0.2
+    },
+    {
+      "ln_id": "ca-sacramento-mokelumne-river",
+      "ln_name": "Mokelumne River",
+      "station_id": "9415287",
+      "station_name": "Georgiana Slough entrance",
+      "miles": 0.2
+    },
+    {
+      "ln_id": "ca-sacramento-seven-mile-slough",
+      "ln_name": "Seven Mile Slough",
+      "station_id": "9415236",
+      "station_name": "Threemile Slough",
+      "miles": 1.2
+    },
+    {
+      "ln_id": "ca-sacramento-three-mile-slough",
+      "ln_name": "Three Mile Slough",
+      "station_id": "9415236",
+      "station_name": "Threemile Slough",
+      "miles": 0.7
+    },
+    {
+      "ln_id": "ca-sacramento-washington-lake",
+      "ln_name": "Washington Lake",
+      "station_id": "9416131",
+      "station_name": "Port of West Sacramento",
+      "miles": 0.4
+    },
+    {
+      "ln_id": "ca-san-francisco-chrissy-field-marsh",
+      "ln_name": "Chrissy Field Marsh",
+      "station_id": "9414290",
+      "station_name": "San Francisco (Golden Gate)",
+      "miles": 0.6
+    },
+    {
+      "ln_id": "ca-san-francisco-san-francisco-bay",
+      "ln_name": "San Francisco Bay",
+      "station_id": "9414305",
+      "station_name": "San Francisco, North Point, Pier 41",
+      "miles": 0.2
+    },
+    {
+      "ln_id": "ca-san-francisco-san-francisco-bay-central",
+      "ln_name": "San Francisco Bay, Central",
+      "station_id": "9414334",
+      "station_name": "Potrero Point",
+      "miles": 1.1
+    },
+    {
+      "ln_id": "ca-san-joaquin-false-river",
+      "ln_name": "False River",
+      "station_id": "9415145",
+      "station_name": "False River",
+      "miles": 0.5
+    },
+    {
+      "ln_id": "ca-san-joaquin-holland-cut",
+      "ln_name": "Holland Cut",
+      "station_id": "9415095",
+      "station_name": "Irish Landing, Sand Mound Slough",
+      "miles": 1.2
+    },
+    {
+      "ln_id": "ca-san-joaquin-little-potato-slough",
+      "ln_name": "Little Potato Slough",
+      "station_id": "9415257",
+      "station_name": "Terminous, South Fork",
+      "miles": 0.1
+    },
+    {
+      "ln_id": "ca-san-joaquin-mcleod-lake",
+      "ln_name": "McLeod Lake",
+      "station_id": "9414883",
+      "station_name": "Stockton",
+      "miles": 0.6
+    },
+    {
+      "ln_id": "ca-san-joaquin-mormon-slough",
+      "ln_name": "Mormon Slough",
+      "station_id": "9414883",
+      "station_name": "Stockton",
+      "miles": 0.9
+    },
+    {
+      "ln_id": "ca-san-joaquin-sacramento-river",
+      "ln_name": "Sacramento River",
+      "station_id": "9415316",
+      "station_name": "Rio Vista",
+      "miles": 0.3
+    },
+    {
+      "ln_id": "ca-san-joaquin-san-joaquin-river",
+      "ln_name": "San Joaquin River",
+      "station_id": "9415021",
+      "station_name": "Blackslough Landing",
+      "miles": 0.6
+    },
+    {
+      "ln_id": "ca-san-mateo-redwood-creek",
+      "ln_name": "Redwood Creek",
+      "station_id": "9414511",
+      "station_name": "Smith Slough",
+      "miles": 0.1
+    },
+    {
+      "ln_id": "ca-san-mateo-san-francisco-bay-lower",
+      "ln_name": "San Francisco Bay, Lower",
+      "station_id": "9414449",
+      "station_name": "Coyote Point Marina",
+      "miles": 0.3
+    },
+    {
+      "ln_id": "ca-solano-carquinez-strait",
+      "ln_name": "Carquinez Strait",
+      "station_id": "9415143",
+      "station_name": "Crockett",
+      "miles": 0.8
+    },
+    {
+      "ln_id": "ca-solano-mare-island-shoreline-heritage-preserve",
+      "ln_name": "Mare Island Shoreline Heritage Preserve",
+      "station_id": "9415218",
+      "station_name": "Mare Island",
+      "miles": 0.5
+    },
+    {
+      "ln_id": "ca-yolo-lake-washington",
+      "ln_name": "Lake Washington",
+      "station_id": "9416131",
+      "station_name": "Port of West Sacramento",
+      "miles": 0.3
+    }
+  ]
+}

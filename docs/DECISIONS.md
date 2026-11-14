@@ -1471,3 +1471,34 @@ Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/SavedLakeCopyTests.swift`.
 Negative controls: the old line fails the same checks, and with `detail`
 returning it three of the five tests fail; with Missouri waters in the data
 a Missouri id reads as a missing lake, not a missing state.
+
+## 0042 — Tidal water pages link the nearest Tide Hours station (2026-11-13)
+
+Chelsea chose this on 2026-11-05 (cross-site links plan, decision B, option
+4b) in place of tide links on coastal county pages: a kayaker or boater on a
+Bay or Delta water also needs the tide, and Tide Hours is her other free site.
+
+- **Which waters.** California waters in the 2026-11-13 snapshot whose
+  center is within 2 km (1.2 miles) of a Tide Hours California station's
+  NOAA coordinates: 47. Twelve were dropped by hand as not tidal or not open
+  water (city and park ponds, a golf course, Foster City's Central Lake,
+  managed marsh ponds, a tide-gated lagoon, an outfall); they are listed in
+  the file under `excluded_not_tidal`. That leaves 35 waters and 26 stations,
+  every station page checked to answer 200 and be indexable on 2026-11-13.
+  The list is reviewed, not computed at build time: a new water does not get
+  a link until someone adds its row.
+- **What the page says.** One sentence after the status and before the
+  after-contact advice: "Tide times for the nearest NOAA tide station,
+  <station> (<miles> mi away), are on Tide Hours, another free site by
+  Chelsea Kelly-Reif, who makes Lake Notice:" and a link to the station page.
+  The label is the one chosen for every cross-site link (decision D). No
+  tide time, height or status is copied, so nothing here goes stale.
+- **Plain link.** No tag, no tracking parameter, no `rel="sponsored"`;
+  nothing is paid. GA4's enhanced measurement already counts outbound clicks.
+- **When.** Merge the week of 2026-12-14, after the Trout Truck links (0026,
+  11-26) have settled on the same template. No Tide Hours file changes, so
+  its 11-24 to 12-15 quiet window is not touched.
+- **Guards.** `tests/test_tide_hours_links.py`: a malformed row or a water
+  listed twice fails the build; a row whose water is gone is dropped; the
+  committed file must hold 35 rows and none of the excluded ids.
+

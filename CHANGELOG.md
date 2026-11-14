@@ -7,6 +7,10 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- 35 tidal California water pages (Bay, Delta, Monterey Bay) link the
+  nearest Tide Hours station page, a plain link labeled as Chelsea's other
+  free site, from a reviewed list in `pipeline/data/tide_hours_stations.json`.
+  No tide time or height is copied (docs/DECISIONS.md 0042).
 - The iPhone app takes the website's look: paper and indigo colors with
   light and dark variants, each lake's status drawn as its posted sign with
   the level's words and rank marks, signage-style headings and the sign-board

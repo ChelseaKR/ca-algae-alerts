@@ -22,6 +22,10 @@
 {% endif %}
 <p>Before you go, check the <a href="{{ water_source.official_map_url }}">state's official algae page</a> and any signs posted at the water.{% if app_store_url %} The <a href="{{ app_store_url }}">iPhone app</a> can alert you when {{ water.name }} gets a new advisory.{% endif %}</p>
 {% endif %}
+{% if tide_hours %}
+
+<p id="tide-hours">Tide times for the nearest NOAA tide station, {{ tide_hours.name }} ({{ tide_hours.miles }} mi away), are on Tide Hours, another free site by Chelsea Kelly-Reif, who makes Lake Notice: <a href="{{ tide_hours.url }}">{{ tide_hours.name }} tide times on Tide Hours</a>.</p>
+{% endif %}
 
 <p id="after-contact"><strong>After contact with the water:</strong> {{ human_advice }}</p>
 
