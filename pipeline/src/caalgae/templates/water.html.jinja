@@ -35,6 +35,14 @@
 </ul>
 {% endif %}
 
+{% if swim %}
+<h2 id="swimming">{{ swim_heading }}</h2>
+{% for line in swim %}
+<p>{{ line }}</p>
+{% endfor %}
+<p>{{ swim_check }}{% for src in swim_sources %} {{ swim_own_page }} <a href="{{ src.url }}">{{ src.name }}</a> (<a href="{{ root }}where-to-check/#{{ src.slug }}">{{ swim_covers }}</a>).{% endfor %}</p>
+{% endif %}
+
 <h2 id="dogs">Dogs at {{ water.name }}</h2>
 <p>{{ unavailable_dog_answer(water.name, state_name) if outage else dog_answer(water.name, water.status) }}</p>
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>

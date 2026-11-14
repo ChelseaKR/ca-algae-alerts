@@ -7,6 +7,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A "Swimming at <water>" section on every indexed water page (merge on
+  2026-11-26). It says the records cannot say if it is safe to swim there
+  today, then gives the posted advisory and what that level's sign asks of
+  people in the water, or the not-a-finding sentence when there is no
+  advisory. Lake Elsinore and Clear Lake also link their local pages.
+  Spanish strings are drafts (docs/DECISIONS.md 0033).
 - The iPhone app takes the website's look: paper and indigo colors with
   light and dark variants, each lake's status drawn as its posted sign with
   the level's words and rank marks, signage-style headings and the sign-board

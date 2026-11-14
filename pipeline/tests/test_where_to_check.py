@@ -169,7 +169,11 @@ def test_orphan_check_catches_an_unlinked_page(
 
     root = tmp_path / "copy"
     shutil.copytree(sample_site, root)
-    for rel in ("index.html", "about/index.html"):
+    # Home, about, and any water page whose swimming section names a
+    # where-to-check source (DECISIONS 0033).
+    linking = inbound(sample_site, "where-to-check")
+    assert {"index.html", "about/index.html"} <= set(linking)
+    for rel in linking:
         page = root / rel
         raw = page.read_text(encoding="utf-8")
         stripped = raw.replace("where-to-check/", "gone/")
