@@ -35,6 +35,11 @@
 </ul>
 {% endif %}
 
+{% if trout_truck %}
+<h2 id="trout-plantings">Trout plantings at {{ water.name }}</h2>
+<p>The California Department of Fish and Wildlife lists {{ trout_truck.name }} in its trout planting schedule. Trout Truck, another free site by Chelsea Kelly-Reif, who makes Lake Notice, shows its planting weeks and history: <a href="{{ trout_truck.url }}">{{ trout_truck.name }} trout planting schedule on Trout Truck</a>.{% if trout_truck.kind == "stream" %} The department plants along the stream. The algae records on this page are at the spots the state names, which may be on a different stretch.{% endif %}</p>
+{% endif %}
+
 <h2 id="dogs">Dogs at {{ water.name }}</h2>
 <p>{{ unavailable_dog_answer(water.name, state_name) if outage else dog_answer(water.name, water.status) }}</p>
 <p class="muted"><a href="{{ root }}dogs/">More on dogs and toxic algae</a>.</p>

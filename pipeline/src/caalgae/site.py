@@ -580,6 +580,59 @@ def same_name_nearby(waters: list[dict[str, Any]]) -> dict[str, list[dict[str, A
     }
 
 
+# Trout Truck links (DECISIONS 0026). A CA water page links to the same water's
+# page on Trout Truck, Chelsea's other free site, only when a reviewed pair in
+# pipeline/data/trout_truck_pairs.json names it; there is no fuzzy match at
+# build time, and no footer or sitewide link. The page links Trout Truck's page
+# and nothing else: no planting week, date or count is copied here, because
+# those go stale on Trout Truck's schedule, not this one. A pair is dropped
+# when its Lake Notice id is gone from the snapshot or its Trout Truck path is
+# gone from trout_truck_pages.json (read from Trout Truck's committed
+# snapshot by scripts/trout_truck_pages.py), so the site never links a dead
+# page. Plain links: no tag, no tracking parameter, no rel="sponsored"
+# (nothing is paid); GA4's enhanced measurement already counts outbound clicks.
+TROUT_TRUCK_URL = "https://trouttruck.com"
+_DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+TROUT_TRUCK_PAIRS_FILE = _DATA_DIR / "trout_truck_pairs.json"
+TROUT_TRUCK_PAGES_FILE = _DATA_DIR / "trout_truck_pages.json"
+TROUT_TRUCK_KINDS = frozenset({"lake", "stream"})
+_TT_PATH = re.compile(r"/water/[a-z0-9]+(?:-[a-z0-9]+)*/")
+
+
+def trout_truck_links(
+    pairs: list[dict[str, Any]],
+    tt_paths: Iterable[str],
+    water_ids: Iterable[str],
+) -> dict[str, dict[str, str]]:
+    """Each Lake Notice water id with a live pair, mapped to its Trout Truck
+    page (``url``, ``name``, ``kind``). A row whose Lake Notice id or Trout
+    Truck path is gone is dropped; a malformed row or a water paired twice is
+    an error, because the file is hand-reviewed and a typo must not ship."""
+    live_tt = set(tt_paths)
+    live_ln = set(water_ids)
+    links: dict[str, dict[str, str]] = {}
+    for row in pairs:
+        ln_id, path, name, kind = (
+            row["ln_id"],
+            row["tt_path"],
+            row["tt_name"],
+            row["kind"],
+        )
+        if kind not in TROUT_TRUCK_KINDS or not _TT_PATH.fullmatch(path) or not name:
+            raise ValueError(f"trout_truck_pairs.json: bad row {row!r}")
+        if ln_id in links:
+            raise ValueError(f"trout_truck_pairs.json: {ln_id} is paired twice")
+        if ln_id in live_ln and path in live_tt:
+            links[ln_id] = {"url": TROUT_TRUCK_URL + path, "name": name, "kind": kind}
+    return links
+
+
+def load_trout_truck_links(water_ids: Iterable[str]) -> dict[str, dict[str, str]]:
+    pairs = json.loads(TROUT_TRUCK_PAIRS_FILE.read_text("utf-8"))["pairs"]
+    pages = json.loads(TROUT_TRUCK_PAGES_FILE.read_text("utf-8"))["paths"]
+    return trout_truck_links(pairs, pages, water_ids)
+
+
 def newest(days: Iterable[dt.date | None]) -> dt.date | None:
     present = [d for d in days if d is not None]
     return max(present) if present else None
@@ -646,6 +699,7 @@ class SiteBuilder:
             (w["state"], w["source_name"].casefold()) for w in self.waters
         )
         self._same_name_nearby = same_name_nearby(self.waters)
+        self._trout_truck = load_trout_truck_links(w["id"] for w in self.waters)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
         # States whose data is live in this build: waters in the snapshot and
         # the state's source listed, the same test state_pages uses.
@@ -900,6 +954,7 @@ class SiteBuilder:
                 for other in self._same_name_nearby.get(water["id"], [])
             ],
             same_name_miles=SAME_NAME_NEARBY_MILES,
+            trout_truck=self._trout_truck.get(water["id"]),
             breadcrumb=crumbs,
             structured_data={
                 "@context": "https://schema.org",
