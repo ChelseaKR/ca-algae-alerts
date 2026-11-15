@@ -279,10 +279,43 @@ def county_description(
     )
 
 
-def advisories_description(waters: list[dict[str, Any]]) -> str:
+def _listed_counts(waters: list[dict[str, Any]]) -> dict[str, int] | None:
+    """How many listed waters each state has, in STATE_NAMES order, only when
+    the counted form applies (DECISIONS 0032, 2026-11-15): two or more states
+    each list at least one water, and every listed water is in one of them,
+    so the total is the length of the page's table. Otherwise None, and the
+    title and description keep the wording they had before."""
+    counts = Counter(w["state"] for w in waters)
+    named = {state: counts[state] for state in STATE_NAMES if counts[state]}
+    if len(named) < 2 or sum(named.values()) != len(waters):
+        return None
+    return named
+
+
+def _oldest_file_date(
+    states: Iterable[str], file_dates: dict[str, str | None]
+) -> str | None:
+    """The oldest of the listed states' file dates, so "the states' data
+    dated <date>" never claims a state's data is newer than it is. None when
+    any listed state has no file date."""
+    dates = [file_dates.get(state) for state in states]
+    if not dates or any(d is None for d in dates):
+        return None
+    return min(d for d in dates if d is not None)
+
+
+def advisories_description(
+    waters: list[dict[str, Any]], file_dates: dict[str, str | None] | None = None
+) -> str:
     """The advisory list's description: how many waters it lists, by state,
     the same waters the page's table lists. Missouri waters are on the page,
-    so the description names them rather than calling the list California's."""
+    so the description names them rather than calling the list California's.
+
+    With two or more states listed and each state's file date known, it
+    ends with the oldest of those dates (DECISIONS 0032, 2026-11-15):
+    "477 California and 47 Missouri lakes and rivers whose latest state
+    record is a toxic algae advisory, from the states' data dated Nov 13,
+    2026." Any other build keeps the earlier wording below."""
     counts = Counter(w["state"] for w in waters)
     parts = [
         f"{counts[state]} {name}"
@@ -295,16 +328,25 @@ def advisories_description(waters: list[dict[str, Any]]) -> str:
             "advisory, with its level and date."
         )
     lead = " and ".join(parts)
-    return fit(
+    earlier = [
+        f"{lead} lakes and rivers whose latest state record is a toxic algae "
+        "advisory, with its level and date, including old ones with no "
+        "recorded end.",
+        f"{lead} lakes and rivers whose latest state record is a toxic algae "
+        "advisory, with its level and date.",
+    ]
+    listed = _listed_counts(waters)
+    when = _oldest_file_date(listed, file_dates or {}) if listed else None
+    dated = (
         [
-            f"{lead} lakes and rivers whose latest state record is a toxic algae "
-            "advisory, with its level and date, including old ones with no "
-            "recorded end.",
-            f"{lead} lakes and rivers whose latest state record is a toxic algae "
-            "advisory, with its level and date.",
-        ],
-        DESCRIPTION_MAX,
+            f"{lead} lakes and rivers whose latest state record is a toxic "
+            f"algae advisory, from the states' data dated "
+            f"{wording.date_label(when)}."
+        ]
+        if when
+        else []
     )
+    return fit([*dated, *earlier], DESCRIPTION_MAX)
 
 
 def state_list(states: Iterable[str]) -> str:
@@ -353,10 +395,21 @@ def home_description(states: Iterable[str]) -> str:
 
 def advisories_title(waters: list[dict[str, Any]]) -> str:
     """The advisory list's title, naming the states its table lists, the
-    same states its description counts (DECISIONS 0032)."""
+    same states its description counts (DECISIONS 0032).
+
+    With two or more states listed it leads with the number of waters the
+    table lists (2026-11-15): "Toxic algae advisories: 524 California and
+    Missouri waters". One state, or none, keeps the earlier title."""
     where = state_list(w["state"] for w in waters) or "California"
+    listed = _listed_counts(waters)
+    counted = (
+        [f"Toxic algae advisories: {sum(listed.values())} {where} waters"]
+        if listed
+        else []
+    )
     return fit(
         [
+            *counted,
             f"All {where} toxic algae advisories on file | {SITE_NAME}",
             f"All {where} toxic algae advisories on file",
             f"{where} toxic algae advisories on file",
@@ -768,7 +821,9 @@ class SiteBuilder:
             "advisories/",
             "advisories.html.jinja",
             title=advisories_title(waters),
-            description=advisories_description(waters),
+            description=advisories_description(
+                waters, {state: self._file_date(state) for state in STATE_NAMES}
+            ),
             lastmod=self.site_date,
             waters=waters,
             breadcrumb=crumbs,

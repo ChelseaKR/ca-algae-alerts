@@ -94,6 +94,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- The /advisories/ title counts the waters it lists and its description
+  dates the states' data, filled from each build: "Toxic algae advisories:
+  524 California and Missouri waters" and "477 California and 47 Missouri
+  lakes and rivers whose latest state record is a toxic algae advisory, from
+  the states' data dated Nov 13, 2026." on the 2026-11-15 data. The date is
+  the oldest listed state's file date. With one state listed, or a file date
+  missing, the earlier wording stays (docs/DECISIONS.md 0032, 2026-11-15).
 - In the app, a saved lake the data on the phone does not have no longer
   says "No longer in the state's current file." It names what is missing
   (no data on this iPhone yet, a state with no lakes in the data, or the lake

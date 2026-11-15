@@ -1247,6 +1247,41 @@ of water pages (~2026-11-25) is not disturbed.
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
 
+**The /advisories/ title counts its waters; the description dates the data
+(owner, 2026-11-15).** The search read of 2026-11-15
+(growth/lake-notice-nhg-search-2026-11-15.md, Lake Notice action 2) found
+/advisories/ still the top page by impressions with no click: 63 in 28 days
+at position 7.0. Chelsea approved this wording for that day's data:
+
+- **Title:** "Toxic algae advisories: 524 California and Missouri waters"
+  (58 characters). The number is the length of the page's table, the states
+  are the ones it lists (`state_list`, as above).
+- **Description:** "477 California and 47 Missouri lakes and rivers whose
+  latest state record is a toxic algae advisory, from the states' data dated
+  Nov 13, 2026." (142 characters). The counts are the table's, by state; the
+  date is the oldest file date of the listed states, so the sentence never
+  says a state's data is newer than it is. On 2026-11-15 California's file
+  is dated Nov 13 and Missouri's (the run date; the layer carries no file date)
+  Nov 15.
+- **Both are filled from each build**, so they change with the nightly data.
+- **Edge cases keep the earlier wording above, with no new words.** One
+  state listed (Missouri with no open advisory, dropped or unavailable):
+  no count of zero is shown, and "the states'" would be wrong for one state,
+  so the title is "All California toxic algae advisories on file | Lake
+  Notice" and the description is the earlier "with its level and date" form.
+  A listed state with no file date: the description keeps the earlier form
+  and the title keeps its count. A listed water from a state not in
+  `STATE_NAMES`: both keep the earlier form, because the count would not be
+  the table's. Length: the counted title fits 60 characters up to 99,999
+  waters and the description fits 160 for any date label, and `fit` falls
+  back to the earlier candidates if either did not.
+- **Not changed:** the page body, the home page, every water, county and
+  state page. The dated-title read of water pages (~2026-11-25) is not
+  disturbed.
+
+To undo, drop the counted candidate from `advisories_title` and the dated
+one from `advisories_description`.
+
 ## 0036 — The app takes the website's identity, with worded empty states, sharing, support and a rare review ask (2026-11-05)
 
 The website's identity (0035, docs/DESIGN.md) is a notice posted at the
