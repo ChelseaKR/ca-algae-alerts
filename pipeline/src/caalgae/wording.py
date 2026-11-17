@@ -187,8 +187,8 @@ NOT_MEDICAL_ADVICE = (
     "911. For a possible poisoning, call Poison Control at 1-800-222-1222."
 )
 
-# The footer's Ko-fi line (docs/DECISIONS.md 0043), draft for the owner's
-# approval. Not tied to any advisory, lake, dog or anyone's safety. The second
+# The footer's Ko-fi line (docs/DECISIONS.md 0043), approved by the owner
+# 2026-11-17. Not tied to any advisory, lake, dog or anyone's safety. The second
 # sentence is the link text.
 TIP_LEAD = "{site_name} is made by one person."
 TIP_LINK_TEXT = "You can leave a tip on Ko-fi."

@@ -1507,14 +1507,14 @@ Negative controls: the old line fails the same checks, and with `detail`
 returning it three of the five tests fail; with Missouri waters in the data
 a Missouri id reads as a missing lake, not a missing state.
 
-## 0043 — A Ko-fi tip link in the footer, and nowhere else (owner, 2026-11-16; wording proposed)
+## 0043 — A Ko-fi tip link in the footer, and nowhere else (owner, 2026-11-16; wording approved 2026-11-17)
 
 The owner decided on 2026-11-16 (`_agent-tools/growth/app-money-ideas-2026-11-16.md`,
 decision 2(a), outside this repo) to put a footer-only link to her personal
-Ko-fi page, the same page as Trout Truck's, judged on 2027-05-31. **The
-wording is a draft awaiting her approval; nothing merges before she approves
-it and the real address replaces the placeholder.** She opens the Ko-fi page
-after 2026-11-27.
+Ko-fi page, the same page as Trout Truck's, judged on 2027-05-31. **She approved
+the footer wording as drafted on 2026-11-17. Nothing merges before the real
+address replaces the placeholder.** She opens the Ko-fi page after
+2026-11-27.
 
 - **Where.** One line in the site footer, after the about, privacy, terms
   and support links: "Lake Notice is made by one person. You can leave a tip
@@ -1528,7 +1528,8 @@ after 2026-11-27.
   `wording.TIP_LEAD` and `wording.TIP_LINK_TEXT` through the catalog. Its
   Spanish twin's two strings ("{site_name} lo hace una sola persona.",
   "Puede dejar una propina en Ko-fi.") are drafts, like the rest of the
-  Spanish footer, and wait for review before `ES_ENABLED` is turned on.
+  Spanish footer, and wait for review before `ES_ENABLED` is turned on (she
+  kept them as unpublished drafts on 2026-11-17).
 - **Words.** The ask is not tied to the advisory content: no "if this kept
   you or your dog safe", no "if this helped you decide", and never "no
   tracking". `tests/test_site_tip.py` holds the words to a banned list.
