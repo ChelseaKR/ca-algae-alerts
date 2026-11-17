@@ -161,9 +161,10 @@ def built_on(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 
 def test_the_constant_is_one_well_formed_ko_fi_address():
-    """The real address is a one-line swap of KOFI_URL; whatever replaces
-    the placeholder must still be a plain https Ko-fi page address."""
+    """KOFI_URL is a plain https Ko-fi page address, and never the
+    placeholder the branch carried before the owner sent her page."""
     assert re.fullmatch(r"https://ko-fi\.com/[A-Za-z0-9_]+", site.KOFI_URL)
+    assert "placeholder" not in site.KOFI_URL.lower()
     assert site.TIP_LEAD == LEAD and site.TIP_LINK_TEXT == LINK_TEXT
 
 

@@ -444,12 +444,12 @@ AFFILIATE_LINK_REL = "sponsored nofollow noopener"
 # surface besides the dogs page's gear links. Footer only, on every page that
 # extends base.html.jinja, and never in the iOS app, which has no web view.
 # A plain link: no Ko-fi script, image or widget, nothing loaded until it is
-# pressed, and no click tracking. The placeholder waits for Chelsea's Ko-fi
-# page (after 2026-11-27); the real address is a one-line change here. Empty,
+# pressed, and no click tracking. The address is Chelsea's Ko-fi page, sent
+# 2026-11-17, and it lives here and nowhere else. Empty,
 # the footer line is gone from every page. Judged on 2027-05-31: under $20 in
 # tips by then, it comes out. Never tie the ask to an advisory, a lake, a dog
 # or anyone's safety (tests/test_site_tip.py holds the words).
-KOFI_URL = "https://ko-fi.com/PLACEHOLDER"
+KOFI_URL = "https://ko-fi.com/chelseakr"
 TIP_LEAD = wording.TIP_LEAD.format(site_name=SITE_NAME)
 TIP_LINK_TEXT = wording.TIP_LINK_TEXT
 TIP_LINK_TARGET = "_blank"

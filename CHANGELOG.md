@@ -7,6 +7,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A Ko-fi tip link in the footer of every page, and nowhere else (DECISIONS
+  0043): "Lake Notice is made by one person. You can leave a tip on Ko-fi.",
+  the second sentence a plain link that opens in a new tab. No Ko-fi script,
+  image or widget, no click tracking, and nothing in the snapshot the app
+  reads. The Spanish footer strings are drafts and stay unpublished.
 - A file that changes too many statuses in one run is not published. After
   each source's file is merged, the pipeline compares every water's status
   before and after. If more than 5% of the waters under an advisory (never

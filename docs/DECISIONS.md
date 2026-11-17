@@ -1512,9 +1512,11 @@ a Missouri id reads as a missing lake, not a missing state.
 The owner decided on 2026-11-16 (`_agent-tools/growth/app-money-ideas-2026-11-16.md`,
 decision 2(a), outside this repo) to put a footer-only link to her personal
 Ko-fi page, the same page as Trout Truck's, judged on 2027-05-31. **She approved
-the footer wording as drafted on 2026-11-17. Nothing merges before the real
-address replaces the placeholder.** She opens the Ko-fi page after
-2026-11-27.
+the footer wording as drafted on 2026-11-17, sent the page's address,
+`https://ko-fi.com/chelseakr`, the same day, and chose to ship the line
+then** and not after 2026-11-27, the date the money plan gave. That choice
+covers this line only. It adds no page or page family, so the template
+freeze 0020 names stands as it was.
 
 - **Where.** One line in the site footer, after the about, privacy, terms
   and support links: "Lake Notice is made by one person. You can leave a tip
@@ -1533,7 +1535,7 @@ address replaces the placeholder.** She opens the Ko-fi page after
 - **Words.** The ask is not tied to the advisory content: no "if this kept
   you or your dog safe", no "if this helped you decide", and never "no
   tracking". `tests/test_site_tip.py` holds the words to a banned list.
-- **One constant.** `site.KOFI_URL`; the real page is a one-line change
+- **One constant.** `site.KOFI_URL`; a change of page is a one-line change
   there, and `""` removes the line from every page.
 - **No new request or tracking.** A plain `<a href>` with
   `target="_blank" rel="noopener"`: no Ko-fi script, button image, widget or
