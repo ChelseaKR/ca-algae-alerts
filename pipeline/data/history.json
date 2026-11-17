@@ -650,6 +650,31 @@
    "quarantined_by_reason": {
     "missing observation date": 18
    }
+  },
+  {
+   "source": "ca-swrcb-fhab",
+   "url": "https://publish.data.ca.gov/dataset/ab672540-aecd-42f1-9b05-9aad326f97ec/resource/4283c060-c22f-48f5-a75c-8bccf0c54a99/download/hab-responses_2026-11-16.csv",
+   "file_name": "hab-responses_2026-11-16.csv",
+   "file_date": "2026-11-16",
+   "fetched_at": "2026-11-17T23:46:01Z",
+   "rows_read": 14628,
+   "quarantined": 249,
+   "quarantined_by_reason": {
+    "missing or unreadable advisory date": 205,
+    "not linked to a bloom report": 44
+   }
+  },
+  {
+   "source": "mo-dnr-hab",
+   "url": "https://gis.dnr.mo.gov/host/rest/services/wqm/HAB_SUBMIT_POINTS/MapServer/6",
+   "file_name": "HAB_SUBMIT_POINTS layer 6 (public water bodies)",
+   "file_date": "2026-11-17",
+   "fetched_at": "2026-11-17T23:46:01Z",
+   "rows_read": 283,
+   "quarantined": 18,
+   "quarantined_by_reason": {
+    "missing observation date": 18
+   }
   }
  ],
  "records": {
