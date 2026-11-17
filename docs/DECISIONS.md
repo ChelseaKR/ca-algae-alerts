@@ -1507,6 +1507,48 @@ Negative controls: the old line fails the same checks, and with `detail`
 returning it three of the five tests fail; with Missouri waters in the data
 a Missouri id reads as a missing lake, not a missing state.
 
+## 0043 — A Ko-fi tip link in the footer, and nowhere else (owner, 2026-11-16; wording proposed)
+
+The owner decided on 2026-11-16 (`_agent-tools/growth/app-money-ideas-2026-11-16.md`,
+decision 2(a), outside this repo) to put a footer-only link to her personal
+Ko-fi page, the same page as Trout Truck's, judged on 2027-05-31. **The
+wording is a draft awaiting her approval; nothing merges before she approves
+it and the real address replaces the placeholder.** She opens the Ko-fi page
+after 2026-11-27.
+
+- **Where.** One line in the site footer, after the about, privacy, terms
+  and support links: "Lake Notice is made by one person. You can leave a tip
+  on Ko-fi." The second sentence is the link. Every page that extends
+  `base.html.jinja` carries it. It is never in a page's main content, never
+  next to an advisory level, a lake's status or the dog guidance, and it is
+  the only money surface besides the dogs page's gear links (0029). The
+  /levels/ page (`_base_i18n.html.jinja`, off on main) carries the same line,
+  since its English footer must match every other page's
+  (`test_english_chrome_matches_every_other_page`); the words come from
+  `wording.TIP_LEAD` and `wording.TIP_LINK_TEXT` through the catalog. Its
+  Spanish twin's two strings ("{site_name} lo hace una sola persona.",
+  "Puede dejar una propina en Ko-fi.") are drafts, like the rest of the
+  Spanish footer, and wait for review before `ES_ENABLED` is turned on.
+- **Words.** The ask is not tied to the advisory content: no "if this kept
+  you or your dog safe", no "if this helped you decide", and never "no
+  tracking". `tests/test_site_tip.py` holds the words to a banned list.
+- **One constant.** `site.KOFI_URL`; the real page is a one-line change
+  there, and `""` removes the line from every page.
+- **No new request or tracking.** A plain `<a href>` with
+  `target="_blank" rel="noopener"`: no Ko-fi script, button image, widget or
+  iframe, nothing loaded from Ko-fi until a person presses it, and no click
+  event (the GA4 tag here records page views only).
+- **Never in the iOS app.** The app reads `snapshot/v1.json`, has no web
+  view, and opens the site's pages ("This lake on the website", "Privacy
+  policy") in the system browser, outside the app. Nothing here reaches the
+  snapshot; a test fails if "ko-fi" is in it or anywhere under `ios/`.
+- **Judged 2027-05-31.** Under $20 in tips by then, the line comes out.
+- **Guards.** `tests/test_site_tip.py`: the exact line once, inside
+  `<footer>`, on every built page with a footer; no Ko-fi script, image,
+  frame, text or tracking hook anywhere else; nothing in a data file or the
+  snapshot; nothing with `KOFI_URL = ""`; negative controls for a line moved
+  into `<main>`, a `data-ga-event` hook and a Ko-fi widget script.
+
 ## 0044 — A file that changes too many statuses in one run is not published (2026-11-17)
 
 From the security review of 2026-11-17 (outside this repo). 0027's guards
