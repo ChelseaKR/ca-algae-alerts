@@ -7,6 +7,17 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A file that changes too many statuses in one run is not published. After
+  each source's file is merged, the pipeline compares every water's status
+  before and after. If more than 5% of the waters under an advisory (never
+  fewer than 5) would leave it or go to a lower level, or the number under
+  an advisory would move by more than 10% (never fewer than 25), the run is
+  refused with a message that says what was measured, the last good data
+  stays live, and the publish-failure issue quotes the reason. A Missouri
+  answer past the limit is not merged and Missouri reads "data unavailable"
+  while California publishes. The publish workflow's `accept_status_change`
+  input lets a checked file through. The limits come from this repository's
+  25 committed runs and the records back to 2016 (docs/DECISIONS.md 0044).
 - The iPhone app takes the website's look: paper and indigo colors with
   light and dark variants, each lake's status drawn as its posted sign with
   the level's words and rank marks, signage-style headings and the sign-board

@@ -32,6 +32,14 @@ on:
         description: "Accept the California file's withdrawals or quarantine jump (read the file first)"
         type: boolean
         default: false
+      accept_status_change:
+        # Only after reading the agency's file: lets through a file that
+        # takes many waters out of an advisory, lowers many levels, or moves
+        # the number of advisories past the tripwire's limits
+        # (pipeline/src/caalgae/tripwire.py, docs/DECISIONS.md 0044).
+        description: "Accept a file that changes many advisories at once (read the file first)"
+        type: boolean
+        default: false
       allow_page_drop:
         # A deliberate drop of a state's pages (say "MO"), which the publish
         # guard otherwise refuses (docs/DECISIONS.md 0024). Empty: no override.
@@ -59,6 +67,7 @@ jobs:
     permissions:
       contents: write
     outputs:
+      pipeline_reason: ${{ steps.pipeline.outputs.reason }}
       guard_reason: ${{ steps.guard.outputs.reason }}
       unavailable: ${{ steps.guard.outputs.unavailable }}
     steps:
@@ -88,21 +97,30 @@ jobs:
         run: uv sync --locked
 
       - name: run the pipeline (live fetch -> history -> snapshot -> site)
+        # A file that changes too many statuses at once is refused here
+        # (docs/DECISIONS.md 0044): the step fails before anything is
+        # committed or uploaded, yesterday's site stays live, and its reason
+        # goes to the publish-failure issue.
+        id: pipeline
         working-directory: pipeline
         env:
           SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
           SUPPORT_EMAIL: ${{ vars.SUPPORT_EMAIL }}
           APP_STORE_URL: ${{ vars.APP_STORE_URL }}
           ACCEPT_CA_EDITS: ${{ inputs.accept_ca_edits == true }}
+          ACCEPT_STATUS_CHANGE: ${{ inputs.accept_status_change == true }}
         run: |
           set -euo pipefail
           accept=""
           if [ "$ACCEPT_CA_EDITS" = "true" ]; then accept="--accept-ca-edits"; fi
+          accept_change=""
+          if [ "$ACCEPT_STATUS_CHANGE" = "true" ]; then accept_change="--accept-status-change"; fi
           uv run caalgae --site-out ../site \
             --base-url "$SITE_BASE_URL" \
             --support-email "$SUPPORT_EMAIL" \
             --app-store-url "$APP_STORE_URL" \
-            ${accept:+"$accept"}
+            ${accept:+"$accept"} \
+            ${accept_change:+"$accept_change"}
 
       - name: guard against a silent drop of a state's pages
         # Before the history commit and the Pages upload: a refusal leaves
@@ -242,12 +260,16 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           GUARD_REASON: ${{ needs.build.outputs.guard_reason }}
+          PIPELINE_REASON: ${{ needs.build.outputs.pipeline_reason }}
         run: |
           set -euo pipefail
           title="publish: the pipeline run failed"
           existing="$(gh issue list --state open --search "\"${title}\" in:title" \
             --json number,title --jq "[.[] | select(.title == \"${title}\")][0].number // empty")"
           body="The publish workflow did not finish. Nothing from this run was committed or deployed. Run: ${RUN_URL}"
+          if [ -n "${PIPELINE_REASON}" ]; then
+            body="${body} Pipeline: ${PIPELINE_REASON}"
+          fi
           if [ -n "${GUARD_REASON}" ]; then
             body="${body} Publish guard: ${GUARD_REASON}"
           fi
