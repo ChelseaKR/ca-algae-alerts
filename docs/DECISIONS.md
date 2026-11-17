@@ -1506,3 +1506,97 @@ Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/SavedLakeCopyTests.swift`.
 Negative controls: the old line fails the same checks, and with `detail`
 returning it three of the five tests fail; with Missouri waters in the data
 a Missouri id reads as a missing lake, not a missing state.
+
+## 0044 — A file that changes too many statuses in one run is not published (2026-11-17)
+
+From the security review of 2026-11-17 (outside this repo). 0027's guards
+look at a file's shape: withdrawn records, quarantined rows. A file can pass
+them with every record in place and its levels wrong. This adds one check on
+what the file means. Numbered after 0040 to 0043, which unmerged branches
+hold. It is a publishing gate only: it decides whether a run is published and
+changes no word on any page.
+
+- **What is compared.** After a source's file is merged, and before
+  anything is written, `caalgae.tripwire` builds each water's status from
+  the history as it was and as it would be, both on the run date, the same
+  way the snapshot does. A water's status **drops** when it leaves an
+  advisory (to "no advisory recorded" or to undetermined) or stays in one
+  at a lower level. The **count** is the number of waters under an advisory.
+  Reading both sides on the run date means an advisory whose own end date
+  passes overnight is not a change: no file made it.
+- **The limits.** A run is refused when more waters drop than 5% of the
+  waters under an advisory before it, never fewer than 5 waters
+  (`MAX_DROP_SHARE`, `MIN_DROP_WATERS`); or when the count moves, up or
+  down, by more than 10% of what it was, never fewer than 25 waters
+  (`MAX_COUNT_SHARE`, `MIN_COUNT_WATERS`).
+- **Where the limits come from: the 25 committed runs** (2026-10-22 to
+  2026-11-17, each one a commit of `pipeline/data/history.json`, replayed
+  pair by pair). California had 476 to 479 waters under an advisory. The
+  most waters whose status dropped in one run was 4 (2026-11-07: 1 left an
+  advisory, 3 went to a lower level), 0.8% of 479. The count never moved by
+  more than 2 (0.4%). Missouri went from 43 to 47 with no drop in any run
+  and at most 2 new in one.
+- **And the records back to 2016.** The file carries every record with its
+  date, so each California water's status was recomputed at each of its
+  record dates (905 waters, 2016-04-30 to 2026-11-16). 367 dates have at
+  least one drop: 242 have 1, 84 have 2, 26 have 3, 10 have 4, 3 have 5 and
+  2 have 6. The most on one date is 6 (2022-11-10, when 291 waters were
+  under an advisory, 2.1%; and 2022-12-30, of 278, 2.2%). A record's date
+  is not the day the state published it, and a run can be missed (three of
+  the 25 runs came two days after the one before), so the windows matter
+  more: the most drops in any 7 days is 13 (ending 2022-12-31, of 280,
+  4.6%) and in any 14 days 18 (ending 2026-07-01, of 437, 4.1%). New
+  advisories: at most 13 on one date (2021-07-01, when 144 were under an
+  advisory), 18 in any 7 days and 23 in any 14. Missouri, 2023-04-23 to
+  2026-11-01: one date with a drop, of 1 water; at most 2 new on one date
+  and 8 in any 14 days.
+- **What that makes the limits today.** California, 477 under an advisory:
+  5% is 23.85, so 23 drops pass and 24 are refused. That is 4 times the
+  largest single date (6), 1.8 times the largest week (13), 1.3 times the
+  largest two weeks (18) and 6 times the largest committed run (4). 10% is
+  47.7, so the count may move by 47 and 48 is refused: 3.7 times the
+  largest single date of new advisories (13) and twice the largest two
+  weeks (23). Missouri, 47 under an advisory: 5% is 2, so the floor of 5
+  applies (6 are refused, against 1 ever), and the count may move by 25
+  (against 8 in two weeks). The drop limit is the tighter one on purpose:
+  a wrong "no advisory" is the costlier error. The count limit is looser so
+  that a real run of new advisories in summer is not held back.
+- **A refused California run publishes nothing.** The run stops before the
+  history, the snapshot or the site is written, so the last good data stays
+  live, as for 0027. The message says what was measured and what to do:
+  "California's file would take 477 of 477 waters out of an advisory and
+  lower 0 more in one run (477 in all; the limit is 23), starting with
+  ca-alameda-..., ... A change that size looks like a wrong file. The last
+  good data stays published. If the agency really did change this much,
+  read its file, then run the publish workflow with accept_status_change."
+  It is printed on the run, and the publish-failure issue quotes it. The
+  message is built from counts and this pipeline's own water ids, never
+  from the source's text.
+- **A refused Missouri answer never stops California** (0010). It is not
+  merged, and Missouri goes to "data unavailable" (0024) with the reason
+  `suspect: ...`, which opens that issue the same day. A normal answer
+  clears it.
+- **The override, for a real mass change.** Agencies do lift many
+  advisories at once, at a season's end or when a program closes old
+  reports. When the issue opens: read the reason, open the agency's file or
+  map and check a few of the named waters, and if the change is real, run
+  the publish workflow by hand with **`accept_status_change`** ticked
+  (`caalgae --accept-status-change`). That one run is published as it is;
+  the next scheduled run compares against it and the limits apply again.
+  `accept_ca_edits` (0027) is a separate switch and does not turn this
+  check off.
+- **Known limits.** A wrong file that changes fewer waters than the limit
+  is published: 23 in California today. Waters added with no advisory, and
+  edits that change no status, are not counted. A source read for the
+  first time is not checked, since there is nothing to compare.
+- **Tests.** `pipeline/tests/test_tripwire.py`, on the committed
+  history.json: the unchanged file is no change; every advisory edited to
+  "None" in place, and a newer "None" added for every report, each pass
+  0027's merge (the sabotage applies) and are refused here; the drop limit
+  and the count limit each pass at the limit and refuse one past it; a
+  lowered level counts with the count unmoved; a passed end date is not a
+  change; the override and a first read pass; the CLI exits 2 and leaves
+  the history file byte for byte, then publishes with the flag; Missouri at
+  the limit merges and one past it is unavailable with California's history
+  untouched. `test_publish_workflow.py` holds the input, the flag and the
+  reason's path to the issue, with controls for each removed.
