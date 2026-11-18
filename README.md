@@ -12,8 +12,8 @@ pattern of Trout Truck (`ChelseaKR/ca-fish-planting-alerts`).
 The domain is lakenotice.com (docs/DOMAIN.md has the variables to set when
 it is served).
 
-**Status:** in build. Private repository. Nothing is published: GitHub
-Pages is off and no App Store record exists.
+**Status:** live at lakenotice.com since 2026-10-22. Public repository.
+Website only; there is no app.
 
 The one rule: an advisory stands until the state records an explicit end.
 Nothing here ever says a water is safe, and silence never ends an advisory.
