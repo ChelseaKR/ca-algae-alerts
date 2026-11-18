@@ -110,6 +110,10 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Site: the footer's Ko-fi tip link opens in the same tab (DECISIONS 0043,
+  addendum 2026-11-17). It was the only link on the site that opened a new
+  tab, and it did not say so. `target="_blank"` and the `rel="noopener"`
+  that went with it are gone; the sentence is unchanged.
 - The /advisories/ title counts the waters it lists and its description
   dates the states' data, filled from each build: "Toxic algae advisories:
   524 California and Missouri waters" and "477 California and 47 Missouri

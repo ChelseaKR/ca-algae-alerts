@@ -1537,8 +1537,8 @@ freeze 0020 names stands as it was.
   tracking". `tests/test_site_tip.py` holds the words to a banned list.
 - **One constant.** `site.KOFI_URL`; a change of page is a one-line change
   there, and `""` removes the line from every page.
-- **No new request or tracking.** A plain `<a href>` with
-  `target="_blank" rel="noopener"`: no Ko-fi script, button image, widget or
+- **No new request or tracking.** A plain `<a href>` (with
+  `target="_blank" rel="noopener"` until the addendum below): no Ko-fi script, button image, widget or
   iframe, nothing loaded from Ko-fi until a person presses it, and no click
   event (the GA4 tag here records page views only).
 - **Never in the iOS app.** The app reads `snapshot/v1.json`, has no web
@@ -1551,6 +1551,29 @@ freeze 0020 names stands as it was.
   frame, text or tracking hook anywhere else; nothing in a data file or the
   snapshot; nothing with `KOFI_URL = ""`; negative controls for a line moved
   into `<main>`, a `data-ga-event` hook and a Ko-fi widget script.
+
+### Addendum 2026-11-17: the link opens in the same tab
+
+- **What was wrong.** The footer link opened a new tab and did not say so,
+  on every page. It was the only link on the site that opened a new tab. The
+  2026-11-17 accessibility sweep recorded the same link on Trout Truck: a
+  screen reader or magnifier user lands on a page whose Back button does
+  nothing, with no word of why.
+- **The choice.** Two fixes were put to the owner: add "(opens in a new
+  tab)" inside the link, or open it in the same tab with no word changed.
+  The same tab was chosen, here and on Trout Truck. The approved sentence
+  stands exactly as it was, and so do the Spanish drafts.
+- **What changed.** `target="_blank"` is gone, and so is `rel="noopener"`,
+  which was there only because of the new tab. The link is a bare
+  `<a href>` in `base.html.jinja` and `_base_i18n.html.jinja`, and `site.py`
+  no longer has `TIP_LINK_TARGET` or `TIP_LINK_REL`.
+- **What did not.** No script, image or tracking hook was added; the
+  constant, the footer-only rule and the 2027-05-31 judgment are as written
+  above. Lake Notice has no calendar feed, so there is no plain-text tip
+  line to check.
+- **Guards.** `tests/test_site_tip.py`: the Ko-fi link on every built page
+  carries `href` and nothing else, with a control that a new-tab link is
+  caught.
 
 ## 0044 — A file that changes too many statuses in one run is not published (2026-11-17)
 

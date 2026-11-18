@@ -79,7 +79,7 @@
     <p>{{ t("footer.file", file_name=source_file.file_name, date=local_date(source_file.fetched_at[:10])) }} <a href="{{ source.official_map_url }}">{{ source.official_map_url }}</a></p>
     <p><a href="{{ source.dataset_url }}">{{ t("footer.dataset") }}</a> &middot; <a href="{{ root }}about/">{{ t("footer.about") }}</a> &middot; <a href="{{ root }}privacy/">{{ t("footer.privacy") }}</a> &middot; <a href="{{ root }}terms/">{{ t("footer.terms") }}</a> &middot; <a href="{{ root }}support/">{{ t("footer.support") }}</a></p>
     {% if tip %}
-    <p class="tip-line">{{ t("footer.tip_lead", site_name=site_name) }} <a href="{{ tip.url }}" target="{{ tip.target }}" rel="{{ tip.rel }}">{{ t("footer.tip_link") }}</a></p>
+    <p class="tip-line">{{ t("footer.tip_lead", site_name=site_name) }} <a href="{{ tip.url }}">{{ t("footer.tip_link") }}</a></p>
     {% endif %}
     {% if ga4_measurement_id %}
     <p id="analytics-choice" hidden><button type="button" id="analytics-opt-out" class="link-button" hidden>{{ t("footer.analytics_opt_out") }}</button> <span id="analytics-status" role="status"></span></p>
