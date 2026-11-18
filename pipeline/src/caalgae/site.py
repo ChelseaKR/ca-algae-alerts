@@ -443,8 +443,9 @@ AFFILIATE_LINK_REL = "sponsored nofollow noopener"
 # The Ko-fi tip link in the footer (docs/DECISIONS.md 0043): the one money
 # surface besides the dogs page's gear links. Footer only, on every page that
 # extends base.html.jinja, and never in the iOS app, which has no web view.
-# A plain link: no Ko-fi script, image or widget, nothing loaded until it is
-# pressed, and no click tracking. The address is Chelsea's Ko-fi page, sent
+# A plain link that opens in the same tab (0043 addendum, 2026-11-17; no
+# target, so no rel): no Ko-fi script, image or widget, nothing loaded until
+# it is pressed, and no click tracking. The address is Chelsea's Ko-fi page, sent
 # 2026-11-17, and it lives here and nowhere else. Empty,
 # the footer line is gone from every page. Judged on 2027-05-31: under $20 in
 # tips by then, it comes out. Never tie the ask to an advisory, a lake, a dog
@@ -452,8 +453,6 @@ AFFILIATE_LINK_REL = "sponsored nofollow noopener"
 KOFI_URL = "https://ko-fi.com/chelseakr"
 TIP_LEAD = wording.TIP_LEAD.format(site_name=SITE_NAME)
 TIP_LINK_TEXT = wording.TIP_LINK_TEXT
-TIP_LINK_TARGET = "_blank"
-TIP_LINK_REL = "noopener"
 # Label, the search terms, then the line tying the item to the dogs page's own
 # advice (DOG_ADVICE and "At the water"). Generic searches, not products, so
 # nothing goes stale and the page states no price, rating or "best" claim.
@@ -554,8 +553,6 @@ def _tip() -> dict[str, str] | None:
         "url": KOFI_URL,
         "lead": TIP_LEAD,
         "link_text": TIP_LINK_TEXT,
-        "target": TIP_LINK_TARGET,
-        "rel": TIP_LINK_REL,
     }
 
 

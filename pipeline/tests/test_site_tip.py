@@ -3,8 +3,9 @@
 On, every built HTML page that has the site footer carries one tip line in
 that footer, and nowhere else on the page: not in <main>, not next to an
 advisory level, never on a lake, county or state page's body. It is a plain
-link with target="_blank" rel="noopener": no Ko-fi script, image, frame or
-widget, and no click tracking. Nothing reaches the snapshot the iOS app
+link that opens in the same tab, with no target and no rel (0043 addendum,
+2026-11-17; it opened a new tab without saying so until then): no Ko-fi
+script, image, frame or widget, and no click tracking. Nothing reaches the snapshot the iOS app
 reads, and the iOS sources never name Ko-fi. Off (``KOFI_URL = ""``), no page
 has it. The words make no safety or dog claim. HTML is read with
 html.parser, never a regex; each guard has a negative control that first
@@ -27,10 +28,7 @@ REPO = Path(__file__).resolve().parents[2]
 URL = site.KOFI_URL
 LEAD = "Lake Notice is made by one person."
 LINK_TEXT = "You can leave a tip on Ko-fi."
-LINE = (
-    f'<p class="tip-line">{LEAD} '
-    f'<a href="{URL}" target="_blank" rel="noopener">{LINK_TEXT}</a></p>'
-)
+LINE = f'<p class="tip-line">{LEAD} <a href="{URL}">{LINK_TEXT}</a></p>'
 # Never in the tip's words: nothing about safety, dogs, a lake's status or
 # what a visitor decided, and never "no tracking".
 BANNED = (
@@ -105,8 +103,8 @@ def _link_problems(rel: Path, w: Where, text: str) -> list[str]:
     landmark, attrs = w.links[0]
     if landmark != "footer":
         found.append(f"{rel}: the link is in <{landmark}>, not the footer")
-    if attrs.get("target") != "_blank" or attrs.get("rel") != "noopener":
-        found.append(f"{rel}: target or rel is not exactly _blank, noopener")
+    if "target" in attrs or "rel" in attrs:
+        found.append(f"{rel}: the link opens a new tab, or carries a rel left from it")
     if any(k.startswith(("data-", "on")) for k in attrs):
         found.append(f"{rel}: the link carries a tracking or script hook")
     if text.count(LINE) != 1:
@@ -185,6 +183,46 @@ def test_every_footer_and_only_the_footer_has_the_line(built_on: Path):
     assert lakes and LINE in lakes[0].read_text(encoding="utf-8")
 
 
+def test_the_tip_link_opens_in_the_same_tab(built_on: Path):
+    """It was the only link on the site that opened a new tab, and it did not
+    say so: a screen reader or magnifier user landed on a page whose Back
+    button did nothing. The owner chose the same tab over adding words (0043
+    addendum), so no Ko-fi link on any built page has a `target`, or the
+    `rel="noopener"` that was there only for the new tab, and the words are
+    what they were."""
+    seen = 0
+    for path in sorted(built_on.rglob("*.html")):
+        w = Where()
+        w.feed(path.read_text(encoding="utf-8"))
+        for _, attrs in w.links:
+            seen += 1
+            assert set(attrs) == {"href"}, (path.relative_to(built_on), attrs)
+    assert seen, "no Ko-fi link on any built page, so this checked nothing"
+    assert set(site._tip() or {}) == {"url", "lead", "link_text"}
+    assert not hasattr(site, "TIP_LINK_TARGET")
+    assert not hasattr(site, "TIP_LINK_REL")
+    for name in ("base.html.jinja", "_base_i18n.html.jinja"):
+        template = (Path(site.__file__).parent / "templates" / name).read_text("utf-8")
+        line = next(x for x in template.splitlines() if 'class="tip-line"' in x)
+        assert "target=" not in line and "rel=" not in line, name
+
+
+def test_negative_control_a_new_tab_link_is_caught(tmp_path: Path):
+    out = build(tmp_path, URL)
+    assert problems(out, on=True) == []
+    home = out / "index.html"
+    text = home.read_text(encoding="utf-8")
+    old = text.replace(
+        f'<a href="{URL}">', f'<a href="{URL}" target="_blank" rel="noopener">', 1
+    )
+    assert old != text
+    home.write_text(old, encoding="utf-8")
+    found = "\n".join(problems(out, on=True))
+    assert (
+        "index.html: the link opens a new tab, or carries a rel left from it" in found
+    )
+
+
 def test_the_snapshot_the_app_reads_never_carries_it(built_on: Path):
     snaps = list(built_on.rglob("snapshot/*.json"))
     assert snaps
@@ -214,7 +252,7 @@ def test_negative_controls(tmp_path: Path):
     sabotage(home, LINE, "")
     sabotage(home, "</main>", LINE + "</main>")
     # A tracking hook on the link.
-    sabotage(dogs, 'rel="noopener"', 'rel="noopener" data-ga-event="tip"')
+    sabotage(dogs, f'<a href="{URL}">', f'<a href="{URL}" data-ga-event="tip">')
     # A Ko-fi widget script.
     widget = '<script src="https://storage.ko-fi.com/w.js"></script></body>'
     sabotage(adv, "</body>", widget)
