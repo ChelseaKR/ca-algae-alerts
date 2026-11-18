@@ -46,6 +46,11 @@ DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
 # asks for in a site icon (scripts/render_icons.sh renders them from
 # templates/mark.svg; templates/_head_icons.html.jinja links them).
 ICON_PNG_SIZES = (48, 96, 192)
+# The one share image, the picture a link preview shows: the mark and the
+# site's name, nothing about any water (scripts/render_share_image.sh). Its
+# size is stated in every page's Open Graph tags, so it lives here.
+SHARE_IMAGE_FILE = "og-image.png"
+SHARE_IMAGE_SIZE = (1200, 630)
 # Sitemap staging (owner decision, 2026-10-23). A water page is listed in the
 # sitemap and indexable only when the state recorded an advisory for it within
 # this many months of the build's data date (``run_date``, never the wall
@@ -626,6 +631,8 @@ class SiteBuilder:
         self.common: dict[str, Any] = {
             "site_name": SITE_NAME,
             "icon_png_sizes": ICON_PNG_SIZES,
+            "share_image_url": f"{self.base_url}assets/{SHARE_IMAGE_FILE}",
+            "share_image_size": SHARE_IMAGE_SIZE,
             "support_email": support_email,
             "app_store_url": app_store_url,
             "ga4_measurement_id": ga4_measurement_id,
@@ -1277,6 +1284,9 @@ class SiteBuilder:
             (assets / name).write_bytes(templates.joinpath(name).read_bytes())
         (self.out / "favicon.ico").write_bytes(
             templates.joinpath("favicon.ico").read_bytes()
+        )
+        (assets / SHARE_IMAGE_FILE).write_bytes(
+            templates.joinpath(SHARE_IMAGE_FILE).read_bytes()
         )
         snap_dir = self.out / "snapshot"
         snap_dir.mkdir(parents=True, exist_ok=True)

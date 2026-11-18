@@ -1310,6 +1310,31 @@ that the icons carry the mark's own colors where the mark has them; the
 `.ico` file's three images; and that robots.txt lets an image crawler fetch
 them. Each has a negative control.
 
+### Addendum 2026-11-17: one share image, the mark and the name only
+
+No page had a share image, so a link sent in a message or posted in a
+group showed no picture. The owner approved one image for the whole site
+(her decision 4a of 2026-11-17), to her own look first.
+
+- `assets/og-image.png`, 1200 by 630: the mark above the site's name, set
+  as the header sets it (the signage face, bold, capitals, in the brand
+  indigo) on the page's paper. No tagline, no level, no lake and no status:
+  a preview is read without the page and its dates, so it says nothing
+  about any water.
+- Every page carries the Open Graph and Twitter image tags, with the
+  image's size, and the card becomes the large-image kind. The alt text is
+  "Lake Notice" and no more.
+- `scripts/render_share_image.sh` renders it from `templates/mark.svg` and
+  `SITE_NAME`. It stops if DIN Alternate Bold is missing, so the name is
+  never set in a fallback face. The output is committed and the build
+  copies it.
+
+Tests: `pipeline/tests/test_share_image.py` reads each page with an HTML
+parser and checks every tag's exact value; checks the image's size, its
+paper ground, the mark's colors where the mark sits, the name in indigo
+under it and nothing anywhere else; and checks that no pixel is a sign
+color or green. Each has a negative control.
+
 ## 0036 — The app takes the website's identity, with worded empty states, sharing, support and a rare review ask (2026-11-05)
 
 The website's identity (0035, docs/DESIGN.md) is a notice posted at the

@@ -23,7 +23,7 @@
 <meta property="og:title" content="{{ title }}">
 <meta property="og:description" content="{{ description }}">
 <meta property="og:site_name" content="{{ site_name }}">
-<meta name="twitter:card" content="summary">
+{% include "_head_share_image.html.jinja" %}
 {% if structured_data %}
 {# schema.org data. Only facts the page itself shows; tojson escapes <, >
    and &, so no water name can close this element. #}

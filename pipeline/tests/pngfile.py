@@ -31,11 +31,32 @@ def _paeth(a: int, b: int, c: int) -> int:
     return b if pb <= pc else c
 
 
-def png_pixels(data: bytes) -> list[list[tuple[int, int, int, int]]]:
-    """Rows of (r, g, b, a) from an 8-bit RGBA, non-interlaced PNG."""
+def _unfilter(kind: int, line: bytearray, previous: bytearray, step: int) -> None:
+    """Undo one row's PNG filter in place (0 none, 1 left, 2 up, 3 average,
+    4 Paeth); `step` is the bytes in one pixel."""
+    if kind == 0:
+        return
+    for i in range(len(line)):
+        left = line[i - step] if i >= step else 0
+        up = previous[i]
+        corner = previous[i - step] if i >= step else 0
+        if kind == 1:
+            line[i] = (line[i] + left) & 0xFF
+        elif kind == 2:
+            line[i] = (line[i] + up) & 0xFF
+        elif kind == 3:
+            line[i] = (line[i] + (left + up) // 2) & 0xFF
+        else:
+            line[i] = (line[i] + _paeth(left, up, corner)) & 0xFF
+
+
+def png_pixels(data: bytes) -> list[list[Pixel]]:
+    """Rows of (r, g, b, a) from an 8-bit RGBA or RGB, non-interlaced PNG.
+    An RGB file has no clear pixels, so each one reads as fully opaque."""
     width, height = png_size(data)
     depth, color_type, _, _, interlace = struct.unpack(">BBBBB", data[24:29])
-    assert (depth, color_type, interlace) == (8, 6, 0), "expected 8-bit RGBA"
+    assert depth == 8 and color_type in (2, 6) and interlace == 0, "8-bit RGB(A)"
+    step = 4 if color_type == 6 else 3
     idat = b""
     at = 8
     while at < len(data):
@@ -44,28 +65,21 @@ def png_pixels(data: bytes) -> list[list[tuple[int, int, int, int]]]:
             idat += data[at + 8 : at + 8 + length]
         at += 12 + length
     raw = zlib.decompress(idat)
-    stride = width * 4
-    rows: list[list[tuple[int, int, int, int]]] = []
+    stride = width * step
+    rows: list[list[Pixel]] = []
     previous = bytearray(stride)
     for y in range(height):
         start = y * (stride + 1)
-        kind = raw[start]
         line = bytearray(raw[start + 1 : start + 1 + stride])
-        for i in range(stride):
-            left = line[i - 4] if i >= 4 else 0
-            up = previous[i]
-            corner = previous[i - 4] if i >= 4 else 0
-            if kind == 1:
-                line[i] = (line[i] + left) & 0xFF
-            elif kind == 2:
-                line[i] = (line[i] + up) & 0xFF
-            elif kind == 3:
-                line[i] = (line[i] + (left + up) // 2) & 0xFF
-            elif kind == 4:
-                line[i] = (line[i] + _paeth(left, up, corner)) & 0xFF
+        _unfilter(raw[start], line, previous, step)
         rows.append(
             [
-                (line[x * 4], line[x * 4 + 1], line[x * 4 + 2], line[x * 4 + 3])
+                (
+                    line[x * step],
+                    line[x * step + 1],
+                    line[x * step + 2],
+                    line[x * step + 3] if step == 4 else 255,
+                )
                 for x in range(width)
             ]
         )

@@ -70,3 +70,10 @@ Search engines that do not read SVG icons get the same mark as PNG files
 (`assets/icon-48.png`, `icon-96.png`, `icon-192.png`) and `/favicon.ico`.
 `scripts/render_icons.sh` renders them from `mark.svg`; run it again only
 when the mark changes.
+
+## Share image
+
+One picture for every link preview (`assets/og-image.png`, 1200 by 630):
+the mark above the name, set as the header sets it, on paper. It carries no
+tagline, level, lake or status, and its alt text is the site's name.
+`scripts/render_share_image.sh` renders it and needs DIN Alternate Bold.
