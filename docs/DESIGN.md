@@ -65,3 +65,8 @@ Rules:
 A notice board on a post at the waterline, with two ripples
 (`templates/mark.svg`, inline in the header with `aria-hidden`, and the
 favicon). It uses `currentColor` in the header, so it follows the theme.
+
+Search engines that do not read SVG icons get the same mark as PNG files
+(`assets/icon-48.png`, `icon-96.png`, `icon-192.png`) and `/favicon.ico`.
+`scripts/render_icons.sh` renders them from `mark.svg`; run it again only
+when the mark changes.

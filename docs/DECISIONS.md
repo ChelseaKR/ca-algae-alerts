@@ -1282,6 +1282,34 @@ no green token, the band words and marks per level, the neutral band for
 non-advisories, and the mark and favicon on every page, each with a
 negative control.
 
+### Addendum 2026-11-17: the mark as PNG files, so search results can show it
+
+The favicon above is an SVG file. Google Search shows a site's icon only
+from a file it can crawl in BMP, GIF, ICO, PNG, JPEG, PPM or TIFF, square,
+and it recommends a multiple of 48 px
+(developers.google.com/search/docs/appearance/favicon-in-search, read
+2026-11-17). SVG is not on that list, and on that day the live site had no
+icon at all: no page named one and `/favicon.ico` was a 404. The site's
+visitors come from Google, mostly on phones, where the icon sits beside
+each result.
+
+- The same mark ships as `assets/icon-48.png`, `icon-96.png` and
+  `icon-192.png`, linked from every page ahead of the SVG line, and as
+  `/favicon.ico` (16, 32 and 48 px) at the site root for clients that ask
+  for it unprompted. The addresses are fixed, and robots.txt allows them.
+- Every pixel comes from `templates/mark.svg`, rendered by
+  `scripts/render_icons.sh`. The outputs are committed and the build copies
+  them, so a build needs no image tool. Nothing was redrawn and no word was
+  added.
+- The owner looks at the three PNG files before this merges (her decision
+  of 2026-11-17).
+
+Tests: `pipeline/tests/test_icon_png.py` reads each page with an HTML
+parser and checks the three links and that each file exists at its size;
+that the icons carry the mark's own colors where the mark has them; the
+`.ico` file's three images; and that robots.txt lets an image crawler fetch
+them. Each has a negative control.
+
 ## 0036 — The app takes the website's identity, with worded empty states, sharing, support and a rare review ask (2026-11-05)
 
 The website's identity (0035, docs/DESIGN.md) is a notice posted at the

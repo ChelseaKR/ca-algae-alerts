@@ -1,0 +1,8 @@
+{# The sign-board mark as the site icon (docs/DESIGN.md). The PNG files are
+   what a search engine can show beside a result: Google Search reads PNG,
+   not SVG, and asks for a multiple of 48 px. Browsers that draw SVG icons
+   take the last line. #}
+{% for size in icon_png_sizes %}
+<link rel="icon" href="{{ root }}assets/icon-{{ size }}.png" type="image/png" sizes="{{ size }}x{{ size }}">
+{% endfor %}
+<link rel="icon" href="{{ root }}assets/mark.svg" type="image/svg+xml">

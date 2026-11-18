@@ -14,6 +14,9 @@ Keep a Changelog, and versions follow Semantic Versioning.
   Warning orange or Danger red band and one to three filled marks; records
   that are not advisories get a neutral dashed box. Table rows show a level
   swatch next to the words. No text, URL or title changed.
+- The sign-board mark also ships as PNG icon files (48, 96 and 192 px) and
+  as `/favicon.ico`, so search engines that do not read SVG icons can show
+  it beside a result (DECISIONS 0035, addendum 2026-11-17).
 - The iPhone app takes the website's look: paper and indigo colors with
   light and dark variants, each lake's status drawn as its posted sign with
   the level's words and rank marks, signage-style headings and the sign-board

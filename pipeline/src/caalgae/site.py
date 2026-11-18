@@ -42,6 +42,10 @@ SITE_DOMAIN = "lakenotice.com"
 STATE_NAMES = {"CA": "California", "MO": "Missouri"}
 STATE_SOURCE = {"CA": "ca-swrcb-fhab", "MO": "mo-dnr-hab"}
 DEFAULT_BASE_URL = f"https://{SITE_DOMAIN}/"
+# The mark as PNG files, each a multiple of 48 px: the sizes Google Search
+# asks for in a site icon (scripts/render_icons.sh renders them from
+# templates/mark.svg; templates/_head_icons.html.jinja links them).
+ICON_PNG_SIZES = (48, 96, 192)
 # Sitemap staging (owner decision, 2026-10-23). A water page is listed in the
 # sitemap and indexable only when the state recorded an advisory for it within
 # this many months of the build's data date (``run_date``, never the wall
@@ -621,6 +625,7 @@ class SiteBuilder:
         source = self.sources["ca-swrcb-fhab"]
         self.common: dict[str, Any] = {
             "site_name": SITE_NAME,
+            "icon_png_sizes": ICON_PNG_SIZES,
             "support_email": support_email,
             "app_store_url": app_store_url,
             "ga4_measurement_id": ga4_measurement_id,
@@ -1263,6 +1268,16 @@ class SiteBuilder:
         # The favicon: the sign-board mark (docs/DESIGN.md).
         mark = resources.files("caalgae").joinpath("templates/mark.svg")
         (assets / "mark.svg").write_text(mark.read_text("utf-8"), encoding="utf-8")
+        # The same mark as files a search engine can show next to a result:
+        # PNG at multiples of 48 px, and /favicon.ico at the site root for
+        # clients that ask for it unprompted (scripts/render_icons.sh).
+        templates = resources.files("caalgae").joinpath("templates")
+        for size in ICON_PNG_SIZES:
+            name = f"icon-{size}.png"
+            (assets / name).write_bytes(templates.joinpath(name).read_bytes())
+        (self.out / "favicon.ico").write_bytes(
+            templates.joinpath("favicon.ico").read_bytes()
+        )
         snap_dir = self.out / "snapshot"
         snap_dir.mkdir(parents=True, exist_ok=True)
         (snap_dir / "v1.json").write_text(
