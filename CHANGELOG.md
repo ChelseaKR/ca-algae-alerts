@@ -7,6 +7,14 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A daily check of the live site, separate from the publish run. At 19:23
+  UTC `publish-health.yml` reads lakenotice.com/snapshot/v1.json and opens
+  one issue when the snapshot is more than 24 hours old, a state's data is
+  unavailable or was last read more than 2 days before the build, or
+  California's newest file is more than 7 days old. It comments only when
+  what it finds changes, and closes the issue itself on the first healthy
+  check. The publish job's own failure alert ran inside the failing run and
+  was blocked with it on 3 of 5 failures (docs/DECISIONS.md 0045).
 - A Ko-fi tip link in the footer of every page, and nowhere else (DECISIONS
   0043): "Lake Notice is made by one person. You can leave a tip on Ko-fi.",
   the second sentence a plain link that opens in a new tab. No Ko-fi script,
