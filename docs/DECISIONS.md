@@ -1668,3 +1668,51 @@ changes no word on any page.
   the limit merges and one past it is unavailable with California's history
   untouched. `test_publish_workflow.py` holds the input, the flag and the
   reason's path to the issue, with controls for each removed.
+
+## 0045 — A daily check of the live snapshot, separate from the publish run (2026-11-19)
+
+Approved by Chelsea on 2026-11-19 (delivery audit, problem 5). The publish
+workflow's `alert-on-failure` job runs inside the run it reports on. From
+2026-10-28 to 2026-11-12 the publish failed 5 times, and on 3 of them
+(2026-10-30, 10-31 and 11-11) GitHub blocked the alert job with the build,
+so no issue opened. Nothing else read the site. This copies Trout Truck's
+`publish-health` check (`ChelseaKR/ca-fish-planting-alerts`), with one
+change: it comments only when the state changes.
+
+- **What it reads.** Once a day at 19:23 UTC, about four and a half hours
+  after the 14:41 publish, `scripts/check_publish_health.py` fetches the
+  live `snapshot/v1.json` (three tries, a `lakenotice-publish-health`
+  User-Agent) and reads `generated_at`, each `state_status` entry and
+  California's `source_files` entry. A missing or unreadable field is a
+  finding, never a pass.
+- **The limits.** The snapshot more than 24 hours old: a healthy one is
+  about 4.7 hours old at check time and a missed day about 28.7, so a
+  missed day is flagged the same day with about 19 hours to spare for a
+  late start. A state `unavailable` (0024), or last read more than 2 days
+  before the snapshot was built (`cli.MO_STALE_AFTER_DAYS`, after which the
+  pipeline should already have marked it unavailable). California's newest
+  file more than 7 days older than the build (`cli.STALE_AFTER_DAYS`, when
+  the site starts saying so). Ages are measured from the build, not from
+  now, so one missed publish is one finding, not one per state. A test ties
+  the two state limits to the pipeline's constants.
+- **One issue, quiet while nothing changes.** The issue "publish: the live
+  snapshot is stale or a state's data stopped" opens on the first unhealthy
+  check. Its body ends with the sorted finding keys (for example
+  `MO-unavailable,publish-stale`). A later unhealthy check with the same
+  keys does nothing; different keys update the body and add one comment.
+  The first healthy check comments and closes it. The open issue is found
+  by listing open issues, not by search: the search missed #11 when the
+  publish alert opened #48 with the same title.
+- **The run stays green while unhealthy**, as Trout Truck's does today; the
+  issue is the signal, and a red run each day would email daily. Only a
+  broken check (a bad base URL) fails the run.
+- **What it cannot see.** It runs on GitHub, so a block that lasts all day
+  stops it too. It catches a block that lifts before 19:23 UTC and every
+  failure the publish job's own alert misses. A check off GitHub (the audit's
+  problem 2) would cover the rest.
+
+Tests: `pipeline/tests/test_publish_health.py`: each limit at its boundary,
+absence as a finding, the report holding no remote text, the state key, the
+fields against `schema/snapshot.v1.json`, and the workflow's pins,
+permissions, interpolation, listing and unchanged-state guard, each with a
+negative control.

@@ -22,7 +22,7 @@ by a comment, a `|| true`, or `continue-on-error`.
 | 6 | axe 0 critical/serious/moderate and pa11y-ci 0 errors on every built page; no sideways scroll at 320px; Lighthouse accessibility ≥ 0.90 | `site-checks.yml` | ACCESSIBILITY |
 | 7 | i18n | N/A until Spanish is in scope (`docs/I18N.md`) | I18N |
 | 8 | ai-eval | N/A: no model, prompt or retrieval surface | AI-EVALUATION |
-| 9 | observability: the publish run prints its coverage line; a failed or timed-out run opens an issue | `publish.yml` | OBSERVABILITY |
+| 9 | observability: the publish run prints its coverage line; a failed or timed-out run opens an issue; a daily check of the live snapshot opens one issue when it is stale or a state's data stopped, and closes it on recovery | `publish.yml`; `publish-health.yml` | OBSERVABILITY |
 | 10 | Lighthouse performance ≥ 0.90, lab Core Web Vitals and script budgets, ≤ 10% regression against `perf/baseline.json` | `site-checks.yml` | PERFORMANCE |
 | 11 | Swift package tests for the app's data layer | `ci.yml` `ios` | CODE-QUALITY |
 
