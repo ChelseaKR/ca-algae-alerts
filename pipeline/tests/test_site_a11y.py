@@ -196,3 +196,31 @@ def test_stylesheet_guard_catches_a_block_table() -> None:
     unfocused = css.replace(".table-scroll:focus-visible", ".nothing:focus-visible")
     assert unfocused != css, "the sabotage did not apply"
     assert "a focused table region draws no outline" in stylesheet_problems(unfocused)
+
+
+AXE_GATE = Path(__file__).resolve().parents[2] / "tools" / "site-checks" / "axe.mjs"
+
+
+def axe_gate_schemes(source: str) -> set[str]:
+    """The color schemes the axe gate emulates before it scans a page."""
+    if "prefers-color-scheme" not in source:
+        return set()
+    found = re.search(r"const SCHEMES = \[([^\]]*)\]", source)
+    return set(re.findall(r'"(light|dark)"', found.group(1))) if found else set()
+
+
+def test_axe_gate_scans_the_dark_palette_too() -> None:
+    # The stylesheet has a dark palette (prefers-color-scheme: dark), and
+    # the ACR states its contrast. A gate that scans light only would let a
+    # dark-mode contrast failure through.
+    assert "prefers-color-scheme: dark" in STYLE.read_text(encoding="utf-8")
+    assert axe_gate_schemes(AXE_GATE.read_text(encoding="utf-8")) == {"light", "dark"}
+
+
+def test_axe_gate_guard_catches_a_light_only_scan() -> None:
+    source = AXE_GATE.read_text(encoding="utf-8")
+    light_only = source.replace(
+        'const SCHEMES = ["light", "dark"]', 'const SCHEMES = ["light"]'
+    )
+    assert light_only != source, "the sabotage did not apply"
+    assert axe_gate_schemes(light_only) == {"light"}
