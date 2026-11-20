@@ -24,3 +24,5 @@ make verify
 
 See `pipeline/README.md` for the pipeline and `docs/LICENSES-AND-ATTRIBUTION.md`
 for the data terms.
+`docs/accessibility/ACR.md` is the website's Accessibility Conformance Report
+(WCAG 2.2 A and AA, provisional until its human screen-reader walkthrough).

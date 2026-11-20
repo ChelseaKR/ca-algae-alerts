@@ -7,6 +7,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- An Accessibility Conformance Report for the website against WCAG 2.2 A
+  and AA, based on the VPAT 2.5 Rev WCAG edition
+  (docs/accessibility/ACR.md). It is provisional: its screen-reader rows rest
+  on axe, pa11y, Lighthouse, scripted browser checks and code reading, and
+  its Appendix B lists the human walkthrough still to do.
 - A daily check of the live site, separate from the publish run. At 19:23
   UTC `publish-health.yml` reads lakenotice.com/snapshot/v1.json and opens
   one issue when the snapshot is more than 24 hours old, a state's data is
@@ -118,6 +123,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Site: every table sits in a scroll region that a keyboard can focus,
+  named by the table's caption, and keeps its table display on a phone.
+  Below 40rem tables had been set to `display: block`, which can drop row and
+  column semantics in VoiceOver, and a wide table with no link in it (a
+  water's history or spots) could not be scrolled from a keyboard in Safari.
+  No wording changed.
 - Site: the footer's Ko-fi tip link opens in the same tab (DECISIONS 0043,
   addendum 2026-11-17). It was the only link on the site that opened a new
   tab, and it did not say so. `target="_blank"` and the `rel="noopener"`
