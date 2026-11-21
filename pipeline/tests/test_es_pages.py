@@ -55,7 +55,6 @@ def builder_for(root: Path, tmp_path: Path, ga4: str = "") -> site.SiteBuilder:
         out,
         base_url="",
         support_email="",
-        app_store_url="",
         ga4_measurement_id=ga4,
         ny_history=newyork.load() if site.NY_HISTORY_ENABLED else None,
     )

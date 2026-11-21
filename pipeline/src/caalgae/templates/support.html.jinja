@@ -4,7 +4,7 @@
 {% if support_email %}
 <p class="lede">Email <a href="mailto:{{ support_email }}">{{ support_email }}</a>.</p>
 {% else %}
-<p class="lede">A support address will be listed here before the app is released.</p>
+<p class="lede">A support address will be listed here.</p>
 {% endif %}
 <h2>Questions</h2>
 <dl>
@@ -15,7 +15,6 @@
   <dt>A lake's record looks wrong.</dt>
   <dd>The records are the state's. Data questions go to {{ source.contact }}. Problems with this site go to the address above.</dd>
 </dl>
-<h2 id="iphone-app">The iPhone app</h2>
-<p>The Lake Notice iPhone app is not released yet. It cannot be downloaded or bought today, so there is nothing to install, restore or refund.</p>
-<p>Everything on this website is free and does not need the app. When the app is released, this section will say how its purchase and its alerts work.</p>
+<h2 id="app">Is there an app?</h2>
+<p>No. {{ site_name }} is a website, and everything on it is free, so there is nothing to install, restore or refund. To follow a lake, bookmark its page.</p>
 {% endblock %}

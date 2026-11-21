@@ -672,7 +672,6 @@ class SiteBuilder:
         *,
         base_url: str,
         support_email: str,
-        app_store_url: str,
         ga4_measurement_id: str,
         ny_history: newyork.History | None = None,
         ny_index_limit: int | None = NY_INDEX_LIMIT,
@@ -701,7 +700,6 @@ class SiteBuilder:
         self.common: dict[str, Any] = {
             "site_name": SITE_NAME,
             "support_email": support_email,
-            "app_store_url": app_store_url,
             "ga4_measurement_id": ga4_measurement_id,
             "ga4_denied_regions": GA4_DENIED_REGIONS,
             # The one host the GA4 tag loads on (_ga4.html.jinja).
@@ -1111,9 +1109,9 @@ class SiteBuilder:
             ("about/", "about.html.jinja", "About the data and its limits",
              "Where the advisories come from, how a status is decided, and what the data cannot tell you."),
             ("privacy/", "privacy.html.jinja", "Privacy policy",
-             "What the website and the iPhone app collect."),
+             "What the website collects."),
             ("support/", "support.html.jinja", "Support",
-             "Help with the website. The iPhone app is not released yet."),
+             "Help with the website."),
             ("terms/", "terms.html.jinja", "Terms of use",
              "Who runs Lake Notice, what it is and is not, and why it is never a determination about a water."),
         ]  # fmt: skip
@@ -1391,7 +1389,6 @@ def build_site(
     *,
     base_url: str = "",
     support_email: str = "",
-    app_store_url: str = "",
     ga4_measurement_id: str | None = None,
     ny_history: newyork.History | None = None,
     ny_index_limit: int | None = NY_INDEX_LIMIT,
@@ -1403,7 +1400,6 @@ def build_site(
         out,
         base_url=base_url,
         support_email=support_email,
-        app_store_url=app_store_url,
         ga4_measurement_id=GA4_MEASUREMENT_ID
         if ga4_measurement_id is None
         else ga4_measurement_id,

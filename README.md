@@ -5,9 +5,9 @@ waterbody, with full history: California from the State Water Resources
 Control Board's public-domain FHAB data (since 2016) and Missouri from the
 Department of Natural Resources' HAB layer (since 2017), plus a separately
 labeled EPA CyAN satellite estimate for large lakes, which is never an
-advisory (docs/DECISIONS.md 0010). A free static site
-and a paid iPhone app with local alerts, no account for either, on the
-pattern of Trout Truck (`ChelseaKR/ca-fish-planting-alerts`).
+advisory (docs/DECISIONS.md 0010). A free static website
+with no account, on the pattern of Trout Truck
+(`ChelseaKR/ca-fish-planting-alerts`).
 
 The domain is lakenotice.com (docs/DOMAIN.md has the variables to set when
 it is served).

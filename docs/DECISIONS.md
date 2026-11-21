@@ -1716,3 +1716,42 @@ absence as a finding, the report holding no remote text, the state key, the
 fields against `schema/snapshot.v1.json`, and the workflow's pins,
 permissions, interpolation, listing and unchanged-state guard, each with a
 negative control.
+
+## 0046 — The website no longer describes an app (owner, 2026-11-17; wording for approval 2026-11-21)
+
+The owner dropped Lake Notice's iPhone app for good on 2026-11-17: Lake
+Notice is a website only. The live site still said "A paid iPhone app is in
+development" (about), "The Lake Notice iPhone app is not released yet"
+(support, and its page description) and described the app on the privacy
+page. On 2026-11-21 she asked for a correction drafted for her approval
+(`_agent-tools/growth/ia-redesign-2026-11-21/lake-notice/FOR-APPROVAL-app-mentions.md`,
+outside this repo), and decided it may ship before the template freeze
+ends. It adds no page, URL or page family and changes no title or H1, so
+the freeze 0020 names stands as it was, as with 0043.
+
+- **About and support** answer "Is there an app?" (`#app` on both; the
+  support section was `#iphone-app`): no, Lake Notice is a website, and a
+  lake is followed by bookmarking its page. There is no calendar or feed to
+  offer instead. The support lede shown without an address no longer
+  mentions a release.
+- **Privacy** covers the website only. The app section and the sentences
+  about the app are removed, never replaced by a "no tracking" claim (the
+  owner's rule), and the gear-link line no longer says "tracking" either.
+  Every version of the page changed the same day, so the date is one
+  literal, 2026-11-21, not the per-switch dates it had.
+- **Descriptions.** The privacy and support page descriptions lose their
+  app clauses; nothing else in any title, H1 or description changes.
+- **The App Store switch is removed** (`--app-store-url`, the publish job's
+  `APP_STORE_URL`, the water-page sentence and the llms.txt line it turned
+  on). It was never set. DECISIONS 0001, 0006, 0007, 0030, 0031 and 0036
+  stay as the record of the app that was planned; `ios/` and
+  `docs/app-store/` are not published and are left as they are.
+
+Tests: `pipeline/tests/test_no_app_mentions.py` reads every text file of two
+builds (production's switches, and analytics, gear links and the address
+flipped) for "iPhone", "iOS app", "App Store", "the app", "in-app", "in
+development", "not released yet" and "no tracking", checks the approved
+words, and has negative controls: each old passage put back, the old
+support description, and a phrase broken across lines are each caught. It
+replaces `test_support_app_section.py`, which asserted the "not released"
+wording.
