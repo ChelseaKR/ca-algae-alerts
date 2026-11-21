@@ -5,6 +5,17 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- The website no longer describes an iPhone app; the app was dropped on
+  2026-11-17 (docs/DECISIONS.md 0046). The about and support pages answer
+  "Is there an app?": no, Lake Notice is a website, and a lake is followed
+  by bookmarking its page. The privacy page's app section and app sentences
+  are gone, it covers the website only, and its date is 2026-11-21. The
+  privacy and support page descriptions drop the app. The unused App Store
+  switch (`--app-store-url`, `APP_STORE_URL`) and its water-page and
+  llms.txt lines are removed.
+
 ### Added
 
 - An Accessibility Conformance Report for the website against WCAG 2.2 A
