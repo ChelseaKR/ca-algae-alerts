@@ -1,0 +1,645 @@
+{
+  "_about": [
+    "Lake Notice water page -> the same water's page on Trout Truck (docs/DECISIONS.md 0026).",
+    "Matched 2026-11-05 from both repos' committed snapshots: Lake Notice ios/AlgaeAlerts/Resources/snapshot.json (run 2026-11-04) and Trout Truck @de884ae android/app/src/main/assets/snapshot.json (2026-10-29).",
+    "Tier A: same name key, a shared county, points within 6 miles. Tier B: same name key and a shared county, Trout Truck has no point.",
+    "Only 'pairs' is read by the build. 'needs_review' is the commented-out list for Chelsea: move a row into 'pairs' (with a tier of 'reviewed') to turn it on.",
+    "The build drops a pair when its Lake Notice id is gone from the snapshot or its Trout Truck path is gone from trout_truck_pages.json."
+  ],
+  "pairs": [
+    {
+      "ln_id": "ca-el-dorado-silver-fork-american-river",
+      "tt_path": "/water/american-river-silver-fork/",
+      "tt_name": "American River Silver Fork",
+      "kind": "stream",
+      "tier": "A",
+      "miles_apart": 1.0
+    },
+    {
+      "ln_id": "ca-san-luis-obispo-atascadero-lake",
+      "tt_path": "/water/atascadero-lake/",
+      "tt_name": "Atascadero Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.0
+    },
+    {
+      "ln_id": "ca-san-bernardino-big-bear-lake",
+      "tt_path": "/water/big-bear-lake/",
+      "tt_name": "Big Bear Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.4
+    },
+    {
+      "ln_id": "ca-san-bernardino-big-bear-lake-ca",
+      "tt_path": "/water/big-bear-lake/",
+      "tt_name": "Big Bear Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.2
+    },
+    {
+      "ln_id": "ca-lake-upper-blue-lake",
+      "tt_path": "/water/blue-lake-upper/",
+      "tt_name": "Blue Lake Upper",
+      "kind": "lake",
+      "tier": "B",
+      "miles_apart": null
+    },
+    {
+      "ln_id": "ca-mono-bridgeport-reservoir",
+      "tt_path": "/water/bridgeport-reservoir/",
+      "tt_name": "Bridgeport Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 1.5
+    },
+    {
+      "ln_id": "ca-plumas-bucks-lake",
+      "tt_path": "/water/bucks-lake/",
+      "tt_name": "Bucks Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.4
+    },
+    {
+      "ln_id": "ca-siskiyou-butte-creek",
+      "tt_path": "/water/butte-creek/",
+      "tt_name": "Butte Creek",
+      "kind": "stream",
+      "tier": "A",
+      "miles_apart": 3.0
+    },
+    {
+      "ln_id": "ca-madera-corrine-lake",
+      "tt_path": "/water/corrine-lake/",
+      "tt_name": "Corrine Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.0
+    },
+    {
+      "ln_id": "ca-mono-crowley-lake",
+      "tt_path": "/water/crowley-lake/",
+      "tt_name": "Crowley Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 1.5
+    },
+    {
+      "ln_id": "ca-mono-lake-crowley",
+      "tt_path": "/water/crowley-lake/",
+      "tt_name": "Crowley Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 1.5
+    },
+    {
+      "ln_id": "ca-mono-deadman-creek",
+      "tt_path": "/water/deadman-creek/",
+      "tt_name": "Deadman Creek",
+      "kind": "stream",
+      "tier": "A",
+      "miles_apart": 4.0
+    },
+    {
+      "ln_id": "ca-inyo-diaz-lake",
+      "tt_path": "/water/diaz-lake/",
+      "tt_name": "Diaz Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.1
+    },
+    {
+      "ln_id": "ca-lassen-dodge-reservoir",
+      "tt_path": "/water/dodge-reservoir/",
+      "tt_name": "Dodge Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.4
+    },
+    {
+      "ln_id": "ca-nevada-donner-lake",
+      "tt_path": "/water/donner-lake/",
+      "tt_name": "Donner Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.9
+    },
+    {
+      "ln_id": "ca-mono-east-walker-river",
+      "tt_path": "/water/east-walker-river/",
+      "tt_name": "East Walker River",
+      "kind": "stream",
+      "tier": "A",
+      "miles_apart": 2.1
+    },
+    {
+      "ln_id": "ca-monterey-el-estero-lake",
+      "tt_path": "/water/el-estero-lake/",
+      "tt_name": "El Estero Lake",
+      "kind": "lake",
+      "tier": "B",
+      "miles_apart": null
+    },
+    {
+      "ln_id": "ca-el-dorado-folsom-lake",
+      "tt_path": "/water/folsom-lake/",
+      "tt_name": "Folsom Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 3.1
+    },
+    {
+      "ln_id": "ca-placer-folsom-lake",
+      "tt_path": "/water/folsom-lake/",
+      "tt_name": "Folsom Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 2.1
+    },
+    {
+      "ln_id": "ca-mono-grant-lake",
+      "tt_path": "/water/grant-lake/",
+      "tt_name": "Grant Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 2.1
+    },
+    {
+      "ln_id": "ca-san-bernardino-green-valley-lake",
+      "tt_path": "/water/green-valley-lake/",
+      "tt_name": "Green Valley Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 3.5
+    },
+    {
+      "ln_id": "ca-san-bernardino-lake-gregory",
+      "tt_path": "/water/gregory-lake/",
+      "tt_name": "Gregory Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.1
+    },
+    {
+      "ln_id": "ca-mono-gull-lake",
+      "tt_path": "/water/gull-lake/",
+      "tt_name": "Gull Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.2
+    },
+    {
+      "ln_id": "ca-shasta-hatchet-creek",
+      "tt_path": "/water/hatchet-creek/",
+      "tt_name": "Hatchet Creek",
+      "kind": "stream",
+      "tier": "A",
+      "miles_apart": 5.2
+    },
+    {
+      "ln_id": "ca-madera-hensley-lake",
+      "tt_path": "/water/hensley-lake/",
+      "tt_name": "Hensley Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.6
+    },
+    {
+      "ln_id": "ca-fresno-hume-lake",
+      "tt_path": "/water/hume-lake/",
+      "tt_name": "Hume Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.1
+    },
+    {
+      "ln_id": "ca-alpine-indian-creek-reservoir",
+      "tt_path": "/water/indian-creek-reservoir/",
+      "tt_name": "Indian Creek Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.0
+    },
+    {
+      "ln_id": "ca-los-angeles-john-anson-ford-park-lake",
+      "tt_path": "/water/john-anson-ford-park-lake/",
+      "tt_name": "John Anson Ford Park Lake",
+      "kind": "lake",
+      "tier": "B",
+      "miles_apart": null
+    },
+    {
+      "ln_id": "ca-mono-june-lake",
+      "tt_path": "/water/june-lake/",
+      "tt_name": "June Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.5
+    },
+    {
+      "ln_id": "ca-los-angeles-la-mirada-lake",
+      "tt_path": "/water/la-mirada-lake/",
+      "tt_name": "La Mirada Lake",
+      "kind": "lake",
+      "tier": "B",
+      "miles_apart": null
+    },
+    {
+      "ln_id": "ca-plumas-lake-almanor",
+      "tt_path": "/water/lake-almanor/",
+      "tt_name": "Lake Almanor",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.8
+    },
+    {
+      "ln_id": "ca-napa-lake-berryessa",
+      "tt_path": "/water/lake-berryessa/",
+      "tt_name": "Lake Berryessa",
+      "kind": "lake",
+      "tier": "B",
+      "miles_apart": null
+    },
+    {
+      "ln_id": "ca-plumas-lake-davis",
+      "tt_path": "/water/lake-davis/",
+      "tt_name": "Lake Davis",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 2.3
+    },
+    {
+      "ln_id": "ca-alameda-lake-del-valle",
+      "tt_path": "/water/lake-del-valle/",
+      "tt_name": "Lake Del Valle",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 2.7
+    },
+    {
+      "ln_id": "ca-riverside-lake-hemet",
+      "tt_path": "/water/lake-hemet/",
+      "tt_name": "Lake Hemet",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.3
+    },
+    {
+      "ln_id": "ca-solano-lake-herman",
+      "tt_path": "/water/lake-herman/",
+      "tt_name": "Lake Herman",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.1
+    },
+    {
+      "ln_id": "ca-kern-lake-isabella",
+      "tt_path": "/water/lake-isabella/",
+      "tt_name": "Lake Isabella",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 1.2
+    },
+    {
+      "ln_id": "ca-monterey-lake-san-antonio",
+      "tt_path": "/water/lake-san-antonio/",
+      "tt_name": "Lake San Antonio",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.5
+    },
+    {
+      "ln_id": "ca-monterey-san-antonio-lake",
+      "tt_path": "/water/lake-san-antonio/",
+      "tt_name": "Lake San Antonio",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.2
+    },
+    {
+      "ln_id": "ca-siskiyou-lake-shastina",
+      "tt_path": "/water/lake-shastina/",
+      "tt_name": "Lake Shastina",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.7
+    },
+    {
+      "ln_id": "ca-trinity-lewiston-lake",
+      "tt_path": "/water/lewiston-lake/",
+      "tt_name": "Lewiston Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 1.5
+    },
+    {
+      "ln_id": "ca-san-luis-obispo-lopez-lake",
+      "tt_path": "/water/lopez-lake/",
+      "tt_name": "Lopez Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.6
+    },
+    {
+      "ln_id": "ca-madera-manzanita-lake",
+      "tt_path": "/water/manzanita-lake/",
+      "tt_name": "Manzanita Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.3
+    },
+    {
+      "ln_id": "ca-mono-lake-mary",
+      "tt_path": "/water/mary-lake/",
+      "tt_name": "Mary Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.2
+    },
+    {
+      "ln_id": "ca-sacramento-mather-lake",
+      "tt_path": "/water/mather-lake/",
+      "tt_name": "Mather Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.2
+    },
+    {
+      "ln_id": "ca-kern-lake-ming",
+      "tt_path": "/water/ming-lake/",
+      "tt_name": "Ming Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.1
+    },
+    {
+      "ln_id": "ca-lassen-mountain-meadows-reservoir",
+      "tt_path": "/water/mountain-meadows-reservoir/",
+      "tt_name": "Mountain Meadows Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 3.7
+    },
+    {
+      "ln_id": "ca-tuolumne-new-melones-reservoir",
+      "tt_path": "/water/new-melones-reservoir/",
+      "tt_name": "New Melones Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.4
+    },
+    {
+      "ln_id": "ca-fresno-pine-flat-reservoir",
+      "tt_path": "/water/pine-flat-reservoir/",
+      "tt_name": "Pine Flat Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.9
+    },
+    {
+      "ln_id": "ca-inyo-pleasant-valley-reservoir",
+      "tt_path": "/water/pleasant-valley-reservoir/",
+      "tt_name": "Pleasant Valley Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.7
+    },
+    {
+      "ln_id": "ca-sonoma-lake-ralphine",
+      "tt_path": "/water/ralphine-lake/",
+      "tt_name": "Ralphine Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.0
+    },
+    {
+      "ln_id": "ca-alpine-red-lake",
+      "tt_path": "/water/red-lake/",
+      "tt_name": "Red Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.2
+    },
+    {
+      "ln_id": "ca-plumas-round-valley-reservoir",
+      "tt_path": "/water/round-valley-reservoir/",
+      "tt_name": "Round Valley Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.0
+    },
+    {
+      "ln_id": "ca-los-angeles-santa-fe-reservoir",
+      "tt_path": "/water/santa-fe-reservoir/",
+      "tt_name": "Santa Fe Reservoir",
+      "kind": "lake",
+      "tier": "B",
+      "miles_apart": null
+    },
+    {
+      "ln_id": "ca-san-luis-obispo-santa-margarita-lake",
+      "tt_path": "/water/santa-margarita-lake/",
+      "tt_name": "Santa Margarita Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.7
+    },
+    {
+      "ln_id": "ca-mono-silver-lake",
+      "tt_path": "/water/silver-lake-3/",
+      "tt_name": "Silver Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.2
+    },
+    {
+      "ln_id": "ca-siskiyou-lake-siskiyou",
+      "tt_path": "/water/siskiyou-lake/",
+      "tt_name": "Siskiyou Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.0
+    },
+    {
+      "ln_id": "ca-riverside-lake-skinner",
+      "tt_path": "/water/skinner-lake/",
+      "tt_name": "Skinner Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.7
+    },
+    {
+      "ln_id": "ca-plumas-spanish-creek",
+      "tt_path": "/water/spanish-creek/",
+      "tt_name": "Spanish Creek",
+      "kind": "stream",
+      "tier": "A",
+      "miles_apart": 1.3
+    },
+    {
+      "ln_id": "ca-alameda-lake-temescal",
+      "tt_path": "/water/temescal-lake/",
+      "tt_name": "Temescal Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.0
+    },
+    {
+      "ln_id": "ca-calaveras-lake-tulloch",
+      "tt_path": "/water/tulloch-lake/",
+      "tt_name": "Tulloch Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 2.3
+    },
+    {
+      "ln_id": "ca-calaveras-tuolumne-lake-tulloch",
+      "tt_path": "/water/tulloch-lake/",
+      "tt_name": "Tulloch Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 2.3
+    },
+    {
+      "ln_id": "ca-tuolumne-lake-tulloch",
+      "tt_path": "/water/tulloch-lake/",
+      "tt_name": "Tulloch Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 1.4
+    },
+    {
+      "ln_id": "ca-modoc-west-valley-reservoir",
+      "tt_path": "/water/west-valley-reservoir/",
+      "tt_name": "West Valley Reservoir",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.4
+    },
+    {
+      "ln_id": "ca-shasta-whiskeytown-lake",
+      "tt_path": "/water/whiskeytown-lake/",
+      "tt_name": "Whiskeytown Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 4.1
+    },
+    {
+      "ln_id": "ca-el-dorado-wrights-lake",
+      "tt_path": "/water/wrights-lake/",
+      "tt_name": "Wrights Lake",
+      "kind": "lake",
+      "tier": "A",
+      "miles_apart": 0.1
+    }
+  ],
+  "needs_review": [
+    {
+      "ln_id": "ca-riverside-big-bear-lake",
+      "tt_path": "/water/big-bear-lake/",
+      "tt_name": "Big Bear Lake",
+      "kind": "lake",
+      "why": "same name, close, LN county differs",
+      "miles_apart": 2.1
+    },
+    {
+      "ln_id": "ca-inyo-lake-george",
+      "tt_path": "/water/george-lake/",
+      "tt_name": "George Lake",
+      "kind": "lake",
+      "why": "same name, close, LN county differs",
+      "miles_apart": 0.1
+    },
+    {
+      "ln_id": "ca-riverside-jenks-lake",
+      "tt_path": "/water/jenks-lake/",
+      "tt_name": "Jenks Lake",
+      "kind": "lake",
+      "why": "same name, close, LN county differs",
+      "miles_apart": 0.1
+    },
+    {
+      "ln_id": "ca-kings-lake-isabella",
+      "tt_path": "/water/lake-isabella/",
+      "tt_name": "Lake Isabella",
+      "kind": "lake",
+      "why": "same name, close, LN county differs",
+      "miles_apart": 1.6
+    },
+    {
+      "ln_id": "ca-alpine-west-fork-carson-river",
+      "tt_path": "/water/carson-river-west-fork/",
+      "tt_name": "Carson River West Fork",
+      "kind": "stream",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 6.2
+    },
+    {
+      "ln_id": "ca-lassen-eagle-lake",
+      "tt_path": "/water/eagle-lake/",
+      "tt_name": "Eagle Lake",
+      "kind": "lake",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 11.0
+    },
+    {
+      "ln_id": "ca-solano-lake-chabot",
+      "tt_path": "/water/lake-chabot/",
+      "tt_name": "Lake Chabot",
+      "kind": "lake",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 6.1
+    },
+    {
+      "ln_id": "ca-calaveras-new-melones-reservoir",
+      "tt_path": "/water/new-melones-reservoir/",
+      "tt_name": "New Melones Reservoir",
+      "kind": "lake",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 12.8
+    },
+    {
+      "ln_id": "ca-shasta-sacramento-river",
+      "tt_path": "/water/sacramento-river/",
+      "tt_name": "Sacramento River",
+      "kind": "stream",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 6.4
+    },
+    {
+      "ln_id": "ca-san-bernardino-santa-ana-river",
+      "tt_path": "/water/santa-ana-river/",
+      "tt_name": "Santa Ana River",
+      "kind": "stream",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 8.3
+    },
+    {
+      "ln_id": "ca-shasta-shasta-lake",
+      "tt_path": "/water/shasta-lake/",
+      "tt_name": "Shasta Lake",
+      "kind": "lake",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 8.8
+    },
+    {
+      "ln_id": "ca-trinity-trinity-lake",
+      "tt_path": "/water/trinity-lake-clair-engle-lake/",
+      "tt_name": "Trinity Lake (Clair Engle Lake)",
+      "kind": "lake",
+      "why": "same name and county, centers far apart",
+      "miles_apart": 11.4
+    },
+    {
+      "ln_id": "ca-prosser-reservoir",
+      "tt_path": "/water/prosser-reservoir/",
+      "tt_name": "Prosser Reservoir",
+      "kind": "lake",
+      "why": "same name; Lake Notice lists no county and Trout Truck has no point, so nothing confirms it",
+      "miles_apart": null
+    }
+  ]
+}
