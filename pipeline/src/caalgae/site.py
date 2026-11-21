@@ -704,6 +704,8 @@ class SiteBuilder:
             "app_store_url": app_store_url,
             "ga4_measurement_id": ga4_measurement_id,
             "ga4_denied_regions": GA4_DENIED_REGIONS,
+            # The one host the GA4 tag loads on (_ga4.html.jinja).
+            "ga4_host": SITE_DOMAIN,
             "affiliate_enabled": bool(AMAZON_ASSOCIATE_TAG),
             "amazon_disclosure": AMAZON_ASSOCIATE_DISCLOSURE,
             "gear_endorsement_all": gear_endorsement(),

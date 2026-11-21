@@ -439,6 +439,37 @@ def test_ga4_when_configured_honors_gpc_before_loading(
     assert "Google Analytics 4" in text_of(out / "privacy" / "index.html")
 
 
+HOST_GUARD = f'if (w.location.hostname !== "{site.SITE_DOMAIN}") return;'
+WEBDRIVER_GUARD = "if (n.webdriver === true) return;"
+
+
+def test_ga4_loads_only_on_the_production_host_and_not_under_automation(
+    traps_site: Path,
+) -> None:
+    # A local or preview build, and a headless browser (Playwright,
+    # Puppeteer) on the live site, must load nothing, or its visit is counted
+    # (growth/traffic-honesty-2026-11-21: one 127.0.0.1 session in GA4).
+    tagged = [
+        p
+        for p in pages(traps_site)
+        if p.suffix == ".html" and "googletagmanager" in p.read_text()
+    ]
+    assert tagged  # the default build carries the tag
+    for path in tagged:
+        page = path.read_text()
+        assert HOST_GUARD in page, path
+        assert WEBDRIVER_GUARD in page, path
+        # After the footer control is set up and after the opt-out return,
+        # so the page looks and behaves the same; before anything is queued
+        # or loaded.
+        footer = page.index('getElementById("analytics-choice")')
+        opted_out = page.index("if (optedOut) return;")
+        queued = page.index("w.dataLayer =")
+        for guard in (HOST_GUARD, WEBDRIVER_GUARD):
+            assert footer < opted_out < page.index(guard) < queued, (path, guard)
+        assert queued < page.index("createElement")
+
+
 def test_404_uses_absolute_links_and_is_noindex(traps_site: Path) -> None:
     page = (traps_site / "404.html").read_text()
     assert 'name="robots" content="noindex"' in page

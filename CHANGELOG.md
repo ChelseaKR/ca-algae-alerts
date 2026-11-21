@@ -123,6 +123,11 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Site: Google Analytics loads only on lakenotice.com and never in an
+  automated browser (`navigator.webdriver`, as Playwright, Puppeteer and
+  headless Chrome set it), so local builds and scripted checks are no longer
+  counted as visits. One local headless run had been (2026-11-05). Nothing
+  on the page, the opt-out or the privacy policy changed.
 - Site: every table sits in a scroll region that a keyboard can focus,
   named by the table's caption, and keeps its table display on a phone.
   Below 40rem tables had been set to `display: block`, which can drop row and
