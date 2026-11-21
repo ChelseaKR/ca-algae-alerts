@@ -66,7 +66,6 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     p.add_argument("--run-today", default=None, help="YYYY-MM-DD (tests only)")
     p.add_argument("--base-url", default="")
     p.add_argument("--support-email", default="")
-    p.add_argument("--app-store-url", default="")
     p.add_argument("--mo-fixture", type=Path, default=None)
     p.add_argument("--mo-viewer-fixture", type=Path, default=None)
     p.add_argument("--cyan-cache", type=Path, default=None)
@@ -513,7 +512,6 @@ def run(args: argparse.Namespace) -> int:
             args.site_out,
             base_url=args.base_url,
             support_email=args.support_email,
-            app_store_url=args.app_store_url,
             ny_history=ny_history,
         )
     hist.save(merged, args.history)

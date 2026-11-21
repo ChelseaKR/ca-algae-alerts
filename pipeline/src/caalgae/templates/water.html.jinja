@@ -20,7 +20,7 @@
 {% if guidance_for(water) %}
 <p><strong>What this level asks:</strong> {{ guidance_for(water) }}</p>
 {% endif %}
-<p>Before you go, check the <a href="{{ water_source.official_map_url }}">state's official algae page</a> and any signs posted at the water.{% if app_store_url %} The <a href="{{ app_store_url }}">iPhone app</a> can alert you when {{ water.name }} gets a new advisory.{% endif %}</p>
+<p>Before you go, check the <a href="{{ water_source.official_map_url }}">state's official algae page</a> and any signs posted at the water.</p>
 {% endif %}
 
 <p id="after-contact"><strong>After contact with the water:</strong> {{ human_advice }}</p>

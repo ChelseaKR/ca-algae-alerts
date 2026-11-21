@@ -188,6 +188,4 @@ def test_built_site_carries_the_name_and_not_the_old_one(tmp_path: Path) -> None
         in (out / "robots.txt").read_text()
     )
     privacy = (out / "privacy" / "index.html").read_text(encoding="utf-8")
-    assert f"this website and the {site.SITE_NAME} iPhone app" in " ".join(
-        privacy.split()
-    )
+    assert "Covers this website." in " ".join(privacy.split())
