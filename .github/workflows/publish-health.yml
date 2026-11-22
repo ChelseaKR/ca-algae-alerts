@@ -1,0 +1,106 @@
+name: publish health
+
+# publish.yml opens an issue when a run fails, but from inside that run: on 3
+# of its 5 failures from 2026-10-28 to 2026-11-12 GitHub blocked the alert
+# job too. This workflow reads what the site serves instead
+# (lakenotice.com/snapshot/v1.json): a daily run that never ran or never
+# deployed, a state whose data stopped, and a California file past its week
+# (docs/DECISIONS.md 0045). Thresholds are constants in
+# scripts/check_publish_health.py. It writes nothing but one issue with a
+# fixed title: opened on the first unhealthy check, commented (and its body
+# updated) only when what the check finds changes, and commented and closed
+# on the first healthy check. An unchanged unhealthy state is left alone.
+#
+# It runs on GitHub too, so a block that lasts the whole day stops it as
+# well; it catches a block that lifts before 19:23 UTC, and every failure
+# the publish job's own alert misses.
+#
+# 19:23 UTC is about four and a half hours after the 14:41 publish, off the
+# top of the hour. About one billed minute per run (~30 per month).
+on:
+  schedule:
+    - cron: "23 19 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-health
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: install uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+
+      - name: install dependencies
+        working-directory: pipeline
+        run: uv sync --locked
+
+      - name: read the live snapshot
+        id: health
+        env:
+          SITE_BASE_URL: ${{ vars.SITE_BASE_URL }}
+        run: |
+          set -u
+          status=0
+          (cd pipeline && uv run --frozen python ../scripts/check_publish_health.py \
+            --base-url "$SITE_BASE_URL" --out "$RUNNER_TEMP/health-report.md" \
+            --state-out "$RUNNER_TEMP/health-state") || status=$?
+          # 0 healthy, 1 unhealthy; anything else is a broken check and fails the step.
+          if [ "$status" -eq 0 ]; then
+            echo "healthy=true" >> "$GITHUB_OUTPUT"
+          elif [ "$status" -eq 1 ]; then
+            echo "healthy=false" >> "$GITHUB_OUTPUT"
+          else
+            exit "$status"
+          fi
+
+      - name: open, update or close the health issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          HEALTHY: ${{ steps.health.outputs.healthy }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ISSUE_TITLE: "publish: the live snapshot is stale or a state's data stopped"
+        run: |
+          set -euo pipefail
+          # A plain listing, not a search: the search index once missed an
+          # open issue with the same title (#11, then #48).
+          existing="$(gh issue list --state open --limit 500 --json number,title \
+            | jq -r --arg t "$ISSUE_TITLE" '[.[] | select(.title == $t)][0].number // empty')"
+          if [ "$HEALTHY" = "true" ]; then
+            if [ -n "$existing" ]; then
+              printf 'The health check passed. Closing.\n\nRun: %s\n' "$RUN_URL" > "$RUNNER_TEMP/recovered.md"
+              gh issue comment "$existing" --body-file "$RUNNER_TEMP/recovered.md"
+              gh issue close "$existing"
+            fi
+            exit 0
+          fi
+          current="$(cat "$RUNNER_TEMP/health-state")"
+          report="$RUNNER_TEMP/health-report.md"
+          printf '\nRun: %s\n' "$RUN_URL" >> "$report"
+          if [ -z "$existing" ]; then
+            gh issue create --title "$ISSUE_TITLE" --body-file "$report" --label bug
+            exit 0
+          fi
+          # The body records the finding keys of the last state reported.
+          previous="$(gh issue view "$existing" --json body \
+            --jq '(.body | capture("<!-- publish-health-state: (?<s>[A-Za-z0-9,-]*) -->") | .s) // ""')"
+          if [ "$previous" = "$current" ]; then
+            echo "still unhealthy, unchanged since the last report (${current}); no comment"
+            exit 0
+          fi
+          gh issue edit "$existing" --body-file "$report"
+          gh issue comment "$existing" --body-file "$report"

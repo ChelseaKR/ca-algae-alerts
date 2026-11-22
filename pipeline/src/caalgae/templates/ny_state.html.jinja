@@ -7,8 +7,9 @@
 
 <h2 id="waters">Waters with a confirmed bloom on record</h2>
 <p>Waters with the most reports come first. {{ ny.unnamed_rows }} rows for waters DEC lists as unnamed have no page here.</p>
+<div class="table-scroll" role="region" aria-labelledby="ny-waters-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">New York waters with a confirmed bloom in DEC's yearly summary, most reports first</caption>
+  <caption id="ny-waters-table-caption" class="visually-hidden">New York waters with a confirmed bloom in DEC's yearly summary, most reports first</caption>
   <thead><tr><th scope="col">Water</th><th scope="col">County</th><th scope="col">Years with a confirmed bloom</th><th scope="col">Reports</th><th scope="col">Most recent year on record</th></tr></thead>
   <tbody>
   {% for w in waters %}
@@ -22,6 +23,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 
 {{ ny_source_section(ny, ny_source) }}
 {% endblock %}

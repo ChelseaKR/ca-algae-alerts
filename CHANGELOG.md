@@ -5,6 +5,17 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- The website no longer describes an iPhone app; the app was dropped on
+  2026-11-17 (docs/DECISIONS.md 0046). The about and support pages answer
+  "Is there an app?": no, Lake Notice is a website, and a lake is followed
+  by bookmarking its page. The privacy page's app section and app sentences
+  are gone, it covers the website only, and its date is 2026-11-21. The
+  privacy and support page descriptions drop the app. The unused App Store
+  switch (`--app-store-url`, `APP_STORE_URL`) and its water-page and
+  llms.txt lines are removed.
+
 ### Added
 
 - "Also listed under <county>" links between the state's entries for what
@@ -13,6 +24,35 @@ Keep a Changelog, and versions follow Semantic Versioning.
   are found from matching names, touching counties (U.S. Census county
   adjacency) and distance, never from a list of names. 74 pages on the
   2026-11-05 snapshot. Merge on or after 2026-11-26 (docs/DECISIONS.md 0034).
+- An Accessibility Conformance Report for the website against WCAG 2.2 A
+  and AA, based on the VPAT 2.5 Rev WCAG edition
+  (docs/accessibility/ACR.md). It is provisional: its screen-reader rows rest
+  on axe, pa11y, Lighthouse, scripted browser checks and code reading, and
+  its Appendix B lists the human walkthrough still to do.
+- A daily check of the live site, separate from the publish run. At 19:23
+  UTC `publish-health.yml` reads lakenotice.com/snapshot/v1.json and opens
+  one issue when the snapshot is more than 24 hours old, a state's data is
+  unavailable or was last read more than 2 days before the build, or
+  California's newest file is more than 7 days old. It comments only when
+  what it finds changes, and closes the issue itself on the first healthy
+  check. The publish job's own failure alert ran inside the failing run and
+  was blocked with it on 3 of 5 failures (docs/DECISIONS.md 0045).
+- A Ko-fi tip link in the footer of every page, and nowhere else (DECISIONS
+  0043): "Lake Notice is made by one person. You can leave a tip on Ko-fi.",
+  the second sentence a plain link that opens in a new tab. No Ko-fi script,
+  image or widget, no click tracking, and nothing in the snapshot the app
+  reads. The Spanish footer strings are drafts and stay unpublished.
+- A file that changes too many statuses in one run is not published. After
+  each source's file is merged, the pipeline compares every water's status
+  before and after. If more than 5% of the waters under an advisory (never
+  fewer than 5) would leave it or go to a lower level, or the number under
+  an advisory would move by more than 10% (never fewer than 25), the run is
+  refused with a message that says what was measured, the last good data
+  stays live, and the publish-failure issue quotes the reason. A Missouri
+  answer past the limit is not merged and Missouri reads "data unavailable"
+  while California publishes. The publish workflow's `accept_status_change`
+  input lets a checked file through. The limits come from this repository's
+  25 committed runs and the records back to 2016 (docs/DECISIONS.md 0044).
 - The iPhone app takes the website's look: paper and indigo colors with
   light and dark variants, each lake's status drawn as its posted sign with
   the level's words and rank marks, signage-style headings and the sign-board
@@ -100,6 +140,28 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- Site: Google Analytics loads only on lakenotice.com and never in an
+  automated browser (`navigator.webdriver`, as Playwright, Puppeteer and
+  headless Chrome set it), so local builds and scripted checks are no longer
+  counted as visits. One local headless run had been (2026-11-05). Nothing
+  on the page, the opt-out or the privacy policy changed.
+- Site: every table sits in a scroll region that a keyboard can focus,
+  named by the table's caption, and keeps its table display on a phone.
+  Below 40rem tables had been set to `display: block`, which can drop row and
+  column semantics in VoiceOver, and a wide table with no link in it (a
+  water's history or spots) could not be scrolled from a keyboard in Safari.
+  No wording changed.
+- Site: the footer's Ko-fi tip link opens in the same tab (DECISIONS 0043,
+  addendum 2026-11-17). It was the only link on the site that opened a new
+  tab, and it did not say so. `target="_blank"` and the `rel="noopener"`
+  that went with it are gone; the sentence is unchanged.
+- The /advisories/ title counts the waters it lists and its description
+  dates the states' data, filled from each build: "Toxic algae advisories:
+  524 California and Missouri waters" and "477 California and 47 Missouri
+  lakes and rivers whose latest state record is a toxic algae advisory, from
+  the states' data dated Nov 13, 2026." on the 2026-11-15 data. The date is
+  the oldest listed state's file date. With one state listed, or a file date
+  missing, the earlier wording stays (docs/DECISIONS.md 0032, 2026-11-15).
 - In the app, a saved lake the data on the phone does not have no longer
   says "No longer in the state's current file." It names what is missing
   (no data on this iPhone yet, a state with no lakes in the data, or the lake
