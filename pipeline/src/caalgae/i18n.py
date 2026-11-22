@@ -106,6 +106,8 @@ EN: dict[str, str] = {
     "footer.privacy": "privacy",
     "footer.terms": "terms",
     "footer.support": "support",
+    "footer.tip_lead": wording.TIP_LEAD,
+    "footer.tip_link": wording.TIP_LINK_TEXT,
     "footer.analytics_opt_out": "Opt out of analytics",
     # the levels page
     "levels.title": "What Caution, Warning and Danger mean",

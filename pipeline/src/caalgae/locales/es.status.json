@@ -89,6 +89,12 @@
   "footer.support": {
     "status": "draft"
   },
+  "footer.tip_lead": {
+    "status": "draft"
+  },
+  "footer.tip_link": {
+    "status": "draft"
+  },
   "footer.analytics_opt_out": {
     "status": "draft"
   },

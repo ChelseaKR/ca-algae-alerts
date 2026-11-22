@@ -5,15 +5,12 @@
 <p class="lede">
   The {{ site_name }} website uses Google Analytics 4 to count visits and see
   which pages are read, unless your browser sends Global Privacy Control or
-  Do Not Track, or you opt out. The {{ site_name }} iPhone app collects no data at all: no
-  analytics, no tracking, and no third-party SDK. Neither has an account or
-  advertising.
+  Do Not Track, or you opt out. It has no account and no advertising.
 </p>
 {% else %}
 <p class="lede">
-  Neither the {{ site_name }} website nor its iOS app collects personal data. There is no
-  account, no analytics, no advertising, no tracking, and no third-party
-  script or SDK in either.
+  The {{ site_name }} website does not collect personal data. It has no
+  account, no analytics, no advertising and no third-party script.
 </p>
 {% endif %}
 {% if affiliate_enabled %}
@@ -23,7 +20,9 @@
   <a href="#affiliate">Gear links</a>.
 </p>
 {% endif %}
-<p class="muted">Last updated {{ "2026-11-05" if affiliate_enabled else ("2026-10-31" if ga4_measurement_id else "2026-10-12") }}. Covers this website and the {{ site_name }} iPhone app.</p>
+{# Every version of this page changed on 2026-11-21, when the app's section
+   and sentences came out (DECISIONS 0046), so one date covers them all. #}
+<p class="muted">Last updated 2026-11-21. Covers this website.</p>
 
 <h2 id="site">The website</h2>
 {% if ga4_measurement_id %}
@@ -67,8 +66,8 @@
       policy</a>. Google also offers an
       <a href="https://tools.google.com/dlpage/gaoptout">opt-out browser
       add-on</a> for Google Analytics.</li>
-  <li>The advisory data file the iPhone app downloads
-      (<code>snapshot/v1.json</code>) is a plain file with no analytics.</li>
+  <li>The advisory data file (<code>snapshot/v1.json</code>) is a plain
+      file with no analytics.</li>
   <li>No account, no email address, no sign-up, anywhere on this site.</li>
   <li>The site is hosted on GitHub Pages. Like any web host, GitHub receives
       standard request information (IP address, the page requested, time,
@@ -100,9 +99,8 @@
   {{ gear_endorsement_all }}
 </p>
 <ul>
-  <li>The links are on the website, never in the iPhone app.</li>
   <li>They are ordinary links. Nothing loads from Amazon when a page opens,
-      and this site adds no script, pixel or tracking for them.</li>
+      and this site adds no script or pixel for them.</li>
   <li>Once you click, Amazon&rsquo;s own site and privacy notice apply, and
       Amazon uses the link&rsquo;s tag to credit this site.{% if ga4_measurement_id %}
       The analytics described above can count a click on any link to another
@@ -113,39 +111,11 @@
 </ul>
 
 {% endif %}
-<h2 id="app">The iPhone app</h2>
-<ul>
-  <li><strong>No analytics:</strong> the app has no analytics, no tracking and
-      no third-party SDK.{% if ga4_measurement_id %} The website's Google
-      Analytics does not run inside the app.{% endif %}</li>
-  <li><strong>What stays on your phone:</strong> the lakes you favorite, the
-      latest copy of the advisory data, and a record of which advisories the
-      app has already alerted you about. These live only in the app's own
-      storage on your device (and in your device backups, if you back up your
-      phone). Deleting the app deletes them. They are never sent to the
-      developer or anyone else.</li>
-  <li><strong>The one network request:</strong> the app downloads the public
-      advisory data file this website publishes, from GitHub Pages. The
-      request carries no identifier and nothing about you or your favorites;
-      as with any web request, the host sees the IP address it came from.
-      Links to the state's map or to this site open in your browser{% if ga4_measurement_id %},
-      where this site's Google Analytics applies as described above{% endif %}.</li>
-  <li><strong>Notifications:</strong> alerts are local notifications that iOS
-      schedules on your device. There is no push service and no device
-      token.</li>
-  <li><strong>Purchases:</strong> the one-time in-app purchase is handled
-      entirely by Apple. The developer does not receive your name, email
-      address or payment details; Apple's privacy policy applies to the
-      transaction.</li>
-  <li><strong>App Store privacy label:</strong> Data Not Collected.</li>
-</ul>
-
 <h2 id="children">Children</h2>
 {% if ga4_measurement_id %}
 <p>
-  The app collects nothing from anyone, including children. The website's
-  analytics are the same for every visitor and never ask for a name, age or
-  contact details.
+  The website's analytics are the same for every visitor, children
+  included, and never ask for a name, age or contact details.
 </p>
 {% else %}
 <p>Nothing is collected from anyone, including children.</p>

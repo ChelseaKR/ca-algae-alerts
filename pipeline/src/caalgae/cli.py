@@ -25,7 +25,17 @@ from typing import Any
 
 import httpx
 
-from caalgae import cyan, fetch, flagged, missouri, newyork, normalize, site, snapshot
+from caalgae import (
+    cyan,
+    fetch,
+    flagged,
+    missouri,
+    newyork,
+    normalize,
+    site,
+    snapshot,
+    tripwire,
+)
 from caalgae import history as hist
 from caalgae.sources import CA_SWRCB_FHAB, EPA_CYAN, MO_DNR_HAB
 
@@ -56,7 +66,6 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     p.add_argument("--run-today", default=None, help="YYYY-MM-DD (tests only)")
     p.add_argument("--base-url", default="")
     p.add_argument("--support-email", default="")
-    p.add_argument("--app-store-url", default="")
     p.add_argument("--mo-fixture", type=Path, default=None)
     p.add_argument("--mo-viewer-fixture", type=Path, default=None)
     p.add_argument("--cyan-cache", type=Path, default=None)
@@ -81,6 +90,15 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
             f"than {hist.MAX_REMOVED_RECORDS} records, or grows the quarantine by "
             f"more than {MAX_QUARANTINE_GROWTH} rows; only after reading the "
             "file (docs/DECISIONS.md 0027)"
+        ),
+    )
+    p.add_argument(
+        "--accept-status-change",
+        action="store_true",
+        help=(
+            "accept a file that takes many waters out of an advisory, lowers "
+            "many levels or moves the number of advisories past the limits; "
+            "only after reading the file (docs/DECISIONS.md 0044)"
         ),
     )
     p.add_argument(
@@ -127,6 +145,19 @@ def _warn(message: str) -> None:
         print(f"::warning::{message}")
 
 
+def _report_refusal(reason: str) -> None:
+    """A refusal by the tripwire (DECISIONS 0044), shown on the workflow run
+    and handed to the job that opens the publish-failure issue. Only for that
+    refusal: its message is counts and this pipeline's own water ids, so no
+    text from a source reaches a workflow command or an issue."""
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::error title=Publish refused::{reason}")
+    path = os.environ.get("GITHUB_OUTPUT")
+    if path:
+        with open(path, "a", encoding="utf-8") as handle:
+            handle.write(f"reason={reason}\n")
+
+
 def _california(
     args: argparse.Namespace, history: hist.History, run_date: dt.date
 ) -> tuple[hist.History, Counter[str], fetch.Download]:
@@ -165,6 +196,16 @@ def _california(
         file_info=file_info,
         max_removed=None if args.accept_ca_edits else hist.MAX_REMOVED_RECORDS,
         protect_advisories=not args.accept_ca_edits,
+    )
+    # After the shape checks, the one on meaning (DECISIONS 0044): a file
+    # with every record in place and its levels changed is refused here.
+    tripwire.check(
+        history,
+        merged,
+        source=CA_SWRCB_FHAB.id,
+        label="California's file",
+        run_date=run_date,
+        accept=args.accept_status_change,
     )
     print(
         f"caalgae: {source.file_name}: {normalized.rows_read} rows, "
@@ -248,6 +289,8 @@ def _missouri_merge(
     viewer: bytes | None,
     run_date: dt.date,
     now: dt.datetime,
+    *,
+    accept_status_change: bool = False,
 ) -> tuple[hist.History, normalize.Normalized]:
     """A good read merged into history, or ``missouri.LayerUnavailable``."""
     normalized = missouri.normalize(body, run_date)
@@ -277,6 +320,27 @@ def _missouri_merge(
         # A partial answer must not stop California (source-outage audit,
         # 2026-11-05, finding 8).
         raise missouri.LayerUnavailable(str(error), kind="partial") from error
+    try:
+        tripwire.check(
+            history,
+            merged,
+            source=MO_DNR_HAB.id,
+            label="Missouri's layer",
+            run_date=run_date,
+            accept=accept_status_change,
+        )
+    except tripwire.MassChange as error:
+        # Like a partial answer, it must not stop California (0010): the
+        # answer is not merged and Missouri reads "data unavailable" (0024)
+        # until a normal answer returns or the owner accepts this one.
+        _warn(
+            f"Missouri not merged: {error.summary} A change that size looks "
+            "like a wrong answer. Missouri reads data unavailable until a "
+            "normal answer returns; if the department really did change this "
+            "much, read its map, then run the publish workflow with "
+            "accept_status_change."
+        )
+        raise missouri.LayerUnavailable(error.summary, kind="suspect") from error
     if MO_DNR_HAB.id in merged.outages:
         print(
             "caalgae: Missouri data available again; outage since "
@@ -324,15 +388,23 @@ def _missouri(
       ``stale_dated``, with its read date, while the last good read is at
       most ``MO_STALE_AFTER_DAYS`` old; ``unavailable`` after that.
     - The layer gone, changed, frozen or superseded
-      (``missouri.LayerUnavailable``), or an answer that would damage
-      history: ``unavailable`` at once (0024). Its history is kept for when
+      (``missouri.LayerUnavailable``), an answer that would damage history,
+      or one that changes too many statuses at once (0044): ``unavailable``
+      at once (0024). Its history is kept for when
       a good read returns, and a good read clears the outage.
     """
     if not MO_DNR_HAB.enabled:
         return history, Counter(), None
     try:
         body, viewer = _missouri_read(args)
-        merged, normalized = _missouri_merge(history, body, viewer, run_date, now)
+        merged, normalized = _missouri_merge(
+            history,
+            body,
+            viewer,
+            run_date,
+            now,
+            accept_status_change=args.accept_status_change,
+        )
     except missouri.LayerUnavailable as error:
         if _missouri_last_read(history) is None:
             # Nothing was ever read, so there is no page to keep up.
@@ -440,7 +512,6 @@ def run(args: argparse.Namespace) -> int:
             args.site_out,
             base_url=args.base_url,
             support_email=args.support_email,
-            app_store_url=args.app_store_url,
             ny_history=ny_history,
         )
     hist.save(merged, args.history)
@@ -461,8 +532,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         hist.HistoryError,
         snapshot.SnapshotError,
         flagged.FlagError,
+        tripwire.MassChange,
     ) as error:
         print(f"caalgae: run refused -- nothing published: {error}", file=sys.stderr)
+        if isinstance(error, tripwire.MassChange):
+            _report_refusal(str(error))
         return 2
 
 
