@@ -403,10 +403,9 @@ def test_default_build_carries_lake_notices_own_ga4_id(traps_site: Path) -> None
             assert f'var id = "{measurement_id}";' in page.read_text(), page
     privacy = text_of(traps_site / "privacy" / "index.html")
     assert "Google Analytics 4" in privacy
-    # The dogs-page-only gear paragraph (DECISIONS 0029) is the latest change
-    # when the affiliate tag is set; GA4 (0014) is the latest otherwise.
-    updated = "2026-11-05" if site.AMAZON_ASSOCIATE_TAG else "2026-10-31"
-    assert f"Last updated {updated}" in privacy
+    # The app's section and sentences came out on 2026-11-21 (DECISIONS 0046),
+    # the latest change to every version of the page.
+    assert "Last updated 2026-11-21" in privacy
     assert "Global Privacy Control" in privacy
 
 
@@ -437,6 +436,37 @@ def test_ga4_when_configured_honors_gpc_before_loading(
     assert "allow_google_signals: false" in page
     assert "ca-algae-alerts:analytics-opt-out" in page
     assert "Google Analytics 4" in text_of(out / "privacy" / "index.html")
+
+
+HOST_GUARD = f'if (w.location.hostname !== "{site.SITE_DOMAIN}") return;'
+WEBDRIVER_GUARD = "if (n.webdriver === true) return;"
+
+
+def test_ga4_loads_only_on_the_production_host_and_not_under_automation(
+    traps_site: Path,
+) -> None:
+    # A local or preview build, and a headless browser (Playwright,
+    # Puppeteer) on the live site, must load nothing, or its visit is counted
+    # (growth/traffic-honesty-2026-11-21: one 127.0.0.1 session in GA4).
+    tagged = [
+        p
+        for p in pages(traps_site)
+        if p.suffix == ".html" and "googletagmanager" in p.read_text()
+    ]
+    assert tagged  # the default build carries the tag
+    for path in tagged:
+        page = path.read_text()
+        assert HOST_GUARD in page, path
+        assert WEBDRIVER_GUARD in page, path
+        # After the footer control is set up and after the opt-out return,
+        # so the page looks and behaves the same; before anything is queued
+        # or loaded.
+        footer = page.index('getElementById("analytics-choice")')
+        opted_out = page.index("if (optedOut) return;")
+        queued = page.index("w.dataLayer =")
+        for guard in (HOST_GUARD, WEBDRIVER_GUARD):
+            assert footer < opted_out < page.index(guard) < queued, (path, guard)
+        assert queued < page.index("createElement")
 
 
 def test_404_uses_absolute_links_and_is_noindex(traps_site: Path) -> None:

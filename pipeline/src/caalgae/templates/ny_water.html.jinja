@@ -7,8 +7,9 @@
 
 <h2 id="years">Years with a confirmed bloom</h2>
 <p>{{ years_label|capitalize }} and {{ reports_label }} on record, newest first.</p>
+<div class="table-scroll" role="region" aria-labelledby="ny-years-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">Years DEC confirmed a harmful algal bloom at {{ water.name }}, newest first</caption>
+  <caption id="ny-years-table-caption" class="visually-hidden">Years DEC confirmed a harmful algal bloom at {{ water.name }}, newest first</caption>
   <thead><tr><th scope="col">Year</th><th scope="col">DEC's finding</th><th scope="col">First report that year</th><th scope="col">Last report that year</th><th scope="col">Reports that year</th></tr></thead>
   <tbody>
   {% for y in water.years %}
@@ -22,6 +23,7 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 <p><a href="{{ root }}state/ny/">Every New York water with a confirmed bloom on record</a>.</p>
 
 {{ ny_source_section(ny, ny_source) }}

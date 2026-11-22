@@ -129,3 +129,71 @@ def test_a_guard_moved_after_the_upload_is_caught() -> None:
     assert guard_problems(after) == ["the publish guard step is missing"]
     moved = before.replace(GUARD, "true") + "\n" + GUARD + "\n"
     assert any("does not run before" in p for p in guard_problems(moved))
+
+
+def tripwire_problems(text: str) -> list[str]:
+    """The tripwire's override reaches the pipeline, and its refusal reaches
+    the publish-failure issue (DECISIONS 0044)."""
+    lines = code_lines(text)
+    found: list[str] = []
+    for needle, what in (
+        ("accept_status_change:", "the accept_status_change input is missing"),
+        (
+            "ACCEPT_STATUS_CHANGE: ${{ inputs.accept_status_change == true }}",
+            "the accept_status_change input does not reach the pipeline step",
+        ),
+        (
+            'if [ "$ACCEPT_STATUS_CHANGE" = "true" ]; then '
+            'accept_change="--accept-status-change"; fi',
+            "the override is not turned into --accept-status-change",
+        ),
+        ('${accept_change:+"$accept_change"}', "the flag is not passed to caalgae"),
+        (
+            "pipeline_reason: ${{ steps.pipeline.outputs.reason }}",
+            "the refusal's reason is not a job output",
+        ),
+        (
+            "PIPELINE_REASON: ${{ needs.build.outputs.pipeline_reason }}",
+            "the refusal's reason does not reach the publish-failure issue",
+        ),
+    ):
+        if needle not in lines:
+            found.append(what)
+    name = "- name: run the pipeline (live fetch -> history -> snapshot -> site)"
+    if name not in lines or lines[lines.index(name) + 1] != "id: pipeline":
+        found.append("the pipeline step has no id for its reason output")
+    # Off unless the owner turns it on for one manual run.
+    at = (
+        lines.index("accept_status_change:") if "accept_status_change:" in lines else -1
+    )
+    if at >= 0 and lines[at + 1 : at + 4][-1] != "default: false":
+        found.append("accept_status_change is not off by default")
+    return found
+
+
+def test_the_tripwire_override_and_reason_are_wired() -> None:
+    assert tripwire_problems(WORKFLOW.read_text(encoding="utf-8")) == []
+
+
+def test_an_unwired_tripwire_override_is_caught() -> None:
+    before = WORKFLOW.read_text(encoding="utf-8")
+    for old, new, expected in (
+        (
+            '${accept_change:+"$accept_change"}',
+            "",
+            "the flag is not passed to caalgae",
+        ),
+        (
+            "        id: pipeline\n",
+            "",
+            "the pipeline step has no id for its reason output",
+        ),
+        (
+            "ACCEPT_STATUS_CHANGE: ${{ inputs.accept_status_change == true }}",
+            "ACCEPT_STATUS_CHANGE: true",
+            "the accept_status_change input does not reach the pipeline step",
+        ),
+    ):
+        after = before.replace(old, new)
+        assert after != before  # the sabotage applied
+        assert expected in tripwire_problems(after)

@@ -279,10 +279,43 @@ def county_description(
     )
 
 
-def advisories_description(waters: list[dict[str, Any]]) -> str:
+def _listed_counts(waters: list[dict[str, Any]]) -> dict[str, int] | None:
+    """How many listed waters each state has, in STATE_NAMES order, only when
+    the counted form applies (DECISIONS 0032, 2026-11-15): two or more states
+    each list at least one water, and every listed water is in one of them,
+    so the total is the length of the page's table. Otherwise None, and the
+    title and description keep the wording they had before."""
+    counts = Counter(w["state"] for w in waters)
+    named = {state: counts[state] for state in STATE_NAMES if counts[state]}
+    if len(named) < 2 or sum(named.values()) != len(waters):
+        return None
+    return named
+
+
+def _oldest_file_date(
+    states: Iterable[str], file_dates: dict[str, str | None]
+) -> str | None:
+    """The oldest of the listed states' file dates, so "the states' data
+    dated <date>" never claims a state's data is newer than it is. None when
+    any listed state has no file date."""
+    dates = [file_dates.get(state) for state in states]
+    if not dates or any(d is None for d in dates):
+        return None
+    return min(d for d in dates if d is not None)
+
+
+def advisories_description(
+    waters: list[dict[str, Any]], file_dates: dict[str, str | None] | None = None
+) -> str:
     """The advisory list's description: how many waters it lists, by state,
     the same waters the page's table lists. Missouri waters are on the page,
-    so the description names them rather than calling the list California's."""
+    so the description names them rather than calling the list California's.
+
+    With two or more states listed and each state's file date known, it
+    ends with the oldest of those dates (DECISIONS 0032, 2026-11-15):
+    "477 California and 47 Missouri lakes and rivers whose latest state
+    record is a toxic algae advisory, from the states' data dated Nov 13,
+    2026." Any other build keeps the earlier wording below."""
     counts = Counter(w["state"] for w in waters)
     parts = [
         f"{counts[state]} {name}"
@@ -295,16 +328,25 @@ def advisories_description(waters: list[dict[str, Any]]) -> str:
             "advisory, with its level and date."
         )
     lead = " and ".join(parts)
-    return fit(
+    earlier = [
+        f"{lead} lakes and rivers whose latest state record is a toxic algae "
+        "advisory, with its level and date, including old ones with no "
+        "recorded end.",
+        f"{lead} lakes and rivers whose latest state record is a toxic algae "
+        "advisory, with its level and date.",
+    ]
+    listed = _listed_counts(waters)
+    when = _oldest_file_date(listed, file_dates or {}) if listed else None
+    dated = (
         [
-            f"{lead} lakes and rivers whose latest state record is a toxic algae "
-            "advisory, with its level and date, including old ones with no "
-            "recorded end.",
-            f"{lead} lakes and rivers whose latest state record is a toxic algae "
-            "advisory, with its level and date.",
-        ],
-        DESCRIPTION_MAX,
+            f"{lead} lakes and rivers whose latest state record is a toxic "
+            f"algae advisory, from the states' data dated "
+            f"{wording.date_label(when)}."
+        ]
+        if when
+        else []
     )
+    return fit([*dated, *earlier], DESCRIPTION_MAX)
 
 
 def state_list(states: Iterable[str]) -> str:
@@ -353,10 +395,21 @@ def home_description(states: Iterable[str]) -> str:
 
 def advisories_title(waters: list[dict[str, Any]]) -> str:
     """The advisory list's title, naming the states its table lists, the
-    same states its description counts (DECISIONS 0032)."""
+    same states its description counts (DECISIONS 0032).
+
+    With two or more states listed it leads with the number of waters the
+    table lists (2026-11-15): "Toxic algae advisories: 524 California and
+    Missouri waters". One state, or none, keeps the earlier title."""
     where = state_list(w["state"] for w in waters) or "California"
+    listed = _listed_counts(waters)
+    counted = (
+        [f"Toxic algae advisories: {sum(listed.values())} {where} waters"]
+        if listed
+        else []
+    )
     return fit(
         [
+            *counted,
             f"All {where} toxic algae advisories on file | {SITE_NAME}",
             f"All {where} toxic algae advisories on file",
             f"{where} toxic algae advisories on file",
@@ -387,6 +440,19 @@ AMAZON_SEARCH_URL = "https://www.amazon.com/s"
 # Amazon's required wording, byte for byte: do not paraphrase it.
 AMAZON_ASSOCIATE_DISCLOSURE = "As an Amazon Associate I earn from qualifying purchases."
 AFFILIATE_LINK_REL = "sponsored nofollow noopener"
+# The Ko-fi tip link in the footer (docs/DECISIONS.md 0043): the one money
+# surface besides the dogs page's gear links. Footer only, on every page that
+# extends base.html.jinja, and never in the iOS app, which has no web view.
+# A plain link that opens in the same tab (0043 addendum, 2026-11-17; no
+# target, so no rel): no Ko-fi script, image or widget, nothing loaded until
+# it is pressed, and no click tracking. The address is Chelsea's Ko-fi page, sent
+# 2026-11-17, and it lives here and nowhere else. Empty,
+# the footer line is gone from every page. Judged on 2027-05-31: under $20 in
+# tips by then, it comes out. Never tie the ask to an advisory, a lake, a dog
+# or anyone's safety (tests/test_site_tip.py holds the words).
+KOFI_URL = "https://ko-fi.com/chelseakr"
+TIP_LEAD = wording.TIP_LEAD.format(site_name=SITE_NAME)
+TIP_LINK_TEXT = wording.TIP_LINK_TEXT
 # Label, the search terms, then the line tying the item to the dogs page's own
 # advice (DOG_ADVICE and "At the water"). Generic searches, not products, so
 # nothing goes stale and the page states no price, rating or "best" claim.
@@ -473,8 +539,21 @@ def _env() -> jinja2.Environment:
         unavailable_dog_answer=wording.unavailable_dog_answer,
         row_date=wording.row_date,
         not_medical_advice=wording.NOT_MEDICAL_ADVICE,
+        # The footer's Ko-fi line (0043); None turns it off. Read when the
+        # environment is built, so a test can switch it with site.KOFI_URL.
+        tip=_tip(),
     )
     return env
+
+
+def _tip() -> dict[str, str] | None:
+    if not KOFI_URL:
+        return None
+    return {
+        "url": KOFI_URL,
+        "lead": TIP_LEAD,
+        "link_text": TIP_LINK_TEXT,
+    }
 
 
 def _advisory_sort(water: dict[str, Any]) -> tuple[str, int, str]:
@@ -646,7 +725,6 @@ class SiteBuilder:
         *,
         base_url: str,
         support_email: str,
-        app_store_url: str,
         ga4_measurement_id: str,
         ny_history: newyork.History | None = None,
         ny_index_limit: int | None = NY_INDEX_LIMIT,
@@ -675,9 +753,10 @@ class SiteBuilder:
         self.common: dict[str, Any] = {
             "site_name": SITE_NAME,
             "support_email": support_email,
-            "app_store_url": app_store_url,
             "ga4_measurement_id": ga4_measurement_id,
             "ga4_denied_regions": GA4_DENIED_REGIONS,
+            # The one host the GA4 tag loads on (_ga4.html.jinja).
+            "ga4_host": SITE_DOMAIN,
             "affiliate_enabled": bool(AMAZON_ASSOCIATE_TAG),
             "amazon_disclosure": AMAZON_ASSOCIATE_DISCLOSURE,
             "gear_endorsement_all": gear_endorsement(),
@@ -822,7 +901,9 @@ class SiteBuilder:
             "advisories/",
             "advisories.html.jinja",
             title=advisories_title(waters),
-            description=advisories_description(waters),
+            description=advisories_description(
+                waters, {state: self._file_date(state) for state in STATE_NAMES}
+            ),
             lastmod=self.site_date,
             waters=waters,
             breadcrumb=crumbs,
@@ -1083,9 +1164,9 @@ class SiteBuilder:
             ("about/", "about.html.jinja", "About the data and its limits",
              "Where the advisories come from, how a status is decided, and what the data cannot tell you."),
             ("privacy/", "privacy.html.jinja", "Privacy policy",
-             "What the website and the iPhone app collect."),
+             "What the website collects."),
             ("support/", "support.html.jinja", "Support",
-             "Help with the website. The iPhone app is not released yet."),
+             "Help with the website."),
             ("terms/", "terms.html.jinja", "Terms of use",
              "Who runs Lake Notice, what it is and is not, and why it is never a determination about a water."),
         ]  # fmt: skip
@@ -1363,7 +1444,6 @@ def build_site(
     *,
     base_url: str = "",
     support_email: str = "",
-    app_store_url: str = "",
     ga4_measurement_id: str | None = None,
     ny_history: newyork.History | None = None,
     ny_index_limit: int | None = NY_INDEX_LIMIT,
@@ -1375,7 +1455,6 @@ def build_site(
         out,
         base_url=base_url,
         support_email=support_email,
-        app_store_url=app_store_url,
         ga4_measurement_id=GA4_MEASUREMENT_ID
         if ga4_measurement_id is None
         else ga4_measurement_id,

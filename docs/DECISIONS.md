@@ -1287,6 +1287,41 @@ of water pages (~2026-11-25) is not disturbed.
 Tests: `pipeline/tests/test_state_titles.py`, both a California-only build
 and the California-and-Missouri fixture build.
 
+**The /advisories/ title counts its waters; the description dates the data
+(owner, 2026-11-15).** The search read of 2026-11-15
+(growth/lake-notice-nhg-search-2026-11-15.md, Lake Notice action 2) found
+/advisories/ still the top page by impressions with no click: 63 in 28 days
+at position 7.0. Chelsea approved this wording for that day's data:
+
+- **Title:** "Toxic algae advisories: 524 California and Missouri waters"
+  (58 characters). The number is the length of the page's table, the states
+  are the ones it lists (`state_list`, as above).
+- **Description:** "477 California and 47 Missouri lakes and rivers whose
+  latest state record is a toxic algae advisory, from the states' data dated
+  Nov 13, 2026." (142 characters). The counts are the table's, by state; the
+  date is the oldest file date of the listed states, so the sentence never
+  says a state's data is newer than it is. On 2026-11-15 California's file
+  is dated Nov 13 and Missouri's (the run date; the layer carries no file date)
+  Nov 15.
+- **Both are filled from each build**, so they change with the nightly data.
+- **Edge cases keep the earlier wording above, with no new words.** One
+  state listed (Missouri with no open advisory, dropped or unavailable):
+  no count of zero is shown, and "the states'" would be wrong for one state,
+  so the title is "All California toxic algae advisories on file | Lake
+  Notice" and the description is the earlier "with its level and date" form.
+  A listed state with no file date: the description keeps the earlier form
+  and the title keeps its count. A listed water from a state not in
+  `STATE_NAMES`: both keep the earlier form, because the count would not be
+  the table's. Length: the counted title fits 60 characters up to 99,999
+  waters and the description fits 160 for any date label, and `fit` falls
+  back to the earlier candidates if either did not.
+- **Not changed:** the page body, the home page, every water, county and
+  state page. The dated-title read of water pages (~2026-11-25) is not
+  disturbed.
+
+To undo, drop the counted candidate from `advisories_title` and the dated
+one from `advisories_description`.
+
 ## 0036 — The app takes the website's identity, with worded empty states, sharing, support and a rare review ask (2026-11-05)
 
 The website's identity (0035, docs/DESIGN.md) is a notice posted at the
@@ -1511,3 +1546,252 @@ Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/SavedLakeCopyTests.swift`.
 Negative controls: the old line fails the same checks, and with `detail`
 returning it three of the five tests fail; with Missouri waters in the data
 a Missouri id reads as a missing lake, not a missing state.
+
+## 0043 — A Ko-fi tip link in the footer, and nowhere else (owner, 2026-11-16; wording approved 2026-11-17)
+
+The owner decided on 2026-11-16 (`_agent-tools/growth/app-money-ideas-2026-11-16.md`,
+decision 2(a), outside this repo) to put a footer-only link to her personal
+Ko-fi page, the same page as Trout Truck's, judged on 2027-05-31. **She approved
+the footer wording as drafted on 2026-11-17, sent the page's address,
+`https://ko-fi.com/chelseakr`, the same day, and chose to ship the line
+then** and not after 2026-11-27, the date the money plan gave. That choice
+covers this line only. It adds no page or page family, so the template
+freeze 0020 names stands as it was.
+
+- **Where.** One line in the site footer, after the about, privacy, terms
+  and support links: "Lake Notice is made by one person. You can leave a tip
+  on Ko-fi." The second sentence is the link. Every page that extends
+  `base.html.jinja` carries it. It is never in a page's main content, never
+  next to an advisory level, a lake's status or the dog guidance, and it is
+  the only money surface besides the dogs page's gear links (0029). The
+  /levels/ page (`_base_i18n.html.jinja`, off on main) carries the same line,
+  since its English footer must match every other page's
+  (`test_english_chrome_matches_every_other_page`); the words come from
+  `wording.TIP_LEAD` and `wording.TIP_LINK_TEXT` through the catalog. Its
+  Spanish twin's two strings ("{site_name} lo hace una sola persona.",
+  "Puede dejar una propina en Ko-fi.") are drafts, like the rest of the
+  Spanish footer, and wait for review before `ES_ENABLED` is turned on (she
+  kept them as unpublished drafts on 2026-11-17).
+- **Words.** The ask is not tied to the advisory content: no "if this kept
+  you or your dog safe", no "if this helped you decide", and never "no
+  tracking". `tests/test_site_tip.py` holds the words to a banned list.
+- **One constant.** `site.KOFI_URL`; a change of page is a one-line change
+  there, and `""` removes the line from every page.
+- **No new request or tracking.** A plain `<a href>` (with
+  `target="_blank" rel="noopener"` until the addendum below): no Ko-fi script, button image, widget or
+  iframe, nothing loaded from Ko-fi until a person presses it, and no click
+  event (the GA4 tag here records page views only).
+- **Never in the iOS app.** The app reads `snapshot/v1.json`, has no web
+  view, and opens the site's pages ("This lake on the website", "Privacy
+  policy") in the system browser, outside the app. Nothing here reaches the
+  snapshot; a test fails if "ko-fi" is in it or anywhere under `ios/`.
+- **Judged 2027-05-31.** Under $20 in tips by then, the line comes out.
+- **Guards.** `tests/test_site_tip.py`: the exact line once, inside
+  `<footer>`, on every built page with a footer; no Ko-fi script, image,
+  frame, text or tracking hook anywhere else; nothing in a data file or the
+  snapshot; nothing with `KOFI_URL = ""`; negative controls for a line moved
+  into `<main>`, a `data-ga-event` hook and a Ko-fi widget script.
+
+### Addendum 2026-11-17: the link opens in the same tab
+
+- **What was wrong.** The footer link opened a new tab and did not say so,
+  on every page. It was the only link on the site that opened a new tab. The
+  2026-11-17 accessibility sweep recorded the same link on Trout Truck: a
+  screen reader or magnifier user lands on a page whose Back button does
+  nothing, with no word of why.
+- **The choice.** Two fixes were put to the owner: add "(opens in a new
+  tab)" inside the link, or open it in the same tab with no word changed.
+  The same tab was chosen, here and on Trout Truck. The approved sentence
+  stands exactly as it was, and so do the Spanish drafts.
+- **What changed.** `target="_blank"` is gone, and so is `rel="noopener"`,
+  which was there only because of the new tab. The link is a bare
+  `<a href>` in `base.html.jinja` and `_base_i18n.html.jinja`, and `site.py`
+  no longer has `TIP_LINK_TARGET` or `TIP_LINK_REL`.
+- **What did not.** No script, image or tracking hook was added; the
+  constant, the footer-only rule and the 2027-05-31 judgment are as written
+  above. Lake Notice has no calendar feed, so there is no plain-text tip
+  line to check.
+- **Guards.** `tests/test_site_tip.py`: the Ko-fi link on every built page
+  carries `href` and nothing else, with a control that a new-tab link is
+  caught.
+
+## 0044 — A file that changes too many statuses in one run is not published (2026-11-17)
+
+From the security review of 2026-11-17 (outside this repo). 0027's guards
+look at a file's shape: withdrawn records, quarantined rows. A file can pass
+them with every record in place and its levels wrong. This adds one check on
+what the file means. Numbered after 0040 to 0043, which unmerged branches
+hold. It is a publishing gate only: it decides whether a run is published and
+changes no word on any page.
+
+- **What is compared.** After a source's file is merged, and before
+  anything is written, `caalgae.tripwire` builds each water's status from
+  the history as it was and as it would be, both on the run date, the same
+  way the snapshot does. A water's status **drops** when it leaves an
+  advisory (to "no advisory recorded" or to undetermined) or stays in one
+  at a lower level. The **count** is the number of waters under an advisory.
+  Reading both sides on the run date means an advisory whose own end date
+  passes overnight is not a change: no file made it.
+- **The limits.** A run is refused when more waters drop than 5% of the
+  waters under an advisory before it, never fewer than 5 waters
+  (`MAX_DROP_SHARE`, `MIN_DROP_WATERS`); or when the count moves, up or
+  down, by more than 10% of what it was, never fewer than 25 waters
+  (`MAX_COUNT_SHARE`, `MIN_COUNT_WATERS`).
+- **Where the limits come from: the 25 committed runs** (2026-10-22 to
+  2026-11-17, each one a commit of `pipeline/data/history.json`, replayed
+  pair by pair). California had 476 to 479 waters under an advisory. The
+  most waters whose status dropped in one run was 4 (2026-11-07: 1 left an
+  advisory, 3 went to a lower level), 0.8% of 479. The count never moved by
+  more than 2 (0.4%). Missouri went from 43 to 47 with no drop in any run
+  and at most 2 new in one.
+- **And the records back to 2016.** The file carries every record with its
+  date, so each California water's status was recomputed at each of its
+  record dates (905 waters, 2016-04-30 to 2026-11-16). 367 dates have at
+  least one drop: 242 have 1, 84 have 2, 26 have 3, 10 have 4, 3 have 5 and
+  2 have 6. The most on one date is 6 (2022-11-10, when 291 waters were
+  under an advisory, 2.1%; and 2022-12-30, of 278, 2.2%). A record's date
+  is not the day the state published it, and a run can be missed (three of
+  the 25 runs came two days after the one before), so the windows matter
+  more: the most drops in any 7 days is 13 (ending 2022-12-31, of 280,
+  4.6%) and in any 14 days 18 (ending 2026-07-01, of 437, 4.1%). New
+  advisories: at most 13 on one date (2021-07-01, when 144 were under an
+  advisory), 18 in any 7 days and 23 in any 14. Missouri, 2023-04-23 to
+  2026-11-01: one date with a drop, of 1 water; at most 2 new on one date
+  and 8 in any 14 days.
+- **What that makes the limits today.** California, 477 under an advisory:
+  5% is 23.85, so 23 drops pass and 24 are refused. That is 4 times the
+  largest single date (6), 1.8 times the largest week (13), 1.3 times the
+  largest two weeks (18) and 6 times the largest committed run (4). 10% is
+  47.7, so the count may move by 47 and 48 is refused: 3.7 times the
+  largest single date of new advisories (13) and twice the largest two
+  weeks (23). Missouri, 47 under an advisory: 5% is 2, so the floor of 5
+  applies (6 are refused, against 1 ever), and the count may move by 25
+  (against 8 in two weeks). The drop limit is the tighter one on purpose:
+  a wrong "no advisory" is the costlier error. The count limit is looser so
+  that a real run of new advisories in summer is not held back.
+- **A refused California run publishes nothing.** The run stops before the
+  history, the snapshot or the site is written, so the last good data stays
+  live, as for 0027. The message says what was measured and what to do:
+  "California's file would take 477 of 477 waters out of an advisory and
+  lower 0 more in one run (477 in all; the limit is 23), starting with
+  ca-alameda-..., ... A change that size looks like a wrong file. The last
+  good data stays published. If the agency really did change this much,
+  read its file, then run the publish workflow with accept_status_change."
+  It is printed on the run, and the publish-failure issue quotes it. The
+  message is built from counts and this pipeline's own water ids, never
+  from the source's text.
+- **A refused Missouri answer never stops California** (0010). It is not
+  merged, and Missouri goes to "data unavailable" (0024) with the reason
+  `suspect: ...`, which opens that issue the same day. A normal answer
+  clears it.
+- **The override, for a real mass change.** Agencies do lift many
+  advisories at once, at a season's end or when a program closes old
+  reports. When the issue opens: read the reason, open the agency's file or
+  map and check a few of the named waters, and if the change is real, run
+  the publish workflow by hand with **`accept_status_change`** ticked
+  (`caalgae --accept-status-change`). That one run is published as it is;
+  the next scheduled run compares against it and the limits apply again.
+  `accept_ca_edits` (0027) is a separate switch and does not turn this
+  check off.
+- **Known limits.** A wrong file that changes fewer waters than the limit
+  is published: 23 in California today. Waters added with no advisory, and
+  edits that change no status, are not counted. A source read for the
+  first time is not checked, since there is nothing to compare.
+- **Tests.** `pipeline/tests/test_tripwire.py`, on the committed
+  history.json: the unchanged file is no change; every advisory edited to
+  "None" in place, and a newer "None" added for every report, each pass
+  0027's merge (the sabotage applies) and are refused here; the drop limit
+  and the count limit each pass at the limit and refuse one past it; a
+  lowered level counts with the count unmoved; a passed end date is not a
+  change; the override and a first read pass; the CLI exits 2 and leaves
+  the history file byte for byte, then publishes with the flag; Missouri at
+  the limit merges and one past it is unavailable with California's history
+  untouched. `test_publish_workflow.py` holds the input, the flag and the
+  reason's path to the issue, with controls for each removed.
+
+## 0045 — A daily check of the live snapshot, separate from the publish run (2026-11-19)
+
+Approved by Chelsea on 2026-11-19 (delivery audit, problem 5). The publish
+workflow's `alert-on-failure` job runs inside the run it reports on. From
+2026-10-28 to 2026-11-12 the publish failed 5 times, and on 3 of them
+(2026-10-30, 10-31 and 11-11) GitHub blocked the alert job with the build,
+so no issue opened. Nothing else read the site. This copies Trout Truck's
+`publish-health` check (`ChelseaKR/ca-fish-planting-alerts`), with one
+change: it comments only when the state changes.
+
+- **What it reads.** Once a day at 19:23 UTC, about four and a half hours
+  after the 14:41 publish, `scripts/check_publish_health.py` fetches the
+  live `snapshot/v1.json` (three tries, a `lakenotice-publish-health`
+  User-Agent) and reads `generated_at`, each `state_status` entry and
+  California's `source_files` entry. A missing or unreadable field is a
+  finding, never a pass.
+- **The limits.** The snapshot more than 24 hours old: a healthy one is
+  about 4.7 hours old at check time and a missed day about 28.7, so a
+  missed day is flagged the same day with about 19 hours to spare for a
+  late start. A state `unavailable` (0024), or last read more than 2 days
+  before the snapshot was built (`cli.MO_STALE_AFTER_DAYS`, after which the
+  pipeline should already have marked it unavailable). California's newest
+  file more than 7 days older than the build (`cli.STALE_AFTER_DAYS`, when
+  the site starts saying so). Ages are measured from the build, not from
+  now, so one missed publish is one finding, not one per state. A test ties
+  the two state limits to the pipeline's constants.
+- **One issue, quiet while nothing changes.** The issue "publish: the live
+  snapshot is stale or a state's data stopped" opens on the first unhealthy
+  check. Its body ends with the sorted finding keys (for example
+  `MO-unavailable,publish-stale`). A later unhealthy check with the same
+  keys does nothing; different keys update the body and add one comment.
+  The first healthy check comments and closes it. The open issue is found
+  by listing open issues, not by search: the search missed #11 when the
+  publish alert opened #48 with the same title.
+- **The run stays green while unhealthy**, as Trout Truck's does today; the
+  issue is the signal, and a red run each day would email daily. Only a
+  broken check (a bad base URL) fails the run.
+- **What it cannot see.** It runs on GitHub, so a block that lasts all day
+  stops it too. It catches a block that lifts before 19:23 UTC and every
+  failure the publish job's own alert misses. A check off GitHub (the audit's
+  problem 2) would cover the rest.
+
+Tests: `pipeline/tests/test_publish_health.py`: each limit at its boundary,
+absence as a finding, the report holding no remote text, the state key, the
+fields against `schema/snapshot.v1.json`, and the workflow's pins,
+permissions, interpolation, listing and unchanged-state guard, each with a
+negative control.
+
+## 0046 — The website no longer describes an app (owner, 2026-11-17; wording for approval 2026-11-21)
+
+The owner dropped Lake Notice's iPhone app for good on 2026-11-17: Lake
+Notice is a website only. The live site still said "A paid iPhone app is in
+development" (about), "The Lake Notice iPhone app is not released yet"
+(support, and its page description) and described the app on the privacy
+page. On 2026-11-21 she asked for a correction drafted for her approval
+(`_agent-tools/growth/ia-redesign-2026-11-21/lake-notice/FOR-APPROVAL-app-mentions.md`,
+outside this repo), and decided it may ship before the template freeze
+ends. It adds no page, URL or page family and changes no title or H1, so
+the freeze 0020 names stands as it was, as with 0043.
+
+- **About and support** answer "Is there an app?" (`#app` on both; the
+  support section was `#iphone-app`): no, Lake Notice is a website, and a
+  lake is followed by bookmarking its page. There is no calendar or feed to
+  offer instead. The support lede shown without an address no longer
+  mentions a release.
+- **Privacy** covers the website only. The app section and the sentences
+  about the app are removed, never replaced by a "no tracking" claim (the
+  owner's rule), and the gear-link line no longer says "tracking" either.
+  Every version of the page changed the same day, so the date is one
+  literal, 2026-11-21, not the per-switch dates it had.
+- **Descriptions.** The privacy and support page descriptions lose their
+  app clauses; nothing else in any title, H1 or description changes.
+- **The App Store switch is removed** (`--app-store-url`, the publish job's
+  `APP_STORE_URL`, the water-page sentence and the llms.txt line it turned
+  on). It was never set. DECISIONS 0001, 0006, 0007, 0030, 0031 and 0036
+  stay as the record of the app that was planned; `ios/` and
+  `docs/app-store/` are not published and are left as they are.
+
+Tests: `pipeline/tests/test_no_app_mentions.py` reads every text file of two
+builds (production's switches, and analytics, gear links and the address
+flipped) for "iPhone", "iOS app", "App Store", "the app", "in-app", "in
+development", "not released yet" and "no tracking", checks the approved
+words, and has negative controls: each old passage put back, the old
+support description, and a phrase broken across lines are each caught. It
+replaces `test_support_app_section.py`, which asserted the "not released"
+wording.
