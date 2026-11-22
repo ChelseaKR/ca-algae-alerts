@@ -2,8 +2,9 @@
 {% block content %}
 <h1>{{ county }} County: lake and river algae advisories</h1>
 <p class="lede">{{ waters|length }} waters in {{ county }} County appear in the state's harmful algal bloom records.{% if count_line %} {{ count_line }} An advisory stays listed until the state records an end.{% endif %} Waters whose latest record is an advisory come first, newest first.</p>
+<div class="table-scroll" role="region" aria-labelledby="county-table-caption" tabindex="0">
 <table>
-  <caption class="visually-hidden">Waters in {{ county }} County and what the state's latest record says</caption>
+  <caption id="county-table-caption" class="visually-hidden">Waters in {{ county }} County and what the state's latest record says</caption>
   <thead><tr><th scope="col">Water</th><th scope="col">Latest record</th></tr></thead>
   <tbody>
   {% for w in waters %}
@@ -11,5 +12,6 @@
   {% endfor %}
   </tbody>
 </table>
+</div>
 <p class="muted">{{ list_caveat }}</p>
 {% endblock %}

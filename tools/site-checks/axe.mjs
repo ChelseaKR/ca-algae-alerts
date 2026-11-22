@@ -1,6 +1,8 @@
 // axe-core over every page of the built site (ACCESSIBILITY-STANDARD §1):
 //   A11Y-01  0 violations of impact critical, serious or moderate, against
-//            the WCAG 2.0/2.1/2.2 A and AA tags (target-size included).
+//            the WCAG 2.0/2.1/2.2 A and AA tags (target-size included), in
+//            the light and the dark color scheme: the stylesheet has a dark
+//            palette, and its contrast is a claim in docs/accessibility/ACR.md.
 //   A11Y-09  320 x 256 viewport: the page does not scroll sideways.
 //
 // Usage: node axe.mjs <base-url> <path> [<path> ...]
@@ -17,6 +19,7 @@ import puppeteer from "puppeteer";
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 const BLOCKING = new Set(["critical", "serious", "moderate"]);
+const SCHEMES = ["light", "dark"];
 const BLOCKED_HOSTS = /(^|\.)(googletagmanager\.com|google-analytics\.com)$/;
 
 const [base, ...paths] = process.argv.slice(2);
@@ -32,6 +35,9 @@ try {
   for (const path of paths) {
     const url = new URL(path, base).href;
     const page = await browser.newPage();
+    // Each page loads once per color scheme. Without this the second load
+    // can come back 304 from the cache, which is not ok().
+    await page.setCacheEnabled(false);
     await page.setBypassCSP(true);
     await page.setRequestInterception(true);
     page.on("request", (req) => {
@@ -41,21 +47,29 @@ try {
     });
 
     await page.setViewport({ width: 1280, height: 900 });
-    const response = await page.goto(url, { waitUntil: "load" });
-    if (!response || !response.ok()) {
-      problems.push(`${path}: HTTP ${response ? response.status() : "no response"}`);
+    let loaded = true;
+    for (const scheme of SCHEMES) {
+      await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: scheme }]);
+      const response = await page.goto(url, { waitUntil: "load" });
+      if (!response || !response.ok()) {
+        problems.push(`${path}: HTTP ${response ? response.status() : "no response"}`);
+        loaded = false;
+        break;
+      }
+      const results = await new AxePuppeteer(page).withTags(TAGS).analyze();
+      if (results.passes.length === 0) {
+        problems.push(`${path} (${scheme}): axe reported no passing rules, so it did not really run`);
+      }
+      for (const v of results.violations) {
+        if (BLOCKING.has(v.impact ?? "")) {
+          const where = v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join("; ");
+          problems.push(`${path} (${scheme}): [${v.impact}] ${v.id}: ${v.help} (${where})`);
+        }
+      }
+    }
+    if (!loaded) {
       await page.close();
       continue;
-    }
-    const results = await new AxePuppeteer(page).withTags(TAGS).analyze();
-    if (results.passes.length === 0) {
-      problems.push(`${path}: axe reported no passing rules, so it did not really run`);
-    }
-    for (const v of results.violations) {
-      if (BLOCKING.has(v.impact ?? "")) {
-        const where = v.nodes.slice(0, 3).map((n) => n.target.join(" ")).join("; ");
-        problems.push(`${path}: [${v.impact}] ${v.id}: ${v.help} (${where})`);
-      }
     }
 
     await page.setViewport({ width: 320, height: 256 });

@@ -59,12 +59,10 @@ def render(builder: SiteBuilder) -> str:
         s for s in builder.snap["sources"] if s["record_kind"] != "official_advisory"
     ]
     run_date: dt.date = builder.run_date
-    app = builder.common["app_store_url"]
-    what = "website and iPhone app" if app else "website"
     lines = [
         f"# {SITE_NAME}",
         "",
-        f"> {SITE_NAME} is a free {what} that mirrors state "
+        f"> {SITE_NAME} is a free website that mirrors state "
         f"harmful algal bloom (toxic algae) advisories for lakes and rivers in "
         f"{_join(names)}, one page per water, with every advisory the state has "
         "recorded there. It shows what a state agency published and when; it is "
@@ -120,7 +118,6 @@ def render(builder: SiteBuilder) -> str:
         f"- [Dogs and algae]({base}/dogs/): how to read an advisory before a trip with a dog",
         f"- [Where to check]({base}/where-to-check/): the agencies' own maps and notices",
         f"- [About the data and its limits]({base}/about/): sources, licenses and what the data cannot tell you",
-        *([f"- [iPhone app]({app}): favorites, alerts and a widget"] if app else []),
         f"- [Sitemap]({base}/sitemap.xml)",
         "",
         "## Sources",
