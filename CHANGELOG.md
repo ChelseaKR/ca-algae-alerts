@@ -7,6 +7,15 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Changed
 
+- The home and /advisories/ titles and descriptions lead with what each
+  page answers, while two or more states are listed (docs/DECISIONS.md
+  0032, 2026-11-25 read). /advisories/: "Algae advisories by lake: <n>
+  <states> waters" and "Level and date by lake: ... in state data dated
+  <date>." Home: "Newest toxic algae advisories: <states> lakes" and
+  "Advisories posted in the last 30 days at <states> lakes and rivers,
+  from the states' data dated <date>, with each lake's history." The date
+  is the oldest listed state's file date. California alone, a missing file
+  date or a form too long keeps the earlier wording. No other page changes.
 - The website no longer describes an iPhone app; the app was dropped on
   2026-11-17 (docs/DECISIONS.md 0046). The about and support pages answer
   "Is there an app?": no, Lake Notice is a website, and a lake is followed
