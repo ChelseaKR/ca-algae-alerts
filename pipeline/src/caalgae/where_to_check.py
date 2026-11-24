@@ -32,6 +32,10 @@ class Source:
     does_not_cover: str
     also_label: str = ""
     also_url: str = ""
+    # Lake Notice water ids this source is specific to, so that water's page
+    # can point to it ("Swimming at <water>", DECISIONS 0033). Only a source
+    # that names one water gets ids; a district-wide or national page does not.
+    waters: tuple[str, ...] = ()
 
 
 READ = dt.date(2026, 10, 23)
@@ -126,6 +130,7 @@ SOURCES: tuple[Source, ...] = (
             "record from the state's advisory records, and we did not read "
             "the results themselves."
         ),
+        waters=("ca-clear-lake", "ca-lake-clear-lake"),
     ),
     Source(
         name="Lake Elsinore and San Jacinto Watersheds Authority: lake conditions",
@@ -139,6 +144,7 @@ SOURCES: tuple[Source, ...] = (
             "We could not read Elsinore Valley MWD's site on Oct 23, 2026, so "
             "we say nothing about what it shows."
         ),
+        waters=("ca-riverside-lake-elsinore",),
     ),
     Source(
         name="U.S. EPA: harmful algal bloom advisories",
@@ -207,3 +213,8 @@ COUNTY_COUNTS: tuple[tuple[str, int], ...] = (
     ("San Bernardino", 36),
     ("Contra Costa", 32),
 )
+
+
+def sources_for(water_id: str) -> list[Source]:
+    """The where-to-check sources specific to one water, in page order."""
+    return [src for src in SOURCES if water_id in src.waters]

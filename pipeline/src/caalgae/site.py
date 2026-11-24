@@ -1036,6 +1036,18 @@ class SiteBuilder:
             ],
             same_name_miles=SAME_NAME_NEARBY_MILES,
             trout_truck=self._trout_truck.get(water["id"]),
+            # "Swimming at <water>" on indexed pages only (DECISIONS 0033), and
+            # never while the state's data is unavailable: the answer reads the
+            # water's status, which 0024 says such a page does not show.
+            swim=wording.swim_answer(water) if indexable and not outage else [],
+            swim_heading=wording.SWIM_HEADING.format(name=water["name"]),
+            swim_check=wording.SWIM_CHECK,
+            swim_own_page=wording.SWIM_OWN_PAGE.format(name=water["name"]),
+            swim_covers=wording.SWIM_COVERS,
+            swim_sources=[
+                {"name": src.name, "url": src.url, "slug": slugify(src.name)}
+                for src in where_to_check.sources_for(water["id"])
+            ],
             breadcrumb=crumbs,
             structured_data={
                 "@context": "https://schema.org",

@@ -18,6 +18,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A "Swimming at <water>" section on every indexed water page (merge on
+  2026-11-26). It says the records cannot say if it is safe to swim there
+  today, then gives the posted advisory and what that level's sign asks of
+  people in the water, or the not-a-finding sentence when there is no
+  advisory. Lake Elsinore and Clear Lake also link their local pages.
+  Spanish strings are drafts (docs/DECISIONS.md 0033).
 - An Accessibility Conformance Report for the website against WCAG 2.2 A
   and AA, based on the VPAT 2.5 Rev WCAG edition
   (docs/accessibility/ACR.md). It is provisional: its screen-reader rows rest
