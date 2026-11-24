@@ -172,6 +172,13 @@ Keep a Changelog, and versions follow Semantic Versioning.
   the states' data dated Nov 13, 2026." on the 2026-11-15 data. The date is
   the oldest listed state's file date. With one state listed, or a file date
   missing, the earlier wording stays (docs/DECISIONS.md 0032, 2026-11-15).
+- The Missouri page (/state/mo/) counts its advisories in its search title,
+  its description and its first line: "Missouri lake algae advisories: 47 of
+  225 waters" and "47 of the 225 waters in Missouri have a toxic algae
+  (harmful algal bloom) advisory as their latest state record, in the state's
+  data dated Nov 13, 2026." The count comes from the data. With no advisory
+  on record, or while Missouri's data is unavailable, the page states no
+  count. /state/ca/ is unchanged (docs/DECISIONS.md 0041).
 - In the app, a saved lake the data on the phone does not have no longer
   says "No longer in the state's current file." It names what is missing
   (no data on this iPhone yet, a state with no lakes in the data, or the lake
