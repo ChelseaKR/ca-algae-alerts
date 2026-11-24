@@ -24,6 +24,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
   people in the water, or the not-a-finding sentence when there is no
   advisory. Lake Elsinore and Clear Lake also link their local pages.
   Spanish strings are drafts (docs/DECISIONS.md 0033).
+- "Also listed under <county>" links between the state's entries for what
+  may be one water listed once per county, such as Lake Tahoe (El Dorado
+  and Placer) and the South Fork Eel River (Humboldt and Mendocino). Pairs
+  are found from matching names, touching counties (U.S. Census county
+  adjacency) and distance, never from a list of names. 74 pages on the
+  2026-11-05 snapshot. Merge on or after 2026-11-26 (docs/DECISIONS.md 0034).
 - An Accessibility Conformance Report for the website against WCAG 2.2 A
   and AA, based on the VPAT 2.5 Rev WCAG edition
   (docs/accessibility/ACR.md). It is provisional: its screen-reader rows rest
