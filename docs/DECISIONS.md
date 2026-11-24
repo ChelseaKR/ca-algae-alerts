@@ -1040,6 +1040,46 @@ differ), and a safety claim ("segura") in a reviewed string. Tests:
 undo: delete `i18n.py`, `levels.py`, `locales/`, the two templates, the
 `i18n` make target and the one `levels.build` line in `site.py`.
 
+## 0026 — A water page links the same water on Trout Truck, labeled as Chelsea's other site (owner, 2026-11-05)
+
+Chelsea approved the first cross-site link in
+`growth/cross-site-links-plan-2026-11-05.md`: a California water page links
+the same water's page on Trout Truck (trouttruck.com), her other free site.
+Anglers and families planning a trip to a planted lake check algae, and when
+the state last planted is their next question. Merge on or after 2026-11-26,
+after the dated-title read (0018), so these pages do not change mid-window.
+
+- **A committed list, checked in review.** The pairs live in
+  `pipeline/data/trout_truck_pairs.json`, matched once from both repos'
+  committed snapshots (Lake Notice 2026-11-04, Trout Truck @de884ae
+  2026-10-29): the same name key (`name_key`), a shared county, and points
+  within 6 miles (tier A) or no Trout Truck point (tier B). 66 Lake Notice
+  pages to 60 Trout Truck pages. There is no fuzzy match at build time. Thirteen
+  rows a person must look at (centers far apart, Lake Notice county differs,
+  Prosser Reservoir with no county) sit in `needs_review`, which the build
+  never reads; moving one into `pairs` turns it on.
+- **Dropped when either page is gone.** A pair renders only while its Lake
+  Notice id is in the snapshot and its Trout Truck path is in
+  `pipeline/data/trout_truck_pages.json`. Trout Truck commits no sitemap, so
+  that list is read from its committed app snapshot by
+  `scripts/trout_truck_pages.py` (read only). A malformed or doubled row stops
+  the build.
+- **Labeled plainly.** "Trout Truck, another free site by Chelsea Kelly-Reif,
+  who makes Lake Notice." Never worded as an independent recommendation.
+- **Nothing copied.** The section names the water and links the page. No
+  planting week, date, count or status from Trout Truck appears here: it
+  would go stale on Trout Truck's schedule, and a missing one could render as
+  a value. Stream pairs add that the algae records may be on another stretch.
+- **Only where there is a match.** One section after "Matching names nearby",
+  on paired water pages only. No footer, home, county or sitewide link.
+- **Plain links.** No affiliate tag, no tracking parameter, no
+  `rel="sponsored"` (nothing is paid). GA4's enhanced measurement (0014)
+  already counts the outbound click; no custom event is added. The Amazon tag
+  (0013) is unchanged.
+
+Tests: `pipeline/tests/test_trout_truck_links.py`, with a removed Trout Truck
+page as the negative control.
+
 ## 0027 — A short or reshaped California file cannot flip a live advisory (2026-11-05)
 
 The source-outage audit of 2026-11-05 cut the newest 5% of advisory rows
@@ -1281,6 +1321,51 @@ at position 7.0. Chelsea approved this wording for that day's data:
 
 To undo, drop the counted candidate from `advisories_title` and the dated
 one from `advisories_description`.
+
+## 0033 — "Swimming at <water>" on indexed water pages (owner, 2026-11-05; merge on 2026-11-26)
+
+The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
+swimming questions the largest visible group of queries (6 of about 15):
+"is lake elsinore safe to swim in" at position 19, Berryessa at 9, and
+Arrowhead, the Russian River and the Missouri River at 60 to 96. Water pages
+had "Dogs at <water>" but nothing that answered the word "swim". The owner
+chose option A1: build it now, merge on 2026-11-26, after the dated-title read
+and with or after #29, before #35 on 12-01.
+
+- **Indexed water pages only.** A `noindex` page gets no section, so the
+  thin pages 0016 keeps out of search do not grow.
+- **The heading is a statement**, "Swimming at <water>", never a question
+  (0018).
+- **First, what the records cannot say**: "The state's records cannot say if
+  it is safe to swim at <water> today. They show what the state recorded and
+  when, not the water's condition now." Never "safe" as a verdict (0002).
+- **An advisory** then gets its posting in 0002's form ("The latest posting:
+  Caution advisory, last posted Sep 24, 2026. No all-clear recorded.") and
+  one line from that level's posted sign, from the quotes already in
+  wording.py: Caution asks people to keep children away from algae in the
+  water and on the shore; Warning says "No swimming."; Danger says to stay
+  out of the water until further notice; the algal mat sign says not to let
+  children or adults touch, eat or swallow mats. A non-standard California
+  level says to read the sign. Missouri, which has no levels, gets the
+  generic read-the-notice line.
+- **Any other status** gets the headline and the not-a-finding sentence
+  ("That is not a finding that the water is safe now."), that blooms can
+  return within days and many are never reported, and to look at the water
+  first. A level the site cannot read, or no classified level, says the
+  records cannot answer the question.
+- **A local page** is linked only where the where-to-check page lists a
+  source for that one water: Lake Elsinore (the Watersheds Authority's lake
+  conditions page) and Clear Lake (Big Valley Band of Pomo). The ids are in
+  `where_to_check.Source.waters`. District-wide and national pages get none.
+- **Spanish strings are drafts** (0025): 15 `swim.*` keys, 12 of them safety
+  strings, all `draft`, so turning Spanish on fails until each is reviewed.
+
+On the 2026-11-05 snapshot the section is on all 427 indexed water pages and
+on none of the 702 others.
+
+Tests: `pipeline/tests/test_site_swimming.py`.
+
+While a state's data is unavailable (0024), its water pages leave the swimming section out, since the answer reads the water's status (owner, 2026-11-11: option A, no new wording).
 
 ## 0034 — "Also listed under <county>" links for one water split across counties (owner, 2026-11-05; merge on or after 2026-11-26)
 

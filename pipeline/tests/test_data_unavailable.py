@@ -162,6 +162,13 @@ def test_a_superseded_layer_keeps_missouri_pages_up_unavailable(tmp_path: Path) 
     mo_pages = sorted(
         p.parent.name for p in (tmp_path / "site/water").glob("mo-*/index.html")
     )
+    # Live, indexed Missouri pages carry "Swimming at <water>" (DECISIONS 0033);
+    # the control that the check below can fail.
+    live_swim = [
+        p for p in (tmp_path / "site/water").glob("mo-*/index.html")
+        if 'id="swimming"' in p.read_text(encoding="utf-8")
+    ]  # fmt: skip
+    assert live_swim
     snap = build(tmp_path, "2026-10-12", "--mo-fixture", str(MO_POINTS),
                  "--mo-viewer-fixture", write(tmp_path, "v.json", superseded_viewer()))  # fmt: skip
     mode = mo_mode(snap)
@@ -175,6 +182,10 @@ def test_a_superseded_layer_keeps_missouri_pages_up_unavailable(tmp_path: Path) 
         == mo_pages
     )
     assert_unavailable_pages(site, "Oct 12, 2026")
+    # The swimming answer reads the water's status, so an unavailable state's
+    # pages leave the section out (owner, 2026-11-11, option A).
+    for page in (site / "water").glob("mo-*/index.html"):
+        assert 'id="swimming"' not in page.read_text(encoding="utf-8"), page
     # Missouri's last records are not current advisories anywhere.
     assert "/mo-" not in (site / "advisories/index.html").read_text()
     assert "data unavailable since Oct 12, 2026" in text_of(site / "index.html")

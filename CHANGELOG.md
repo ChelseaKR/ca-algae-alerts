@@ -18,6 +18,12 @@ Keep a Changelog, and versions follow Semantic Versioning.
 
 ### Added
 
+- A "Swimming at <water>" section on every indexed water page (merge on
+  2026-11-26). It says the records cannot say if it is safe to swim there
+  today, then gives the posted advisory and what that level's sign asks of
+  people in the water, or the not-a-finding sentence when there is no
+  advisory. Lake Elsinore and Clear Lake also link their local pages.
+  Spanish strings are drafts (docs/DECISIONS.md 0033).
 - "Also listed under <county>" links between the state's entries for what
   may be one water listed once per county, such as Lake Tahoe (El Dorado
   and Placer) and the South Fork Eel River (Humboldt and Mendocino). Pairs
@@ -90,6 +96,10 @@ Keep a Changelog, and versions follow Semantic Versioning.
   for English left on /es/ pages, and a levels page in English (/levels/) and
   Spanish (/es/niveles/). Neither page is built while `LEVELS_ENABLED` and
   `ES_ENABLED` are off, and every Spanish safety string is still a draft.
+- A water page that matches a Trout Truck water links that page, labeled as
+  Chelsea Kelly-Reif's other free site, with no planting data copied. 66
+  committed pairs in `pipeline/data/trout_truck_pairs.json`; a pair drops when
+  either page is gone. DECISIONS 0026.
 - A short or reshaped California file can no longer flip a live advisory to
   "recommends no advisory". A run that would withdraw more than 25 records,
   withdraw any report's current advisory, or grow the quarantine by more than
