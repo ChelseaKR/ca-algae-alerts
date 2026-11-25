@@ -1040,6 +1040,46 @@ differ), and a safety claim ("segura") in a reviewed string. Tests:
 undo: delete `i18n.py`, `levels.py`, `locales/`, the two templates, the
 `i18n` make target and the one `levels.build` line in `site.py`.
 
+## 0026 — A water page links the same water on Trout Truck, labeled as Chelsea's other site (owner, 2026-11-05)
+
+Chelsea approved the first cross-site link in
+`growth/cross-site-links-plan-2026-11-05.md`: a California water page links
+the same water's page on Trout Truck (trouttruck.com), her other free site.
+Anglers and families planning a trip to a planted lake check algae, and when
+the state last planted is their next question. Merge on or after 2026-11-26,
+after the dated-title read (0018), so these pages do not change mid-window.
+
+- **A committed list, checked in review.** The pairs live in
+  `pipeline/data/trout_truck_pairs.json`, matched once from both repos'
+  committed snapshots (Lake Notice 2026-11-04, Trout Truck @de884ae
+  2026-10-29): the same name key (`name_key`), a shared county, and points
+  within 6 miles (tier A) or no Trout Truck point (tier B). 66 Lake Notice
+  pages to 60 Trout Truck pages. There is no fuzzy match at build time. Thirteen
+  rows a person must look at (centers far apart, Lake Notice county differs,
+  Prosser Reservoir with no county) sit in `needs_review`, which the build
+  never reads; moving one into `pairs` turns it on.
+- **Dropped when either page is gone.** A pair renders only while its Lake
+  Notice id is in the snapshot and its Trout Truck path is in
+  `pipeline/data/trout_truck_pages.json`. Trout Truck commits no sitemap, so
+  that list is read from its committed app snapshot by
+  `scripts/trout_truck_pages.py` (read only). A malformed or doubled row stops
+  the build.
+- **Labeled plainly.** "Trout Truck, another free site by Chelsea Kelly-Reif,
+  who makes Lake Notice." Never worded as an independent recommendation.
+- **Nothing copied.** The section names the water and links the page. No
+  planting week, date, count or status from Trout Truck appears here: it
+  would go stale on Trout Truck's schedule, and a missing one could render as
+  a value. Stream pairs add that the algae records may be on another stretch.
+- **Only where there is a match.** One section after "Matching names nearby",
+  on paired water pages only. No footer, home, county or sitewide link.
+- **Plain links.** No affiliate tag, no tracking parameter, no
+  `rel="sponsored"` (nothing is paid). GA4's enhanced measurement (0014)
+  already counts the outbound click; no custom event is added. The Amazon tag
+  (0013) is unchanged.
+
+Tests: `pipeline/tests/test_trout_truck_links.py`, with a removed Trout Truck
+page as the negative control.
+
 ## 0027 — A short or reshaped California file cannot flip a live advisory (2026-11-05)
 
 The source-outage audit of 2026-11-05 cut the newest 5% of advisory rows
@@ -1317,6 +1357,86 @@ To undo, drop the "by lake" candidates from `advisories_title` and
 `advisories_description`, and the `newest` and `dated` candidates from
 `home_title` and `home_description`.
 
+## 0033 — "Swimming at <water>" on indexed water pages (owner, 2026-11-05; merge on 2026-11-26)
+
+The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
+swimming questions the largest visible group of queries (6 of about 15):
+"is lake elsinore safe to swim in" at position 19, Berryessa at 9, and
+Arrowhead, the Russian River and the Missouri River at 60 to 96. Water pages
+had "Dogs at <water>" but nothing that answered the word "swim". The owner
+chose option A1: build it now, merge on 2026-11-26, after the dated-title read
+and with or after #29, before #35 on 12-01.
+
+- **Indexed water pages only.** A `noindex` page gets no section, so the
+  thin pages 0016 keeps out of search do not grow.
+- **The heading is a statement**, "Swimming at <water>", never a question
+  (0018).
+- **First, what the records cannot say**: "The state's records cannot say if
+  it is safe to swim at <water> today. They show what the state recorded and
+  when, not the water's condition now." Never "safe" as a verdict (0002).
+- **An advisory** then gets its posting in 0002's form ("The latest posting:
+  Caution advisory, last posted Sep 24, 2026. No all-clear recorded.") and
+  one line from that level's posted sign, from the quotes already in
+  wording.py: Caution asks people to keep children away from algae in the
+  water and on the shore; Warning says "No swimming."; Danger says to stay
+  out of the water until further notice; the algal mat sign says not to let
+  children or adults touch, eat or swallow mats. A non-standard California
+  level says to read the sign. Missouri, which has no levels, gets the
+  generic read-the-notice line.
+- **Any other status** gets the headline and the not-a-finding sentence
+  ("That is not a finding that the water is safe now."), that blooms can
+  return within days and many are never reported, and to look at the water
+  first. A level the site cannot read, or no classified level, says the
+  records cannot answer the question.
+- **A local page** is linked only where the where-to-check page lists a
+  source for that one water: Lake Elsinore (the Watersheds Authority's lake
+  conditions page) and Clear Lake (Big Valley Band of Pomo). The ids are in
+  `where_to_check.Source.waters`. District-wide and national pages get none.
+- **Spanish strings are drafts** (0025): 15 `swim.*` keys, 12 of them safety
+  strings, all `draft`, so turning Spanish on fails until each is reviewed.
+
+On the 2026-11-05 snapshot the section is on all 427 indexed water pages and
+on none of the 702 others.
+
+Tests: `pipeline/tests/test_site_swimming.py`.
+
+While a state's data is unavailable (0024), its water pages leave the swimming section out, since the answer reads the water's status (owner, 2026-11-11: option A, no new wording).
+
+## 0034 — "Also listed under <county>" links for one water split across counties (owner, 2026-11-05; merge on or after 2026-11-26)
+
+The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found
+pages for one water competing with each other: Lake Tahoe's Placer page at
+position 37.8 and its El Dorado page at 19.2, neither linking the other. The
+state's file lists such waters once per county. "Matching names nearby"
+(2026-10-29) already links entries within SAME_NAME_NEARBY_MILES (6), which
+covers Big Bear Lake and Lake Tulloch, but not Tahoe (centers 17.7 miles
+apart) or the South Fork Eel River (9.2). The owner chose option B1: mutual
+links, identity (0009) unchanged, merged on or after 2026-11-26.
+
+- **Detected, never listed by name.** Two entries are linked when their
+  names match (`name_key`, the same rule as "Matching names nearby"), their
+  counties touch (share a county or a border) and their centers are within
+  30 miles, or 120 for a river, bay, sea, ocean, slough or strait. Pairs that
+  "Matching names nearby" links are left to it.
+- **County borders come from the U.S. Census Bureau's county adjacency
+  file** (2024, public domain), copied once into `county_adjacency.py`.
+  It is what keeps Alameda's Lake Chabot and Solano's apart.
+- **The caps were set on the 2026-11-05 snapshot.** Lakes and creeks repeat
+  across neighboring counties for different waters (Horseshoe Lake 67 miles
+  apart, Rock Creek 80, Bear Creek 44), so they get 30 miles; rivers run
+  long (the Eel River's two entries are 100 miles apart, the Salinas 103), so
+  they get 120.
+- **The page hedges, as "Matching names nearby" does**: "may be the same
+  water, listed once per county. Each listing has its own records." Each
+  link shows that entry's own headline. Nothing merges statuses.
+- **On the 2026-11-05 snapshot**: 74 pages (41 indexable), 31 names,
+  including Lake Tahoe, the South Fork Eel River, the Eel, Russian, Trinity,
+  Klamath, San Joaquin and Sacramento rivers, the Salton Sea and New Melones
+  Reservoir. Known doubtful pair: Redwood Creek (Alameda and San Mateo, 22
+  miles apart across the Bay) is likely two creeks; the hedge covers it.
+
+Tests: `pipeline/tests/test_split_county_links.py`.
+
 ## 0036 — The app takes the website's identity, with worded empty states, sharing, support and a rare review ask (2026-11-05)
 
 The website's identity (0035, docs/DESIGN.md) is a notice posted at the
@@ -1541,6 +1661,100 @@ Tests: `ios/AlgaeCore/Tests/AlgaeCoreTests/SavedLakeCopyTests.swift`.
 Negative controls: the old line fails the same checks, and with `detail`
 returning it three of the five tests fail; with Missouri waters in the data
 a Missouri id reads as a missing lake, not a missing state.
+
+## 0040 — Chesterfield: the two lakes with an advisory are already indexed, and the park lake stays out (2026-11-13)
+
+The search read of 2026-11-12 (growth/ln-search-gaps-2026-11-12.md) saw the
+query "chesterfield lake" at position 29.5 and guessed that the Missouri
+pages it matches were among the noindexed thin pages. The owner chose
+"index Chesterfield Lake" (2026-11-12). Built from the history of
+2026-11-13, three Missouri waters carry the name, and the guess holds for
+only one of them:
+
+- **Lake Chesterfield (and tributary)** and **Harbors at Lake
+  Chesterfield** were already indexable. Each has one record, an "Advisory
+  (advise)" posted Jul 5 and Jul 16, 2026, inside the 24-month window
+  (0016). Both pages have no robots tag, a canonical of their own and a
+  sitemap entry. Nothing in the index rule needed to change for them.
+- **Chesterfield Central Park Lake stays `noindex,follow` and out of the
+  sitemap.** It has one record, "Dissipated (dissap)" from Aug 17, 2024,
+  and its page's only status line is "Reports on file, with no advisory
+  level the state has classified." The noindex audit of 2026-11-07
+  (growth/ln-noindex-audit-2026-11-07.md) sets out why such a page is held
+  back: built from one record, in a search result, it reads as an
+  all-clear (0002). The page is still built and linked from /state/mo/.
+- **No index rule changed.** The search read also proposed indexing any
+  thin page that Search Console shows impressions for. That rule would
+  index pages like the park lake's, so it is not adopted here. **Owner to
+  confirm.**
+- **Not changed, and worth knowing:** both indexed pages have names too
+  long for a dated title (0018), so they read "Lake Chesterfield (and
+  tributary) | Lake Notice" and "Harbors at Lake Chesterfield algae
+  advisories | Lake Notice". Water titles are under the dated-title read
+  until about 2026-11-25. Both pages leave the index in July 2028 if the
+  department posts nothing newer.
+
+Tests: `pipeline/tests/test_missouri_indexing.py`. The site tests build
+California only, so this is the first check of the staging rule (robots tag,
+canonical and sitemap agreeing with the snapshot) on a build with Missouri
+in it. It then checks the three Chesterfield waters by name. Negative
+control: with `INDEX_MIN_RECORDS` set to 1 the park lake's page becomes
+indexable, so the record floor is what holds it back.
+
+## 0041 — /state/mo/ counts its advisories in the title, the description and the first line (2026-11-13)
+
+The search read of 2026-11-12 (growth/ln-search-gaps-2026-11-12.md) found
+/state/mo/ the site's top page by clicks (5 on 22 impressions in 20 days)
+and no queued work aimed at Missouri. The owner chose a Missouri pass
+(2026-11-12): a title and description for /state/mo/, and indexing for the
+Missouri lake pages with impressions. The numbers below are from the
+history of 2026-11-13.
+
+- **Title.** Was "Missouri lake algae advisories | Lake Notice". Now
+  "Missouri lake algae advisories: 47 of 225 waters". The launch words stay
+  in front, unchanged. The count is the waters whose latest record is an
+  advisory, out of the waters on record, as in a county title (0018). The
+  site name is left out to make room, as 0018 does; `og:site_name` still
+  names it.
+- **Description.** Was "Toxic algae advisory status and history for 225
+  lakes and rivers in Missouri, from the state's own records." Now "47 of
+  the 225 waters in Missouri have a toxic algae (harmful algal bloom)
+  advisory as their latest state record, in the state's data dated Nov 13,
+  2026." "Harmful algal bloom" is the department's own term; it is dropped
+  when the sentence would not fit 155 characters. Missouri's layer has no
+  file date, so the date is the day it was read, as on Missouri water pages.
+- **First line.** The page's first paragraph gains the same sentence
+  (without the parenthesis), so the count in the title is on the page.
+- **No advisory on record: no count.** The launch title and description
+  come back, and the page has no count sentence. "0 of 225 waters", with no
+  room for the not-a-finding sentence, would read as an all-clear (0002).
+- **Unavailable (0024): nothing changes.** The title stays "Missouri lake
+  algae: data unavailable since <since>", the description stays the outage
+  one, and no count appears anywhere on the page. During a passing failure
+  the count is dated by the last good read, not the run.
+- **Missouri only.** `site.STATE_COUNTED` holds "MO". /state/ca/ keeps its
+  title, description and first line byte for byte; the noindex audit of
+  2026-11-07 found it with no impressions. Adding "CA" to the constant
+  widens it.
+- **Indexing: nothing to change.** Table Rock Lake, Briars Pond and Hagen
+  Lake, the pages the search read names, each have an advisory posted in
+  August or September 2026, so they were already indexable and in the
+  sitemap, with 38 more Missouri water pages (41 of 225). The other 184
+  have fewer than five records and no advisory in the last 24 months, and
+  stay `noindex,follow` (0016, 0040).
+- **Owner to confirm the wording.** To undo, empty `STATE_COUNTED`.
+
+Built before and after from the same history, only /state/mo/index.html
+differs: its title, description, `og:` copies of both, and first paragraph.
+
+Tests: `pipeline/tests/test_state_snippets.py` checks the built page
+against the snapshot (count in the title, the description and the first
+line; the file date; the copy guard), /state/ca/ unchanged, the unavailable
+page with no count, and a passing failure dated by the last good read.
+Negative controls: a wrong count written into Missouri's title and "0 of 2
+waters" written into California's are both reported; with "CA" added to
+the constant, California's page counts too.
+`pipeline/tests/test_missouri_indexing.py` checks the three named pages.
 
 ## 0043 — A Ko-fi tip link in the footer, and nowhere else (owner, 2026-11-16; wording approved 2026-11-17)
 

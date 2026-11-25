@@ -25,6 +25,16 @@
 
 <p id="after-contact"><strong>After contact with the water:</strong> {{ human_advice }}</p>
 
+{% if also_listed %}
+<h2 id="also-listed">Also listed under another county</h2>
+<p>The state's file has {{ "an entry" if also_listed|length == 1 else "entries" }} with a name that matches {{ water.name }} under another county. {{ "It" if also_listed|length == 1 else "They" }} may be the same water, listed once per county. Each listing has its own records:</p>
+<ul>
+{% for other in also_listed %}
+  <li><a href="{{ root }}water/{{ other.id }}/">Also listed under {{ other.place }}</a>{% if other.name != water.name %} as {{ other.name }}{% endif %}: {{ other.headline }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
 {% if same_name_nearby %}
 <h2 id="same-name">Matching names nearby</h2>
 <p>The state's file also has {{ "this entry" if same_name_nearby|length == 1 else "these entries" }} with a name that matches {{ water.name }}, within {{ same_name_miles }} miles of it. {{ "It" if same_name_nearby|length == 1 else "They" }} may be the same water, listed under another county or spelling. Each entry has its own records:</p>
@@ -33,6 +43,19 @@
   <li><a href="{{ root }}water/{{ other.id }}/">{{ other.name }}</a>, {{ other.place }}: {{ other.headline }}</li>
 {% endfor %}
 </ul>
+{% endif %}
+
+{% if trout_truck %}
+<h2 id="trout-plantings">Trout plantings at {{ water.name }}</h2>
+<p>The California Department of Fish and Wildlife lists {{ trout_truck.name }} in its trout planting schedule. Trout Truck, another free site by Chelsea Kelly-Reif, who makes Lake Notice, shows its planting weeks and history: <a href="{{ trout_truck.url }}">{{ trout_truck.name }} trout planting schedule on Trout Truck</a>.{% if trout_truck.kind == "stream" %} The department plants along the stream. The algae records on this page are at the spots the state names, which may be on a different stretch.{% endif %}</p>
+{% endif %}
+
+{% if swim %}
+<h2 id="swimming">{{ swim_heading }}</h2>
+{% for line in swim %}
+<p>{{ line }}</p>
+{% endfor %}
+<p>{{ swim_check }}{% for src in swim_sources %} {{ swim_own_page }} <a href="{{ src.url }}">{{ src.name }}</a> (<a href="{{ root }}where-to-check/#{{ src.slug }}">{{ swim_covers }}</a>).{% endfor %}</p>
 {% endif %}
 
 <h2 id="dogs">Dogs at {{ water.name }}</h2>

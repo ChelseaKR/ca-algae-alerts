@@ -28,7 +28,16 @@ from urllib.parse import urlencode, urlsplit
 
 import jinja2
 
-from caalgae import i18n, indexnow, levels, llms, newyork, where_to_check, wording
+from caalgae import (
+    county_adjacency,
+    i18n,
+    indexnow,
+    levels,
+    llms,
+    newyork,
+    where_to_check,
+    wording,
+)
 from caalgae.normalize import CA_COUNTIES, TIER_RANK
 from caalgae.snapshot import UNAVAILABLE_INDEX_DAYS, slugify
 from caalgae.water_names import display_water
@@ -273,6 +282,93 @@ def county_description(
         [
             f"{line} An advisory stays listed until the state records an end.",
             line,
+            plain,
+        ],
+        DESCRIPTION_MAX,
+    )
+
+
+# State pages whose title, description and first line count the waters with
+# an advisory as their latest record, the way county pages do (DECISIONS
+# 0041). Missouri only: /state/mo/ is the page the owner asked to change, and
+# /state/ca/ keeps its launch title and description. To widen, add "CA".
+STATE_COUNTED = frozenset({"MO"})
+
+
+def state_title(name: str, with_advisory: int, total: int) -> str:
+    """A state page title of at most TITLE_MAX characters.
+
+    With an advisory on record it keeps the launch title's words and adds
+    how many waters have one as their latest record, out of the waters on
+    record: the count the page's first line and its table carry. Without one
+    it is the launch title: "0 of 225 waters", with no room for the
+    not-a-finding sentence, would read as an all-clear (DECISIONS 0002)."""
+    tail = f" | {SITE_NAME}"
+    if with_advisory > 0:
+        share = f"{with_advisory} of {_waters(total)}"
+        for candidate in (
+            f"{name} lake algae advisories: {share}",
+            f"{name} algae advisories: {share}",
+        ):
+            if len(candidate) <= TITLE_MAX:
+                return candidate
+    return fit(
+        [f"{name} lake algae advisories{tail}", f"{name} algae advisories{tail}"],
+        TITLE_MAX,
+    )
+
+
+def state_count_line(
+    name: str,
+    with_advisory: int,
+    total: int,
+    file_date: str | None,
+    algae: str = "toxic algae",
+) -> str:
+    """The state page's count sentence, which its description also leads
+    with. Empty for a state with no advisory on record, as on a county page:
+    the table says the rest."""
+    if with_advisory <= 0:
+        return ""
+    if total == 1:
+        lead = f"The one water in {name} has a {algae} advisory as its"
+    elif with_advisory == 1:
+        lead = f"1 of the {_waters(total)} in {name} has a {algae} advisory as its"
+    else:
+        lead = (
+            f"{with_advisory} of the {_waters(total)} in {name} have a {algae} "
+            "advisory as their"
+        )
+    when = (
+        f", in the state's data dated {wording.date_label(file_date)}"
+        if file_date
+        else ""
+    )
+    return f"{lead} latest state record{when}."
+
+
+def state_description(
+    name: str, with_advisory: int, total: int, file_date: str | None
+) -> str:
+    """A state page description of at most DESCRIPTION_MAX characters: the
+    count sentence, naming harmful algal blooms too when that fits, or the
+    launch description for a state with no advisory on record."""
+    plain = (
+        f"Toxic algae advisory status and history for {total} "
+        f"lakes and rivers in {name}, from the state's own records."
+    )
+    if with_advisory <= 0:
+        return plain
+    return fit(
+        [
+            state_count_line(
+                name,
+                with_advisory,
+                total,
+                file_date,
+                algae="toxic algae (harmful algal bloom)",
+            ),
+            state_count_line(name, with_advisory, total, file_date),
             plain,
         ],
         DESCRIPTION_MAX,
@@ -696,6 +792,117 @@ def same_name_nearby(waters: list[dict[str, Any]]) -> dict[str, list[dict[str, A
     }
 
 
+# Trout Truck links (DECISIONS 0026). A CA water page links to the same water's
+# page on Trout Truck, Chelsea's other free site, only when a reviewed pair in
+# pipeline/data/trout_truck_pairs.json names it; there is no fuzzy match at
+# build time, and no footer or sitewide link. The page links Trout Truck's page
+# and nothing else: no planting week, date or count is copied here, because
+# those go stale on Trout Truck's schedule, not this one. A pair is dropped
+# when its Lake Notice id is gone from the snapshot or its Trout Truck path is
+# gone from trout_truck_pages.json (read from Trout Truck's committed
+# snapshot by scripts/trout_truck_pages.py), so the site never links a dead
+# page. Plain links: no tag, no tracking parameter, no rel="sponsored"
+# (nothing is paid); GA4's enhanced measurement already counts outbound clicks.
+TROUT_TRUCK_URL = "https://trouttruck.com"
+_DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+TROUT_TRUCK_PAIRS_FILE = _DATA_DIR / "trout_truck_pairs.json"
+TROUT_TRUCK_PAGES_FILE = _DATA_DIR / "trout_truck_pages.json"
+TROUT_TRUCK_KINDS = frozenset({"lake", "stream"})
+_TT_PATH = re.compile(r"/water/[a-z0-9]+(?:-[a-z0-9]+)*/")
+
+
+def trout_truck_links(
+    pairs: list[dict[str, Any]],
+    tt_paths: Iterable[str],
+    water_ids: Iterable[str],
+) -> dict[str, dict[str, str]]:
+    """Each Lake Notice water id with a live pair, mapped to its Trout Truck
+    page (``url``, ``name``, ``kind``). A row whose Lake Notice id or Trout
+    Truck path is gone is dropped; a malformed row or a water paired twice is
+    an error, because the file is hand-reviewed and a typo must not ship."""
+    live_tt = set(tt_paths)
+    live_ln = set(water_ids)
+    links: dict[str, dict[str, str]] = {}
+    for row in pairs:
+        ln_id, path, name, kind = (
+            row["ln_id"],
+            row["tt_path"],
+            row["tt_name"],
+            row["kind"],
+        )
+        if kind not in TROUT_TRUCK_KINDS or not _TT_PATH.fullmatch(path) or not name:
+            raise ValueError(f"trout_truck_pairs.json: bad row {row!r}")
+        if ln_id in links:
+            raise ValueError(f"trout_truck_pairs.json: {ln_id} is paired twice")
+        if ln_id in live_ln and path in live_tt:
+            links[ln_id] = {"url": TROUT_TRUCK_URL + path, "name": name, "kind": kind}
+    return links
+
+
+def load_trout_truck_links(water_ids: Iterable[str]) -> dict[str, dict[str, str]]:
+    pairs = json.loads(TROUT_TRUCK_PAIRS_FILE.read_text("utf-8"))["pairs"]
+    pages = json.loads(TROUT_TRUCK_PAGES_FILE.read_text("utf-8"))["paths"]
+    return trout_truck_links(pairs, pages, water_ids)
+
+
+# Also listed under another county (DECISIONS 0034). The state's file lists
+# some waters once per county: Lake Tahoe under El Dorado and Placer, the
+# South Fork Eel River under Humboldt and Mendocino. Their centers are farther
+# apart than SAME_NAME_NEARBY_MILES, so "Matching names nearby" misses them
+# and the pages compete with each other in search. A pair is linked when its
+# names match (``name_key``), its counties touch (share a county or a border,
+# ``county_adjacency``) and its centers are within the cap below. Rivers and
+# other long waters reach farther than lakes and creeks, whose names repeat
+# across neighboring counties for different waters (two Horseshoe Lakes 67
+# miles apart, two Rock Creeks 80 miles apart). Pairs that "Matching names
+# nearby" already links are left to it. Detected from the data, never a list
+# of names.
+SPLIT_COUNTY_MILES = 30
+SPLIT_COUNTY_LONG_MILES = 120
+_LONG_WATER_WORDS = frozenset({"river", "bay", "sea", "ocean", "slough", "strait"})
+
+
+def split_county_miles(name: str) -> int:
+    """The distance cap for a water's name: longer for a river or bay."""
+    return (
+        SPLIT_COUNTY_LONG_MILES
+        if _LONG_WATER_WORDS & set(name_key(name))
+        else SPLIT_COUNTY_MILES
+    )
+
+
+def also_listed(
+    waters: list[dict[str, Any]], nearby: dict[str, list[dict[str, Any]]]
+) -> dict[str, list[dict[str, Any]]]:
+    """For each water id, the other entries for what may be the same water
+    listed under another county. Symmetric: if A lists B, B lists A."""
+    groups: dict[tuple[str, tuple[str, ...]], list[dict[str, Any]]] = defaultdict(list)
+    for water in waters:
+        key = name_key(water["name"])
+        if key and water.get("center") and water["counties"]:
+            groups[(water["state"], key)].append(water)
+    found: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for group in groups.values():
+        for i, a in enumerate(group):
+            for b in group[i + 1 :]:
+                if set(a["counties"]) == set(b["counties"]):
+                    continue
+                if any(o["id"] == b["id"] for o in nearby.get(a["id"], [])):
+                    continue
+                if not county_adjacency.touching(a["counties"], b["counties"]):
+                    continue
+                if miles_between(a["center"], b["center"]) > split_county_miles(
+                    a["name"]
+                ):
+                    continue
+                found[a["id"]].append(b)
+                found[b["id"]].append(a)
+    return {
+        wid: sorted(others, key=lambda w: (w["counties"], w["id"]))
+        for wid, others in found.items()
+    }
+
+
 def newest(days: Iterable[dt.date | None]) -> dt.date | None:
     present = [d for d in days if d is not None]
     return max(present) if present else None
@@ -762,6 +969,8 @@ class SiteBuilder:
             (w["state"], w["source_name"].casefold()) for w in self.waters
         )
         self._same_name_nearby = same_name_nearby(self.waters)
+        self._trout_truck = load_trout_truck_links(w["id"] for w in self.waters)
+        self._also_listed = also_listed(self.waters, self._same_name_nearby)
         self.common["states_present"] = sorted({w["state"] for w in self.waters})
         # States whose data is live in this build: waters in the snapshot and
         # the state's source listed, the same test state_pages uses.
@@ -1021,6 +1230,28 @@ class SiteBuilder:
                 for other in self._same_name_nearby.get(water["id"], [])
             ],
             same_name_miles=SAME_NAME_NEARBY_MILES,
+            trout_truck=self._trout_truck.get(water["id"]),
+            # "Swimming at <water>" on indexed pages only (DECISIONS 0033), and
+            # never while the state's data is unavailable: the answer reads the
+            # water's status, which 0024 says such a page does not show.
+            swim=wording.swim_answer(water) if indexable and not outage else [],
+            swim_heading=wording.SWIM_HEADING.format(name=water["name"]),
+            swim_check=wording.SWIM_CHECK,
+            swim_own_page=wording.SWIM_OWN_PAGE.format(name=water["name"]),
+            swim_covers=wording.SWIM_COVERS,
+            swim_sources=[
+                {"name": src.name, "url": src.url, "slug": slugify(src.name)}
+                for src in where_to_check.sources_for(water["id"])
+            ],
+            also_listed=[
+                {
+                    "id": other["id"],
+                    "name": other["name"],
+                    "place": self._place(other),
+                    "headline": self._headline(other),
+                }
+                for other in self._also_listed.get(water["id"], [])
+            ],
             breadcrumb=crumbs,
             structured_data={
                 "@context": "https://schema.org",
@@ -1095,6 +1326,9 @@ class SiteBuilder:
             crumbs = self._crumbs((name, self.base_url + rel))
             ordered = sorted(waters, key=wording.list_sort_key)
             outage = self.unavailable.get(state)
+            file_date = self._file_date(state)
+            # No count while the state's data is unavailable (DECISIONS 0024).
+            count_line = ""
             if outage:
                 when = wording.date_label(outage["since"])
                 title = fit(
@@ -1108,16 +1342,22 @@ class SiteBuilder:
                     f"{name} lakes", name, outage["since"], scope="their"
                 )
             else:
-                title = f"{name} lake algae advisories | {SITE_NAME}"
-                description = (
-                    f"Toxic algae advisory status and history for {len(waters)} "
-                    f"lakes and rivers in {name}, from the state's own records."
+                # Counted for Missouri only (STATE_COUNTED); zero keeps the
+                # launch title and description, and no count line.
+                counted = (
+                    sum(w["status"]["kind"] == "advisory" for w in waters)
+                    if state in STATE_COUNTED
+                    else 0
                 )
+                title = state_title(name, counted, len(waters))
+                description = state_description(name, counted, len(waters), file_date)
+                count_line = state_count_line(name, counted, len(waters), file_date)
             self._write(
                 rel,
                 "state.html.jinja",
                 title=title,
                 description=description,
+                count_line=count_line,
                 outage=outage,
                 outage_banner=wording.unavailable_banner(
                     name,
@@ -1130,7 +1370,7 @@ class SiteBuilder:
                 noindex=bool(outage) and not self._indexable_unavailable(state),
                 robots="noindex,follow",
                 state=state,
-                file_date=self._file_date(state),
+                file_date=file_date,
                 lastmod=self._newest_of(waters),
                 state_name=name,
                 waters=ordered,
