@@ -1322,6 +1322,41 @@ at position 7.0. Chelsea approved this wording for that day's data:
 To undo, drop the counted candidate from `advisories_title` and the dated
 one from `advisories_description`.
 
+**Both pages lead with what they answer (2026-11-25 read; wording for
+approval).** Search Console, 2026-10-25 to 2026-11-21 (dataState all):
+/advisories/ 63 impressions at position 6.7 and home 46 (36 apex, 10 www)
+at about 6.5, with 0 clicks on either. Only two queries are visible, both
+water names on /advisories/ ("quarry lakes" at 7, "elm grove beach" at
+10); every home query is anonymized. The counted /advisories/ title above
+had 8 impressions in its first six days, too few to judge on its own.
+(growth/ln-titles-2026-11-25/README.md.)
+
+- **/advisories/ title:** "Algae advisories by lake: 524 California and
+  Missouri waters" (60 characters). Water-name searches find this page, and
+  "by lake" says the page answers them. The 2026-11-15 counted title is the
+  next candidate when this one is too long.
+- **/advisories/ description:** "Level and date by lake: 477 California and
+  47 Missouri waters whose latest state record is a toxic algae advisory,
+  in state data dated Nov 20, 2026." (148). The counts and the oldest file
+  date are the same as above; the 2026-11-15 form is the next candidate.
+- **Home title:** "Newest toxic algae advisories: California and Missouri
+  lakes" (60). The page opens with the advisories posted in the last 30
+  days. The title never carries a count, because an off-season "0" would
+  read as an all-clear (0002).
+- **Home description:** "Advisories posted in the last 30 days at
+  California and Missouri lakes and rivers, from the states' data dated
+  Nov 20, 2026, with each lake's history." (150). The date is the oldest of
+  the live states' file dates, as on /advisories/.
+- **Edge cases keep the earlier wording**: one state live, any live state
+  without a file date, or a form over 60 or 155 characters. California
+  alone keeps the launch title and description byte for byte.
+- **Not changed:** every page body, and every water, county and state page.
+  No word judges a water's safety: the pages list the states' advisories.
+
+To undo, drop the "by lake" candidates from `advisories_title` and
+`advisories_description`, and the `newest` and `dated` candidates from
+`home_title` and `home_description`.
+
 ## 0033 — "Swimming at <water>" on indexed water pages (owner, 2026-11-05; merge on 2026-11-26)
 
 The search read of 2026-11-05 (growth/ln-search-demand-2026-11-05.md) found

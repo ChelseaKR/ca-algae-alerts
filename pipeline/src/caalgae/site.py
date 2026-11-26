@@ -435,9 +435,14 @@ def advisories_description(
     when = _oldest_file_date(listed, file_dates or {}) if listed else None
     dated = (
         [
+            # Leads with what a search for one water's name finds here
+            # (DECISIONS 0032, 2026-11-25 read).
+            f"Level and date by lake: {lead} waters whose latest state record "
+            f"is a toxic algae advisory, in state data dated "
+            f"{wording.date_label(when)}.",
             f"{lead} lakes and rivers whose latest state record is a toxic "
             f"algae advisory, from the states' data dated "
-            f"{wording.date_label(when)}."
+            f"{wording.date_label(when)}.",
         ]
         if when
         else []
@@ -461,8 +466,15 @@ def home_title(states: Iterable[str]) -> str:
     since launch; a state is named only while its waters are in the
     snapshot, so an empty or dropped Missouri source drops the name too."""
     where = state_list(states) or "California"
+    # With two or more states the title leads with what the page lists first,
+    # the newest advisories (DECISIONS 0032, 2026-11-25 read). California
+    # alone keeps the launch title.
+    newest = (
+        [f"Newest toxic algae advisories: {where} lakes"] if " and " in where else []
+    )
     return fit(
         [
+            *newest,
             f"{where} lake toxic algae advisories by date | {SITE_NAME}",
             f"{where} toxic algae advisories by date",
             f"{where} algae advisories by date",
@@ -471,14 +483,34 @@ def home_title(states: Iterable[str]) -> str:
     )
 
 
-def home_description(states: Iterable[str]) -> str:
+def home_description(
+    states: Iterable[str], file_dates: dict[str, str | None] | None = None
+) -> str:
     """The home page description, naming the same states as its title.
     "Since 2016" is California's span only, so a build with another state
-    says "history" without a year."""
+    says "history" without a year.
+
+    With two or more states and each one's file date known, it names the
+    list the page opens with and dates it by the oldest of those files
+    (DECISIONS 0032, 2026-11-25 read), so it never says a state's data is
+    newer than it is. Any other build keeps the earlier wording."""
+    states = list(states)
     where = state_list(states) or "California"
     span = " since 2016" if where == "California" else ""
+    named = [state for state in STATE_NAMES if state in set(states)]
+    when = _oldest_file_date(named, file_dates or {}) if len(named) >= 2 else None
+    dated = (
+        [
+            f"Advisories posted in the last {wording.RECENT_DAYS} days at "
+            f"{where} lakes and rivers, from the states' data dated "
+            f"{wording.date_label(when)}, with each lake's history."
+        ]
+        if when
+        else []
+    )
     return fit(
         [
+            *dated,
             f"Toxic algae (harmful algal bloom) advisories at {where} lakes "
             f"and rivers, newest first, with each lake's history{span} for "
             "swimmers and dogs.",
@@ -499,7 +531,12 @@ def advisories_title(waters: list[dict[str, Any]]) -> str:
     where = state_list(w["state"] for w in waters) or "California"
     listed = _listed_counts(waters)
     counted = (
-        [f"Toxic algae advisories: {sum(listed.values())} {where} waters"]
+        [
+            # By lake first: the queries this page shows for are water names
+            # (DECISIONS 0032, 2026-11-25 read).
+            f"Algae advisories by lake: {sum(listed.values())} {where} waters",
+            f"Toxic algae advisories: {sum(listed.values())} {where} waters",
+        ]
         if listed
         else []
     )
@@ -1035,7 +1072,10 @@ class SiteBuilder:
             "",
             "index.html.jinja",
             title=home_title(self.live_states),
-            description=home_description(self.live_states),
+            description=home_description(
+                self.live_states,
+                {state: self._file_date(state) for state in STATE_NAMES},
+            ),
             lastmod=self.site_date,
             recent=recent,
             older_count=len(open_) - len(recent),
